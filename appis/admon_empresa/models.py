@@ -25,13 +25,18 @@ class Zona(models.Model):
 
 class Sucursal(models.Model):
     id_sucursal = models.AutoField(primary_key=True)
-    nombre_suc = models.CharField(max_length=150)
+    nombre_suc = models.CharField(
+        max_length=150, verbose_name='Nombre de Sucursal')
     direccion = models.CharField(max_length=250)
     tipo_sucursal = models.CharField(max_length=10)
-    zona_id = models.OneToOneField(
+    id_zona = models.ForeignKey(
         Zona, null=True, blank=True, on_delete=models.CASCADE)
     empresa = models.ForeignKey(
         Empresa, null=True, blank=True, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ["nombre_suc"]
+        verbose_name_plural = "Sucursales"
 
     def __str__(self):
         return self.nombre_suc
