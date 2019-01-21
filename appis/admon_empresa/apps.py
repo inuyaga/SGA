@@ -6,5 +6,5 @@ from django.apps import AppConfig
 
 
 class AdmonEmpresaConfig(AppConfig):
-    name = 'admon_empresa'
-    verbose_name = 'hola'
+    name = 'appis.admon_empresa'
+    verbose_name = 'Administracion de Empresa'

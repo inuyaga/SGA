@@ -7,36 +7,49 @@ from django.db import models
 
 
 class Empresa(models.Model):
-    nombre = models.CharField(max_length=120)
-    tipo = models.CharField(max_length=20)
-    abrebiacion = models.CharField(max_length=10, null=True)
+    empresa_nombre = models.CharField(max_length=120, verbose_name='Nombre')
+    empresa_tipo = models.CharField(max_length=20, verbose_name='Tipo de empresa')
+    empresa_abrebiacion = models.CharField(max_length=10, verbose_name='Abrebiacion')
 
     def __str__(self):
-        return self.nombre
+        return self.empresa_nombre
 
 
 class Zona(models.Model):
     zona_id = models.AutoField(primary_key=True)
-    nombre_zona = models.CharField(max_length=80)
+    zona_nombre = models.CharField(max_length=80, verbose_name='Nombre de zona')
 
     def __str__(self):
-        return self.nombre_zona
+        return self.zona_nombre
 
 
 class Sucursal(models.Model):
     id_sucursal = models.AutoField(primary_key=True)
-    nombre_suc = models.CharField(
-        max_length=150, verbose_name='Nombre de Sucursal')
-    direccion = models.CharField(max_length=250)
-    tipo_sucursal = models.CharField(max_length=10)
-    id_zona = models.ForeignKey(
-        Zona, null=True, blank=True, on_delete=models.CASCADE)
-    empresa = models.ForeignKey(
-        Empresa, null=True, blank=True, on_delete=models.CASCADE)
+    sucursal_nombre = models.CharField(max_length=150, verbose_name='Nombre de Sucursal')
+    sucursal_direccion = models.CharField(max_length=250, verbose_name='Direccion')
+    sucursal_tipo_sucursal = models.CharField(max_length=10, verbose_name='Tipo sucursal')
+    sucursal_id_zona = models.ForeignKey(Zona, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Zona')
+    sucursal_empresa_id = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Empresa')
 
     class Meta:
-        ordering = ["nombre_suc"]
+        ordering = ["sucursal_nombre"]
         verbose_name_plural = "Sucursales"
 
     def __str__(self):
-        return self.nombre_suc
+        return self.sucursal_nombre
+
+
+class Departamento(models.Model):
+    departamento_id_depo=models.AutoField(primary_key=True)
+    departamento_nombre=models.CharField(max_length=80, verbose_name='Nombre')
+    departamento_limite_gasto=models.FloatField(null=True, blank=True, verbose_name='Limite de gastos')
+    departamento_id_sucursal=models.ForeignKey(Sucursal, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Sucursal')
+
+    def __str__(self):
+        return str(self.departamento_nombre)
+    #def nombre_empresa(self):
+    #    query = Sucursal.objects.get(id_sucursal=self.departamento_id_sucursal.id_sucursal)
+    #    return query.sucursal_empresa_id
+    def nombre_empresa(self):
+        query = Sucursal.objects.select_related().get(id_sucursal=self.departamento_id_sucursal.id_sucursal)
+        return query.sucursal_empresa_id
