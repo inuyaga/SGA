@@ -26,28 +26,26 @@ class detallePedido(admin.ModelAdmin):
     search_fields = ["detallepedido_pedido_id", ]
     readonly_fields = ('detallepedido_creado_por', 'detallepedido_precio',)
 
-
     def save_model(self, request, obj, form, change):
         qr = Producto.objects.get(
             producto_codigo=request.POST.get('detallepedido_producto_id'))
         obj.detallepedido_precio = qr.producto_precio
-        obj.detallepedido_creado_por= request.user
+        obj.detallepedido_creado_por = request.user
         super(detallePedido, self).save_model(request, obj, form, change)
 
 
 class PedidoConfig(admin.ModelAdmin):
     list_display = ('pedido_id_pedido',
-                    'pedido_fecha_pedido', 'pedido_status', 'nombre_sucursal', 'limite_gastos', 'pedido_id_depo',)
+                    'pedido_fecha_pedido', 'pedido_status', 'nombre_sucursal', 'limite_gastos', 'pedido_id_depo', 'total',)
     exclude = ("pedido_status",)
     readonly_fields = ('pedido_status',)
     raw_id_fields = ('pedido_id_depo',)
     search_fields = ['pedido_id_pedido']
-    list_filter = ('pedido_status','pedido_fecha_pedido', 'pedido_id_depo',)
+    list_filter = ('pedido_status', 'pedido_fecha_pedido', 'pedido_id_depo',)
     #inlines = [Detalle_pedidoInstanceInLine]
     list_editable = ('pedido_status',)
 
-
-    #def get_queryset(self, request):
+    # def get_queryset(self, request):
 
     # def getnombredepo(self, object):
     #    n = object.pedido_id_depo
