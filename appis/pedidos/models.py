@@ -4,12 +4,11 @@ from __future__ import absolute_import
 
 from django.db import models
 from appis.admon_empresa.models import Departamento, Sucursal
-from django.db.models import Avg
-from django.db.models import Sum
-from django.db.models import F
+from django.db.models import Avg, Sum, F
+
 from django.contrib.auth import get_user_model
 # pylint: disable = E1101
-User = get_user_model()
+Usuario = get_user_model()
 # Create your models here.
 
 
@@ -37,13 +36,17 @@ class Producto(models.Model):
     producto_descripcion = models.CharField(
         max_length=150, verbose_name='Descripcion')
     producto_imagen = models.ImageField(
-        blank=True, null=True, upload_to="cover/%Y/%m/%D", verbose_name='Imagen')
+        blank=True, null=True, upload_to="img_productos/", verbose_name='Imagen')
     producto_marca = models.ForeignKey(
         Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
     producto_area = models.ForeignKey(
         Area, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Area')
     producto_precio = models.FloatField(
         null=True, blank=True, verbose_name='Precio')
+
+    TIPO_PRODUCTO = ((1, 'Uso Interno'), (2, 'Activo Fijo'),)
+    tipo_producto = models.IntegerField(
+        choices=TIPO_PRODUCTO, null=True, blank=True)
 
     def __str__(self):
         return self.producto_nombre
@@ -94,14 +97,14 @@ class Detalle_pedido(models.Model):
     detallepedido_cantidad = models.FloatField(
         null=True, blank=True, verbose_name='Cantidad')
     detallepedido_creado_por = models.ForeignKey(
-        User, null=True, blank=True, on_delete=models.PROTECT,)
+        Usuario, null=True, blank=True, on_delete=models.PROTECT,)
     #precio = auto_save_precio(self)
     detallepedido_precio = models.FloatField(
         null=False, blank=False, default=0)
 
     class Meta:
         ordering = ["detallepedido_pedido_id"]
-        verbose_name_plural = "Carrito compra"
+        verbose_name_plural = "Detalle de pedidos"
 
     def __str__(self):
         return str(self.detallepedido_producto_id)

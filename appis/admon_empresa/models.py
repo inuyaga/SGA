@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
+from django.contrib.auth import get_user_model
+Usuario = get_user_model()
 # Create your models here.
 # pylint: disable = E1101
 
@@ -67,3 +68,10 @@ class Departamento(models.Model):
         query = Sucursal.objects.select_related().get(
             id_sucursal=self.departamento_id_sucursal.id_sucursal)
         return query.sucursal_empresa_id
+
+
+class Pertenece_empresa(models.Model):
+    #pertenece_id = models.AutoField(primary_key=True)
+    pertenece_id_usuario = models.OneToOneField(Usuario)
+    pertenece_empresa = models.ForeignKey(
+        Departamento, null=True, blank=True, on_delete=models.CASCADE)
