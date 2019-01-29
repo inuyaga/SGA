@@ -7,7 +7,7 @@ from appis.admon_empresa.models import Departamento, Sucursal
 from django.db.models import Avg, Sum, F
 
 from django.contrib.auth import get_user_model
-# pylint: disable = E1101
+# pylint: disable = E1101 
 Usuario = get_user_model()
 # Create your models here.
 
@@ -35,8 +35,7 @@ class Producto(models.Model):
     producto_nombre = models.CharField(max_length=50, verbose_name='Nombre')
     producto_descripcion = models.CharField(
         max_length=150, verbose_name='Descripcion')
-    producto_imagen = models.ImageField(
-        blank=True, null=True, upload_to="img_productos/", verbose_name='Imagen')
+    producto_imagen = models.ImageField(blank=True, null=True, upload_to="img_productos/", verbose_name='Imagen')
     producto_marca = models.ForeignKey(
         Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
     producto_area = models.ForeignKey(

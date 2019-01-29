@@ -72,6 +72,6 @@ class Departamento(models.Model):
 
 class Pertenece_empresa(models.Model):
     #pertenece_id = models.AutoField(primary_key=True)
-    pertenece_id_usuario = models.OneToOneField(Usuario)
+    pertenece_id_usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
     pertenece_empresa = models.ForeignKey(
         Departamento, null=True, blank=True, on_delete=models.CASCADE)

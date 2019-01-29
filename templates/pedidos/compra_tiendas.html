@@ -11,10 +11,11 @@ Compra de tiendas
       {% for producto in productos %}
       <div class="col-3">
         <div class="card" style="width: 18rem;">
-          <img src="{% static producto.producto_imagen%}" class="card-img-top" width="50" height="250" alt="...">
+          <img src="{% static producto.producto_imagen %}" class="card-img-top" width="50" height="250" alt="...">
           <div class="card-body">
             <h5 class="card-title">{{producto.producto_codigo}}</h5>
             <p class="card-text">{{producto.producto_descripcion}}</p>
+            <p class="card-text">{{producto.producto_imagen}}</p>
             <a href="#" class="btn btn-primary">Añadir</a>
           </div>
         </div>
