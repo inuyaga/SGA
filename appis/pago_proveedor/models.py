@@ -7,9 +7,12 @@ from django.db.models import Sum
 
 # Create your models here.
 
-# pylint: disable = E1101 
+# pylint: disable = E1101
+
+
 class Proveedor(models.Model):
     proveedor_nombre = models.CharField(max_length=100, verbose_name='Nombre')
+    proveedor_rfc = models.CharField(max_length=15, verbose_name='RFC')
     proveedor_email = models.EmailField(verbose_name='Correo')
 
     def __str__(self):
@@ -54,7 +57,8 @@ class Factura(models.Model):
     factura_isr_retenido = models.FloatField(null=True, blank=True)
     factura_corresponde_mes = models.DateField()
     factura_creado = models.DateTimeField(auto_now_add=True)
-    factura_pagado_status=models.BooleanField(verbose_name='Status pago', default=False)
+    factura_pagado_status = models.BooleanField(
+        verbose_name='Status pago', default=False)
 
     def __str__(self):
         return str(self.factura_id)
@@ -70,28 +74,34 @@ class Pago(models.Model):
                    ('TRANSFERENCIA', 'TRANSFERENCIA'))
     pago_metodo = models.CharField(max_length=40, choices=METODO_PAGO)
     pago_creado = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return str(self.pago_id)
 
     def Suma_complementos(self):
-        complementos = Complemento.objects.filter(complemento_pago_id = self.pago_id).aggregate(suma_total=Sum('complemento_monto'))
+        complementos = Complemento.objects.filter(
+            complemento_pago_id=self.pago_id).aggregate(suma_total=Sum('complemento_monto'))
         return str(complementos['suma_total'])
+
     def Resta(self):
-        factura = Factura.objects.get(factura_id = self.pago_factura_id.factura_id)
-        complementos = Complemento.objects.filter(complemento_pago_id = self.pago_id).aggregate(suma_total=Sum('complemento_monto'))
+        factura = Factura.objects.get(
+            factura_id=self.pago_factura_id.factura_id)
+        complementos = Complemento.objects.filter(
+            complemento_pago_id=self.pago_id).aggregate(suma_total=Sum('complemento_monto'))
         resta = 0
         if complementos['suma_total'] == None:
             pass
         else:
-            total_factura=factura.factura_monto_total
-            resta = total_factura - (self.pago_monto + complementos['suma_total'])
+            total_factura = factura.factura_monto_total
+            resta = total_factura - \
+                (self.pago_monto + complementos['suma_total'])
             pass
 
         if resta <= 0:
-            Factura.objects.filter(factura_id = self.pago_factura_id.factura_id).update(factura_pagado_status=True)
+            Factura.objects.filter(factura_id=self.pago_factura_id.factura_id).update(
+                factura_pagado_status=True)
             resta = 0
         return str(resta)
-
 
 
 class Complemento(models.Model):
