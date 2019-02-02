@@ -35,6 +35,8 @@ class ContratoConfig(admin.ModelAdmin):
 
     readonly_fields = ('contrato_autorizado', 'contrato_status',)
 
+    change_list_template = "pagoproveedor/contratos_change.html"
+
     # def save_related(self, request, form, formsets, change):
     #     form.save_m2m()
     #     contador = 1

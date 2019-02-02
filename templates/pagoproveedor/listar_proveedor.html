@@ -1,0 +1,65 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Lista Proveedores</title>
+{% endblock titulo %}
+
+{% block contenido %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">SGA</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Proveedores</li>
+  </ol>
+</nav>
+<div class="container">
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Nombre</th>
+				<th scope="col">Correo</th>
+				<th scope="col">RFC</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for proveedor in object_list %}
+			<tr>
+				<th scope="row">{{proveedor.proveedor_nombre}}</th>
+				<td>{{proveedor.proveedor_email}}</td>
+				<td>{{proveedor.proveedor_rfc}}</td>
+				<td>
+					<a class="btn btn-outline-success" href="{% url 'proveedor:edicion_p' proveedor.id %}" role="button">Editar</a>
+					<a class="btn btn-outline-danger" href="{% url 'proveedor:eliminar' proveedor.id %}" role="button">Eliminar</a>
+
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+<div class="row justify-content-md-center">
+
+{% block pagination %}
+{% if is_paginated %}
+<nav aria-label="Page navigation example">
+	<ul class="pagination">
+		{% if page_obj.has_previous %}
+		<li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i class="material-icons">
+					navigate_before
+				</i></a></li>
+		{% endif %}
+		<span class="page-link">
+			Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+			<span class="sr-only">(current)</span>
+		</span>
+		{% if page_obj.has_next %}
+		<li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i class="material-icons">
+					navigate_next
+				</i></a></li>
+		{% endif %}
+	</ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+</div>
+{% endblock contenido %}

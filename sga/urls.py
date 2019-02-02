@@ -16,9 +16,14 @@ Including another URLconf
 from __future__ import absolute_import
 from django.conf.urls import url, include
 from django.contrib import admin
-from appis.pedidos.views import compra_tienda, busquedafiltro
+from django.contrib.auth.views import login, logout
+
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^adminsga/', admin.site.urls),
     url(r'^pedido/', include('appis.pedidos.urls'), name='pedidos'),
+    url(r'^proveedor/', include('appis.pago_proveedor.urls'), name='proveedor'),
+    url(r'^salir', logout, name="salir", kwargs={'next_page': '/'}),
+    url(r'^login/',login, {'template_name':'index/inicio.html'}, name='inicio'),
+    url(r'^$', include('appis.inicio.urls'), name='principal'),
 ]

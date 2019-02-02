@@ -1,0 +1,18 @@
+{% extends 'index/base.html'%}
+
+{% block contenido %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">SGA</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'proveedor:lista' %}">Proveedores</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{tituloBrea}}</li>
+  </ol>
+</nav>
+<div class="container">
+	<form method="post" class="col-sm-4">
+	 {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-outline-success">Guardar</button>
+</form>
+</div>
+{% endblock %}

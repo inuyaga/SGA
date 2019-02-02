@@ -1,0 +1,21 @@
+{% extends 'index/base.html'%}
+
+{% block contenido %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">SGA</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'proveedor:lista' %}">Proveedores</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Eliminar</li>
+  </ol>
+</nav>
+<div class="container">
+  <form method="post">
+    {% csrf_token %}
+    <div class="alert alert-danger" role="alert">
+      Esta seguro de eliminar {{ object.proveedor_nombre }} con RFC {{object.proveedor_rfc}}?.
+    </div>
+    <input class="btn btn-danger" type="submit" value="Si estoy seguro!">
+    <a class="btn btn-primary" href="{% url 'proveedor:lista' %}" role="button">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

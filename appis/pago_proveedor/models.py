@@ -12,8 +12,9 @@ from django.db.models import Sum
 
 class Proveedor(models.Model):
     proveedor_nombre = models.CharField(max_length=100, verbose_name='Nombre')
-    proveedor_rfc = models.CharField(max_length=15, verbose_name='RFC')
-    proveedor_email = models.EmailField(verbose_name='Correo')
+    proveedor_rfc = models.CharField(max_length=15, verbose_name='RFC', default = 'none', unique=True)
+    proveedor_email = models.EmailField(verbose_name='Correo') 
+    
 
     def __str__(self):
         return self.proveedor_nombre
