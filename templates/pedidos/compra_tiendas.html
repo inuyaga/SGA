@@ -1,27 +1,164 @@
-{% extends "pedidos/base/base.html" %}
-{% load staticfiles %}
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Lista Productos</title>
+{% endblock titulo %}
 
-{% block title %}
-Compra de tiendas
-{% endblock  %}
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'inicio:index' %}">SGA</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="{% url 'admin:index' %}">Panel <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                {{ usuario }}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'salir' %}">Salir</a>
+            </div>
+        </li>
+
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+          <a class="btn btn-outline-success" href="{% url 'pedidos:pedido_tienda_listado' %}" role="button"><i class="material-icons">shopping_cart</i><span
+            class="badge badge-light" id="conteo">
+            {% if conteo > 0 %}
+            {{conteo}}
+            {% endif %}
+          </span></a>
+      </form>
+      <form class="form-inline my-2 my-lg-0">
+        <br>
+          <a class="btn btn-outline-info" href="{% url 'pedidos:pedido_sucursal_list' %}" role="button" title="Pedidos"><i class="material-icons">ballot</i></a>
+      </form>
+    </div>
+  </nav>
+{% endblock navbar %}
 
 {% block contenido %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Pedido</li>
+  </ol>
+</nav>
 <div class="container">
-    <div class="row">
-      {% for producto in productos %}
-      <div class="col-3">
-        <div class="card" style="width: 18rem;">
-          <img src="{% static producto.producto_imagen %}" class="card-img-top" width="50" height="250" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">{{producto.producto_codigo}}</h5>
-            <p class="card-text">{{producto.producto_descripcion}}</p>
-            <a href="#" class="btn btn-primary">Añadir</a>
+
+  <div class="row">
+    {% for producto in object_list %}
+
+    <div class="col-3">
+      <div class="card" style="width: 18rem;">
+        <img src="{{ producto.producto_imagen.url }}" class="card-img-top" width="50" height="250" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">{{producto.producto_codigo}}</h5>
+          <p class="card-text">{{producto.producto_descripcion}}</p>
+          <div class="form-group col-md-12 row justify-content-md-center">
+            <label for="inputEmail4">Cantidad</label>
+            <input type="number" id="{{producto.producto_codigo}}" class="form-control" min="1" value="1">
           </div>
+          <div class="row justify-content-md-center">
+            <button type="button" onclick="agregar('{{producto.producto_codigo}}')" class="btn btn-primary">Agregar</button>
+          </div>
+
         </div>
       </div>
-      {% endfor %}
     </div>
+
+    {% endfor %}
   </div>
-{% endblock  %}
-  
-  
+</div>
+
+
+<div class="row justify-content-md-center">
+  {% block pagination %}
+  {% if is_paginated %}
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i
+            class="material-icons">
+            navigate_before
+          </i></a></li>
+      {% endif %}
+      <span class="page-link">
+        Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+        <span class="sr-only">(current)</span>
+      </span>
+      {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i
+            class="material-icons">
+            navigate_next
+          </i></a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+  {% endblock %}
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+  // var frm = $('#');
+  // var id_form = frm.attr('id')
+  // frm.submit(function (e) {
+
+  //   e.preventDefault();
+
+  //   $.ajax({
+  //     type: frm.attr('method'),
+  //     url: frm.attr('action'),
+  //     data: frm.serialize(),
+  //     success: function (data) {
+  //       var message = data.content.mensaje
+  //       alert(id_form)
+  //     },
+  //     error: function (data) {
+  //       console.log('An error occurred.');
+  //       console.log(data);
+  //     },
+  //   });
+  // });
+
+
+  function agregar(codigo) {
+    $.ajax({
+      type: "POST",
+      url: "",
+      data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        nombre: codigo,
+        catidad: $('#' + codigo).val()
+      },
+      success: function (data) {
+        var message = data.content.mensaje
+        var contado = data.content.conteo
+        var tipo_mensaje = data.content.tipo_mensaje
+        if (tipo_mensaje) {
+          alertify.success(message);
+        } else {
+          alertify.error(message);
+        }
+        $('#conteo').replaceWith('<span class="badge badge-light" id="conteo">' + contado + '</span>');
+
+      },
+      error: function (data) {
+        console.log('An error occurred.');
+        console.log(data);
+      },
+    });
+  }
+</script>
+
+{% endblock script %}

@@ -1,0 +1,106 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Lista Pedidos</title>
+{% endblock titulo %}
+{% block contenido %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Pedidos</li>
+    </ol>
+</nav>
+<div class="row">
+    <div class="col-sm-9">
+
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col"><small>##</small></th>
+                    <th scope="col"><small>CREADO</small></th>
+                    <th scope="col"><small>DEPARTAMENTO</small></th>
+                    <th scope="col"><small>SUCURSAL</small></th>
+                    <th scope="col"><small>LIMITE</small></th>
+                    <th scope="col"><small>TOTAL</small></th>
+                    <th scope="col"><small>STATUS</small></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in object_list %}
+                <tr>
+                    <th scope="row"><small>{{pedido.pedido_id_pedido}}</small></th>
+                    <th scope="row"><small>{{pedido.pedido_fecha_pedido}}</small></th>
+                    <td><small>{{pedido.pedido_id_depo}}</small></td>
+                    <td><small>{{pedido.nombre_sucursal}}</small></td>
+                    <td><small>{{pedido.limite_gastos}}</small></td>
+                    <td><small>{{pedido.total}}</small></td>
+                    <td><small>
+                            {% if pedido.pedido_status == 1%}
+                            {{status.1}}
+                            {% endif %}
+
+                            {% if pedido.pedido_status == 2%}
+                            {{status.2}}
+                            {% endif %}
+
+                            {% if pedido.pedido_status == 3%}
+                            {{status.3}}
+                            {% endif %}
+
+                        </small>
+                    </td>
+                    <td><small>
+                            <a class="btn btn-outline-warning btn-sm" href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}"
+                                role="button"><i class="material-icons">border_color</i></a>
+                        </small>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-sm-3">
+        <ul class="list-group">
+            <li class="list-group-item active">Filtros</li>
+            <li class="list-group-item">
+                <a href="?status=1" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Creado</a>
+                <a href="?status=2" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Aprobado</a>
+                <a href="?status=3" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Rechazado</a>
+                <a href="{% url 'pedidos:pedidos_list' %}" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Todo</a>
+            </li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row justify-content-md-center">
+    {% block pagination %}
+    {% if is_paginated %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i
+                        class="material-icons">
+                        navigate_before
+                    </i></a></li>
+            {% endif %}
+            <span class="page-link">
+                Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                <span class="sr-only">(current)</span>
+            </span>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i
+                        class="material-icons">
+                        navigate_next
+                    </i></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endblock %}
+</div>
+
+{% endblock contenido %}

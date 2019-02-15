@@ -1,0 +1,95 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+{% load staticfiles %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Facturas</li>
+  </ol>
+</nav>
+  <table class="table">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col"> <small>CONTRATO</small> </th>
+        <th scope="col"><small>TIPO</small></th>
+        <th scope="col"><small>XML</small></th> 
+        <th scope="col"><small>PDF</small></th>
+        <th scope="col"><small>TOTAL</small></th>
+        <th scope="col"><small>IVA</small></th>
+        <th scope="col"><small>IVA RETENIDO</small></th>
+        <th scope="col"><small>ISR</small></th>
+        <th scope="col"><small>MES</small></th>
+        <th scope="col"><small>CREADO</small></th>
+        <th scope="col"><small>PAGADO</small></th>
+        <th scope="col"><small>ACCIÓN</small></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for factura in object_list %}
+      <tr>
+        <th scope="row"><small>{{factura.factura_id}}</small></th>
+        <td><small>
+          <a href="{% url 'proveedor:contrato_detalle' factura.factura_contrato_id %}">{{factura.factura_contrato_id}}</a>
+          </small></td>
+        <td><small>{% if factura.factura_tipo == 1 %}
+        Fisica
+        {% else %}
+        Moral
+        {% endif %}
+        </small></td>
+        <td><small><a href="{{factura.factura_xml.url }}">xml</a></small></td>
+        <td><small><a href="{{factura.factura_pdf.url }}">pdf</a></small></td>
+        <td><small>{{factura.factura_monto_total}}</small></td>
+        <td><small>{{factura.factura_iva_trasladado}}</small></td>
+        <td><small>{{factura.factura_iva_retenido}}</small></td>
+        <td><small>{{factura.factura_isr_retenido}}</small></td>
+        <td><small>{{factura.factura_corresponde_mes|date:'M-Y'}}</small></td>
+        <td><small>{{factura.factura_creado}}</small></td>
+        <td><small>
+        {% if factura.factura_pagado_status %}
+        <i class="material-icons">done_outline</i>
+        {% else %}
+        <i class="material-icons">cancel</i>
+        {% endif %}
+        </small></td>
+        
+        <td><small>
+      <a data-toggle="tooltip" title="Pagar" class="btn btn-outline-success btn-sm" href="{% url 'proveedor:pago_crear' factura.factura_id %}" role="button"><i class="material-icons">payment</i></a>
+      <a class="btn btn-outline-warning btn-sm" href="{% url 'proveedor:factura_edicion' factura.factura_id %}" role="button"><i class="material-icons">edit</i></a>
+      <a class="btn btn-outline-danger btn-sm" href="{% url 'proveedor:factura_eliminar' factura.factura_id %}" role="button"><i class="material-icons">delete_forever</i></a>
+      </small></td>
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+
+<div class="row justify-content-md-center">
+
+  {% block pagination %}
+  {% if is_paginated %}
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i class="material-icons">
+            navigate_before
+          </i></a></li>
+      {% endif %}
+      <span class="page-link">
+        Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+        <span class="sr-only">(current)</span>
+      </span>
+      {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i class="material-icons">
+            navigate_next
+          </i></a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+  {% endblock %}
+
+</div>
+{% endblock %}

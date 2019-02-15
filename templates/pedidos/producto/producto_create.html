@@ -1,0 +1,25 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Crear Producto</title>
+{% endblock titulo %}
+
+{% block contenido %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Producto</li>
+    </ol>
+  </nav>
+
+<div class="container">
+  <form method="post" class="col-sm-4" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-outline-success">Guardar</button>
+  </form>
+</div>
+{% endblock contenido %}
+

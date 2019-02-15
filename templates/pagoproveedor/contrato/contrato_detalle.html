@@ -1,0 +1,14 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<div class="container">
+    <li>{{object.contrato_id}}</li>
+    <li>{{object.contrato_proveedor_id}}</li>
+    <li>{{object.contrato_fecha_inicio}}</li>
+    <li>{{object.contrato_fecha_termino}}</li>
+    <li>{{object.contrato_dias_pago}}</li>
+    <li>{{object.contrato_direccion}}</li>
+    <li>{{object.contrato_monto}}</li>
+    <li>{{object.contrato_autorizado}}</li>
+    <li>{{object.contrato_status}}</li>
+</div>
+{% endblock contenido %}

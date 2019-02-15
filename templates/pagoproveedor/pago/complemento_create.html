@@ -1,0 +1,53 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li> 
+    <li class="breadcrumb-item"><a href="{% url 'proveedor:factura_lista' %}">Facturas</a></li>
+    <li class="breadcrumb-item"><a href="#" onClick="javascript:history.go(-1);">Pago</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Complementos</li> 
+  </ol>
+</nav>
+<div class="container">
+    <div class="row">
+        <form method="post" class="col-sm-4" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-outline-success">Guardar</button>
+        </form>
+
+    </div>
+
+    <div class="row">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">PDF</th>
+                    <th scope="col">MONTO</th>
+                    <th scope="col">METODO</th>
+                    <th scope="col">CREADO</th>
+                    <th scope="col">ACCION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for complemento in complementos %}
+                <tr>
+                    <th scope="row">{{complemento.complemento_id}}</th>
+                    <td><a href="{{complemento.complemento_pdf.url}}">PDF</a></td>
+                    <td>{{complemento.complemento_monto}}</td>
+                    <td>{{complemento.complemento_metodo}}</td>
+                    <td>{{complemento.complemento_creado}}</td>
+                    <td>
+                    <a class="btn btn-outline-danger btn-sm" href="{% url 'proveedor:complemento_delete' complemento.complemento_id idComplemento %}" role="button"><i class="material-icons">delete_forever</i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock contenido %}

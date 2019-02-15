@@ -1,0 +1,88 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Lista Productos</title>
+{% endblock titulo %}
+
+{% block contenido %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Productos</li>
+    </ol>
+  </nav>
+<div class="container">
+    <table class="table table-sm">
+        <thead class="thead-light">
+          <tr>
+          <small>
+          </small>
+            <th scope="col"><small>CODIGO</small></th>
+            <th scope="col"><small>NOMBRE</small></th>
+            <th scope="col"><small>DESCRIPCION</small></th>
+            <th scope="col"><small>IMAGEN</small></th>
+            <th scope="col"><small>MARCA</small></th>
+            <th scope="col"><small>AREA</small></th>
+            <th scope="col"><small>PRECIO</small></th>
+            <th scope="col"><small>TIPO</small></th>
+            <th scope="col"><small>ACCION</small></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for producto in object_list %}
+        <tr>
+            <th scope="row"><small>{{producto.producto_codigo}}</small></th>
+            <td><small>{{producto.producto_nombre}}</small></td>
+            <td><small>{{producto.producto_descripcion}}</small></td>
+            <td>
+            <img src="{{producto.producto_imagen.url}}" alt="..." class="img-thumbnail" height="80" width="80">
+            </td>
+            <td><small>{{producto.producto_marca}}</small></td>
+            <td><small>{{producto.producto_area}}</small></td>
+            <td><small>{{producto.producto_precio}}</small></td>
+            <td>
+                {% if  producto.tipo_producto == 1%}
+                 <small>Uso Interno</small>
+                {% else %}
+                <small>Activo Fijo</small>
+                {% endif %}
+
+            </td>
+            <td>
+                <a class="btn btn-outline-info btn-sm" href="{% url 'pedidos:update_producto' producto.producto_codigo %}" role="button"><i class="material-icons">border_color</i></a>
+                <a class="btn btn-outline-danger btn-sm" href="{% url 'pedidos:eliminar_producto' producto.producto_codigo %}" role="button"><i class="material-icons">delete_forever</i></a>
+            </td>
+          </tr>
+        {% endfor %}
+
+        </tbody>
+      </table>
+</div>
+
+
+<div class="row justify-content-md-center">
+    {% block pagination %}
+    {% if is_paginated %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i
+                        class="material-icons">
+                        navigate_before
+                    </i></a></li>
+            {% endif %}
+            <span class="page-link">
+                Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                <span class="sr-only">(current)</span>
+            </span>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i
+                        class="material-icons">
+                        navigate_next
+                    </i></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endblock %}
+</div>
+{% endblock contenido %}

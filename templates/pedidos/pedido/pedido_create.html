@@ -1,0 +1,17 @@
+ {% extends 'index/base.html'%}
+{% block titulo %}
+<title>Pedido</title>
+{% endblock titulo %}
+
+{% block contenido %}
+<div class="container">
+  <form method="post" class="col-sm-4" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-outline-success">Guardar</button>
+  </form>
+</div>
+{% endblock contenido %}
+

@@ -1,20 +1,29 @@
 {% extends 'index/base.html'%}
-{% load staticfiles %}
 {% block contenido %}
-
+{% load staticfiles %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Contartos</li>
+  </ol>
+</nav>
+<a href="?autorizado=True">Autorizado</a>
+<a href="?autorizado=False">No Autorizado</a>
   <table class="table">
     <thead class="thead-light">
       <tr>
         <th scope="col">#</th>
         <th scope="col"> <small>PROVEEDOR</small> </th>
         <th scope="col"><small>DOCUMENTO</small></th>
-        <th scope="col"><small>INICIO</small></th>
+        <th scope="col"><small>SUCURSAL</small></th>
+        <th scope="col"><small>INICIO</small></th> 
         <th scope="col"><small>TERMINO</small></th>
         <th scope="col"><small>DIAS DE PAGO</small></th>
         <th scope="col"><small>DIRECCION</small></th>
         <th scope="col"><small>MONTO</small></th>
         <th scope="col"><small>AUTORIZADO</small></th>
         <th scope="col"><small>STATUS</small></th>
+        <th scope="col"><small>ACCION</small></th>
       </tr>
     </thead>
     <tbody>
@@ -22,14 +31,36 @@
       <tr>
         <th scope="row"><small>{{contrato.contrato_id}}</small></th>
         <td><small>{{contrato.contrato_proveedor_id}}</small></td>
-        <td><small><a href="{% static contrato.contrato_documento%}">doc</a></small></td>
+        <td><small><a href="{{contrato.contrato_documento.url }}">PDF</a></small></td>
+        <td><small>{{contrato.contrato_sucursal}}</small></td>
         <td><small>{{contrato.contrato_fecha_inicio}}</small></td>
         <td><small>{{contrato.contrato_fecha_termino}}</small></td>
         <td><small>{{contrato.contrato_dias_pago}}</small></td>
         <td><small>{{contrato.contrato_direccion}}</small></td>
         <td><small>{{contrato.contrato_monto}}</small></td>
-        <td><small>{{contrato.contrato_autorizado}}</small></td>
-        <td><small>{{contrato.contrato_status}}</small></td>
+        <td><small>
+        {% comment %} condicion de contrato autorizado {% endcomment %}
+        {% if  contrato.contrato_autorizado %}
+        <i class="material-icons">done_outline</i>
+        {% else %}
+        <i class="material-icons">cancel</i>
+        {% endif %}
+        </small></td>
+        {% comment %} -------------------------------------------------------- {% endcomment %}
+        
+        {% comment %} condicion de contrato status {% endcomment %}
+        <td><small>
+        {% if  contrato.contrato_status %}
+        <i class="material-icons">done_outline</i>
+        {% else %}
+        <i class="material-icons">cancel</i>
+        {% endif %}
+        </small></td>
+        {% comment %} --------------------------------------------------------------------- {% endcomment %}
+        <td><small>
+        <a class="btn btn-outline-warning btn-sm" href="{% url 'proveedor:contrato_edicion' contrato.contrato_id %}" role="button"><i class="material-icons">edit</i></a>
+        <a class="btn btn-outline-danger btn-sm" href="{% url 'proveedor:contrato_eliminar' contrato.contrato_id %}" role="button"><i class="material-icons">delete_forever</i></a>
+        </small></td>
       </tr>
       {% endfor %}
     </tbody>
