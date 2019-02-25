@@ -10,6 +10,17 @@
       <li class="breadcrumb-item active" aria-current="page">Area</li>
     </ol>
   </nav>
+{% if perms.pedidos.add_area %}
+<div class="row">
+    <div class="col">
+        <span class="float-right">
+        <a class="btn btn-secondary btn-sm" href="{% url 'pedidos:crear_area' %}" role="button">Añadir</a>
+        </span>
+    </div>
+</div>
+{% endif %}
+
+
 <div class="container">
     <table class="table table-sm">
         <thead class="thead-light">
@@ -30,7 +41,7 @@
             </td>
           </tr>
         {% endfor %}
-          
+
         </tbody>
       </table>
 </div>

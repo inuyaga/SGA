@@ -9,6 +9,27 @@
 </nav>
 <a href="?autorizado=True">Autorizado</a>
 <a href="?autorizado=False">No Autorizado</a>
+
+{% if perms.pago_proveedor.add_contrato %}
+<div class="row">
+    <div class="col">
+        <span class="float-right">
+        <a class="btn btn-secondary btn-sm" href="{% url 'proveedor:contrato_nuevo' %}" role="button">Añadir</a>
+        </span>
+    </div>
+</div>
+{% endif %}
+
+  <div class="row">
+    <div class="col">
+      <div class="float-right">
+          <a class="btn btn-primary btn-sm" href="{% url 'proveedor:nuevo_excel' %}" role="button"><i class="material-icons">cloud_download</i></a>
+          <!-- <a class="btn btn-primary btn-sm" href="?descargar=pdf" role="button"><i class="material-icons">cloud_download</i></a> -->
+      </div>
+    </div>
+  </div>
+
+
   <table class="table">
     <thead class="thead-light">
       <tr>
@@ -16,7 +37,7 @@
         <th scope="col"> <small>PROVEEDOR</small> </th>
         <th scope="col"><small>DOCUMENTO</small></th>
         <th scope="col"><small>SUCURSAL</small></th>
-        <th scope="col"><small>INICIO</small></th> 
+        <th scope="col"><small>INICIO</small></th>
         <th scope="col"><small>TERMINO</small></th>
         <th scope="col"><small>DIAS DE PAGO</small></th>
         <th scope="col"><small>DIRECCION</small></th>
@@ -47,7 +68,7 @@
         {% endif %}
         </small></td>
         {% comment %} -------------------------------------------------------- {% endcomment %}
-        
+
         {% comment %} condicion de contrato status {% endcomment %}
         <td><small>
         {% if  contrato.contrato_status %}

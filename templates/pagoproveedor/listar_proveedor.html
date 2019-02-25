@@ -10,6 +10,16 @@
     <li class="breadcrumb-item active" aria-current="page">Proveedores</li>
   </ol>
 </nav>
+
+{% if perms.pago_proveedor.add_proveedor %}
+<div class="row">
+    <div class="col">
+        <span class="float-right">
+        <a class="btn btn-secondary btn-sm" href="{% url 'proveedor:nuevo' %}" role="button">Añadir</a>
+        </span>
+    </div>
+</div>
+{% endif %}
 <div class="container">
 	<table class="table">
 		<thead>

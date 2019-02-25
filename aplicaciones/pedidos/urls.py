@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import path
 from aplicaciones.pedidos.views import AreaCreate, AreaList, AreaUpdate, AreaDelete, MarcaCreate, MarcaList, \
 MarcaUpdate, MarcaDelete, ProductoCreate, ProductoList, ProductoDelete, ProductoUpdate, ProductoCompraList, \
-DetalleList, DetalleDelete, Crear_pedido_tienda, PedidoList, PedidoUpdate, PedidoListSucursal
+DetalleList, DetalleDelete, Crear_pedido_tienda, PedidoList, PedidoUpdate, PedidoListSucursal, ProductokitCreate, \
+ProductoKitUpdate, dowload_pedido_detalles
 # from aplicaciones.inicio.views import inicio
 app_name = "pedidos"
 urlpatterns = [
@@ -19,18 +20,21 @@ urlpatterns = [
 
 
     path('update/producto/<slug:pk>/', ProductoUpdate.as_view(), name='update_producto'),
+    path('update/producto_kit/<slug:pk>/', ProductoKitUpdate.as_view(), name='update_producto_kit'),
     path('delete/producto/<slug:pk>/', ProductoDelete.as_view(), name='eliminar_producto'),
     path('list/producto/', ProductoList.as_view(), name='listar_producto'),
     path('add/producto/', ProductoCreate.as_view(), name='crear_producto'),
+    path('add/producto/kit/', ProductokitCreate.as_view(), name='crear_producto_kit'),
 
     path('compra_sucursal/', ProductoCompraList.as_view(), name='pedido_tienda'),
     path('compra_sucursal/pre_pedido', DetalleList.as_view(), name='pedido_tienda_listado'),
     path('compra_sucursal/pre_pedido/delete/<int:pk>/', DetalleDelete.as_view(), name='detalle_producto_delete'),
     path('compra_sucursal/pre_pedido/confirm_pedido/add/', Crear_pedido_tienda, name='creacion_pedido_sucursal'),
-    path('compra_sucursal/pedido/list', PedidoListSucursal.as_view(), name='pedido_sucursal_list'),
+    path('compra_sucursal/pedido/list/', PedidoListSucursal.as_view(), name='pedido_sucursal_list'),
 
 
     path('list/pedidos/', PedidoList.as_view(), name='pedidos_list'),
+    path('list/pedidos/detalles/<int:pk>', dowload_pedido_detalles.as_view(), name='pedidos_list_detalles'),
     path('list/pedidos/update/<int:pk>/', PedidoUpdate.as_view(), name='pedido_update'),
 
 

@@ -8,13 +8,24 @@
     <li class="breadcrumb-item active" aria-current="page">Facturas</li>
   </ol>
 </nav>
+
+{% if perms.pago_proveedor.add_factura %}
+<div class="row">
+    <div class="col">
+        <span class="float-right">
+        <a class="btn btn-secondary btn-sm" href="{% url 'proveedor:factura_crear' %}" role="button">Añadir</a>
+        </span>
+    </div>
+</div>
+{% endif %}
+
   <table class="table">
     <thead class="thead-light">
       <tr>
         <th scope="col">#</th>
         <th scope="col"> <small>CONTRATO</small> </th>
         <th scope="col"><small>TIPO</small></th>
-        <th scope="col"><small>XML</small></th> 
+        <th scope="col"><small>XML</small></th>
         <th scope="col"><small>PDF</small></th>
         <th scope="col"><small>TOTAL</small></th>
         <th scope="col"><small>IVA</small></th>
@@ -54,7 +65,7 @@
         <i class="material-icons">cancel</i>
         {% endif %}
         </small></td>
-        
+
         <td><small>
       <a data-toggle="tooltip" title="Pagar" class="btn btn-outline-success btn-sm" href="{% url 'proveedor:pago_crear' factura.factura_id %}" role="button"><i class="material-icons">payment</i></a>
       <a class="btn btn-outline-warning btn-sm" href="{% url 'proveedor:factura_edicion' factura.factura_id %}" role="button"><i class="material-icons">edit</i></a>

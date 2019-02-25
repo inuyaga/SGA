@@ -10,6 +10,18 @@
       <li class="breadcrumb-item active" aria-current="page">Productos</li>
     </ol>
   </nav>
+
+  {% if perms.pedidos.add_producto %}
+<div class="row">
+    <div class="col">
+        <span class="float-right">
+        <a class="btn btn-secondary btn-sm" href="{% url 'pedidos:crear_producto' %}" role="button">Añadir</a>
+        <a class="btn btn-secondary btn-sm" href="{% url 'pedidos:crear_producto_kit' %}" role="button">Añadir kit</a>
+        </span>
+    </div>
+</div>
+{% endif %}
+
 <div class="container">
     <table class="table table-sm">
         <thead class="thead-light">
@@ -48,7 +60,12 @@
 
             </td>
             <td>
+
+                {% if producto.producto_kit %}
+                <a class="btn btn-outline-info btn-sm" href="{% url 'pedidos:update_producto_kit' producto.producto_codigo %}" role="button"><i class="material-icons">border_color</i></a>
+                {% else %}
                 <a class="btn btn-outline-info btn-sm" href="{% url 'pedidos:update_producto' producto.producto_codigo %}" role="button"><i class="material-icons">border_color</i></a>
+                {% endif %}
                 <a class="btn btn-outline-danger btn-sm" href="{% url 'pedidos:eliminar_producto' producto.producto_codigo %}" role="button"><i class="material-icons">delete_forever</i></a>
             </td>
           </tr>

@@ -1,8 +1,9 @@
 from django import forms
 from aplicaciones.pago_proveedor.models import Proveedor, Contrato, Factura, Pago, Complemento
 from xml.dom.minidom import parse
+from datetime import datetime
 # pylint: disable = E1101
-class NuevoProveedorForm(forms.ModelForm): 
+class NuevoProveedorForm(forms.ModelForm):
     class Meta:
         model = Proveedor
         fields = ('proveedor_nombre', 'proveedor_rfc', 'proveedor_email',)
@@ -40,7 +41,7 @@ class ContratosFormsEdit(forms.ModelForm):
         model = Contrato
         exclude = ['contrato_status']
         widgets = {
-        
+
         'contrato_dias_pago' : forms.TextInput(),
         'contrato_direccion' : forms.Textarea(attrs={'cols': 25, 'rows': 3}),
         'contrato_monto' : forms.NumberInput(),
@@ -60,6 +61,8 @@ class FacturaForms(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super(FacturaForms, self).__init__(*args, **kwargs)
+        hoy=datetime.now()
+        self.fields['factura_contrato_id'].queryset = Contrato.objects.filter(contrato_fecha_termino__gt=hoy)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
@@ -85,4 +88,3 @@ class ComplementoForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
-    

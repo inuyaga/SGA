@@ -11,14 +11,14 @@ from aplicaciones.empresa.models import Sucursal
 class Proveedor(models.Model):
     proveedor_nombre = models.CharField(max_length=100, verbose_name='Nombre')
     proveedor_rfc = models.CharField(max_length=15, verbose_name='RFC', default = 'none', unique=True)
-    proveedor_email = models.EmailField(verbose_name='Correo') 
-    
+    proveedor_email = models.EmailField(verbose_name='Correo')
+
 
     def __str__(self):
         return self.proveedor_nombre
 
 
-class Contrato(models.Model):  
+class Contrato(models.Model):
     contrato_id = models.AutoField(primary_key=True)
     contrato_proveedor_id = models.ForeignKey(
         Proveedor, null=False, blank=False, on_delete=models.PROTECT)
@@ -103,7 +103,7 @@ class Pago(models.Model):
         else:
             Factura.objects.filter(factura_id=self.pago_factura.factura_id).update(
                 factura_pagado_status=False)
-            
+
         return str(resta)
 
 

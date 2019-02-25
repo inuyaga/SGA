@@ -3,6 +3,11 @@
 <title>Lista Pedidos</title>
 {% endblock titulo %}
 {% block contenido %}
+{% if msn_empresa != None %}
+<div class="alert alert-danger" role="alert">
+    {{msn_empresa}}
+  </div>
+{% endif %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
@@ -51,6 +56,7 @@
                     <td><small>
                             <a class="btn btn-outline-warning btn-sm" href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}"
                                 role="button"><i class="material-icons">border_color</i></a>
+                            <a class="btn btn-outline-success btn-sm" href="{% url 'pedidos:pedidos_list_detalles' pedido.pedido_id_pedido %}" role="button"><i class="material-icons">arrow_downward</i></a>
                         </small>
                     </td>
                 </tr>
@@ -67,11 +73,11 @@
                 <a href="?status=1" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Creado</a>
                 <a href="?status=2" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Aprobado</a>
                 <a href="?status=3" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Rechazado</a>
-                <a href="{% url 'pedidos:pedidos_list' %}" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Todo</a>
+                <a href="?" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Todo</a>
             </li>
-            <li class="list-group-item">Morbi leo risus</li>
+            {% comment %} <li class="list-group-item">Morbi leo risus</li>
             <li class="list-group-item">Porta ac consectetur ac</li>
-            <li class="list-group-item">Vestibulum at eros</li>
+            <li class="list-group-item">Vestibulum at eros</li> {% endcomment %}
         </ul>
     </div>
 </div>

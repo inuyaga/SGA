@@ -23,10 +23,23 @@ class MarcaForm(forms.ModelForm):
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['producto_productos', 'producto_kit']
 
     def __init__(self, *args, **kwargs):
         super(ProductoForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class ProductoKitForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        # fields = '__all__'
+        exclude = ['producto_kit', 'producto_es_kit']
+
+    def __init__(self, *args, **kwargs):
+        super(ProductoKitForm, self).__init__(*args, **kwargs)
+        self.fields['producto_productos'].queryset = Producto.objects.filter(producto_es_kit=True)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 

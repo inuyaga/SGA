@@ -35,7 +35,7 @@ class Producto(models.Model):
     producto_nombre = models.CharField(max_length=50, verbose_name='Nombre')
     producto_descripcion = models.CharField(
         max_length=150, verbose_name='Descripcion')
-    producto_imagen = models.ImageField(blank=True, null=True, upload_to="img_productos/", verbose_name='Imagen')
+    producto_imagen = models.ImageField(blank=False, null=False, upload_to="img_productos/", verbose_name='Imagen')
     producto_marca = models.ForeignKey(
         Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
     producto_area = models.ForeignKey(
@@ -46,6 +46,9 @@ class Producto(models.Model):
     TIPO_PRODUCTO = ((1, 'Uso Interno'), (2, 'Activo Fijo'),)
     tipo_producto = models.IntegerField(
         choices=TIPO_PRODUCTO, null=True, blank=True)
+    producto_es_kit=models.BooleanField(verbose_name='Pertenecera a un Kit', default=False)
+    producto_kit=models.BooleanField(verbose_name='Kit', default=False)
+    producto_productos=models.ManyToManyField("Producto")
 
     def __str__(self):
         return self.producto_nombre

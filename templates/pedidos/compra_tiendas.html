@@ -44,6 +44,11 @@
 {% endblock navbar %}
 
 {% block contenido %}
+{% if msn_empresa != None %}
+<div class="alert alert-danger" role="alert">
+    {{msn_empresa}}
+  </div>
+{% endif %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
@@ -51,6 +56,8 @@
   </ol>
 </nav>
 <div class="container">
+
+
 
   <div class="row">
     {% for producto in object_list %}
@@ -61,6 +68,7 @@
         <div class="card-body">
           <h5 class="card-title">{{producto.producto_codigo}}</h5>
           <p class="card-text">{{producto.producto_descripcion}}</p>
+          {% if msn_empresa is None %}
           <div class="form-group col-md-12 row justify-content-md-center">
             <label for="inputEmail4">Cantidad</label>
             <input type="number" id="{{producto.producto_codigo}}" class="form-control" min="1" value="1">
@@ -68,6 +76,7 @@
           <div class="row justify-content-md-center">
             <button type="button" onclick="agregar('{{producto.producto_codigo}}')" class="btn btn-primary">Agregar</button>
           </div>
+          {% endif %}
 
         </div>
       </div>
