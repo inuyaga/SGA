@@ -1,0 +1,18 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{tituloBrea}}</li>
+  </ol>
+</nav>
+<div class="container">
+<div class="col-sm-5">
+    <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-outline-success">Guardar</button>
+    </form>
+</div>
+</div>
+{% endblock contenido %}
