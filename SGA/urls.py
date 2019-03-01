@@ -23,7 +23,11 @@ urlpatterns = [
     path('adminsga/', admin.site.urls),
     # path('pedido/', include('aplicaciones.pedidos.urls'), name='pedidos'),
     path('proveedor/', include('aplicaciones.pago_proveedor.urls'), name='proveedor'),
+<<<<<<< HEAD
     path('proveedor/', include('aplicaciones.pago_proveedor.urls'), name='proveedor'),
+=======
+    path('fuds/', include('aplicaciones.fuds.urls'), name='fuds'),
+>>>>>>> 97f6c1330d1411382a5511be5ef7303e3fdaaf5c
     path('pedidos/', include('aplicaciones.pedidos.urls'), name='pedidos'),
     path('login/',LoginView.as_view(template_name='index/inicio.html'), name='inicio'),
     path('salir/', LogoutView.as_view(template_name='index/salir.html'), name="salir"),
