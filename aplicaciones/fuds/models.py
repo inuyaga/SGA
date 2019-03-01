@@ -55,8 +55,8 @@ class Fud(models.Model):
     ZonaCliente = models.CharField(null=False, blank=False, default="no identificado", max_length=80, verbose_name="Zona que pertence el cliente")
     VendedorCliente = models.CharField(null=False, blank=False, default="no identificado", max_length=80, verbose_name="Vendedor asignado al cliente")
     Factura = models.ManyToManyField(Factura)
-    Motivo= models.ForeignKey(Motivo, null= True, blank=True, on_delete = models.PROTECT)
     conformidad= models.ForeignKey(Conformidad, null= True, blank=True, on_delete = models.PROTECT)
+    Motivo= models.ForeignKey(Motivo, null= True, blank=True, on_delete = models.PROTECT)
     tramite= models.ForeignKey(Tramite, null= True, blank=True, on_delete = models.PROTECT)
     DEVOLUCION = ((1,'Total'),(2,'Parcial'),(3,'N/A'))
     devolucion = models.IntegerField(null=True, blank=True, choices= DEVOLUCION, default=1, verbose_name="Estado")
@@ -64,6 +64,6 @@ class Fud(models.Model):
     observaciones = models.CharField(max_length =80)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     creado_por = models.CharField(max_length = 150)
-    
+
     def __str__(self):
         return self.Folio

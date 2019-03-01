@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path
 from aplicaciones.inicio.views import inicio, err_permisos
-from aplicaciones.fuds.views import MotivoCreate, MotivoUpdate, MotivoList, MotivoDelete,ConformidadCreate,ConformidadUpdate,ConformidadList,ConformidadDelete
+from aplicaciones.fuds.views import MotivoCreate, MotivoUpdate, MotivoList, MotivoDelete,ConformidadCreate,ConformidadUpdate,ConformidadList,ConformidadDelete,FudCreate, FudList
+
 app_name = "fuds"
 urlpatterns = [
     path('NuevoMotivo/', MotivoCreate.as_view(), name='NuevoMotivo'),
@@ -13,4 +14,9 @@ urlpatterns = [
     path('ListarConformidad/', ConformidadList.as_view(), name='ListarConformidad'),
     path('EliminarConformidad/<int:pk>/', ConformidadDelete.as_view(), name='EliminarConformidad'),
     path('permisos/', err_permisos, name='need_permisos'),
+
+    path('nuevo_fud/', FudCreate.as_view(), name='fud_create'),
+    path('list/fud/', FudList.as_view(), name='fud_list'),
+    path('update/fud/', FudList.as_view(), name='fud_update'),
+    path('delete/fud/', FudList.as_view(), name='fud_delete'),
 ]

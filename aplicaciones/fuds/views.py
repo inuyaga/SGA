@@ -15,7 +15,7 @@ from django.db.models import Sum,F
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 
 
-
+# pylint: disable = E1101
 class MotivoCreate(CreateView):
     model= Motivo
     form_class = MotivoForm
@@ -35,7 +35,7 @@ class MotivoUpdate(UpdateView):
     @method_decorator(permission_required('fuds.change_motivo',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(MotivoUpdate, self).dispatch(*args, **kwargs)
- 
+
 class MotivoList(ListView):
     model= Motivo
     template_name='fuds/ViewMotivo.html'
@@ -98,6 +98,66 @@ class ConformidadDelete(DeleteView):
     @method_decorator(permission_required('fuds.delete_conformidad',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(ConformidadDelete, self).dispatch(*args, **kwargs)
+        return context
+
+
+
+# CLASES DE FUD
+
+class FudCreate(CreateView):
+    model = Fud
+    template_name = 'fuds/fud/create.html'
+    form_class = FudForm
+    success_url = reverse_lazy('fuds:fud_list')
+
+    @method_decorator(permission_required('fuds.add_fud',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(FudCreate, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        context['tituloBrea'] = 'Crear Fud'
+        return context
+
+class FudList(ListView):
+    model = Fud
+    paginate_by = 10
+    template_name= 'fuds/fud/list.html'
+
+    @method_decorator(permission_required('fuds.view_fud',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(FudList, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        return context
+
+
+class FudUpdate(UpdateView):
+    model = Fud
+    template_name = 'fud/create.html'
+    form_class = FudForm
+    success_url = reverse_lazy('fuds:fud_list')
+
+    @method_decorator(permission_required('fuds.change_fud',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(FudUpdate, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        return context
+
+class FudDelete(DeleteView):
+    model= Motivo
+    template_name='fuds/DeleteMotivo.html'
+    success_url = reverse_lazy('fuds:fud_list')
+
+    @method_decorator(permission_required('fuds.delete_fud',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(FudDelete, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
