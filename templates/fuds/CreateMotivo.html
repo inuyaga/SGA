@@ -1,0 +1,10 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<div class="col-md-3 offset-md-3">
+    <form method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button class="form-control" type="submit">Guardar Cambios</button>
+    </form>
+</div>
+{% endblock contenido %}

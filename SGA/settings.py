@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'aplicaciones.empresa',
     'aplicaciones.pago_proveedor',
     'aplicaciones.pedidos',
-
+    'aplicaciones.fuds',
 ]
 
 MIDDLEWARE = [
