@@ -28,16 +28,27 @@ class FudForm(forms.ModelForm):
 
 class FacturaForm(forms.ModelForm):
     class Meta:
+        hoy=datetime.now()
+        context={}
+        context['maximo']= hoy.strftime("%Y-%m-%d")
         model = Factura
         # exclude = ['']
         fields = ('__all__')
-        # widgets ={
-        #     'FechaFactura': forms.DateInput(attrs={'type':'date', 'min':context['minimo'],'max':context['maximo']}),
-        # }
+        widgets ={
+            'FechaFactura': forms.DateInput(attrs={'type':'date'}),
+        }
+class FacturaFormEdicion(forms.ModelForm):
+    class Meta:
+        hoy=datetime.now()
+        context={}
+        context['maximo']= hoy.strftime("%Y-%m-%d")
+        model = Factura
+        # exclude = ['']
+        fields = ('__all__')
 
 
     def __init__(self, *args, **kwargs):
-        super(FacturaForm, self).__init__(*args, **kwargs)
+        super(FacturaFormEdicion, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
