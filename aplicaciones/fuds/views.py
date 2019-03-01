@@ -81,7 +81,7 @@ class ConformidadUpdate(UpdateView):
     @method_decorator(permission_required('fuds.change_conformidad',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(ConformidadUpdate, self).dispatch(*args, **kwargs)
- 
+
 class ConformidadList(ListView):
     model= Conformidad
     template_name='fuds/ViewConformidad.html'
@@ -97,8 +97,8 @@ class ConformidadDelete(DeleteView):
 
     @method_decorator(permission_required('fuds.delete_conformidad',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
-                return super(ConformidadDelete, self).dispatch(*args, **kwargs)
-        return context
+        return super(ConformidadDelete, self).dispatch(*args, **kwargs)
+
 
 
 

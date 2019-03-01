@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.urls import path
 from aplicaciones.inicio.views import inicio, err_permisos
 from aplicaciones.fuds.views import MotivoCreate, MotivoUpdate, MotivoList, MotivoDelete,ConformidadCreate,ConformidadUpdate,ConformidadList,ConformidadDelete,FudCreate, FudList
-
 app_name = "fuds"
 urlpatterns = [
     path('NuevoMotivo/', MotivoCreate.as_view(), name='NuevoMotivo'),
