@@ -1,5 +1,5 @@
 from django import forms
-from aplicaciones.fuds.models import Fud,Factura,Motivo
+from aplicaciones.fuds.models import Fud,Factura,Motivo,Conformidad
 from datetime import datetime, timedelta
 
 class FudForm(forms.ModelForm):
@@ -49,5 +49,16 @@ class MotivoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(MotivoForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class ConformidadForm(forms.ModelForm):
+    class Meta:
+        model = Conformidad
+        fields = ('__all__')
+
+
+    def __init__(self, *args, **kwargs):
+        super(ConformidadForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})

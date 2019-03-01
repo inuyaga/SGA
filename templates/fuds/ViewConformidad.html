@@ -1,0 +1,28 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<div class="container">
+    {% if perms.fuds.add_conformidad %}
+    <a href="{% url 'fuds:NuevaConformidad' %}"><i class="material-icons">
+            add_circle
+            </i>Agregar nuevo</a>
+    {% endif %}
+    
+    <table class="table table-reposive">
+        <tr>
+            <td><b>Motivo</b></td>
+            <td><b>Fecha Alta</b></td>
+            <td class="text-center">Editar</td>
+            <td class="text-center">Eliminar</td>
+        </tr>
+        {% for datamotivos in object_list %}
+        
+        <tr>
+            <td>{{ datamotivos.conformidad_descripcion }}</td>
+            <td>{{ datamotivos.conformidad_fechaAlta }}</td>
+            <td class="text-center"><a href="{% url 'fuds:EditarConformidad' datamotivos.conformidad_id %}"><i class="material-icons">edit</i></a></td>
+            <td class="text-center"><a href="{% url 'fuds:EliminarConformidad' datamotivos.conformidad_id %}"><i class="material-icons">delete</i></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div><!-- fin container-->
+{% endblock contenido %}

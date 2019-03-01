@@ -112,10 +112,26 @@
 <div class="col-md-7">
   <ul class="list-group">
     <li class="list-group-item active">FORMATO ÚNICO DE DEVOLUCIONES</li>
-    <li class="list-group-item">Dapibus ac facilisis in</li>
-    <li class="list-group-item">Morbi leo risus</li>
-    <li class="list-group-item">Porta ac consectetur ac</li>
-    <li class="list-group-item">Vestibulum at eros</li>
+    {% if perms.fuds.view_motivo %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'fuds:ListarMotivo' %}">Motivos para devoluciones</a>
+      {% if perms.fuds.add_motivo %}
+      <div class="badge-pill">
+        <a href="{% url 'fuds:NuevoMotivo' %}" class="badge badge-success">Añadir</a>
+      </div>
+      {% endif %}
+    </li>
+    {% endif %}
+    {% if perms.fuds.view_conformidad %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'fuds:ListarConformidad' %}">Conformidades para devoluciones</a>
+      {% if perms.fuds.add_conformidad %}
+      <div class="badge-pill">
+        <a href="{% url 'fuds:NuevaConformidad' %}" class="badge badge-success">Añadir</a>
+      </div>
+      {% endif %}
+    </li>
+    {% endif %}
   </ul>
 </div>
 {% endif %}

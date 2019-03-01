@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedor,Factura
 from django.contrib import messages
 from datetime import datetime, timedelta
-from aplicaciones.fuds.forms import FudForm,FacturaForm,MotivoForm
+from aplicaciones.fuds.forms import FudForm,FacturaForm,MotivoForm,ConformidadForm
 from django.db.models import Sum,F
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 
@@ -60,5 +60,50 @@ class MotivoDelete(DeleteView):
         context['deletable_objects']=deletable_objects
         context['model_count']=dict(model_count).items()
         context['protected']=protected
+        return context
 
+class ConformidadCreate(CreateView):
+    model= Conformidad
+    form_class = ConformidadForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarConformidad")
+
+    @method_decorator(permission_required('fuds.add_conformidad',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ConformidadCreate, self).dispatch(*args, **kwargs)
+
+class ConformidadUpdate(UpdateView):
+    model= Conformidad
+    form_class = ConformidadForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarConformidad")
+
+    @method_decorator(permission_required('fuds.change_conformidad',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ConformidadUpdate, self).dispatch(*args, **kwargs)
+ 
+class ConformidadList(ListView):
+    model= Conformidad
+    template_name='fuds/ViewConformidad.html'
+
+    @method_decorator(permission_required('fuds.view_conformidad',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ConformidadList, self).dispatch(*args, **kwargs)
+
+class ConformidadDelete(DeleteView):
+    model= Conformidad
+    template_name='fuds/DeleteMotivo.html'
+    success_url=reverse_lazy("fuds:ListarConformidad")
+
+    @method_decorator(permission_required('fuds.delete_conformidad',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ConformidadDelete, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
         return context
