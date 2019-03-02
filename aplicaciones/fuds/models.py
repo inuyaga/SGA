@@ -69,4 +69,4 @@ class Fud(models.Model):
     creado_por = models.CharField(max_length = 150)
 
     def __str__(self):
-        return self.Folio
+        return str(self.Folio)

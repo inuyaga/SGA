@@ -53,8 +53,8 @@
             <td><small>{{fud.fecha_creacion}}</small></td>
             <td><small>{{fud.creado_por}}</small></td>
             <td><small>
-                    <a href="{% url 'fuds:fud_update' %}"><i class="material-icons">border_color</i></a>
-                    <a href="{% url 'fuds:fud_delete' %}"><i class="material-icons">delete_forever</i></a>
+                    <a href="{% url 'fuds:fud_update' fud.Folio %}"><i class="material-icons">border_color</i></a>
+                    <a href="{% url 'fuds:fud_delete' fud.Folio %}"><i class="material-icons">delete_forever</i></a>
                 </small></td>
         </tr>
         {% endfor %}

@@ -3,7 +3,7 @@ from django.urls import path
 from aplicaciones.inicio.views import inicio, err_permisos
 from aplicaciones.fuds.views import MotivoCreate, MotivoUpdate, MotivoList, MotivoDelete,\
 ConformidadCreate,ConformidadUpdate,ConformidadList,ConformidadDelete,\
-FudCreate, FudList,\
+FudCreate, FudList, FudUpdate, FudDelete,\
 FacturaCreate,FacturaDelete,FacturaList,FacturaUpdate,\
 TramiteCreate,TramiteUpdate,TramiteDelete,TramiteList
 
@@ -30,8 +30,8 @@ urlpatterns = [
 
     path('nuevo_fud/', FudCreate.as_view(), name='fud_create'),
     path('list/fud/', FudList.as_view(), name='fud_list'),
-    path('update/fud/', FudList.as_view(), name='fud_update'),
-    path('delete/fud/', FudList.as_view(), name='fud_delete'),
+    path('update/fud/<int:pk>/', FudUpdate.as_view(), name='fud_update'),
+    path('eliminar/fud/<int:pk>/', FudDelete.as_view(), name='fud_delete'),
 
     path('permisos/', err_permisos, name='need_permisos'),
 ]

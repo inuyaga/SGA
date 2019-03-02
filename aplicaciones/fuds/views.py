@@ -10,9 +10,10 @@ from django.contrib.auth.decorators import login_required
 from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedor,Factura
 from django.contrib import messages
 from datetime import datetime, timedelta
-from aplicaciones.fuds.forms import FudForm,FacturaForm,MotivoForm,ConformidadForm,FacturaFormEdicion,TramiteForm
+from aplicaciones.fuds.forms import FudForm,FacturaForm,MotivoForm,ConformidadForm,FacturaFormEdicion,TramiteForm, FudFormEdit
 from django.db.models import Sum,F
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
+from django.db.models import ProtectedError
 
 
 # pylint: disable = E1101
@@ -52,6 +53,15 @@ class MotivoDelete(DeleteView):
     @method_decorator(permission_required('fuds.delete_motivo',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(MotivoDelete, self).dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.delete(request, *args, **kwargs)
+        except ProtectedError:
+            contex = {
+        'proveedores': 'proveedor'
+                        }
+        return render(request, 'pagoproveedor/protecteError.html', contex)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -107,6 +117,15 @@ class ConformidadDelete(DeleteView):
         context['protected']=protected
         return context
 
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.delete(request, *args, **kwargs)
+        except ProtectedError:
+            contex = {
+        'proveedores': 'proveedor'
+                        }
+        return render(request, 'pagoproveedor/protecteError.html', contex)
+
 
 
 # CLASES DE FUD
@@ -144,8 +163,8 @@ class FudList(ListView):
 
 class FudUpdate(UpdateView):
     model = Fud
-    template_name = 'fud/create.html'
-    form_class = FudForm
+    template_name = 'fuds/fud/create.html'
+    form_class = FudFormEdit
     success_url = reverse_lazy('fuds:fud_list')
 
     @method_decorator(permission_required('fuds.change_fud',reverse_lazy('inicio:need_permisos')))
@@ -158,14 +177,13 @@ class FudUpdate(UpdateView):
         return context
 
 class FudDelete(DeleteView):
-    model= Motivo
+    model= Fud
     template_name='fuds/DeleteMotivo.html'
     success_url = reverse_lazy('fuds:fud_list')
 
     @method_decorator(permission_required('fuds.delete_fud',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(FudDelete, self).dispatch(*args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
@@ -265,3 +283,11 @@ class TramiteDelete(DeleteView):
         context['model_count']=dict(model_count).items()
         context['protected']=protected
         return context
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.delete(request, *args, **kwargs)
+        except ProtectedError:
+            contex = {
+        'proveedores': 'proveedor'
+                        }
+        return render(request, 'pagoproveedor/protecteError.html', contex)
