@@ -1,7 +1,12 @@
 from django.contrib import admin
 from django.urls import path
 from aplicaciones.inicio.views import inicio, err_permisos
-from aplicaciones.fuds.views import MotivoCreate, MotivoUpdate, MotivoList, MotivoDelete,ConformidadCreate,ConformidadUpdate,ConformidadList,ConformidadDelete,FudCreate, FudList
+from aplicaciones.fuds.views import MotivoCreate, MotivoUpdate, MotivoList, MotivoDelete,\
+ConformidadCreate,ConformidadUpdate,ConformidadList,ConformidadDelete,\
+FudCreate, FudList,\
+FacturaCreate,FacturaDelete,FacturaList,FacturaUpdate,\
+TramiteCreate,TramiteUpdate,TramiteDelete,TramiteList
+
 app_name = "fuds"
 urlpatterns = [
     path('NuevoMotivo/', MotivoCreate.as_view(), name='NuevoMotivo'),
@@ -12,10 +17,21 @@ urlpatterns = [
     path('EditarConformidad/<int:pk>/', ConformidadUpdate.as_view(), name='EditarConformidad'),
     path('ListarConformidad/', ConformidadList.as_view(), name='ListarConformidad'),
     path('EliminarConformidad/<int:pk>/', ConformidadDelete.as_view(), name='EliminarConformidad'),
-    path('permisos/', err_permisos, name='need_permisos'),
+
+    path('NuevaFactura/', FacturaCreate.as_view(), name='NuevaFactura'),
+    path('EditarFactura/<int:pk>/', FacturaUpdate.as_view(), name='EditarFactura'),
+    path('ListarFactura/', FacturaList.as_view(), name='ListarFacturas'),
+    path('EliminarFactura/<int:pk>/', FacturaDelete.as_view(), name='EliminarFactura'),
+
+    path('NuevoTramite/', TramiteCreate.as_view(), name='NuevoTramite'),
+    path('EditarTramite/<int:pk>/', TramiteUpdate.as_view(), name='EditarTramite'),
+    path('ListarTramites/', TramiteList.as_view(), name='ListarTramites'),
+    path('EliminarTramite/<int:pk>/', TramiteDelete.as_view(), name='EliminarTramite'),
 
     path('nuevo_fud/', FudCreate.as_view(), name='fud_create'),
     path('list/fud/', FudList.as_view(), name='fud_list'),
     path('update/fud/', FudList.as_view(), name='fud_update'),
     path('delete/fud/', FudList.as_view(), name='fud_delete'),
+
+    path('permisos/', err_permisos, name='need_permisos'),
 ]

@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from django.db import models
+from datetime import datetime
 
 # Create your models here.
 class Conformidad(models.Model):
@@ -37,9 +38,11 @@ class Tramite(models.Model):
         return self.tramite_descripcion
 
 class Factura(models.Model):
+    hoy=datetime.now()
+    context= hoy.strftime("%Y-%m-%d")
     factura_id=models.AutoField(primary_key=True)
-    FechaFactura = models.DateField(null=False, blank=False, default="2017-01-01")
-    factura_folio=models.CharField(max_length=100)
+    FechaFactura = models.DateField(null=False, blank=False, default=context)
+    factura_folio=models.CharField(max_length=100, unique=True, verbose_name="Folio de factura")
     factura_total=models.FloatField(verbose_name="Valor de la factura")
     factura_fechaAlta=models.DateTimeField(auto_now_add=True)
 

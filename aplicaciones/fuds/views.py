@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedor,Factura
 from django.contrib import messages
 from datetime import datetime, timedelta
-from aplicaciones.fuds.forms import FudForm,FacturaForm,MotivoForm,ConformidadForm
+from aplicaciones.fuds.forms import FudForm,FacturaForm,MotivoForm,ConformidadForm,FacturaFormEdicion,TramiteForm
 from django.db.models import Sum,F
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 
@@ -97,8 +97,15 @@ class ConformidadDelete(DeleteView):
 
     @method_decorator(permission_required('fuds.delete_conformidad',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
-        return super(ConformidadDelete, self).dispatch(*args, **kwargs)
-
+                return super(ConformidadDelete, self).dispatch(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
 
 
 
@@ -159,6 +166,97 @@ class FudDelete(DeleteView):
     def dispatch(self, *args, **kwargs):
                 return super(FudDelete, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+class FacturaCreate(CreateView):
+    model= Factura
+    form_class = FacturaForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarFacturas")
+
+    @method_decorator(permission_required('fuds.add_factura',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(FacturaCreate, self).dispatch(*args, **kwargs)
+
+class FacturaUpdate(UpdateView):
+    model= Factura
+    form_class = FacturaFormEdicion
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarFacturas")
+
+    @method_decorator(permission_required('fuds.change_factura',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(FacturaUpdate, self).dispatch(*args, **kwargs)
+
+class FacturaList(ListView):
+    model= Factura
+    template_name='fuds/ViewFactura.html'
+
+    @method_decorator(permission_required('fuds.view_factura',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(FacturaList, self).dispatch(*args, **kwargs)
+
+class FacturaDelete(DeleteView):
+    model= Factura
+    template_name='fuds/DeleteMotivo.html'
+    success_url=reverse_lazy("fuds:ListarFacturas")
+
+    @method_decorator(permission_required('fuds.delete_factura',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(FacturaDelete, self).dispatch(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+
+class TramiteCreate(CreateView):
+    model= Tramite
+    form_class = TramiteForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarTramites")
+
+    @method_decorator(permission_required('fuds.add_tramite',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(TramiteCreate, self).dispatch(*args, **kwargs)
+
+class TramiteUpdate(UpdateView):
+    model= Tramite
+    form_class = TramiteForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarTramites")
+
+    @method_decorator(permission_required('fuds.change_tramite',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(TramiteUpdate, self).dispatch(*args, **kwargs)
+
+class TramiteList(ListView):
+    model= Tramite
+    template_name='fuds/ViewTramite.html'
+
+    @method_decorator(permission_required('fuds.view_tramite',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(TramiteList, self).dispatch(*args, **kwargs)
+
+class TramiteDelete(DeleteView):
+    model= Tramite
+    template_name='fuds/DeleteMotivo.html'
+    success_url=reverse_lazy("fuds:ListarTramites")
+
+    @method_decorator(permission_required('fuds.delete_tramite',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(TramiteDelete, self).dispatch(*args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user

@@ -1,0 +1,28 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<div class="container">
+    {% if perms.fuds.add_tramite %}
+    <a href="{% url 'fuds:NuevoTramite' %}"><i class="material-icons">
+            add_circle
+            </i>Agregar nuevo</a>
+    {% endif %}
+    
+    <table class="table table-reposive">
+        <tr>
+            <td><b>Descripción trámite</b></td>
+            <td><b>Fecha Alta</b></td>
+            <td class="text-center">Editar</td>
+            <td class="text-center">Eliminar</td>
+        </tr>
+        {% for datamotivos in object_list %}
+        
+        <tr>
+            <td>{{ datamotivos.tramite_descripcion }}</td>
+            <td>{{ datamotivos.tramite_fechaAlta }}</td>
+            <td class="text-center"><a href="{% url 'fuds:EditarTramite' datamotivos.tramite_id %}"><i class="material-icons">edit</i></a></td>
+            <td class="text-center"><a href="{% url 'fuds:EliminarTramite' datamotivos.tramite_id %}"><i class="material-icons">delete</i></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div><!-- fin container-->
+{% endblock contenido %}
