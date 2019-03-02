@@ -132,6 +132,8 @@
       {% endif %}
     </li>
     {% endif %}
+
+
     {% if perms.fuds.view_factura %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <a href="{% url 'fuds:ListarFacturas' %}">Facturas para devoluciones</a>
@@ -142,8 +144,20 @@
       {% endif %}
     </li>
     {% endif %}
-    {% if perms.fuds.add_fud or perms.fuds.view_fud %}
 
+    {% if perms.fuds.view_tramite %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'fuds:ListarTramites' %}">Trámite válidos para devoluciones</a>
+      {% if perms.fuds.add_tramite %}
+      <div class="badge-pill">
+        <a href="{% url 'fuds:NuevoTramite' %}" class="badge badge-success">Añadir</a>
+      </div>
+      {% endif %}
+    </li>
+    {% endif %}
+
+
+    {% if perms.fuds.add_fud or perms.fuds.view_fud %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <a href="{% url 'fuds:fud_list' %}">Fud</a>
       <div class="badge-pill">
