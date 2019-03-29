@@ -9,6 +9,7 @@
     
     <table class="table table-reposive">
         <tr>
+            <td><b>Conformidad</b></td>
             <td><b>Motivo</b></td>
             <td><b>Fecha Alta</b></td>
             <td class="text-center">Editar</td>
@@ -17,6 +18,7 @@
         {% for datamotivos in object_list %}
         
         <tr>
+            <td>{{ datamotivos.motivo_idconformidad.conformidad_descripcion }}</td>
             <td>{{ datamotivos.motivo_descripcion }}</td>
             <td>{{ datamotivos.motivo_fechaAlta }}</td>
             <td class="text-center"><a href="{% url 'fuds:EditarMotivo' datamotivos.motivo_id %}"><i class="material-icons">edit</i></a></td>

@@ -94,15 +94,6 @@
       </div>
     </li>
     {% endif %}
-    {% if  perms.pago_proveedor.add_factura or perms.pago_proveedor.view_factura %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'proveedor:factura_lista' %}">Facturas</a>
-      <div class="badge-pill">
-        <a href="{% url 'proveedor:factura_crear' %}" class="badge badge-success">Añadir</a>
-
-      </div>
-    </li>
-    {% endif %}
   </ul>
 </div>
 
@@ -112,16 +103,6 @@
 <div class="col-md-7">
   <ul class="list-group">
     <li class="list-group-item active">FORMATO ÚNICO DE DEVOLUCIONES</li>
-    {% if perms.fuds.view_motivo %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'fuds:ListarMotivo' %}">Motivos para devoluciones</a>
-      {% if perms.fuds.add_motivo %}
-      <div class="badge-pill">
-        <a href="{% url 'fuds:NuevoMotivo' %}" class="badge badge-success">Añadir</a>
-      </div>
-      {% endif %}
-    </li>
-    {% endif %}
     {% if perms.fuds.view_conformidad %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <a href="{% url 'fuds:ListarConformidad' %}">Conformidades para devoluciones</a>
@@ -132,18 +113,18 @@
       {% endif %}
     </li>
     {% endif %}
-
-
-    {% if perms.fuds.view_factura %}
+    {% if perms.fuds.view_motivo %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'fuds:ListarFacturas' %}">Facturas para devoluciones</a>
-      {% if perms.fuds.add_factura %}
+      <a href="{% url 'fuds:ListarMotivo' %}">Motivos para devoluciones</a>
+      {% if perms.fuds.add_motivo %}
       <div class="badge-pill">
-        <a href="{% url 'fuds:NuevaFactura' %}" class="badge badge-success">Añadir</a>
+        <a href="{% url 'fuds:NuevoMotivo' %}" class="badge badge-success">Añadir</a>
       </div>
       {% endif %}
     </li>
     {% endif %}
+    
+
 
     {% if perms.fuds.view_tramite %}
     <li class="list-group-item d-flex justify-content-between align-items-center">

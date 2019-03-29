@@ -6,13 +6,93 @@
     <li class="breadcrumb-item active" aria-current="page">{{tituloBrea}}</li>
   </ol>
 </nav>
-<div class="container">
-<div class="col-sm-5">
+<!-- <div class="container"> -->
+<!-- <div class="row"> -->
+  <style>
+  
+  .rayas .col-sm-3{
+    background-color: whitesmoke ;
+  }
+  
+  .asd{
+    border-style: double;
+  }
+  </style>
     <form action="" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
+      <div class="container">
+        <div class="row rayas asd">
+          {% csrf_token %}
+          <div class="col-sm-3">
+            {{ form.FechaFactura.label }}
+            {{ form.FechaFactura.errors }}
+            {{ form.FechaFactura }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.NumeroCliente.label }}
+            {{ form.NumeroCliente.errors }}
+            {{ form.NumeroCliente }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.NombreCliente.label }}
+            {{ form.NombreCliente.errors }}
+            {{ form.NombreCliente }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.ZonaCliente.label }}
+            {{ form.ZonaCliente.errors }}
+            {{ form.ZonaCliente }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.VendedorCliente.label }}
+            {{ form.VendedorCliente.errors }}
+            {{ form.VendedorCliente }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.Factura.label }}
+            {{ form.Factura.errors }}
+            {{ form.Factura }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.FechaFactura.label }}
+            {{ form.FechaFactura.errors }}
+            {{ form.FechaFactura }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.factura_total.label }}
+            {{ form.factura_total.errors }}
+            {{ form.factura_total }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.Motivo.label }}
+            {{ form.Motivo.errors }}
+            {{ form.Motivo }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.tramite.label }}
+            {{ form.tramite.errors }}
+            {{ form.tramite }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.devolucion.label }}
+            {{ form.devolucion.errors }}
+            {{ form.devolucion }}
+          </div>
+          <div class="col-sm-3">
+            {{ form.responsable.label }}
+            {{ form.responsable.errors }}
+            {{ form.responsable }}
+          </div>
+          <div class="col-sm-12">
+            {{ form.observaciones.label }}
+            {{ form.observaciones.errors }}
+            {{ form.observaciones }}
+          </div>
+          <div class="col-sm-12">
             <button type="submit" class="btn btn-outline-success">Guardar</button>
-    </form>
-</div>
-</div>
+          </div>
+        </div>
+      </div>
+</form>
+<!-- </div> -->
+<!-- </div> -->
 {% endblock contenido %}
