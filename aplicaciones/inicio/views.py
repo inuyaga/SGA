@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from aplicaciones.pago_proveedor.models import Proveedor
 
 # Create your views here.
 @login_required(login_url='/login/')
 def inicio(request):
     contex = {
-    'productos': 'productos',
+    'proveedor': Proveedor.history.all(),
     'usuario': request.user,
     }
     return render(request, 'index/principal.html', contex)

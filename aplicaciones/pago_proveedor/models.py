@@ -4,6 +4,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models import Sum
 from aplicaciones.empresa.models import Sucursal
+from simple_history.models import HistoricalRecords
 
 # Create your models here.
 # pylint: disable = E1101
@@ -12,6 +13,7 @@ class Proveedor(models.Model):
     proveedor_nombre = models.CharField(max_length=100, verbose_name='Nombre')
     proveedor_rfc = models.CharField(max_length=15, verbose_name='RFC', default = 'none', unique=True)
     proveedor_email = models.EmailField(verbose_name='Correo')
+    history = HistoricalRecords()
 
 
     def __str__(self):
@@ -36,6 +38,7 @@ class Contrato(models.Model):
         default=False, verbose_name='Autorizado')
     contrato_status = models.BooleanField(default=True, verbose_name='Status')
     contrato_sucursal=models.ForeignKey(Sucursal, verbose_name="Sucursal", on_delete=models.PROTECT, null=True, blank=True,)
+    history = HistoricalRecords()
 
     def __str__(self):
         return str(self.contrato_id)
@@ -59,6 +62,7 @@ class Factura(models.Model):
     factura_creado = models.DateTimeField(auto_now_add=True)
     factura_pagado_status = models.BooleanField(
         verbose_name='Status pago', default=False)
+    history = HistoricalRecords()
 
     def __str__(self):
         return str(self.factura_id)
@@ -74,6 +78,7 @@ class Pago(models.Model):
                    ('TRANSFERENCIA', 'TRANSFERENCIA'))
     pago_metodo = models.CharField(max_length=40, choices=METODO_PAGO)
     pago_creado = models.DateTimeField(auto_now_add=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return str(self.pago_id)
@@ -117,6 +122,7 @@ class Complemento(models.Model):
                    ('TRANSFERENCIA', 'TRANSFERENCIA'))
     complemento_metodo = models.CharField(max_length=40, choices=METODO_PAGO)
     complemento_creado = models.DateTimeField(auto_now_add=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return str(self.complemento_id)

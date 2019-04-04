@@ -1,11 +1,16 @@
 {% extends 'index/base.html'%}
 
 {% block contenido %}
-<div class="container">
+
+
 
 {% if perms.pedidos %}
 
+<div class="container">
+<div class="row">
 <div class="col-sm-7">
+
+
   <ul class="list-group">
     <li class="list-group-item active">PEDIDOS</li>
     {% if perms.pedidos.view_area or perms.pedidos.add_area %}
@@ -67,13 +72,13 @@
 
 
   </ul>
-</div>
+
 {% endif %}
 
 {% if  perms.pago_proveedor %}
 
 
-<div class="col-sm-7">
+
   <ul class="list-group">
     <li class="list-group-item active">PAGOS PROVEEDORES</li>
     {% if perms.pago_proveedor.add_proveedor or perms.pago_proveedor.view_proveedor %}
@@ -104,12 +109,12 @@
     </li>
     {% endif %}
   </ul>
-</div>
+
 
 {% endif %}
 
 {% if perms.fuds %}
-<div class="col-md-7">
+
   <ul class="list-group">
     <li class="list-group-item active">FORMATO ÚNICO DE DEVOLUCIONES</li>
     {% if perms.fuds.view_motivo %}
@@ -167,6 +172,16 @@
     {% endif %}
   </ul>
 </div>
+
+
+<div class="col-sm-5">
+
+
+</div>
+</div>
+</div>
+
+
 {% endif %}
-</div><!--Fin del container-->
+
 {% endblock %}

@@ -581,3 +581,11 @@ class ComplementoDelete(DeleteView):
 #         }
 #         pdf = render_to_pdf('formatos/pdfejemplo.html', data)
 #         return HttpResponse(pdf, content_type='application/pdf')
+
+class HostorialProveedor(ListView):
+    model=Proveedor
+    template_name = 'pagoproveedor/HISTORIAL.html'
+    def get_queryset(self):
+        queryset = super(HostorialProveedor, self).get_queryset()
+        queryset=Proveedor.history.all()
+        return queryset

@@ -2,12 +2,14 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from django.db import models
 from datetime import datetime
+from simple_history.models import HistoricalRecords
 
 # Create your models here.
 class Conformidad(models.Model):
     conformidad_id=models.AutoField(primary_key=True)
     conformidad_descripcion=models.CharField(max_length=150, verbose_name="Descripción de conformidad")
     conformidad_fechaAlta=models.DateTimeField(auto_now_add=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.conformidad_descripcion
@@ -17,6 +19,7 @@ class Vendedor(models.Model):
     vendedor_nombre=models.CharField(max_length=150, verbose_name="Nombre de vendedor")
     vendedor_estatus=models.IntegerField(null=False, blank=False, default=1, verbose_name="Estado de vendedor")
     vendedor_fechaAlta=models.DateTimeField(auto_now_add=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.vendedor_nombre
@@ -25,6 +28,7 @@ class Motivo(models.Model):
     motivo_id=models.AutoField(primary_key=True)
     motivo_descripcion=models.CharField(max_length=150, verbose_name="Descripción de motivo")
     motivo_fechaAlta=models.DateTimeField(auto_now_add=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.motivo_descripcion
@@ -33,6 +37,7 @@ class Tramite(models.Model):
     tramite_id=models.AutoField(primary_key=True)
     tramite_descripcion=models.CharField(max_length=150, verbose_name="Descripción de trámite")
     tramite_fechaAlta=models.DateTimeField(auto_now_add=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.tramite_descripcion
@@ -45,6 +50,7 @@ class Factura(models.Model):
     factura_folio=models.CharField(max_length=100, unique=True, verbose_name="Folio de factura")
     factura_total=models.FloatField(verbose_name="Valor de la factura")
     factura_fechaAlta=models.DateTimeField(auto_now_add=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.factura_folio
@@ -67,6 +73,7 @@ class Fud(models.Model):
     observaciones = models.CharField(max_length =80)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     creado_por = models.CharField(max_length = 150)
+    history = HistoricalRecords()
 
     def __str__(self):
         return str(self.Folio)

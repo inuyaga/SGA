@@ -548,5 +548,14 @@ class PedidoListSucursal(ListView):
         return queryset.filter(pedido_id_depo=departamento)
 
 
+class HostorialProducto(ListView):
+    model=Producto
+    template_name = 'pagoproveedor/HISTORIAL.html'
+    def get_queryset(self):
+        queryset = super(HostorialProducto, self).get_queryset()
+        queryset=Producto.history.all()
+        return queryset
+
+
 
 # ---------------------------------------------------------------------------------------------------------

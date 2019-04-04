@@ -3,7 +3,7 @@ from django.urls import path
 from aplicaciones.pedidos.views import AreaCreate, AreaList, AreaUpdate, AreaDelete, MarcaCreate, MarcaList, \
 MarcaUpdate, MarcaDelete, ProductoCreate, ProductoList, ProductoDelete, ProductoUpdate, ProductoCompraList, \
 DetalleList, DetalleDelete, Crear_pedido_tienda, PedidoList, PedidoUpdate, PedidoListSucursal, ProductokitCreate, \
-ProductoKitUpdate, dowload_pedido_detalles
+ProductoKitUpdate, dowload_pedido_detalles, HostorialProducto
 # from aplicaciones.inicio.views import inicio
 app_name = "pedidos"
 urlpatterns = [
@@ -36,6 +36,9 @@ urlpatterns = [
     path('list/pedidos/', PedidoList.as_view(), name='pedidos_list'),
     path('list/pedidos/detalles/<int:pk>', dowload_pedido_detalles.as_view(), name='pedidos_list_detalles'),
     path('list/pedidos/update/<int:pk>/', PedidoUpdate.as_view(), name='pedido_update'),
+
+
+    path('pedido/historial/', HostorialProducto.as_view(), name='pedido_historial'),
 
 
 
