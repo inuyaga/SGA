@@ -25,14 +25,15 @@
             <th scope="col"> <small>Nombre</small></th>
             <th scope="col"> <small>Zona</small></th>
             <th scope="col"> <small>Vendedor</small></th>
-            <th scope="col"> <small>Motivo</small></th>
             <th scope="col"> <small>Conformidad</small></th>
+            <th scope="col"> <small>Motivo</small></th>
             <th scope="col"> <small>Tramite</small></th>
             <th scope="col"> <small>Devolucion</small></th>
             <th scope="col"> <small>Responsable</small></th>
             <th scope="col"> <small>Observaciones</small></th>
             <th scope="col"> <small>Creacion</small></th>
             <th scope="col"> <small>Creado</small></th>
+            <th scope="col"> <small>Acciones</small></th>
         </tr>
     </thead>
     <tbody>
@@ -44,8 +45,8 @@
             <td><small>{{fud.NombreCliente}}</small></td>
             <td><small>{{fud.ZonaCliente}}</small></td>
             <td><small>{{fud.VendedorCliente}}</small></td>
+            <td><small>{{fud.Motivo.motivo_idconformidad.conformidad_descripcion}}</small></td>
             <td><small>{{fud.Motivo}}</small></td>
-            <td><small>{{fud.conformidad}}</small></td>
             <td><small>{{fud.tramite}}</small></td>
             <td><small>{{fud.devolucion}}</small></td>
             <td><small>{{fud.responsable}}</small></td>

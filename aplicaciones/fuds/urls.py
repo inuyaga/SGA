@@ -4,7 +4,6 @@ from aplicaciones.inicio.views import inicio, err_permisos
 from aplicaciones.fuds.views import MotivoCreate, MotivoUpdate, MotivoList, MotivoDelete,\
 ConformidadCreate,ConformidadUpdate,ConformidadList,ConformidadDelete,\
 FudCreate, FudList, FudUpdate, FudDelete,\
-FacturaCreate,FacturaDelete,FacturaList,FacturaUpdate,\
 TramiteCreate,TramiteUpdate,TramiteDelete,TramiteList
 
 app_name = "fuds"
@@ -13,15 +12,11 @@ urlpatterns = [
     path('EditarMotivo/<int:pk>/', MotivoUpdate.as_view(), name='EditarMotivo'),
     path('ListarMotivo/', MotivoList.as_view(), name='ListarMotivo'),
     path('EliminarMotivo/<int:pk>/', MotivoDelete.as_view(), name='EliminarMotivo'),
+    
     path('NuevaConformidad/', ConformidadCreate.as_view(), name='NuevaConformidad'),
     path('EditarConformidad/<int:pk>/', ConformidadUpdate.as_view(), name='EditarConformidad'),
     path('ListarConformidad/', ConformidadList.as_view(), name='ListarConformidad'),
     path('EliminarConformidad/<int:pk>/', ConformidadDelete.as_view(), name='EliminarConformidad'),
-
-    path('NuevaFactura/', FacturaCreate.as_view(), name='NuevaFactura'),
-    path('EditarFactura/<int:pk>/', FacturaUpdate.as_view(), name='EditarFactura'),
-    path('ListarFactura/', FacturaList.as_view(), name='ListarFacturas'),
-    path('EliminarFactura/<int:pk>/', FacturaDelete.as_view(), name='EliminarFactura'),
 
     path('NuevoTramite/', TramiteCreate.as_view(), name='NuevoTramite'),
     path('EditarTramite/<int:pk>/', TramiteUpdate.as_view(), name='EditarTramite'),
