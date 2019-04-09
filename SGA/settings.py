@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'aplicaciones.pago_proveedor',
     'aplicaciones.pedidos',
     'aplicaciones.fuds',
-    'simple_history',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +54,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'SGA.urls'
@@ -86,9 +84,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'SGA',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
+        'USER': 'externo',
+        'PASSWORD': '0102261218',
+        'HOST': '192.168.1.228',
         'PORT': '3306',
     }
 }

@@ -9,7 +9,7 @@ from django.db.models import Avg, Sum, F
 from django.contrib.auth import get_user_model
 # pylint: disable = E1101
 Usuario = get_user_model()
-from simple_history.models import HistoricalRecords
+
 # Create your models here.
 
 
@@ -50,7 +50,7 @@ class Producto(models.Model):
     producto_es_kit=models.BooleanField(verbose_name='Pertenecera a un Kit', default=False)
     producto_kit=models.BooleanField(verbose_name='Kit', default=False)
     producto_productos=models.ManyToManyField("Producto")
-    history = HistoricalRecords()
+    
 
     def __str__(self):
         return self.producto_nombre

@@ -1,6 +1,0 @@
-{% extends 'index/base.html'%}
-{% block contenido %}
-{% for h in object_list %}
-<li>El usuario {{ h.history_user }} {% if  h.history_type == '+'%}Creo{% endif %} {% if  h.history_type == '-'%}Elimino{% endif %} {% if  h.history_type == '~'%}Cambio{% endif %} en el id {{ h.history_id }} objecto {{ h.history_object }}  {{ h.history_date }}</li>
-{% endfor %}
-{% endblock contenido %}

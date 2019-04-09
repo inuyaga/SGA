@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "sga_win\\Scripts\\python.exe",
+    "python.pythonPath": "env_sga/bin/python",
     "python.linting.enabled": true
 }

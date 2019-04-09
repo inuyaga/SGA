@@ -6,7 +6,6 @@ from aplicaciones.pago_proveedor.models import Proveedor
 @login_required(login_url='/login/')
 def inicio(request):
     contex = {
-    'proveedor': Proveedor.history.all(),
     'usuario': request.user,
     }
     return render(request, 'index/principal.html', contex)

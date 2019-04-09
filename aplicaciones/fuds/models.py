@@ -2,19 +2,16 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from django.db import models
 from datetime import datetime
-<<<<<<< HEAD
-from simple_history.models import HistoricalRecords
 
-=======
+
 from django.contrib.auth import get_user_model
 Usuario = get_user_model()
->>>>>>> 3abfc5a79b9e0e39f307332b426e6a5cc8f0f8bb
 # Create your models here.
 class Conformidad(models.Model):
     conformidad_id=models.AutoField(primary_key=True)
     conformidad_descripcion=models.CharField(max_length=150, verbose_name="Descripción de conformidad")
     conformidad_fechaAlta=models.DateTimeField(auto_now_add=True)
-    history = HistoricalRecords()
+    
 
     def __str__(self):
         return self.conformidad_descripcion
@@ -24,7 +21,7 @@ class Vendedor(models.Model):
     vendedor_nombre=models.CharField(max_length=150, verbose_name="Nombre de vendedor")
     vendedor_estatus=models.IntegerField(null=False, blank=False, default=1, verbose_name="Estado de vendedor")
     vendedor_fechaAlta=models.DateTimeField(auto_now_add=True)
-    history = HistoricalRecords()
+    
 
     def __str__(self):
         return self.vendedor_nombre
@@ -34,7 +31,7 @@ class Motivo(models.Model):
     motivo_descripcion=models.CharField(max_length=150, verbose_name="Descripción de motivo")
     motivo_idconformidad=models.ForeignKey(Conformidad, verbose_name="Id conformidad", on_delete=models.CASCADE)
     motivo_fechaAlta=models.DateTimeField(auto_now_add=True)
-    history = HistoricalRecords()
+    
 
     def __str__(self):
         return self.motivo_descripcion
@@ -43,28 +40,11 @@ class Tramite(models.Model):
     tramite_id=models.AutoField(primary_key=True)
     tramite_descripcion=models.CharField(max_length=150, verbose_name="Descripción de trámite")
     tramite_fechaAlta=models.DateTimeField(auto_now_add=True)
-    history = HistoricalRecords()
+    
 
     def __str__(self):
         return self.tramite_descripcion
 
-<<<<<<< HEAD
-class Factura(models.Model):
-    hoy=datetime.now()
-    context= hoy.strftime("%Y-%m-%d")
-    factura_id=models.AutoField(primary_key=True)
-    FechaFactura = models.DateField(null=False, blank=False, default=context)
-    factura_folio=models.CharField(max_length=100, unique=True, verbose_name="Folio de factura")
-    factura_total=models.FloatField(verbose_name="Valor de la factura")
-    factura_fechaAlta=models.DateTimeField(auto_now_add=True)
-    history = HistoricalRecords()
-
-    def __str__(self):
-        return self.factura_folio
-
-
-=======
->>>>>>> 3abfc5a79b9e0e39f307332b426e6a5cc8f0f8bb
 class Fud(models.Model):
     Folio = models.AutoField(primary_key=True)
     FechaFactura = models.DateField(null=True, blank=True)
@@ -83,13 +63,7 @@ class Fud(models.Model):
     responsable = models.CharField(max_length =80)
     observaciones = models.CharField(max_length =1500)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-<<<<<<< HEAD
-    creado_por = models.CharField(max_length = 150)
-    history = HistoricalRecords()
-
-=======
     creado_por = models.ForeignKey(Usuario, null= True, blank=True, on_delete = models.CASCADE)
-    
->>>>>>> 3abfc5a79b9e0e39f307332b426e6a5cc8f0f8bb
+
     def __str__(self):
         return self.Folio
