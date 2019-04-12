@@ -50,7 +50,7 @@
     <tbody>
       {% for contrato in object_list %}
       <tr>
-        <th scope="row"><small>{{contrato.contrato_id}}</small></th>
+        <th scope="row"><small><a href="{% url 'proveedor:contrato_detalle'  contrato.contrato_id %}">{{contrato.contrato_id}}</a></small></th>
         <td><small>{{contrato.contrato_proveedor_id}}</small></td>
         <td><small><a href="{{contrato.contrato_documento.url }}">PDF</a></small></td>
         <td><small>{{contrato.contrato_sucursal}}</small></td>
@@ -74,14 +74,19 @@
         {% if  contrato.contrato_status %}
         <i class="material-icons">done_outline</i>
         {% else %}
-        <i class="material-icons">cancel</i>
+        <i class="material-icons">cancel</i> 
         {% endif %}
         </small></td>
         {% comment %} --------------------------------------------------------------------- {% endcomment %}
         <td><small>
         <a class="btn btn-outline-warning btn-sm" href="{% url 'proveedor:contrato_edicion' contrato.contrato_id %}" role="button"><i class="material-icons">edit</i></a>
         <a class="btn btn-outline-danger btn-sm" href="{% url 'proveedor:contrato_eliminar' contrato.contrato_id %}" role="button"><i class="material-icons">delete_forever</i></a>
-        </small></td>
+        </small>
+        {% if  contrato.contrato_autorizado %}
+        <a class="btn btn-outline-success btn-sm" href="{% url 'proveedor:contrato_edicion' contrato.contrato_id %}" role="button"><i class="material-icons">payment</i></a>
+        {% endif %}
+        
+        </td>
       </tr>
       {% endfor %}
     </tbody>

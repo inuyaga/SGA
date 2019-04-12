@@ -41,9 +41,7 @@ class Producto(models.Model):
         Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
     producto_area = models.ForeignKey(
         Area, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Area')
-    producto_precio = models.FloatField(
-        null=True, blank=True, verbose_name='Precio')
-
+    producto_precio = models.DecimalField('Precio', max_digits=7, decimal_places=2, default=0.00)
     TIPO_PRODUCTO = ((1, 'Uso Interno'), (2, 'Activo Fijo'),)
     tipo_producto = models.IntegerField(
         choices=TIPO_PRODUCTO, null=True, blank=True)
@@ -53,21 +51,28 @@ class Producto(models.Model):
     
 
     def __str__(self):
-        return self.producto_nombre
+        return self.producto_nombre 
 
 
-class Pedido(models.Model):
+class Pedido(models.Model): 
     pedido_id_pedido = models.AutoField(primary_key=True)
     pedido_fecha_pedido = models.DateTimeField(auto_now_add=True)
     pedido_actualizado = models.DateTimeField(auto_now=True)
-    pedido_id_depo = models.ForeignKey(
-        Departamento, null=False, blank=False, on_delete=models.CASCADE, verbose_name='Departamento')
+    pedido_id_depo = models.ForeignKey(Departamento, null=False, blank=False, on_delete=models.CASCADE, verbose_name='Departamento')
     STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Rechazado'),)
-    pedido_status = models.IntegerField(
-        choices=STATUS, default=1, verbose_name='Status')
+    pedido_status = models.IntegerField(choices=STATUS, default=1, verbose_name='Status')
+    pedido_autorizo=models.ForeignKey(Usuario, verbose_name='Autorizado Por', related_name='Autorizador', blank=True, null=True, on_delete=models.CASCADE)
+    pedido_rechazado=models.ForeignKey(Usuario, verbose_name='Rechazado Por', related_name='Cancelo', blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.pedido_id_pedido)
+    # class Meta:
+    #     permissions = (
+    #         # Permission identifier     human-readable permission name
+    #         ("can_drive",               "Can drive"),
+    #         ("can_vote",                "Can vote in elections"),
+    #         ("can_drink",               "Can drink alcohol"),
+    #     )
 # Obtiene nombre de la sucursal
 
     def nombre_sucursal(self):
@@ -86,7 +91,7 @@ class Pedido(models.Model):
         query = Sucursal.objects.get(
             id_sucursal=self.nombre_sucursal().id_sucursal)
         return query.sucursal_empresa_id
-
+ 
     def total(self):
         total_importe = Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido).aggregate(
             total=Sum(F('detallepedido_cantidad')*F('detallepedido_precio')))
@@ -94,17 +99,12 @@ class Pedido(models.Model):
 
 
 class Detalle_pedido(models.Model):
-    detallepedido_pedido_id = models.ForeignKey(
-        Pedido, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Numero de pedido')
-    detallepedido_producto_id = models.ForeignKey(
-        Producto, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Producto')
-    detallepedido_cantidad = models.FloatField(
-        null=True, blank=True, verbose_name='Cantidad')
-    detallepedido_creado_por = models.ForeignKey(
-        Usuario, null=True, blank=True, on_delete=models.PROTECT,)
+    detallepedido_pedido_id = models.ForeignKey(Pedido, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Numero de pedido')
+    detallepedido_producto_id = models.ForeignKey(Producto, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Producto')
+    detallepedido_cantidad = models.FloatField(null=True, blank=True, verbose_name='Cantidad')
+    detallepedido_creado_por = models.ForeignKey(Usuario, null=True, blank=True, on_delete=models.PROTECT,)
     #precio = auto_save_precio(self)
-    detallepedido_precio = models.FloatField(
-        null=False, blank=False, default=0)
+    detallepedido_precio = models.FloatField(null=False, blank=False, default=0)
     detallepedido_status = models.BooleanField(default=False)
 
     class Meta:

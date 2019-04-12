@@ -2,16 +2,14 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
-
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
-
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 from aplicaciones.pedidos.models import Area, Marca, Producto, Detalle_pedido, Pedido
 from aplicaciones.pedidos.froms import AreaForm, MarcaForm, ProductoForm, PedidoForm, ProductoKitForm
 from aplicaciones.empresa.models import Pertenece_empresa
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F
-
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import ProtectedError
 
@@ -54,7 +52,7 @@ class AreaList(ListView):
     def dispatch(self, *args, **kwargs):
                 return super(AreaList, self).dispatch(*args, **kwargs)
 
-class AreaUpdate(UpdateView):
+class AreaUpdate(UpdateView): 
     model = Area
     form_class = AreaForm
     template_name = "pedidos/area/area_create.html"
@@ -292,13 +290,12 @@ class ProductoCompraList(ListView):
         # Add in a QuerySet of all the books
         context['usuario'] = self.request.user
         context['conteo'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False).count()
-        empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=self.request.user)
-        departamento=empresa_pertenece.pertenece_empresa
-        print(self.request.user)
-        if departamento == None:
+        context['msn_empresa'] = None
+        try:
+            empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=self.request.user)
+        except ObjectDoesNotExist as error:
             context['msn_empresa'] = 'Para poder hacer pedidos es nesesario que pertenesca a una empresa, ¡comuniquese con el administrador del sistema!'
-        else:
-            context['msn_empresa'] = None
+
         return context
     def get_queryset(self):
         queryset = super(ProductoCompraList, self).get_queryset()
@@ -310,12 +307,13 @@ class ProductoCompraList(ListView):
         return super(ProductoCompraList, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        from decimal import Decimal
         codigo = request.POST.get('nombre')
         cantidad = request.POST.get('catidad')
-        tipo_mensaje=True
+        tipo_mensaje=True 
         mensaje=''
 
-        if float(cantidad) <= 0:
+        if Decimal(cantidad) <= 0:
             mensaje='Ingrese un numero positivo por favor'
             tipo_mensaje=False
         else:
@@ -328,7 +326,7 @@ class ProductoCompraList(ListView):
 
 
             producto = Producto.objects.get(producto_codigo=codigo)
-            total=(producto.producto_precio * float(cantidad)) + suma_pedido['suma_total']
+            total=(Decimal(producto.producto_precio) * Decimal(cantidad)) + Decimal(suma_pedido['suma_total'])
 
 
             if total <= limite_gasto:
@@ -373,7 +371,7 @@ class ProductoCompraList(ListView):
 class DetalleList(ListView):
     paginate_by = 10
     model = Detalle_pedido
-    template_name = 'pedidos/listado_pre_pedido.html'
+    template_name = 'pedidos/listado_pre_pedido.html' 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
@@ -398,7 +396,7 @@ class DetalleDelete(DeleteView):
         context['protected']=protected
         return context
 
-def Crear_pedido_tienda(request):
+def Crear_pedido_tienda(request): 
     empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=request.user)
     departamento=empresa_pertenece.pertenece_empresa.departamento_id_depo
 
@@ -412,28 +410,25 @@ def Crear_pedido_tienda(request):
 class PedidoList(ListView):
     model = Pedido
     template_name = 'pedidos/pedido/pedido_admin.html'
-    paginate_by = 10
+    paginate_by = 10 
     def get_context_data(self, **kwargs):
         context = super(PedidoList, self).get_context_data(**kwargs)
         context['tituloBrea'] = 'Actualizar'
         context['usuario'] = self.request.user
-        context['status'] = {1:'Creado', 2:'Aprobado', 3:'Rechazado',}
+       
         return context
 
     def get_queryset(self):
         queryset = super(PedidoList, self).get_queryset()
-
-        if self.request.method == "GET":
-            status = self.request.GET.get('status')
-
-            if status != None:
+        status = self.request.GET.get('status')
+        if status != None:
+            if status == '0':
+                pass
+            else:
                 queryset = queryset.filter(pedido_status=status)
-        # if filter == '1':
-        #     queryset = queryset.filter(contrato_autorizado=True)
-        # elif filter== '2':
-        #     queryset = queryset.filter(contrato_autorizado=False)
-        # elif filter== '3':
-        #     queryset = queryset.filter(contrato_autorizado=False)
+        else: 
+            queryset = queryset.filter(pedido_status=1)
+     
         return queryset
     @method_decorator(permission_required('pedidos.view_pedido',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
@@ -444,6 +439,8 @@ class dowload_pedido_detalles(TemplateView):
         from openpyxl.styles import Font, Fill, Alignment
         from django.http import HttpResponse
         from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        from decimal import Decimal
         wb = Workbook()
         ws=wb.active
         id_pedido=self.kwargs.get('pk')
@@ -472,7 +469,7 @@ class dowload_pedido_detalles(TemplateView):
             ws.cell(row=cont, column=3).value = str(cto.detallepedido_pedido_id.pedido_id_depo)
             ws.cell(row=cont, column=4).value = cto.detallepedido_cantidad
             ws.cell(row=cont, column=5).value = cto.detallepedido_precio
-            ws.cell(row=cont, column=6).value = (cto.detallepedido_cantidad * cto.detallepedido_precio)
+            ws.cell(row=cont, column=6).value = (Decimal(cto.detallepedido_cantidad) * Decimal(cto.detallepedido_precio))
             ws.cell(row=cont, column=6).number_format = '#,##0'
             cont += 1
 
@@ -485,8 +482,9 @@ class dowload_pedido_detalles(TemplateView):
                 if cell.value:
                     if cell.row != 1:
                         dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
         for col, value in dims.items():
-            ws.column_dimensions[col].width = value
+            ws.column_dimensions[get_column_letter(col)].width = value+1
 
 
 
@@ -497,7 +495,7 @@ class dowload_pedido_detalles(TemplateView):
         wb.save(response)
         return response
 
-class PedidoUpdate(UpdateView):
+class PedidoUpdate(UpdateView): 
     model = Pedido
     form_class = PedidoForm
     template_name = 'pedidos/pedido/pedido_create.html'
@@ -508,6 +506,14 @@ class PedidoUpdate(UpdateView):
         context['tituloBrea'] = 'Actualizar'
         context['usuario'] = self.request.user
         return context
+    
+    def form_valid(self, form):
+        self.object = form.save()
+        if form.instance.pedido_status == 2:
+            self.object.pedido_autorizo=self.request.user
+        elif form.instance.pedido_status == 3:
+            self.object.pedido_rechazado=self.request.user
+        return super().form_valid(form)
     @method_decorator(permission_required('pedidos.change_pedido',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(PedidoUpdate, self).dispatch(*args, **kwargs)
@@ -522,30 +528,25 @@ class PedidoListSucursal(ListView):
         context = super(PedidoListSucursal, self).get_context_data(**kwargs)
         context['tituloBrea'] = 'Actualizar'
         context['usuario'] = self.request.user
-        context['status'] = {1:'Creado', 2:'Aprobado', 3:'Rechazado',}
-        empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=self.request.user)
-        departamento=empresa_pertenece.pertenece_empresa
-        print(self.request.user)
-        if departamento == None:
-            context['msn_empresa'] = 'Para poder hacer pedidos es nesesario que pertenesca a una empresa'
-
-
-
         return context
 
     def get_queryset(self):
         queryset = super(PedidoListSucursal, self).get_queryset()
-        empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=self.request.user)
-        departamento=empresa_pertenece.pertenece_empresa
-        print(self.request.user)
-        if departamento == None:
-            departamento = 0
+        queryset_init=queryset
+        # OBTENER A QUE SUCURSAL PERTENECE EL USUARIO
+        pertenece=Pertenece_empresa.objects.get(pertenece_id_usuario=self.request.user)
+        # FILTRAMOS EN QUERY PARA MOSTRAR
+        
+        status = self.request.GET.get('status')
+        if status != None:
+            if status == '0':
+                pass
+            else:
+                queryset = queryset_init.filter(pedido_status=status, pedido_id_depo=pertenece.pertenece_empresa)
+        else:
+            queryset=queryset.filter(pedido_id_depo=pertenece.pertenece_empresa, pedido_status=1)
 
-        if self.request.method == "GET":
-            status = self.request.GET.get('status')
-            if status != None:
-                queryset = queryset.filter(pedido_status=status)
-        return queryset.filter(pedido_id_depo=departamento)
+        return queryset
 
 
 

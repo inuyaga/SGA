@@ -12,13 +12,28 @@
   <form method="post">
     {% csrf_token %}
     <div class="alert alert-danger" role="alert">
-      Esta seguro de eliminar  {{ object }}?.
-      
+      Esta seguro de eliminar {{ object }} con RFC {{object.proveedor_rfc}}?.
     </div>
     <input class="btn btn-danger" type="submit" value="Si estoy seguro!">
     <a class="btn btn-primary" href="#" onClick="javascript:history.go(-1);" role="button">Cancelar</a>
   </form>
 </div>
 
-
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Amount</th>
+  </tr>
+  {% for model_name, object_count in model_count %}
+    <tr>
+      <td>{{ model_name|capfirst }}</td>
+      <td>{{ object_count }}</td>
+    </tr>
+  {% endfor %}
+</table>
+<p>
+  <ul>
+    {{ deletable_objects|unordered_list }}
+  </ul>
+</p>
 {% endblock %}

@@ -26,37 +26,32 @@
                     <th scope="col"><small>SUCURSAL</small></th>
                     <th scope="col"><small>LIMITE</small></th>
                     <th scope="col"><small>TOTAL</small></th>
+                    <th scope="col"><small>AUTORIZO</small></th>
+                    <th scope="col"><small>RECHAZÓ</small></th>
                     <th scope="col"><small>STATUS</small></th>
                 </tr>
             </thead>
             <tbody>
                 {% for pedido in object_list %}
-                <tr>
+                <tr> 
                     <th scope="row"><small>{{pedido.pedido_id_pedido}}</small></th>
                     <th scope="row"><small>{{pedido.pedido_fecha_pedido}}</small></th>
                     <td><small>{{pedido.pedido_id_depo}}</small></td>
                     <td><small>{{pedido.nombre_sucursal}}</small></td>
                     <td><small>{{pedido.limite_gastos}}</small></td>
                     <td><small>{{pedido.total}}</small></td>
+                    <td><small>{{pedido.pedido_autorizo}}</small></td>
+                    <td><small>{{pedido.pedido_rechazado}}</small></td>
+                    <td><small>{{pedido.get_pedido_status_display}}</small></td>
                     <td><small>
-                            {% if pedido.pedido_status == 1%}
-                            {{status.1}}
+                            {% if perms.pedidos.change_pedido %}
+                            {% if pedido.pedido_status == 1 %}
+                            <a class="btn btn-outline-warning btn-sm" href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}"  role="button"><i class="material-icons">border_color</i></a>
                             {% endif %}
-
-                            {% if pedido.pedido_status == 2%}
-                            {{status.2}}
-                            {% endif %}
-
-                            {% if pedido.pedido_status == 3%}
-                            {{status.3}}
-                            {% endif %}
-
-                        </small>
-                    </td>
-                    <td><small>
-                            <a class="btn btn-outline-warning btn-sm" href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}"
-                                role="button"><i class="material-icons">border_color</i></a>
+                            {% if pedido.pedido_status == 2 %}
                             <a class="btn btn-outline-success btn-sm" href="{% url 'pedidos:pedidos_list_detalles' pedido.pedido_id_pedido %}" role="button"><i class="material-icons">arrow_downward</i></a>
+                            {% endif %}
+                            {% endif %}
                         </small>
                     </td>
                 </tr>
@@ -73,7 +68,7 @@
                 <a href="?status=1" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Creado</a>
                 <a href="?status=2" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Aprobado</a>
                 <a href="?status=3" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Rechazado</a>
-                <a href="?" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Todo</a>
+                <a href="?status=0" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Todo</a>
             </li>
             {% comment %} <li class="list-group-item">Morbi leo risus</li>
             <li class="list-group-item">Porta ac consectetur ac</li>

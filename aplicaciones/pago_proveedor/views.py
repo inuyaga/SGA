@@ -196,6 +196,7 @@ class report_contratso(TemplateView):
     def get(self, request , *args, **kwargs):
         from openpyxl.styles import Font, Fill, Alignment
         from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
         wb = Workbook()
         ws=wb.active
 
@@ -226,15 +227,16 @@ class report_contratso(TemplateView):
 
         ws["F"+str(cont)] = "=SUM(F3:F"+str(cont-1)+")"
         ws["F"+str(cont)].number_format = '#,##0'
-
+        
         dims = {}
         for row in ws.rows:
             for cell in row:
                 if cell.value:
                     if cell.row != 1:
                         dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
         for col, value in dims.items():
-            ws.column_dimensions[col].width = value
+            ws.column_dimensions[get_column_letter(col)].width = value+1
 
 
 
@@ -266,12 +268,17 @@ class ContratoCreate(CreateView):
 class ContratoDelete(DeleteView):
     model = Contrato
     form_class = ContratosForms
-    template_name = 'pagoproveedor/contrato/contrato_eliminar.html'
+    template_name = 'pagoproveedor/elimina_proveedor.html'
     success_url = reverse_lazy('proveedor:contrato_listar')
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
+        
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+
         context['usuario'] = self.request.user
         return context
     @method_decorator(permission_required('pago_proveedor.delete_contrato',reverse_lazy('inicio:need_permisos')))
@@ -298,7 +305,7 @@ class ContratoUpdate(UpdateView):
 # CLASES PARA LA VISTA DE FATURAS
 # -------------------------------------------------------------------------------------------------------------
 class FacturaList(ListView):
-    paginate_by = 10
+    
     model = Factura
     ordering = ['-factura_creado']
     template_name = 'pagoproveedor/factura/factura_list.html'
@@ -307,12 +314,36 @@ class FacturaList(ListView):
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['usuario'] = self.request.user
-        context['object_list'] = Factura.objects.filter(factura_contrato_id__contrato_autorizado=True).select_related('factura_contrato_id')
+        # context['object_list'] = Factura.objects.filter(factura_contrato_id__contrato_autorizado=True).select_related('factura_contrato_id')
         return context
+
+    def get_queryset(self):
+        queryset = super(FacturaList, self).get_queryset()
+        queryset__init=queryset.filter(factura_contrato_id__contrato_autorizado=True)
+        queryset=queryset.filter(factura_pagado_status=False)
+        
+
+        mes=self.request.GET.get('buscar_mes')
+        status=self.request.GET.get('status')
+        todo=self.request.GET.get('todo')
+
+        if mes != None:
+            if mes != '':
+                x = mes.split("-")
+                queryset=queryset__init.filter(factura_corresponde_mes__year=x[0], factura_corresponde_mes__month=x[1])
+
+        if status != None:
+            queryset=queryset.filter(factura_pagado_status=status)
+
+        if todo == 'SI':
+            queryset=queryset__init          
+                 
+        return queryset
     @method_decorator(permission_required('pago_proveedor.view_factura',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(FacturaList, self).dispatch(*args, **kwargs)
-class FacturaCreate(CreateView):
+
+class FacturaCreate(CreateView): 
     model = Factura
     form_class = FacturaForms
     template_name = 'pagoproveedor/factura/factura_create.html'
@@ -347,7 +378,6 @@ class FacturaCreate(CreateView):
                             form.instance.factura_iva_trasladado = target_list.getAttribute("Importe")
 
         else:  # PERSONA MORAL
-
             for nodo_hijo in raiz.getElementsByTagName("cfdi:Impuestos"):
                 for hijo in nodo_hijo.getElementsByTagName("cfdi:Retenciones"):
                     for target_list in hijo.childNodes:
@@ -388,13 +418,18 @@ class FacturatoUpdate(UpdateView):
 class FacturaDelete(DeleteView):
     model = Factura
     form_class = FacturaForms
-    template_name = 'pagoproveedor/factura/factura_eliminar.html'
+    template_name = 'pagoproveedor/elimina_proveedor.html'
     success_url = reverse_lazy('proveedor:factura_lista')
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['usuario'] = self.request.user
+
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
         return context
 
     @method_decorator(permission_required('pago_proveedor.delete_factura',reverse_lazy('inicio:need_permisos')))
@@ -443,6 +478,12 @@ class PagoCreate(CreateView):
             return HttpResponse("Actualmente ya se encuenta un pago realizado")
         return super(PagoCreate, self).form_valid(form)
 
+    def get_success_url(self):
+        pk=self.kwargs.get('pk')
+        print(pk)
+        url=reverse_lazy('proveedor:pago_crear', kwargs={'pk':pk})
+        return url
+
 
 class PagoList(ListView):
     paginate_by = 10
@@ -466,15 +507,23 @@ class PagoDelete(DeleteView):
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['usuario'] = self.request.user
+
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
         return context
 
     def delete(self,*args,**kwargs):
-        print(self.kwargs['pk'])
         pago = Pago.objects.get(pago_id=self.kwargs['pk'])
         Factura.objects.filter(factura_id=pago.pago_factura_id).update(factura_pagado_status=False)
-
-
         return super().delete(*args,**kwargs)
+
+    def get_success_url(self):
+        pk=self.kwargs.get('id_pago')
+        print(pk)
+        url=reverse_lazy('proveedor:pago_crear', kwargs={'pk':pk})
+        return url
 
     @method_decorator(permission_required('pago_proveedor.delete_pago',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
@@ -547,7 +596,7 @@ class ComplementoCreate(CreateView):
 class ComplementoDelete(DeleteView):
     model = Complemento
     form_class = ComplementoForm
-    template_name = 'pagoproveedor/pago/pago_delete.html'
+    template_name = 'pagoproveedor/elimina_proveedor.html'
     # success_url = reverse_lazy('proveedor:factura_lista')
     def get_success_url(self,*args,**kwargs):
         return reverse_lazy('proveedor:complemento_crear', kwargs={'pk': self.kwargs['id_comp']},)
@@ -555,6 +604,11 @@ class ComplementoDelete(DeleteView):
         # Call the base implementation first to get a context
         context = super(ComplementoDelete, self).get_context_data(**kwargs)
         context['usuario'] = self.request.user
+
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
         return context
 
     def delete(self,*args,**kwargs):
@@ -582,10 +636,4 @@ class ComplementoDelete(DeleteView):
 #         pdf = render_to_pdf('formatos/pdfejemplo.html', data)
 #         return HttpResponse(pdf, content_type='application/pdf')
 
-class HostorialProveedor(ListView):
-    model=Proveedor
-    template_name = 'pagoproveedor/HISTORIAL.html'
-    def get_queryset(self):
-        queryset = super(HostorialProveedor, self).get_queryset()
-        queryset=Proveedor.history.all()
-        return queryset
+

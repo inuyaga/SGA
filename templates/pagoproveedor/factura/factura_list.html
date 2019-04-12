@@ -8,6 +8,24 @@
     <li class="breadcrumb-item active" aria-current="page">Facturas</li>
   </ol>
 </nav>
+ 
+<form class="form-inline" method="GET">
+  <div class="form-group mb-2">
+    
+    <input type="month" class="form-control mb-2 mr-sm-2" id="buscar_mes" name="buscar_mes" placeholder="Mes" title="Buscar mes correspondiente" required>
+  </div>
+  <div class="form-group mb-2">
+    <select class="custom-select form-control mb-2 mr-sm-2" name="status">
+      <option selected disabled>Estado de factura</option>
+      <option value="True">Pagado</option>
+      <option value="False">No Pagado</option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary mb-2"><i class="material-icons">search</i></button>
+  <a class="btn btn-outline-success mb-2" href="?todo=SI" role="button">Todo</a>
+</form>
+
 
 {% if perms.pago_proveedor.add_factura %}
 <div class="row">
@@ -77,6 +95,8 @@
     </tbody>
   </table>
 
+  
+
 <div class="row justify-content-md-center">
 
   {% block pagination %}
@@ -104,3 +124,26 @@
 
 </div>
 {% endblock %}
+{% block script %}
+<script>
+{% comment %} var app = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#app',
+  data: {
+    message: 'Hello Vue!'
+  }
+})
+
+var app4 = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#app-4',
+  data: {
+    todos: [
+      { text: 'Learn JavaScript' },
+      { text: 'Learn Vue' },
+      { text: 'Build something awesome' }
+    ]
+  }
+}) {% endcomment %}
+</script>
+{% endblock script %}

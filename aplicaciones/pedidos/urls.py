@@ -4,7 +4,8 @@ from aplicaciones.pedidos.views import AreaCreate, AreaList, AreaUpdate, AreaDel
 MarcaUpdate, MarcaDelete, ProductoCreate, ProductoList, ProductoDelete, ProductoUpdate, ProductoCompraList, \
 DetalleList, DetalleDelete, Crear_pedido_tienda, PedidoList, PedidoUpdate, PedidoListSucursal, ProductokitCreate, \
 ProductoKitUpdate, dowload_pedido_detalles
-# from aplicaciones.inicio.views import inicio
+from django.conf import settings
+from django.conf.urls.static import static
 app_name = "pedidos"
 urlpatterns = [
 
@@ -27,7 +28,7 @@ urlpatterns = [
     path('add/producto/kit/', ProductokitCreate.as_view(), name='crear_producto_kit'),
 
     path('compra_sucursal/', ProductoCompraList.as_view(), name='pedido_tienda'),
-    path('compra_sucursal/pre_pedido', DetalleList.as_view(), name='pedido_tienda_listado'),
+    path('compra_sucursal/pre_pedido', DetalleList.as_view(), name='pedido_tienda_listado'), 
     path('compra_sucursal/pre_pedido/delete/<int:pk>/', DetalleDelete.as_view(), name='detalle_producto_delete'),
     path('compra_sucursal/pre_pedido/confirm_pedido/add/', Crear_pedido_tienda, name='creacion_pedido_sucursal'),
     path('compra_sucursal/pedido/list/', PedidoListSucursal.as_view(), name='pedido_sucursal_list'),
@@ -42,4 +43,4 @@ urlpatterns = [
 
 
 
-]
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

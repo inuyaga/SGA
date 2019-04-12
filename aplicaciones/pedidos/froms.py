@@ -46,7 +46,7 @@ class ProductoKitForm(forms.ModelForm):
 class PedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
-        fields = '__all__'
+        fields = ('pedido_id_depo','pedido_status')
 
     def __init__(self, *args, **kwargs):
         super(PedidoForm, self).__init__(*args, **kwargs)

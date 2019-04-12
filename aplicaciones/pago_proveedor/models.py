@@ -60,8 +60,7 @@ class Factura(models.Model):
     factura_isr_retenido = models.FloatField(null=True, blank=True)
     factura_corresponde_mes = models.DateField()
     factura_creado = models.DateTimeField(auto_now_add=True)
-    factura_pagado_status = models.BooleanField(
-        verbose_name='Status pago', default=False)
+    factura_pagado_status = models.BooleanField(verbose_name='Status pago', default=False)
     
 
     def __str__(self):

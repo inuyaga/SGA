@@ -98,6 +98,16 @@
 
       </div>
     </li>
+    {% endif %} 
+
+    {% if perms.pago_proveedor.add_factura or perms.pago_proveedor.view_factura %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'proveedor:factura_lista' %}">Factura</a>
+      <div class="badge-pill">
+        <a href="{% url 'proveedor:factura_crear' %}" class="badge badge-success">Añadir</a>
+
+      </div>
+    </li>
     {% endif %}
   </ul>
 
