@@ -1,5 +1,5 @@
 from django import forms
-from aplicaciones.fuds.models import Fud,Motivo,Conformidad,Tramite
+from aplicaciones.fuds.models import Fud,Motivo,Conformidad,Tramite,Zona,Vendedores
 from datetime import datetime, timedelta
 # pylint: disable = E1101
 class FudForm(forms.ModelForm):
@@ -72,5 +72,25 @@ class TramiteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(TramiteForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class ZonaForm(forms.ModelForm):
+    class Meta:
+        model = Zona
+        fields = ('__all__')
+
+    def __init__(self, *args, **kwargs):
+        super(ZonaForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class VendedorForm(forms.ModelForm):
+    class Meta:
+        model = Vendedores
+        fields = ('__all__')
+
+    def __init__(self, *args, **kwargs):
+        super(VendedorForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})

@@ -161,6 +161,25 @@
       </div>
     </li>
     {% endif %}
+
+    {% if perms.fuds.add_zonas or perms.fuds.view_zonas %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'fuds:ListarZona' %}">Zonas</a>
+      <div class="badge-pill">
+        <a href="{% url 'fuds:NuevaZona' %}" class="badge badge-success">Añadir</a>
+      </div>
+    </li>
+    {% endif %}
+
+
+    {% if perms.fuds.add_vendedores or perms.fuds.view_vendedores %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'fuds:ListarVendedor' %}">Vendedores</a>
+      <div class="badge-pill">
+        <a href="{% url 'fuds:NuevoVendedor' %}" class="badge badge-success">Añadir</a>
+      </div>
+    </li>
+    {% endif %}
   </ul>
 </div>
 

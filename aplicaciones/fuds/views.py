@@ -7,10 +7,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedor
+from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedores,Zona
 from django.contrib import messages
 from datetime import datetime, timedelta
-from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit
+from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit,ZonaForm,VendedorForm
 from django.db.models import Sum,F
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 from django.db.models import ProtectedError
@@ -229,6 +229,114 @@ class TramiteDelete(DeleteView):
     @method_decorator(permission_required('fuds.delete_tramite',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(TramiteDelete, self).dispatch(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.delete(request, *args, **kwargs)
+        except ProtectedError:
+            contex = {
+        'proveedores': 'proveedor'
+                        }
+        return render(request, 'pagoproveedor/protecteError.html', contex)
+
+
+class ZonaCreate(CreateView):
+    model= Zona
+    form_class = ZonaForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarZona")
+
+    @method_decorator(permission_required('fuds.add_zona',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ZonaCreate, self).dispatch(*args, **kwargs)
+
+class ZonaList(ListView):
+    model= Zona
+    template_name='fuds/ViewZona.html'
+
+    @method_decorator(permission_required('fuds.view_zona',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ZonaList, self).dispatch(*args, **kwargs)
+
+class ZonaUpdate(UpdateView):
+    model= Zona
+    form_class = ZonaForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarZona")
+
+    @method_decorator(permission_required('fuds.change_zona',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ZonaUpdate, self).dispatch(*args, **kwargs)
+
+class ZonaDelete(DeleteView):
+    model= Zona
+    template_name='fuds/DeleteMotivo.html'
+    success_url=reverse_lazy("fuds:ListarZona")
+
+    @method_decorator(permission_required('fuds.delete_zona',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ZonaDelete, self).dispatch(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.delete(request, *args, **kwargs)
+        except ProtectedError:
+            contex = {
+        'proveedores': 'proveedor'
+                        }
+        return render(request, 'pagoproveedor/protecteError.html', contex)
+
+class VendedorCreate(CreateView):
+    model= Vendedores
+    form_class = VendedorForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarVendedor")
+
+    @method_decorator(permission_required('fuds.add_vendedores',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(VendedorCreate, self).dispatch(*args, **kwargs)
+
+
+class VendedorList(ListView):
+    model= Vendedores
+    template_name='fuds/ViewVendedores.html'
+
+    @method_decorator(permission_required('fuds.view_vendedores',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(VendedorList, self).dispatch(*args, **kwargs)
+
+class VendedorUpdate(UpdateView):
+    model= Vendedores
+    form_class = VendedorForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarVendedor")
+
+    @method_decorator(permission_required('fuds.change_vendedores',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(VendedorUpdate, self).dispatch(*args, **kwargs)
+
+class VendedorDelete(DeleteView):
+    model= Vendedores
+    template_name='fuds/DeleteMotivo.html'
+    success_url=reverse_lazy("fuds:ListarVendedor")
+
+    @method_decorator(permission_required('fuds.delete_vendedores',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(VendedorDelete, self).dispatch(*args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user

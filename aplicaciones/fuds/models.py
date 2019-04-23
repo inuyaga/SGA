@@ -16,16 +16,6 @@ class Conformidad(models.Model):
     def __str__(self):
         return self.conformidad_descripcion
 
-class Vendedor(models.Model):
-    vendedor_id=models.AutoField(primary_key=True)
-    vendedor_nombre=models.CharField(max_length=150, verbose_name="Nombre de vendedor")
-    vendedor_estatus=models.IntegerField(null=False, blank=False, default=1, verbose_name="Estado de vendedor")
-    vendedor_fechaAlta=models.DateTimeField(auto_now_add=True)
-    
-
-    def __str__(self):
-        return self.vendedor_nombre
-
 class Motivo(models.Model):
     motivo_id=models.AutoField(primary_key=True)
     motivo_descripcion=models.CharField(max_length=150, verbose_name="Descripción de motivo")
@@ -40,18 +30,35 @@ class Tramite(models.Model):
     tramite_id=models.AutoField(primary_key=True)
     tramite_descripcion=models.CharField(max_length=150, verbose_name="Descripción de trámite")
     tramite_fechaAlta=models.DateTimeField(auto_now_add=True)
-    
 
     def __str__(self):
         return self.tramite_descripcion
+
+
+class Zona(models.Model):
+    Zona_id = models.AutoField(primary_key=True)
+    Zona_nombre=models.CharField(max_length=80, verbose_name="Nombre de la Zona")
+    Zona_FechaAlta=models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.Zona_nombre
+
+class Vendedores(models.Model):
+    Vend_id = models.AutoField(primary_key=True)
+    Vend_nombre=models.CharField(max_length=80, verbose_name="Nombre del vendedor")
+    Vend_Zona=models.ForeignKey(Zona, null= True, blank=True, on_delete = models.PROTECT, verbose_name="Zona a la que pertenece el vendedor")
+    TIPO_ESTADO = ((1, 'Activo'), (2, 'Inactivo'))
+    Vend_Estatus=models.IntegerField(choices=TIPO_ESTADO,null=False, blank=False, default=1, verbose_name="Estado de vendedor")
+    Vend_FechaAlta=models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return str(self.Vend_nombre)
 
 class Fud(models.Model):
     Folio = models.AutoField(primary_key=True)
     FechaFactura = models.DateField(null=True, blank=True)
     NumeroCliente = models.IntegerField(null=False, blank=False, default=1, verbose_name="Número de cliente")
     NombreCliente = models.CharField(null=False, blank=False, default="no identificado", max_length=80, verbose_name="Nombre de cliente")
-    ZonaCliente = models.CharField(null=False, blank=False, default="no identificado", max_length=80, verbose_name="Zona que pertence el cliente")
-    VendedorCliente = models.CharField(null=False, blank=False, default="no identificado", max_length=80, verbose_name="Vendedor asignado al cliente")
+    # ZonaCliente = models.CharField(null=False, blank=False, default="no identificado", max_length=80, verbose_name="Zona que pertence el cliente")
+    VendedorCliente = models.ForeignKey(Vendedores, null= True, blank=True, on_delete = models.PROTECT, verbose_name="Vendedor asignado al cliente")
     Factura = models.CharField(blank=True, null=True, max_length=150, verbose_name="Factura")
     FechaFactura = models.DateField(null=False, blank=False, default="2017-01-01")
     factura_total=models.FloatField(verbose_name="Valor de la factura", default="0.00")
