@@ -247,7 +247,7 @@ class ProductoKitUpdate(UpdateView):
     def dispatch(self, *args, **kwargs):
                 return super(ProductoKitUpdate, self).dispatch(*args, **kwargs)
 
-class ProductoDelete(DeleteView):
+class ProductoDelete(DeleteView): 
     model = Producto
     template_name = "pedidos/delete_forever.html"
     success_url = reverse_lazy('pedidos:listar_producto')

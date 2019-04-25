@@ -52,7 +52,7 @@ class Producto(models.Model):
         return self.producto_nombre  
 
 
-class Pedido(models.Model): 
+class Pedido(models.Model):  
     pedido_id_pedido = models.AutoField(primary_key=True)
     pedido_fecha_pedido = models.DateTimeField(auto_now_add=True)
     pedido_actualizado = models.DateTimeField(auto_now=True)
@@ -75,28 +75,8 @@ class Pedido(models.Model):
     #     )
 # Obtiene nombre de la sucursal
 
-    def nombre_sucursal(self):
-        query = Departamento.objects.get(
-            departamento_id_depo=self.pedido_id_depo.departamento_id_depo)
-        idDepo = query.departamento_id_sucursal
-        return idDepo
-
-    def limite_gastos(self):
-        query = Departamento.objects.get(
-            departamento_id_depo=self.pedido_id_depo.departamento_id_depo)
-        return query.departamento_limite_gasto
-# Obtiene nombre de la empresa
-
-    def empresa(self):
-        query = Sucursal.objects.get(
-            id_sucursal=self.nombre_sucursal().id_sucursal)
-        return query.sucursal_empresa_id
- 
-    def total(self):
-        total_importe = Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido).aggregate(
-            total=Sum(F('detallepedido_cantidad')*F('detallepedido_precio')))
-        return total_importe['total']
-
+    
+#
 
 class Detalle_pedido(models.Model):
     detallepedido_pedido_id = models.ForeignKey(Pedido, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Numero de pedido')

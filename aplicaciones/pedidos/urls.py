@@ -15,7 +15,7 @@ urlpatterns = [
     path('delete/area/<int:pk>/', AreaDelete.as_view(), name='eliminar_area'),
 
     path('update/marca/<int:pk>/', MarcaUpdate.as_view(), name='update_marca'),
-    path('delete/marca/<int:pk>/', MarcaDelete.as_view(), name='eliminar_marca'),
+    path('delete/marca/<int:pk>/', MarcaDelete.as_view(), name='eliminar_marca'), 
     path('list/marca/', MarcaList.as_view(), name='listar_marca'),
     path('add/marca/', MarcaCreate.as_view(), name='crear_marca'), 
 

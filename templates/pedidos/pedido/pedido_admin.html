@@ -24,7 +24,7 @@
                     <th scope="col"><small>CREADO</small></th>
                     <th scope="col"><small>DEPARTAMENTO</small></th>
                     <th scope="col"><small>SUCURSAL</small></th>
-                    <th scope="col"><small>LIMITE</small></th>
+                    
                     <th scope="col"><small>TOTAL</small></th>
                     <th scope="col"><small>AUTORIZO</small></th>
                     <th scope="col"><small>RECHAZÓ</small></th>
@@ -33,13 +33,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for pedido in object_list %}
+                {% for pedido in object_list %} 
                 <tr> 
                     <th scope="row"><small>{{pedido.pedido_id_pedido}}</small></th>
                     <th scope="row"><small>{{pedido.pedido_fecha_pedido}}</small></th>
                     <td><small>{{pedido.pedido_id_depo}}</small></td>
-                    <td><small>{{pedido.nombre_sucursal}}</small></td>
-                    <td><small>{{pedido.limite_gastos}}</small></td>
+                    <td><small>{{pedido.pedido_id_depo.departamento_id_sucursal}}</small></td>
                     <td><small>{{pedido.total}}</small></td>
                     <td><small>{{pedido.pedido_autorizo}}</small></td>
                     <td><small>{{pedido.pedido_rechazado}}</small></td>
