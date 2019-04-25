@@ -6,7 +6,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'pedidos:pedido_tienda' %}">Pedido</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'pedidos:pedido_select_compra' %}">Pedido</a></li>
         <li class="breadcrumb-item active" aria-current="page">Carrito</li>
     </ol>
 </nav>
@@ -23,6 +23,7 @@
                 <th scope="col"><small>codigo</small></th>
                 <th scope="col"><small>Producto</small></th>
                 <th scope="col"><small>Cantidad</small></th>
+                <th scope="col"><small>Pedido</small></th>
             </tr>
         </thead>
         <tbody>
@@ -31,6 +32,7 @@
                 <th scope="row"><small>{{detalle.detallepedido_producto_id.producto_codigo}}</small></th>
                 <th scope="row"><small>{{detalle.detallepedido_producto_id}}</small></th>
                 <td><small>{{detalle.detallepedido_cantidad}}</small></td>
+                <td><small>{{detalle.get_detallepedido_categoria_display}}</small></td>
                 <td><small><a class="btn btn-outline-danger btn-sm"
                             href="{% url 'pedidos:detalle_producto_delete' detalle.id %}" role="button"><i
                                 class="material-icons">delete_forever</i></a></small></td>
@@ -38,9 +40,17 @@
             {% endfor %}
         </tbody>
     </table>
-    {% if object_list %}
-    <a class="btn btn-primary" title="Crear pedido" href="{% url 'pedidos:creacion_pedido_sucursal' %}"
-        role="button">Confirmar pedido<i class="material-icons">swap_vert</i></a>
+    {% if Limpieza %}
+    <a class="btn btn-primary" title="Crear pedido" href="{% url 'pedidos:creacion_pedido_sucursal' 1 %}"
+        role="button">Confirmar pedido limpieza<i class="material-icons">swap_vert</i></a>
+    {% endif %}
+    {% if Papeleria %}
+    <a class="btn btn-success" title="Crear pedido" href="{% url 'pedidos:creacion_pedido_sucursal' 2 %}"
+        role="button">Confirmar pedido papeleria<i class="material-icons">swap_vert</i></a>
+    {% endif %}
+    {% if Venta %}
+    <a class="btn btn-dark" title="Crear pedido" href="{% url 'pedidos:creacion_pedido_sucursal' 3 %}"
+        role="button">Confirmar pedido consumo venta<i class="material-icons">swap_vert</i></a>
     {% endif %}
 </div>
 

@@ -10,13 +10,29 @@
       <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
       <li class="breadcrumb-item active" aria-current="page">Producto</li>
     </ol>
-  </nav>
+  </nav> 
 
 <div class="container">
-  <form method="post" class="col-sm-4" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="row">
-      {{ form.as_p }}
+
+    <div class="form-row">
+      {% for input in form %}
+      {% if input.name == 'producto_es_kit' %}
+      <div class="form-check">
+        {{input}}
+        {{input.errors}}
+        {{input.label}}
+      </div>
+      {% else %}
+      <div class="form-group col-md-4">
+        {{input.label}}
+        {{input.errors}}
+        {{input}}
+      </div>
+      {% endif %}
+
+      {% endfor %}
     </div>
     <button type="submit" class="btn btn-outline-success">Guardar</button>
   </form>

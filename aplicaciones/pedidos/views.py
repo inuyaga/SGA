@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView, View
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 from aplicaciones.pedidos.models import Area, Marca, Producto, Detalle_pedido, Pedido
 from aplicaciones.pedidos.froms import AreaForm, MarcaForm, ProductoForm, PedidoForm, ProductoKitForm
@@ -299,12 +299,13 @@ class ProductoCompraList(ListView):
         return context
     def get_queryset(self):
         queryset = super(ProductoCompraList, self).get_queryset()
-        queryset = queryset.filter(producto_es_kit=False)
+        queryset = queryset.filter(producto_es_kit=False, producto_categoria=self.kwargs.get('tipo'))
         return queryset
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        return super(ProductoCompraList, self).dispatch(request, *args, **kwargs)
+        return super(ProductoCompraList, self).dispatch(request, *args, **kwargs)           
+
 
     def post(self, request, *args, **kwargs):
         from decimal import Decimal
@@ -312,50 +313,105 @@ class ProductoCompraList(ListView):
         cantidad = request.POST.get('catidad')
         tipo_mensaje=True 
         mensaje=''
+        
 
         if Decimal(cantidad) <= 0:
             mensaje='Ingrese un numero positivo por favor'
             tipo_mensaje=False
-        else:
+        else: 
+            tipo_pedido=self.kwargs.get('tipo')
             empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=request.user)
-            limite_gasto=empresa_pertenece.pertenece_empresa.departamento_limite_gasto
-            suma_pedido=Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))
-            if suma_pedido['suma_total'] == None:
-                suma_pedido['suma_total']=0
-
-
-
             producto = Producto.objects.get(producto_codigo=codigo)
-            total=(Decimal(producto.producto_precio) * Decimal(cantidad)) + Decimal(suma_pedido['suma_total'])
 
+            if tipo_pedido == 1:# PEDIDO DE TIPO DE LIMPIEZA
+                # SE OBTINE EL LIMITE DE GASTOS DE CADA CASO
+                limite_gasto=empresa_pertenece.pertenece_empresa.departamento_limite_limpieza
 
-            if total <= limite_gasto:
-                if producto.producto_kit:
-                    queryset = Producto.objects.filter(producto__producto_codigo=producto.producto_codigo)
-                    for producto_list in queryset:
-                        detalle_pedido=Detalle_pedido(
-                        detallepedido_producto_id_id=producto_list.producto_codigo,
-                        detallepedido_cantidad=cantidad,
-                        detallepedido_creado_por=request.user,
-                        detallepedido_precio=producto_list.producto_precio,
-                        )
-                        detalle_pedido.save()
-                    mensaje='Agregado Correctamente'
+                suma_pedido=Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_categoria=tipo_pedido).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))
+                total=(Decimal(producto.producto_precio) * Decimal(cantidad)) + Decimal(Obtenernumero(suma_pedido['suma_total']))
+                if total <= limite_gasto:
+                    if producto.producto_kit:
+                        queryset = Producto.objects.filter(producto__producto_codigo=producto.producto_codigo)
+                        for producto_list in queryset:
+                            GuardaDetallePedido(
+                                producto_list.producto_codigo, 
+                                cantidad, 
+                                request.user, 
+                                producto_list.producto_precio, 
+                                producto_list.producto_categoria)
+                        mensaje='Agregado Correctamente'
+                    else:
+                        GuardaDetallePedido(
+                            producto.producto_codigo, 
+                            cantidad, 
+                            request.user, 
+                            producto.producto_precio, 
+                            producto.producto_categoria)
+                        mensaje='Agregado Correctamente'
+                    
                 else:
-                    detalle_pedido=Detalle_pedido(
-                    detallepedido_producto_id_id=producto.producto_codigo,
-                    detallepedido_cantidad=cantidad,
-                    detallepedido_creado_por=request.user,
-                    detallepedido_precio=producto.producto_precio,
-                    )
-                    detalle_pedido.save()
-                    mensaje='Agregado Correctamente'
-            else:
-                tipo_mensaje=False
-                mensaje='Supera el limite de gasto admitido de '+ str(limite_gasto)
+                    tipo_mensaje=False
+                    mensaje='Supera el limite de gasto admitido para limpieza '+ str(limite_gasto)
+            elif tipo_pedido == 2:# PEDIDO DE TIPO DE PAPELERIA
+                
+                limite_gasto=empresa_pertenece.pertenece_empresa.departamento_limite_papeleria
+
+                suma_pedido=Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_categoria=tipo_pedido).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))
+                total=(Decimal(producto.producto_precio) * Decimal(cantidad)) + Decimal(Obtenernumero(suma_pedido['suma_total']))
+                if total <= limite_gasto:
+                    if producto.producto_kit:
+                        queryset = Producto.objects.filter(producto__producto_codigo=producto.producto_codigo)
+                        for producto_list in queryset:
+                            GuardaDetallePedido(
+                                producto_list.producto_codigo, 
+                                cantidad, 
+                                request.user, 
+                                producto_list.producto_precio, 
+                                producto_list.producto_categoria)
+                        mensaje='Agregado Correctamente'
+                    else:
+                        GuardaDetallePedido(
+                            producto.producto_codigo, 
+                            cantidad, 
+                            request.user, 
+                            producto.producto_precio, 
+                            producto.producto_categoria)
+                        mensaje='Agregado Correctamente'
+                    
+                else:
+                    tipo_mensaje=False
+                    mensaje='Supera el limite de gasto admitido para papeleria '+ str(limite_gasto)
+            elif tipo_pedido == 3:# PEDIDO DE TIPO VENTA TIENDA
+                
+                limite_gasto=empresa_pertenece.pertenece_empresa.departamento_limite_venta
+
+                suma_pedido=Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_categoria=tipo_pedido).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))
+                total=(Decimal(producto.producto_precio) * Decimal(cantidad)) + Decimal(Obtenernumero(suma_pedido['suma_total']))
+                if total <= limite_gasto:
+                    if producto.producto_kit:
+                        queryset = Producto.objects.filter(producto__producto_codigo=producto.producto_codigo)
+                        for producto_list in queryset:
+                            GuardaDetallePedido(
+                                producto_list.producto_codigo, 
+                                cantidad, 
+                                request.user, 
+                                producto_list.producto_precio, 
+                                producto_list.producto_categoria)
+                        mensaje='Agregado Correctamente'
+                    else:
+                        GuardaDetallePedido(
+                            producto.producto_codigo, 
+                            cantidad, 
+                            request.user, 
+                            producto.producto_precio, 
+                            producto.producto_categoria)
+                        mensaje='Agregado Correctamente'
+                    
+                else:
+                    tipo_mensaje=False
+                    mensaje='Supera el limite de gasto admitido para consumo venta '+ str(limite_gasto)
 
         pedido_conteo=Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False).count()
-
         json = JsonResponse(
             {
                 'content':{
@@ -368,13 +424,32 @@ class ProductoCompraList(ListView):
 
         return json
 
-class DetalleList(ListView):
+def GuardaDetallePedido(codigo, cantidad, creado_por, precio, categoria):
+    detalle_pedido=Detalle_pedido(
+    detallepedido_producto_id_id=codigo,
+    detallepedido_cantidad=cantidad,
+    detallepedido_creado_por=creado_por,
+    detallepedido_precio=precio,
+    detallepedido_categoria=categoria,
+    )
+    detalle_pedido.save()
+
+def Obtenernumero(numero):
+    if numero == None:
+        return 0
+    else:
+        return numero
+
+class DetalleList(ListView): 
     paginate_by = 10
     model = Detalle_pedido
     template_name = 'pedidos/listado_pre_pedido.html' 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
+        context['Limpieza'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False, detallepedido_categoria=1)
+        context['Papeleria'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False, detallepedido_categoria=2)
+        context['Venta'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False, detallepedido_categoria=3)
         return context
     def get_queryset(self):
         queryset = super(DetalleList, self).get_queryset()
@@ -396,15 +471,38 @@ class DetalleDelete(DeleteView):
         context['protected']=protected
         return context
 
-def Crear_pedido_tienda(request): 
-    empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=request.user)
-    departamento=empresa_pertenece.pertenece_empresa.departamento_id_depo
+# def Crear_pedido_tienda(request): 
+#     empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=request.user)
+#     departamento=empresa_pertenece.pertenece_empresa.departamento_id_depo
+    
+#     pedido=Pedido(pedido_id_depo_id=departamento)
+#     pedido.save()
+#     Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False).update(detallepedido_pedido_id=pedido.pk, detallepedido_status=True)
 
-    pedido=Pedido(pedido_id_depo_id=departamento)
-    pedido.save()
-    Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False).update(detallepedido_pedido_id=pedido.pk, detallepedido_status=True)
+#     return redirect('pedidos:pedido_tienda')
 
-    return redirect('pedidos:pedido_tienda')
+
+class Crear_pedido_tiendaView(View):
+    def get(self, request, *args, **kwargs):
+        empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=request.user)
+        departamento=empresa_pertenece.pertenece_empresa.departamento_id_depo
+        if self.kwargs.get('tipo') == 1:
+            pedido=Pedido(pedido_id_depo_id=departamento, pedido_tipo=1)
+            pedido.save()
+            Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_categoria=1).update(detallepedido_pedido_id=pedido.pk, detallepedido_status=True)
+        elif self.kwargs.get('tipo') == 2:
+            pedido=Pedido(pedido_id_depo_id=departamento, pedido_tipo=2)
+            pedido.save()
+            Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_categoria=2).update(detallepedido_pedido_id=pedido.pk, detallepedido_status=True)
+        elif self.kwargs.get('tipo') == 3:
+            pedido=Pedido(pedido_id_depo_id=departamento, pedido_tipo=3)
+            pedido.save()
+            Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_categoria=3).update(detallepedido_pedido_id=pedido.pk, detallepedido_status=True)
+
+        return redirect('pedidos:pedido_tienda_listado')
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponse('POST request!')
 
 
 class PedidoList(ListView):
@@ -547,6 +645,10 @@ class PedidoListSucursal(ListView):
             queryset=queryset.filter(pedido_id_depo=pertenece.pertenece_empresa, pedido_status=1)
 
         return queryset
+ 
+class SelectTipoCompraView(TemplateView):
+    template_name = "pedidos/select_compra.html"
+
 
 
 

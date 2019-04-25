@@ -23,7 +23,7 @@ class Suc(admin.ModelAdmin):
 
 
 class DepoConfig(admin.ModelAdmin):
-    list_display = ('departamento_nombre', 'departamento_limite_gasto',
+    list_display = ('departamento_nombre',
                     'departamento_id_sucursal', 'nombre_empresa',)
     list_filter = ('departamento_id_sucursal',)
 

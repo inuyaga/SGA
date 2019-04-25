@@ -34,24 +34,22 @@ class Area(models.Model):
 class Producto(models.Model):
     producto_codigo = models.CharField(max_length=15, primary_key=True)
     producto_nombre = models.CharField(max_length=50, verbose_name='Nombre')
-    producto_descripcion = models.CharField(
-        max_length=150, verbose_name='Descripcion')
+    producto_descripcion = models.CharField(max_length=150, verbose_name='Descripcion')
     producto_imagen = models.ImageField(blank=False, null=False, upload_to="img_productos/", verbose_name='Imagen')
-    producto_marca = models.ForeignKey(
-        Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
-    producto_area = models.ForeignKey(
-        Area, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Area')
+    producto_marca = models.ForeignKey(Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
+    producto_area = models.ForeignKey(Area, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Area')
     producto_precio = models.DecimalField('Precio', max_digits=7, decimal_places=2, default=0.00)
     TIPO_PRODUCTO = ((1, 'Uso Interno'), (2, 'Activo Fijo'),)
-    tipo_producto = models.IntegerField(
-        choices=TIPO_PRODUCTO, null=True, blank=True)
+    tipo_producto = models.IntegerField(choices=TIPO_PRODUCTO, null=True, blank=True)
     producto_es_kit=models.BooleanField(verbose_name='Pertenecera a un Kit', default=False)
     producto_kit=models.BooleanField(verbose_name='Kit', default=False)
     producto_productos=models.ManyToManyField("Producto")
-    
+    CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
+    producto_categoria=models.IntegerField('Categoria de producto', choices=CATEGORIA, default=1)
+     
 
     def __str__(self):
-        return self.producto_nombre 
+        return self.producto_nombre  
 
 
 class Pedido(models.Model): 
@@ -63,6 +61,8 @@ class Pedido(models.Model):
     pedido_status = models.IntegerField(choices=STATUS, default=1, verbose_name='Status')
     pedido_autorizo=models.ForeignKey(Usuario, verbose_name='Autorizado Por', related_name='Autorizador', blank=True, null=True, on_delete=models.CASCADE)
     pedido_rechazado=models.ForeignKey(Usuario, verbose_name='Rechazado Por', related_name='Cancelo', blank=True, null=True, on_delete=models.CASCADE)
+    CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
+    pedido_tipo=models.IntegerField('Categoria de producto', choices=CATEGORIA, default=1)
 
     def __str__(self):
         return str(self.pedido_id_pedido)
@@ -106,6 +106,8 @@ class Detalle_pedido(models.Model):
     #precio = auto_save_precio(self)
     detallepedido_precio = models.FloatField(null=False, blank=False, default=0)
     detallepedido_status = models.BooleanField(default=False)
+    CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
+    detallepedido_categoria=models.IntegerField('Pedido', choices=CATEGORIA, default=1)
 
     class Meta:
         ordering = ["detallepedido_pedido_id"]

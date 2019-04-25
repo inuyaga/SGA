@@ -29,6 +29,7 @@
                     <th scope="col"><small>AUTORIZO</small></th>
                     <th scope="col"><small>RECHAZÓ</small></th>
                     <th scope="col"><small>STATUS</small></th>
+                    <th scope="col"><small>TIPO</small></th>
                 </tr>
             </thead>
             <tbody>
@@ -43,6 +44,7 @@
                     <td><small>{{pedido.pedido_autorizo}}</small></td>
                     <td><small>{{pedido.pedido_rechazado}}</small></td>
                     <td><small>{{pedido.get_pedido_status_display}}</small></td>
+                    <td><small>{{pedido.get_pedido_tipo_display}}</small></td>
                     <td><small>
                             {% if perms.pedidos.change_pedido %}
                             {% if pedido.pedido_status == 1 %}

@@ -63,9 +63,9 @@
     {% endif %}
     {% if perms.pedidos.add_pedido %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'pedidos:pedido_tienda' %}">Comprar</a>
+      <a href="{% url 'pedidos:pedido_select_compra' %}">Comprar</a>
       <div class="badge-pill">
-        <a href="{% url 'pedidos:pedido_tienda' %}" class="badge badge-success">Añadir</a>
+        <a href="{% url 'pedidos:pedido_select_compra' %}" class="badge badge-success">Añadir</a>
       </div>
     </li>
     {% endif %}

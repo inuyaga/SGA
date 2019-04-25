@@ -30,6 +30,7 @@ class ProductoForm(forms.ModelForm):
         super(ProductoForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+        self.fields['producto_es_kit'].widget.attrs.update({'class': 'form-check-input'})
 
 class ProductoKitForm(forms.ModelForm):
     class Meta:
