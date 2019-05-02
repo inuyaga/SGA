@@ -103,5 +103,5 @@ venv.bak/
 # mypy
 .mypy_cache/
 sga_win/
-env_sga/
 media/
+env_sga/
