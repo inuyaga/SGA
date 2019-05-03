@@ -1,0 +1,100 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<div class="container">
+
+
+<h2 class="text-center">Fud seleccionado :  {{ view.kwargs.pk }} </h2>
+<div class="col-md-12">
+    <form action="{% url 'fuds:PartidaSearch' %}" id="form_search" method="post">
+        {% csrf_token %}
+        <input type="text" name="txt_search" class="form-control" value="" placeholder="Busqueda de producto" required>
+        <input type="text" name="txt_idfud" class="form-control" hidden value="{{ view.kwargs.pk }}" readonly>
+        <input type="submit" class="btn btn-info" value="Buscar" placeholder="Busqueda de producto">
+    </form>
+        <hr>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                <th scope="col">Partida</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="mediocuerpo">
+                
+            </tbody>
+        </table>
+        <hr>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                <th scope="col">Partida</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="mediocuerpoResultado">
+                
+            </tbody>
+        </table>
+
+</div>
+</div>
+{% endblock contenido %}
+{% block script %}
+<script>
+  var frm = $('#form_search');
+//   var id_form = frm.attr('id')
+  frm.submit(function (e) {
+
+    e.preventDefault();
+
+    $.ajax({
+      type: frm.attr('method'),
+      url: frm.attr('action'),
+      data: frm.serialize(),
+      success: function (data) {
+        // var message = data.ResultadoTXT
+        // $("#mediocuerpo").html(data.cuerpoT)
+        document.getElementById("mediocuerpo").innerHTML=data.cuerpoT
+        document.getElementById("mediocuerpoResultado").innerHTML=data.cuerpoF
+        //$("#id_Partida_nombre").val(message[0].)
+        // console.log(message)
+      },
+      error: function (data) {
+        console.log('An error occurred.');
+        console.log(data);
+      },
+    });
+  });
+
+  function guardar_partida(Partida_producto, id_fud) {
+      alert(Partida_producto+ " "+id_fud);
+
+      $.ajax({
+      type: 'POST',
+      url: '',
+      data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        Partida_nombre: Partida_producto,
+        Partida_fud: id_fud,
+        Partida_Precio: $("#Partida_Precio"+Partida_producto).val(),
+        Partida_Cantidad: $("#Partida_Cantidad"+Partida_producto).val(),
+      },
+      success: function (data) {
+        
+        document.getElementById("mediocuerpoResultado").innerHTML=data.cp
+       
+      },
+      error: function (data) {
+        console.log('An error occurred.');
+        console.log(data);
+      },
+    });
+  }
+</script>
+{% endblock script %}

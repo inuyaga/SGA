@@ -6,6 +6,7 @@ ConformidadCreate,ConformidadUpdate,ConformidadList,ConformidadDelete,\
 ZonaCreate,ZonaList,ZonaUpdate,ZonaDelete,\
 VendedorCreate,VendedorList, VendedorUpdate,VendedorDelete,\
 FudCreate, FudList, FudUpdate, FudDelete,\
+PartidaCreate, PartidaView, \
 TramiteCreate,TramiteUpdate,TramiteDelete,TramiteList
 
 app_name = "fuds"
@@ -39,6 +40,10 @@ urlpatterns = [
     path('list/fud/', FudList.as_view(), name='fud_list'),
     path('update/fud/<int:pk>/', FudUpdate.as_view(), name='fud_update'),
     path('eliminar/fud/<int:pk>/', FudDelete.as_view(), name='fud_delete'),
+
+    path('Partida/<int:pk>/', PartidaCreate.as_view(), name='Partida'),
+    path('PartidaSearch/', PartidaView.as_view(), name='PartidaSearch'),
+
 
     path('permisos/', err_permisos, name='need_permisos'),
 ]

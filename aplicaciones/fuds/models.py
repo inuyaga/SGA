@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from django.db import models
 from datetime import datetime
+from aplicaciones.pedidos.models import Producto
 
 
 from django.contrib.auth import get_user_model
@@ -71,6 +72,15 @@ class Fud(models.Model):
     observaciones = models.CharField(max_length =1500)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     creado_por = models.ForeignKey(Usuario, null= True, blank=True, on_delete = models.CASCADE)
-
     def __str__(self):
-        return self.Folio
+        return str(self.Folio)
+
+class PartidasFud(models.Model):
+    Partida_id = models.AutoField(primary_key=True)
+    Partida_nombre = models.ForeignKey(Producto,on_delete = models.CASCADE, verbose_name="Partida de fud")
+    Partida_fud = models.ForeignKey(Fud, on_delete = models.CASCADE, verbose_name="Fud a seleccionar")
+    Partida_Precio=models.FloatField(null=False, blank=False, default=0, verbose_name="Precio de la partida")
+    Partida_Cantidad=models.IntegerField(null=False, blank=False, default=1, verbose_name="cantidad de partidas")
+    Partida_FechaAlta = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return str(self.Partida_nombre)

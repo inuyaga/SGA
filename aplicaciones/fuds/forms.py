@@ -1,5 +1,5 @@
 from django import forms
-from aplicaciones.fuds.models import Fud,Motivo,Conformidad,Tramite,Zona,Vendedores
+from aplicaciones.fuds.models import Fud,Motivo,Conformidad,Tramite,Zona,Vendedores,PartidasFud
 from datetime import datetime, timedelta
 # pylint: disable = E1101
 class FudForm(forms.ModelForm):
@@ -92,5 +92,15 @@ class VendedorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(VendedorForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class PartidaFudForm(forms.ModelForm):
+    class Meta:
+        model = PartidasFud
+        # fields = ('__all__')
+        exclude = ['Partida_fud']
+    def __init__(self, *args, **kwargs):
+        super(PartidaFudForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})

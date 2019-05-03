@@ -33,6 +33,7 @@
             <th scope="col"> <small>Observaciones</small></th>
             <th scope="col"> <small>Creacion</small></th>
             <th scope="col"> <small>Creado</small></th>
+            <th scope="col"> <small>Partidas</small></th>
             <th scope="col"> <small>Acciones</small></th>
         </tr>
     </thead>
@@ -53,6 +54,7 @@
             <td><small>{{fud.observaciones}}</small></td>
             <td><small>{{fud.fecha_creacion}}</small></td>
             <td><small>{{fud.creado_por}}</small></td>
+            <td><small><a href="{% url 'fuds:Partida' fud.Folio %}"><i class="material-icons">add</i></a></small></td>
             <td><small>
                     <a href="{% url 'fuds:fud_update' fud.Folio %}"><i class="material-icons">border_color</i></a>
                     <a href="{% url 'fuds:fud_delete' fud.Folio %}"><i class="material-icons">delete_forever</i></a>

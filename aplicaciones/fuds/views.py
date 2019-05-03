@@ -1,19 +1,20 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DeleteView, UpdateView, CreateView
+from django.views.generic import ListView, DeleteView, UpdateView, CreateView, View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedores,Zona
+from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedores,Zona,PartidasFud
 from django.contrib import messages
 from datetime import datetime, timedelta
-from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit,ZonaForm,VendedorForm
+from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit,ZonaForm,VendedorForm,PartidaFudForm
 from django.db.models import Sum,F
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
-from django.db.models import ProtectedError
+from aplicaciones.pedidos.models import Producto
+from django.db.models import ProtectedError,Q
 
 
 # pylint: disable = E1101
@@ -353,3 +354,95 @@ class VendedorDelete(DeleteView):
         'proveedores': 'proveedor'
                         }
         return render(request, 'pagoproveedor/protecteError.html', contex)
+
+
+
+class PartidaCreate(CreateView):
+    model= PartidasFud
+    form_class = PartidaFudForm
+    template_name='fuds/CreatePartida.html'
+    success_url=reverse_lazy("fuds:ListarVendedor")
+
+    @method_decorator(permission_required('fuds.add_vendedores',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(PartidaCreate, self).dispatch(*args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        producto=Producto.objects.get(producto_codigo=request.POST.get('Partida_nombre'))
+        pf=PartidasFud(
+                Partida_nombre=producto,
+                Partida_fud_id=request.POST.get('Partida_fud'),
+                Partida_Precio=request.POST.get('Partida_Precio'),
+                Partida_Cantidad=request.POST.get('Partida_Cantidad'),
+                )
+        pf.save()
+        productoFiltrado= PartidasFud.objects.filter(Partida_fud = request.POST.get('Partida_fud'))
+        String2= ''
+        for pd2 in productoFiltrado:
+            String2 += """
+            <tr>
+                <th scope="row">{Partida_nombre}</th>
+                <th scope="row">{Partida_fud}</th>
+                <th scope="row">{Partida_Precio}</th>
+                <th scope="row">{Partida_Cantidad}</th>
+                <th> <input type="submit" class="btn btn-info" value="Agregar a fud" placeholder="Busqueda de producto"> </th>
+            </tr>
+            """.format(
+                Partida_nombre = pd2.Partida_nombre,
+                Partida_fud = pd2.Partida_fud,
+                Partida_Precio = pd2.Partida_Precio,
+                Partida_Cantidad = pd2.Partida_Cantidad,
+            )
+
+        return JsonResponse({'cp':String2})
+
+
+
+
+class PartidaView(View):
+    
+    # template_name='fuds/ViewVendedores.html'
+    def post(self, request, *args, **kwargs):
+        resultado = request.POST.get("txt_search")
+        idfud = request.POST.get("txt_idfud")
+        producto= Producto.objects.filter(Q(producto_descripcion__icontains = resultado) | Q(producto_codigo= resultado) )
+        productoFiltrado= PartidasFud.objects.filter(Partida_fud = idfud )
+        String = ''
+        for pd in producto:
+            String += """
+            <form action="asdasdasd.com" method="POST" >
+            <tr>
+                <th scope="row">{Partida}</th>
+                <th scope="row">{Descripcion} </th>
+                <th scope="row"><input type="number" step="any" class="form-control" id="Partida_Precio{Partida}"></th>
+                <th scope="row"><input type="number" class="form-control" id="Partida_Cantidad{Partida}"></th>
+                <th> <input type="submit" class="btn btn-info" onclick="guardar_partida('{Partida}',{idfud})" value="Agregar a fud" placeholder="Busqueda de producto"> </th>
+            </tr>
+            </form>
+            """.format(
+                Partida = pd.producto_codigo,
+                Descripcion = pd.producto_descripcion,
+                idfud = idfud,
+            )
+
+        String2= ''
+        for pd2 in productoFiltrado:
+            String2 += """
+            <tr>
+                <th scope="row">{Partida_nombre}</th>
+                <th scope="row">{Partida_fud}</th>
+                <th scope="row">{Partida_Precio}</th>
+                <th scope="row">{Partida_Cantidad}</th>
+                <th> <input type="submit" class="btn btn-info" value="Agregar a fud" placeholder="Busqueda de producto"> </th>
+            </tr>
+            """.format(
+                Partida_nombre = pd2.Partida_nombre,
+                Partida_fud = pd2.Partida_fud,
+                Partida_Precio = pd2.Partida_Precio,
+                Partida_Cantidad = pd2.Partida_Cantidad,
+            )
+
+        data = {
+                'cuerpoT': String,
+                'cuerpoF': String2,
+            }
+        return JsonResponse(data)
