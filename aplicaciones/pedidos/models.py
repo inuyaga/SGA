@@ -64,6 +64,10 @@ class Pedido(models.Model):
     CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
     pedido_tipo=models.IntegerField('Categoria de producto', choices=CATEGORIA, default=1)
 
+    def get_total(self):
+        total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))
+        return total['suma_total']
+
     def __str__(self):
         return str(self.pedido_id_pedido)
     # class Meta:

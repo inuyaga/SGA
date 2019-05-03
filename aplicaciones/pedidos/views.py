@@ -611,6 +611,7 @@ class PedidoUpdate(UpdateView):
             self.object.pedido_autorizo=self.request.user
         elif form.instance.pedido_status == 3:
             self.object.pedido_rechazado=self.request.user
+            Detalle_pedido.objects.filter(detallepedido_pedido_id=self.kwargs.get('pk')).update(detallepedido_status=False)
         return super().form_valid(form)
     @method_decorator(permission_required('pedidos.change_pedido',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
