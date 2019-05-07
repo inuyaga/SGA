@@ -3,42 +3,45 @@
 <div class="container">
 
 
-<h2 class="text-center">Fud seleccionado :  {{ view.kwargs.pk }} </h2>
+<h3 class="text-center">Número de FUD seleccionado :  {{ view.kwargs.pk }} </h3>
 <div class="col-md-12">
     <form action="{% url 'fuds:PartidaSearch' %}" id="form_search" method="post">
         {% csrf_token %}
         <input type="text" name="txt_search" class="form-control" value="" placeholder="Busqueda de producto" required>
         <input type="text" name="txt_idfud" class="form-control" hidden value="{{ view.kwargs.pk }}" readonly>
         <input type="submit" class="btn btn-info" value="Buscar" placeholder="Busqueda de producto">
+        <div id="informacion"></div>
     </form>
         <hr>
-        <table class="table">
-            <thead class="thead-dark">
-                <tr>
-                <th scope="col">Partida</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Precio</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="mediocuerpo">
-                
-            </tbody>
+        <table class="table" id="mediocuerpo">
+           
         </table>
         <hr>
         <table class="table table-bordered">
+            <thead>
+                <tr>
+                <th colspan="12" class="text-center" style="background-color: gray">Partidas que contiene el fud</th>
+                </tr>
+            </thead>
             <thead>
                 <tr>
                 <th scope="col">Partida</th>
                 <th scope="col">Descripción</th>
                 <th scope="col">Precio</th>
                 <th scope="col">Cantidad</th>
-                <th scope="col">Acciones</th>
+                {% comment %} <th scope="col">Acciones</th> {% endcomment %}
                 </tr>
             </thead>
             <tbody id="mediocuerpoResultado">
-                
+                {% for fud in resultados %}
+                <tr>
+                  <th scope="row">{{fud.Partida_nombre.producto_codigo}}</th>
+                  <th scope="row">{{fud.Partida_nombre.producto_descripcion}}</th>
+                  <th scope="row">{{fud.Partida_Precio}}</th>
+                  <th scope="row">{{fud.Partida_Cantidad}}</th>
+                  {% comment %} <th><input type="submit" class="btn btn-danger" placeholder="Busqueda de producto"> </th> {% endcomment %}
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
 
@@ -62,6 +65,7 @@
         // $("#mediocuerpo").html(data.cuerpoT)
         document.getElementById("mediocuerpo").innerHTML=data.cuerpoT
         document.getElementById("mediocuerpoResultado").innerHTML=data.cuerpoF
+        document.getElementById("informacion").innerHTML="."
         //$("#id_Partida_nombre").val(message[0].)
         // console.log(message)
       },
@@ -73,28 +77,34 @@
   });
 
   function guardar_partida(Partida_producto, id_fud) {
-      alert(Partida_producto+ " "+id_fud);
-
+    if(Number($("#Partida_Cantidad"+Partida_producto).val()) <= 0 || Number($("#Partida_Precio"+Partida_producto).val()) <= 0){
+      alert("Cantidad y precio no debe ser menor a 0");
+    }else{
       $.ajax({
-      type: 'POST',
-      url: '',
-      data: {
-        csrfmiddlewaretoken: '{{ csrf_token }}',
-        Partida_nombre: Partida_producto,
-        Partida_fud: id_fud,
-        Partida_Precio: $("#Partida_Precio"+Partida_producto).val(),
-        Partida_Cantidad: $("#Partida_Cantidad"+Partida_producto).val(),
-      },
-      success: function (data) {
-        
-        document.getElementById("mediocuerpoResultado").innerHTML=data.cp
-       
-      },
-      error: function (data) {
-        console.log('An error occurred.');
-        console.log(data);
-      },
-    });
+        type: 'POST',
+        url: '',
+        data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          Partida_nombre: Partida_producto,
+          Partida_fud: id_fud,
+          Partida_Precio: $("#Partida_Precio"+Partida_producto).val(),
+          Partida_Cantidad: $("#Partida_Cantidad"+Partida_producto).val(),
+        },
+        success: function (data) {
+          
+          document.getElementById("mediocuerpoResultado").innerHTML=data.cp;
+          $("#Partida_Precio"+Partida_producto).val("");
+          $("#Partida_Cantidad"+Partida_producto).val("");
+          document.getElementById("informacion").innerHTML=data.rsp
+        },
+        error: function (data) {
+          console.log('An error occurred.');
+          console.log(data);
+        },
+      });
+    }
   }
+
+  
 </script>
 {% endblock script %}

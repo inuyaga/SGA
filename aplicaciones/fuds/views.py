@@ -175,6 +175,7 @@ class FudUpdate(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
+        context['resultados'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk'))
         return context
 
 class FudDelete(DeleteView):
@@ -363,6 +364,15 @@ class PartidaCreate(CreateView):
     template_name='fuds/CreatePartida.html'
     success_url=reverse_lazy("fuds:ListarVendedor")
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['usuario'] = self.request.user
+        context['resultados'] =productoFiltrado= PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk'))
+
+        return context
+
     @method_decorator(permission_required('fuds.add_vendedores',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(PartidaCreate, self).dispatch(*args, **kwargs)
@@ -375,8 +385,18 @@ class PartidaCreate(CreateView):
                 Partida_Cantidad=request.POST.get('Partida_Cantidad'),
                 )
         pf.save()
+        respuesta="""
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {Partida_nombre} agredado al FUD!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        """.format(
+            Partida_nombre = request.POST.get('Partida_nombre'),
+        )
         productoFiltrado= PartidasFud.objects.filter(Partida_fud = request.POST.get('Partida_fud'))
-        String2= ''
+        String2= ""
         for pd2 in productoFiltrado:
             String2 += """
             <tr>
@@ -384,7 +404,7 @@ class PartidaCreate(CreateView):
                 <th scope="row">{Partida_fud}</th>
                 <th scope="row">{Partida_Precio}</th>
                 <th scope="row">{Partida_Cantidad}</th>
-                <th> <input type="submit" class="btn btn-info" value="Agregar a fud" placeholder="Busqueda de producto"> </th>
+                
             </tr>
             """.format(
                 Partida_nombre = pd2.Partida_nombre,
@@ -393,7 +413,7 @@ class PartidaCreate(CreateView):
                 Partida_Cantidad = pd2.Partida_Cantidad,
             )
 
-        return JsonResponse({'cp':String2})
+        return JsonResponse({'cp':String2,'rsp':respuesta})
 
 
 
@@ -406,7 +426,16 @@ class PartidaView(View):
         idfud = request.POST.get("txt_idfud")
         producto= Producto.objects.filter(Q(producto_descripcion__icontains = resultado) | Q(producto_codigo= resultado) )
         productoFiltrado= PartidasFud.objects.filter(Partida_fud = idfud )
-        String = ''
+        String = """
+         <thead class="thead-dark">
+                <tr>
+                <th scope="col">Partida</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Acciones</th>
+                </tr>
+            </thead>"""
         for pd in producto:
             String += """
             <form action="asdasdasd.com" method="POST" >
@@ -432,7 +461,6 @@ class PartidaView(View):
                 <th scope="row">{Partida_fud}</th>
                 <th scope="row">{Partida_Precio}</th>
                 <th scope="row">{Partida_Cantidad}</th>
-                <th> <input type="submit" class="btn btn-info" value="Agregar a fud" placeholder="Busqueda de producto"> </th>
             </tr>
             """.format(
                 Partida_nombre = pd2.Partida_nombre,

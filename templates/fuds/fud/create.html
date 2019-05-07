@@ -14,15 +14,17 @@
     background-color: whitesmoke ;
   }
   
-  .asd{
-    border-style: double;
+  thead tr{
+    background-color: grey;
+    text-align: center;
+    color: white;
   }
   </style>
-    <form action="" method="post">
+    <form action="" method="post" id="formu">
       <div class="container">
-        <div class="row rayas asd">
+        <div class="row rayas ">
           {% csrf_token %}
-          <div class="col-sm-3">
+          <div class="col-sm-3" id="testdiv">
             {{ form.FechaFactura.label }}
             {{ form.FechaFactura.errors }}
             {{ form.FechaFactura }}
@@ -88,6 +90,71 @@
         </div>
       </div>
 </form>
+<hr>
+<div class="container">
+  <div class="row">
+    <button type="button" onclick="genera_pdf()" class="btn btn-dark">Generar PDF</button>
+    <table class="table table-bordered" id="tabla_fud">
+      <thead>
+          <tr>
+            <th scope="col">Partida</th>
+            <th scope="col">Descripción</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Cantidad</th>
+            {% comment %} <th scope="col">Acciones</th> {% endcomment %}
+          </tr>
+      </thead>
+      {% for partidas in resultados %}
+      <tr>
+        <th scope="row">{{partidas.Partida_nombre.producto_codigo}}</th>
+        <th scope="row">{{partidas.Partida_nombre.producto_descripcion}}</th>
+        <th scope="row">{{partidas.Partida_Precio}}</th>
+        <th scope="row">{{partidas.Partida_Cantidad}}</th>
+      </tr>
+      {% endfor %}
+    </div>
+  </table>
+</div>
 <!-- </div> -->
 <!-- </div> -->
 {% endblock contenido %}
+{% block script %}
+{% load static %}
+<script>
+function genera_pdf(){
+  var margins = {
+        top: 0,
+        bottom: 60,
+        left: 0,
+        width: 100
+      };
+
+  var doc = new jsPDF();
+  var img = new Image();
+  img.src = "{% static 'ccs.png' %}" ;
+  doc.addImage(img, 'png', 10, 10, 25, 17);
+  var img2 = new Image();
+  img2.src = "{% static 'ISO.jpg' %}" ;
+  doc.addImage(img2, 'JPG', 180, 10, 25, 17);
+  doc.setFontSize(14);
+  doc.text(40, 20,"FORMATO ÚNICO DE DEVOLUCIÓN DE MERCANCÍA");
+  doc.setFontSize(6);
+  doc.text(10, 28,"CÓDIGO: CC-AC-R06");
+  doc.text(10, 32,"EDICIÓN: 02 25 DE OCTUBRE DE 2018");
+  doc.setFontSize(14);
+  doc.text(100, 32,"FOLIO: "+{{ view.kwargs.pk }});
+  doc.setFontSize(8);
+  doc.text(10, 40,"PEDIDO: "+{{ view.kwargs.pk }});
+  doc.text(42, 40,"VENDEDOR: "+$("#id_VendedorCliente option:selected").text());
+  doc.text(125, 40,"# CLIENTE: "+$("#id_NumeroCliente").val());
+  doc.text(165, 40,"FECHA: "+$("#id_fecha_creacion").val());
+  doc.text(10, 45,"FACTURA: "+$("#id_Factura").val());
+  doc.text(50, 45,"FECHA FACTURA: "+$("#id_FechaFactura").val());
+  doc.text(100, 45,"CLIENTE: "+$("#id_NombreCliente").val());
+  doc.autoTable({html: '#tabla_fud', startY: 47,styles:{fontSize:6}});
+  var splitTitle = doc.splitTextToSize("OBSERVACIONES: "+$("#id_observaciones").val(), 180);
+  doc.text(10, doc.previousAutoTable.finalY + 2,splitTitle);
+  doc.save('table.pdf');
+  }
+</script>
+{% endblock script %}

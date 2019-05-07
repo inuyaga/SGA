@@ -37,6 +37,11 @@ class FudFormEdit(forms.ModelForm):
         model = Fud
         exclude = ['creado_por']
 
+        widgets ={
+            'FechaFactura': forms.DateInput(attrs={'type':'date', 'min':context['minimo'],'max':context['maximo']}),
+            'observaciones': forms.Textarea(),
+        }
+
     def __init__(self, *args, **kwargs):
         super(FudFormEdit, self).__init__(*args, **kwargs)
 
