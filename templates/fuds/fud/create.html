@@ -1,5 +1,6 @@
 {% extends 'index/base.html'%}
 {% block contenido %}
+{% load humanize %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
 		<li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li>
@@ -101,17 +102,26 @@
             <th scope="col">Descripción</th>
             <th scope="col">Precio</th>
             <th scope="col">Cantidad</th>
+            <th scope="col">Total</th>
             {% comment %} <th scope="col">Acciones</th> {% endcomment %}
           </tr>
       </thead>
-      {% for partidas in resultados %}
+      {% for partidas in resultados %} 
       <tr>
         <th scope="row">{{partidas.Partida_nombre.producto_codigo}}</th>
         <th scope="row">{{partidas.Partida_nombre.producto_descripcion}}</th>
         <th scope="row">{{partidas.Partida_Precio}}</th>
         <th scope="row">{{partidas.Partida_Cantidad}}</th>
+        <th scope="row">{{partidas.get_cantidadXpartidas}}</th>
       </tr>
       {% endfor %}
+      <tr>
+        <th scope="row"></th>
+        <th scope="row"></th>
+        <th scope="row"></th>
+        <th scope="row">Sub Total</th>
+        <th scope="row">{{total_partidas|intcomma}}</th>
+      </tr>
     </div>
   </table>
 </div>

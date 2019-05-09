@@ -75,7 +75,9 @@ class Fud(models.Model):
     def __str__(self):
         return str(self.Folio)
 
-class PartidasFud(models.Model):
+    
+
+class PartidasFud(models.Model): 
     Partida_id = models.AutoField(primary_key=True)
     Partida_nombre = models.ForeignKey(Producto,on_delete = models.CASCADE, verbose_name="Partida de fud")
     Partida_fud = models.ForeignKey(Fud, on_delete = models.CASCADE, verbose_name="Fud a seleccionar")
@@ -84,3 +86,6 @@ class PartidasFud(models.Model):
     Partida_FechaAlta = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return str(self.Partida_nombre)
+    def get_cantidadXpartidas(self):
+        total=self.Partida_Precio * self.Partida_Cantidad
+        return total

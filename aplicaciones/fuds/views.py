@@ -14,7 +14,7 @@ from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteFo
 from django.db.models import Sum,F
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 from aplicaciones.pedidos.models import Producto
-from django.db.models import ProtectedError,Q
+from django.db.models import ProtectedError, Q, F, Sum, FloatField
 
 
 # pylint: disable = E1101
@@ -163,22 +163,25 @@ class FudList(ListView):
 
 
 class FudUpdate(UpdateView):
-    model = Fud
+    model = Fud 
     template_name = 'fuds/fud/create.html'
     form_class = FudFormEdit
     success_url = reverse_lazy('fuds:fud_list')
 
     @method_decorator(permission_required('fuds.change_fud',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
-                return super(FudUpdate, self).dispatch(*args, **kwargs)
+        return super(FudUpdate, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
         context['resultados'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk'))
+        context['total_partidas'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() ))['total']
+
+
         return context
 
-class FudDelete(DeleteView):
+class FudDelete(DeleteView): 
     model= Fud
     template_name='fuds/DeleteMotivo.html'
     success_url = reverse_lazy('fuds:fud_list')
