@@ -89,3 +89,6 @@ class PartidasFud(models.Model):
     def get_cantidadXpartidas(self):
         total=self.Partida_Precio * self.Partida_Cantidad
         return total
+    def get_cantidadXpartidasIVA(self):
+        total="{0:.2f}".format(round((self.Partida_Precio * self.Partida_Cantidad) * 1.16, 2))
+        return total

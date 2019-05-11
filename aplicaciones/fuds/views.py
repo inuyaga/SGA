@@ -177,6 +177,9 @@ class FudUpdate(UpdateView):
         context['usuario'] = self.request.user
         context['resultados'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk'))
         context['total_partidas'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() ))['total']
+        context['total_iva'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_iva=Sum( F('Partida_Cantidad') * F('Partida_Precio')*0.16, output_field=FloatField() ))['total_iva']
+        context['total_total'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_total=Sum( F('Partida_Cantidad') * F('Partida_Precio')*1.16, output_field=FloatField() ))['total_total']
+        
 
 
         return context

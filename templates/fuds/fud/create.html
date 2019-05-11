@@ -102,6 +102,7 @@
             <th scope="col">Descripción</th>
             <th scope="col">Precio</th>
             <th scope="col">Cantidad</th>
+            <th scope="col">Importe</th>
             <th scope="col">Total</th>
             {% comment %} <th scope="col">Acciones</th> {% endcomment %}
           </tr>
@@ -113,14 +114,32 @@
         <th scope="row">{{partidas.Partida_Precio}}</th>
         <th scope="row">{{partidas.Partida_Cantidad}}</th>
         <th scope="row">{{partidas.get_cantidadXpartidas}}</th>
+        <th scope="row">{{partidas.get_cantidadXpartidasIVA}}</th>
       </tr>
       {% endfor %}
       <tr>
         <th scope="row"></th>
         <th scope="row"></th>
         <th scope="row"></th>
+        <th scope="row"></th>
         <th scope="row">Sub Total</th>
         <th scope="row">{{total_partidas|intcomma}}</th>
+      </tr>
+      <tr>
+        <th scope="row"></th>
+        <th scope="row"></th>
+        <th scope="row"></th>
+        <th scope="row"></th>
+        <th scope="row">IVA</th>
+        <th scope="row">{{total_iva|intcomma}}</th>
+      </tr>
+      <tr>
+        <th scope="row"></th>
+        <th scope="row"></th>
+        <th scope="row"></th>
+        <th scope="row"></th>
+        <th scope="row">Total</th>
+        <th scope="row">{{total_total|intcomma}}</th>
       </tr>
     </div>
   </table>
