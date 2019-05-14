@@ -25,11 +25,6 @@
       <div class="container">
         <div class="row rayas ">
           {% csrf_token %}
-          <div class="col-sm-3" id="testdiv">
-            {{ form.FechaFactura.label }}
-            {{ form.FechaFactura.errors }}
-            {{ form.FechaFactura }}
-          </div>
           <div class="col-sm-3">
             {{ form.NumeroCliente.label }}
             {{ form.NumeroCliente.errors }}
@@ -39,11 +34,6 @@
             {{ form.NombreCliente.label }}
             {{ form.NombreCliente.errors }}
             {{ form.NombreCliente }}
-          </div>
-          <div class="col-sm-3">
-            {{ form.ZonaCliente.label }}
-            {{ form.ZonaCliente.errors }}
-            {{ form.ZonaCliente }}
           </div>
           <div class="col-sm-3">
             {{ form.VendedorCliente.label }}
@@ -80,6 +70,13 @@
             {{ form.responsable.errors }}
             {{ form.responsable }}
           </div>
+          {% if perms.fuds.change_fud or perms.fuds.change_fud %}
+          <div class="col-sm-3">
+            {{ form.EstadoFud.label }}
+            {{ form.EstadoFud.errors }}
+            {{ form.EstadoFud }}
+          </div>
+          {% endif %}
           <div class="col-sm-12">
             {{ form.observaciones.label }}
             {{ form.observaciones.errors }}

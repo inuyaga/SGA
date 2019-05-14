@@ -44,6 +44,7 @@ urlpatterns = [
     path('Partida/<int:pk>/', PartidaCreate.as_view(), name='Partida'),
     path('PartidaSearch/', PartidaView.as_view(), name='PartidaSearch'),
 
+    path('FudSearch/', PartidaView.as_view(), name='FudSearch'),
 
     path('permisos/', err_permisos, name='need_permisos'),
 ]

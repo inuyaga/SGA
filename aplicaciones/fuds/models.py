@@ -72,8 +72,14 @@ class Fud(models.Model):
     observaciones = models.CharField(max_length =1500)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     creado_por = models.ForeignKey(Usuario, null= True, blank=True, on_delete = models.CASCADE)
+    ESTADOS = ((1,'Creado'),(2,'Autorizado'),(3,'En transito'),(4,"Entregado"),(5,"Finalizado"))
+    EstadoFud=models.IntegerField(null=True, blank=True, choices= ESTADOS, default=1, verbose_name="Estado")
+
     def __str__(self):
         return str(self.Folio)
+
+    class META:
+        ordering = ['-fecha_creacion']
 
     
 

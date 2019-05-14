@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedores,Zona,PartidasFud
 from django.contrib import messages
 from datetime import datetime, timedelta
-from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit,ZonaForm,VendedorForm,PartidaFudForm
+from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit,FudFormEdit2,ZonaForm,VendedorForm,PartidaFudForm
 from django.db.models import Sum,F
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 from aplicaciones.pedidos.models import Producto
@@ -160,12 +160,20 @@ class FudList(ListView):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
         return context
+    
+    def get_queryset(self):
+        queryset = super(FudList, self).get_queryset()
+        cajaform= self.request.GET.get("Busqueda")
+        if(cajaform != None or cajaform != "0"):
+            queryset= queryset.filter( EstadoFud= cajaform )
+        return queryset
+        
 
 
 class FudUpdate(UpdateView):
     model = Fud 
-    template_name = 'fuds/fud/create.html'
-    form_class = FudFormEdit
+    template_name = 'fuds/fud/createUpdate.html'
+    form_class = FudFormEdit2
     success_url = reverse_lazy('fuds:fud_list')
 
     @method_decorator(permission_required('fuds.change_fud',reverse_lazy('inicio:need_permisos')))
@@ -178,7 +186,7 @@ class FudUpdate(UpdateView):
         context['resultados'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk'))
         context['total_partidas'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() ))['total']
         context['total_iva'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_iva=Sum( F('Partida_Cantidad') * F('Partida_Precio')*0.16, output_field=FloatField() ))['total_iva']
-        context['total_total'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_total=Sum( F('Partida_Cantidad') * F('Partida_Precio')*1.16, output_field=FloatField() ))['total_total']
+        context['total_total'] =round(PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_total=Sum( F('Partida_Cantidad') * F('Partida_Precio')*1.16, output_field=FloatField() ))['total_total'],2)
         
 
 
@@ -420,8 +428,6 @@ class PartidaCreate(CreateView):
             )
 
         return JsonResponse({'cp':String2,'rsp':respuesta})
-
-
 
 
 class PartidaView(View):

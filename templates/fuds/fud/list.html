@@ -9,6 +9,19 @@
 
 {% if perms.fuds.add_fud %}
 <div class="row">
+<div class="col-md-6">
+    <form action="" method="get">
+        <select class="custom-select custom-select-lg mb-3" name="Busqueda">
+            <option selected value="0">Filtrar por: </option>
+            <option value="1">Creado</option>
+            <option value="2">Autorizados</option>
+            <option value="3">En transito</option>
+            <option value="4">Entregados</option>
+            <option value="5">Finalizados</option>
+        </select>
+        <button type="submit" class="btn btn-info">Buscar</button>
+    </form>
+</div>
     <div class="col">
         <span class="float-right">
             <a class="btn btn-secondary btn-sm" href="{% url 'fuds:fud_create' %}" role="button">Añadir</a>
@@ -33,6 +46,7 @@
             <th scope="col" class="text-center"> <small><b>Observaciones</b></small></th>
             <th scope="col" class="text-center"> <small><b>Creacion</b></small></th>
             <th scope="col" class="text-center"> <small><b>Creado</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Estatus</b></small></th>
             <th scope="col" class="text-center"> <small><b>Agregar partidas</b></small></th>
             <th scope="col" class="text-center"> <small><b>Acciones</b></small></th>
         </tr>
@@ -49,11 +63,12 @@
             <td><small>{{fud.Motivo.motivo_idconformidad.conformidad_descripcion}}</small></td>
             <td><small>{{fud.Motivo}}</small></td>
             <td><small>{{fud.tramite}}</small></td>
-            <td><small>{{fud.devolucion}}</small></td>
+            <td><small>{{fud.get_devolucion_display}}</small></td>
             <td><small>{{fud.responsable}}</small></td>
             <td><small>{{fud.observaciones}}</small></td>
             <td><small>{{fud.fecha_creacion}}</small></td>
             <td><small>{{fud.creado_por}}</small></td>
+            <td><small>{{fud.get_EstadoFud_display}}</small></td>
             <td><small><a href="{% url 'fuds:Partida' fud.Folio %}"><i class="material-icons">add</i></a></small></td>
             <td><small>
                     <a href="{% url 'fuds:fud_update' fud.Folio %}"><i class="material-icons">border_color</i></a>
