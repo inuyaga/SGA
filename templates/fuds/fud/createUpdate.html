@@ -181,7 +181,11 @@ function genera_pdf(){
   doc.autoTable({html: '#tabla_fud', startY: 47,styles:{fontSize:6}});
   var splitTitle = doc.splitTextToSize("OBSERVACIONES: "+$("#id_observaciones").val(), 180);
   doc.text(10, doc.previousAutoTable.finalY + 2,splitTitle);
-  doc.save('table.pdf');
+  doc.text(30, doc.previousAutoTable.finalY + 52,"Cliente");
+  doc.text(70, doc.previousAutoTable.finalY + 52,"Almacen");
+  doc.text(120, doc.previousAutoTable.finalY + 52,"Acomodo");
+  doc.text(160, doc.previousAutoTable.finalY + 52,"Gerente Zona");
+  doc.save('Fud'+{{ view.kwargs.pk }}+'.pdf');
   }
 </script>
 {% endblock script %}
