@@ -1,0 +1,30 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Configuracion pedidos</title>
+{% endblock titulo %}
+{% block contenido %}
+<div class="container">
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Fecha Inicial</th>
+                <th scope="col">Fecha Final</th>
+                <th scope="col"></th>
+            </tr>
+        </thead> 
+        <tbody>
+            {% for item in object_list %}
+            <tr>
+                <td>{{item.conf_fecha_inicio}}</td>
+                <td>{{item.conf_fecha_fin}}</td>
+                <td><a class="btn btn-primary" href="{% url 'pedidos:pedido_config_update' item.conf_ID %}" role="button"><i class="material-icons">border_color</i></a></td>
+            </tr>
+            {% empty %}
+            <a class="btn btn-primary" href="{% url 'pedidos:pedido_config_crear' %}" role="button">Establecer fechas iniciales</a>
+            {% endfor %}
+
+
+        </tbody>
+    </table>
+</div>
+{% endblock contenido %}

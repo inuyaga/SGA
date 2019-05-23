@@ -1,0 +1,14 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Configuracion pedidos</title>
+{% endblock titulo %}
+{% block contenido %}
+<div class="container">
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button class="btn btn-primary" type="submit">Crear</button>
+    </form>
+</div>
+
+{% endblock contenido %}

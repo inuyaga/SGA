@@ -1,5 +1,5 @@
 from django import forms
-from aplicaciones.pedidos.models import Area, Marca, Producto, Pedido
+from aplicaciones.pedidos.models import Area, Marca, Producto, Pedido, Configuracion_pedido
 class AreaForm(forms.ModelForm):
     class Meta:
         model = Area
@@ -51,5 +51,19 @@ class PedidoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PedidoForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class ConfigForm(forms.ModelForm):
+    class Meta:
+        model = Configuracion_pedido
+        fields = '__all__'
+        widgets = {
+        'conf_fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
+        'conf_fecha_fin' : forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ConfigForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})

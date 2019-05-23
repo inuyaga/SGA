@@ -3,7 +3,8 @@ from django.urls import path
 from aplicaciones.pedidos.views import AreaCreate, AreaList, AreaUpdate, AreaDelete, MarcaCreate, MarcaList, \
 MarcaUpdate, MarcaDelete, ProductoCreate, ProductoList, ProductoDelete, ProductoUpdate, ProductoCompraList, \
 DetalleList, DetalleDelete, PedidoList, PedidoUpdate, PedidoListSucursal, ProductokitCreate, \
-ProductoKitUpdate, dowload_pedido_detalles, SelectTipoCompraView, Crear_pedido_tiendaView
+ProductoKitUpdate, dowload_pedido_detalles, SelectTipoCompraView, Crear_pedido_tiendaView, ConfigPedidoListView, \
+ConfigPedidoCreate, ConfigPedidoUpdate
 from django.conf import settings
 from django.conf.urls.static import static
 app_name = "pedidos"
@@ -17,7 +18,7 @@ urlpatterns = [
     path('update/marca/<int:pk>/', MarcaUpdate.as_view(), name='update_marca'),
     path('delete/marca/<int:pk>/', MarcaDelete.as_view(), name='eliminar_marca'), 
     path('list/marca/', MarcaList.as_view(), name='listar_marca'),
-    path('add/marca/', MarcaCreate.as_view(), name='crear_marca'), 
+    path('add/marca/', MarcaCreate.as_view(), name='crear_marca'),  
 
 
     path('update/producto/<slug:pk>/', ProductoUpdate.as_view(), name='update_producto'),
@@ -38,6 +39,10 @@ urlpatterns = [
     path('list/pedidos/', PedidoList.as_view(), name='pedidos_list'),
     path('list/pedidos/detalles/<int:pk>', dowload_pedido_detalles.as_view(), name='pedidos_list_detalles'), 
     path('list/pedidos/update/<int:pk>/', PedidoUpdate.as_view(), name='pedido_update'),
+
+    path('config/list/', ConfigPedidoListView.as_view(), name='pedido_config'),
+    path('config/crar/', ConfigPedidoCreate.as_view(), name='pedido_config_crear'),
+    path('config/crar/<int:pk>/', ConfigPedidoUpdate.as_view(), name='pedido_config_update'),
 
 
     

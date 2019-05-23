@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView, View
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
-from aplicaciones.pedidos.models import Area, Marca, Producto, Detalle_pedido, Pedido
-from aplicaciones.pedidos.froms import AreaForm, MarcaForm, ProductoForm, PedidoForm, ProductoKitForm
+from aplicaciones.pedidos.models import Area, Marca, Producto, Detalle_pedido, Pedido, Configuracion_pedido
+from aplicaciones.pedidos.froms import AreaForm, MarcaForm, ProductoForm, PedidoForm, ProductoKitForm, ConfigForm
 from aplicaciones.empresa.models import Pertenece_empresa
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F
@@ -15,7 +15,7 @@ from django.db.models import ProtectedError
 
 from django.http import JsonResponse
 
-from aplicaciones.empresa.models import Departamento
+from aplicaciones.empresa.models import Departamento 
 # Create your views here.
 # pylint: disable=no-member
 # pylint: disable = E1101
@@ -282,7 +282,7 @@ class ProductoDelete(DeleteView):
 class ProductoCompraList(ListView):
     paginate_by = 20
     model = Producto
-    template_name='pedidos/compra_tiendas.html'
+    template_name='pedidos/compra_tiendas.html' 
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -298,9 +298,40 @@ class ProductoCompraList(ListView):
 
         return context
     def get_queryset(self):
+        from datetime import datetime, date
+        import calendar
         queryset = super(ProductoCompraList, self).get_queryset()
-        queryset = queryset.filter(producto_es_kit=False, producto_categoria=self.kwargs.get('tipo'))
-        return queryset
+        try:
+            departamento=Pertenece_empresa.objects.get(pertenece_id_usuario=self.request.user)
+            # ESTABLECEMOS LA FECHA ACTUAL
+            today = datetime.now()
+            # CONSULTAMOS CUAL ES EL ULTIMO DIA DEL MES ACTUAL
+            last_day=calendar.monthrange(today.year, today.month)[1]
+            # INICIALIZAMOS LA FECHA INICIAL
+            start_date = datetime(today.year, today.month, 1)
+            # INICIALIZAMOS LA FECHA FINAL
+            end_date = datetime(today.year, today.month, last_day)
+
+            tipo_pedido=self.kwargs.get('tipo')
+            queryset = queryset.filter(producto_es_kit=False, producto_categoria=tipo_pedido)
+
+            if tipo_pedido == 1:
+                conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).count()
+                if conteo_pedido > 0:
+                    queryset=''
+            if tipo_pedido == 2:
+                conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).count()
+                if conteo_pedido > 0:
+                    queryset=''
+            if tipo_pedido == 3:
+                conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).count()
+                if conteo_pedido > 0:
+                    queryset=''
+
+            return queryset
+        except ObjectDoesNotExist as error:
+            return queryset.filter(producto_es_kit=False, producto_categoria=self.kwargs.get('tipo'))        
+        
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -505,7 +536,7 @@ class Crear_pedido_tiendaView(View):
         return HttpResponse('POST request!')
 
 
-class PedidoList(ListView):
+class PedidoList(ListView): 
     model = Pedido
     template_name = 'pedidos/pedido/pedido_admin.html'
     paginate_by = 10 
@@ -649,6 +680,33 @@ class PedidoListSucursal(ListView):
  
 class SelectTipoCompraView(TemplateView):
     template_name = "pedidos/select_compra.html"
+    def get_context_data(self, **kwargs):
+        import datetime
+        context = super(SelectTipoCompraView, self).get_context_data(**kwargs)
+        context['conf'] = Configuracion_pedido.objects.all()
+        hoy=datetime.datetime.now()
+        for config in context['conf']:
+            if config.conf_fecha_inicio <= hoy.date() and config.conf_fecha_fin >= hoy.date():
+                context['estado_rango_fechas']=True  
+        return context 
+
+
+class ConfigPedidoListView(ListView):
+    model = Configuracion_pedido
+    template_name = "pedidos/pedido/config_list.html"
+
+class ConfigPedidoCreate(CreateView):
+    model = Configuracion_pedido
+    form_class = ConfigForm 
+    template_name = "pedidos/pedido/conf_create.html"
+    success_url = reverse_lazy('pedidos:pedido_config')
+class ConfigPedidoUpdate(UpdateView):
+    model = Configuracion_pedido
+    form_class = ConfigForm 
+    template_name = "pedidos/pedido/conf_create.html"
+    success_url = reverse_lazy('pedidos:pedido_config')
+
+
 
 
 

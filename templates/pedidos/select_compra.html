@@ -4,51 +4,66 @@
 <link rel="stylesheet" href="{% static 'ihover.css' %}" media="all">
 
 <div class="container">
+
+    
+    {% for item in conf %}
+
+    {% if estado_rango_fechas %}
     <div class="row">
-        <div class="col-sm-4">
-            <!-- normal -->
-            <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 1 %}">
-                    <div class="img"><img
-                            src="{% static 'limpieza-kufG--620x349@abc.jpg' %}"
-                            alt="img"></div>
-                    <div class="mask1"></div>
-                    <div class="mask2"></div>
-                    <div class="info">
-                        <h3>Limpieza</h3>
-                        <p>Productos de limpieza</p>
-                    </div>
-                </a></div>
-            <!-- end normal -->
+            <div class="col-sm-4">
+                <!-- normal -->
+                <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 1 %}">
+                        <div class="img"><img src="{% static 'limpieza-kufG--620x349@abc.jpg' %}" alt="img"></div>
+                        <div class="mask1"></div>
+                        <div class="mask2"></div>
+                        <div class="info">
+                            <h3>Limpieza</h3>
+                            <p>Productos de limpieza</p>
+                        </div>
+                    </a></div>
+                <!-- end normal -->
+            </div>
+            <div class="col-sm-4">
+                <!-- normal -->
+                <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 2 %}">
+                        <div class="img"><img src="{% static 'ERP-de-Gestion-y-Distribucion-de-Papeleria-1030x686.jpg' %}"
+                                alt="img"></div>
+                        <div class="mask1"></div>
+                        <div class="mask2"></div>
+                        <div class="info">
+                            <h3>Papeleria</h3>
+                            <p>Productos de papeleria</p>
+                        </div>
+                    </a></div>
+                <!-- end normal -->
+            </div>
+            <div class="col-sm-4">
+                <!-- normal -->
+                <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 3 %}">
+                        <div class="img"><img src="{% static 'Compras-en-linea.jpg' %}" alt="img"></div>
+                        <div class="mask1"></div>
+                        <div class="mask2"></div>
+                        <div class="info">
+                            <h3>Comsumo venta</h3>
+                            <p>Productos para consumo de ventas</p>
+                        </div>
+                    </a></div>
+                <!-- end normal -->
+            </div>
         </div>
-        <div class="col-sm-4">
-            <!-- normal -->
-            <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 2 %}">
-                    <div class="img"><img
-                            src="{% static 'ERP-de-Gestion-y-Distribucion-de-Papeleria-1030x686.jpg' %}"
-                            alt="img"></div>
-                    <div class="mask1"></div>
-                    <div class="mask2"></div>
-                    <div class="info">
-                        <h3>Papeleria</h3>
-                        <p>Productos de papeleria</p>
-                    </div>
-                </a></div>
-            <!-- end normal -->
-        </div>
-        <div class="col-sm-4">
-            <!-- normal -->
-            <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 3 %}">
-                    <div class="img"><img
-                            src="{% static 'Compras-en-linea.jpg' %}"
-                            alt="img"></div>
-                    <div class="mask1"></div>
-                    <div class="mask2"></div>
-                    <div class="info">
-                        <h3>Comsumo venta</h3>
-                        <p>Productos para consumo de ventas</p>
-                    </div>
-                </a></div>
-            <!-- end normal -->
-        </div>
-    </div>
+      {% else %}
+      <div class="alert alert-warning" role="alert">
+            ¡Aun no es fecha de pedido!. Fechas para proximo pedido {{item.conf_fecha_inicio}} al {{item.conf_fecha_fin}}!
+          </div>
+    {% endif %}
+
+    
+        {% empty %}
+        <div class="alert alert-danger" role="alert">
+                Es necesario configurar fechas para realizar pedidos, contacte con el administrador del sitio! 
+              </div>
+    {% endfor %}
+        
+    
+</div>
 {% endblock contenido %}

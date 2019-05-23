@@ -2,196 +2,203 @@
 
 {% block contenido %}
 
-
-
-{% if perms.pedidos %}
-
 <div class="container">
-<div class="row">
-<div class="col-sm-7">
+  {% if perms.pedidos %}
 
+  <div class="row">
 
-  <ul class="list-group">
-    <li class="list-group-item active">PEDIDOS</li>
-    {% if perms.pedidos.view_area or perms.pedidos.add_area %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      {% if perms.pedidos.view_area %}
-      <a href="{% url 'pedidos:listar_area' %}">Area</a>
-      {% else %}
-      Area
-      {% endif %}
+    <div class="col-sm-6">
+      <ul class="list-group">
+        <li class="list-group-item active">PEDIDOS</li>
+        {% if perms.pedidos.view_area or perms.pedidos.add_area %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {% if perms.pedidos.view_area %}
+          <a href="{% url 'pedidos:listar_area' %}">Area</a>
+          {% else %}
+          Area
+          {% endif %}
 
-      <div class="badge-pill">
-        {% if perms.pedidos.add_area %}
-        <a href="{% url 'pedidos:crear_area' %}" class="badge badge-success">Añadir</a>
+          <div class="badge-pill">
+            {% if perms.pedidos.add_area %}
+            <a href="{% url 'pedidos:crear_area' %}" class="badge badge-success">Añadir</a>
+            {% endif %}
+
+          </div>
+        </li>
         {% endif %}
 
-      </div>
-    </li>
+        {% if perms.pedidos.view_marca or perms.pedidos.add_marca %}
+
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{% url 'pedidos:listar_marca' %}">Marcas</a>
+          <div class="badge-pill">
+            <a href="{% url 'pedidos:crear_marca' %}" class="badge badge-success">Añadir</a>
+          </div>
+        </li>
+        {% endif %}
+
+        {% if perms.pedidos.view_producto or perms.pedidos.add_producto %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+
+          <a href="{% url 'pedidos:listar_producto' %}">Productos</a>
+          <div class="badge-pill">
+            <a href="{% url 'pedidos:crear_producto' %}" class="badge badge-success">Añadir</a>
+          </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Armar Kit
+          <div class="badge-pill">
+            <a href="{% url 'pedidos:crear_producto_kit' %}" class="badge badge-success">Añadir</a>
+          </div>
+        </li>
+        {% endif %}
+
+        {% if  perms.pedidos.view_pedido %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{% url 'pedidos:pedidos_list' %}">Pedidos</a>
+        </li>
+        {% endif %}
+        {% if perms.pedidos.add_pedido %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{% url 'pedidos:pedido_select_compra' %}">Comprar</a>
+          <div class="badge-pill">
+            <a href="{% url 'pedidos:pedido_select_compra' %}" class="badge badge-success">Añadir</a>
+          </div>
+        </li>
+        {% endif %}
+
+
+      </ul>
+    </div>
+
     {% endif %}
 
-    {% if perms.pedidos.view_marca or perms.pedidos.add_marca %}
 
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'pedidos:listar_marca' %}">Marcas</a>
-      <div class="badge-pill">
-        <a href="{% url 'pedidos:crear_marca' %}" class="badge badge-success">Añadir</a>
-      </div>
-    </li>
+
+
+    {% if  perms.pago_proveedor %}
+
+
+<div class="col-sm-6">
+    <ul class="list-group">
+      <li class="list-group-item active">PAGOS PROVEEDORES</li>
+      {% if perms.pago_proveedor.add_proveedor or perms.pago_proveedor.view_proveedor %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'proveedor:lista' %}">Proveedores</a>
+        <div class="badge-pill">
+          <a href="{% url 'proveedor:nuevo' %}" class="badge badge-success">Añadir</a>
+        </div>
+      </li>
+      {% endif %}
+
+      {% if perms.pago_proveedor.add_contrato or perms.pago_proveedor.view_contrato %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'proveedor:contrato_listar' %}">Contratos</a>
+        <div class="badge-pill">
+          <a href="{% url 'proveedor:contrato_nuevo' %}" class="badge badge-success">Añadir</a>
+
+        </div>
+      </li>
+      {% endif %}
+
+      {% if perms.pago_proveedor.add_factura or perms.pago_proveedor.view_factura %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'proveedor:factura_lista' %}">Factura</a>
+        <div class="badge-pill">
+          <a href="{% url 'proveedor:factura_crear' %}" class="badge badge-success">Añadir</a>
+
+        </div>
+      </li>
+      {% endif %}
+    </ul>
+
+</div>
     {% endif %}
 
-    {% if perms.pedidos.view_producto or perms.pedidos.add_producto %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-
-      <a href="{% url 'pedidos:listar_producto' %}">Productos</a>
-      <div class="badge-pill">
-        <a href="{% url 'pedidos:crear_producto' %}" class="badge badge-success">Añadir</a>
-      </div>
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      Armar Kit
-      <div class="badge-pill">
-        <a href="{% url 'pedidos:crear_producto_kit' %}" class="badge badge-success">Añadir</a>
-      </div>
-    </li>
-    {% endif %}
-
-    {% if  perms.pedidos.view_pedido %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'pedidos:pedidos_list' %}">Pedidos</a>
-    </li>
-    {% endif %}
-    {% if perms.pedidos.add_pedido %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'pedidos:pedido_select_compra' %}">Comprar</a>
-      <div class="badge-pill">
-        <a href="{% url 'pedidos:pedido_select_compra' %}" class="badge badge-success">Añadir</a>
-      </div>
-    </li>
-    {% endif %}
-
-
-  </ul>
-
-{% endif %}
-
-{% if  perms.pago_proveedor %}
+    {% if perms.fuds %}
+    <div class="col-sm-6">
+    <ul class="list-group">
+      <li class="list-group-item active">FORMATO ÚNICO DE DEVOLUCIONES</li>
+      {% if perms.fuds.view_conformidad %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'fuds:ListarConformidad' %}">Conformidades para devoluciones</a>
+        {% if perms.fuds.add_conformidad %}
+        <div class="badge-pill">
+          <a href="{% url 'fuds:NuevaConformidad' %}" class="badge badge-success">Añadir</a>
+        </div>
+        {% endif %}
+      </li>
+      {% endif %}
+      {% if perms.fuds.view_motivo %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'fuds:ListarMotivo' %}">Motivos para devoluciones</a>
+        {% if perms.fuds.add_motivo %}
+        <div class="badge-pill">
+          <a href="{% url 'fuds:NuevoMotivo' %}" class="badge badge-success">Añadir</a>
+        </div>
+        {% endif %}
+      </li>
 
 
 
-  <ul class="list-group">
-    <li class="list-group-item active">PAGOS PROVEEDORES</li>
-    {% if perms.pago_proveedor.add_proveedor or perms.pago_proveedor.view_proveedor %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'proveedor:lista' %}">Proveedores</a>
-      <div class="badge-pill">
-        <a href="{% url 'proveedor:nuevo' %}" class="badge badge-success">Añadir</a>
-      </div>
-    </li>
-    {% endif %}
 
-    {% if perms.pago_proveedor.add_contrato or perms.pago_proveedor.view_contrato %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'proveedor:contrato_listar' %}">Contratos</a>
-      <div class="badge-pill">
-        <a href="{% url 'proveedor:contrato_nuevo' %}" class="badge badge-success">Añadir</a>
-
-      </div>
-    </li>
-    {% endif %} 
-
-    {% if perms.pago_proveedor.add_factura or perms.pago_proveedor.view_factura %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'proveedor:factura_lista' %}">Factura</a>
-      <div class="badge-pill">
-        <a href="{% url 'proveedor:factura_crear' %}" class="badge badge-success">Añadir</a>
-
-      </div>
-    </li>
-    {% endif %}
-  </ul>
+      {% if perms.fuds.view_tramite %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'fuds:ListarTramites' %}">Trámite válidos para devoluciones</a>
+        {% if perms.fuds.add_tramite %}
+        <div class="badge-pill">
+          <a href="{% url 'fuds:NuevoTramite' %}" class="badge badge-success">Añadir</a>
+        </div>
+        {% endif %}
+      </li>
+      {% endif %}
 
 
-{% endif %}
+      {% if perms.fuds.add_fud or perms.fuds.view_fud %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'fuds:fud_list' %}">Fud</a>
+        <div class="badge-pill">
+          <a href="{% url 'fuds:fud_create' %}" class="badge badge-success">Añadir</a>
+        </div>
+      </li>
+      {% endif %}
 
-{% if perms.fuds %}
+      {% if perms.fuds.add_zonas or perms.fuds.view_zonas %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'fuds:ListarZona' %}">Zonas</a>
+        <div class="badge-pill">
+          <a href="{% url 'fuds:NuevaZona' %}" class="badge badge-success">Añadir</a>
+        </div>
+      </li>
+      {% endif %}
 
-  <ul class="list-group">
-    <li class="list-group-item active">FORMATO ÚNICO DE DEVOLUCIONES</li>
-    {% if perms.fuds.view_conformidad %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'fuds:ListarConformidad' %}">Conformidades para devoluciones</a>
-      {% if perms.fuds.add_conformidad %}
-      <div class="badge-pill">
-        <a href="{% url 'fuds:NuevaConformidad' %}" class="badge badge-success">Añadir</a>
+
+      {% if perms.fuds.add_vendedores or perms.fuds.view_vendedores %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'fuds:ListarVendedor' %}">Vendedores</a>
+        <div class="badge-pill">
+          <a href="{% url 'fuds:NuevoVendedor' %}" class="badge badge-success">Añadir</a>
+        </div>
+      </li>
+      {% endif %}
+    </ul>
       </div>
       {% endif %}
-    </li>
-    {% endif %}
-    {% if perms.fuds.view_motivo %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'fuds:ListarMotivo' %}">Motivos para devoluciones</a>
-      {% if perms.fuds.add_motivo %}
-      <div class="badge-pill">
-        <a href="{% url 'fuds:NuevoMotivo' %}" class="badge badge-success">Añadir</a>
-      </div>
-      {% endif %}
-    </li>
-    {% endif %}
-    
 
 
-    {% if perms.fuds.view_tramite %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'fuds:ListarTramites' %}">Trámite válidos para devoluciones</a>
-      {% if perms.fuds.add_tramite %}
-      <div class="badge-pill">
-        <a href="{% url 'fuds:NuevoTramite' %}" class="badge badge-success">Añadir</a>
-      </div>
-      {% endif %}
-    </li>
-    {% endif %}
+
+      
 
 
-    {% if perms.fuds.add_fud or perms.fuds.view_fud %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'fuds:fud_list' %}">Fud</a>
-      <div class="badge-pill">
-        <a href="{% url 'fuds:fud_create' %}" class="badge badge-success">Añadir</a>
-      </div>
-    </li>
-    {% endif %}
 
-    {% if perms.fuds.add_zonas or perms.fuds.view_zonas %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'fuds:ListarZona' %}">Zonas</a>
-      <div class="badge-pill">
-        <a href="{% url 'fuds:NuevaZona' %}" class="badge badge-success">Añadir</a>
-      </div>
-    </li>
-    {% endif %}
+    <!-- <div class="col-sm-5">
 
 
-    {% if perms.fuds.add_vendedores or perms.fuds.view_vendedores %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="{% url 'fuds:ListarVendedor' %}">Vendedores</a>
-      <div class="badge-pill">
-        <a href="{% url 'fuds:NuevoVendedor' %}" class="badge badge-success">Añadir</a>
-      </div>
-    </li>
-    {% endif %}
-  </ul>
+</div> -->
+  </div>
+
+
+  {% endif %}
 </div>
-
-
-<div class="col-sm-5">
-
-
-</div>
-</div>
-</div>
-
-
-{% endif %}
 
 {% endblock %}

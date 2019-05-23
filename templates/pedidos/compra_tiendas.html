@@ -3,7 +3,7 @@
 <title>Lista Productos</title>
 {% endblock titulo %}
 
-{% block navbar %}
+{% block navbar %} 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="{% url 'inicio:index' %}">SGA</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,6 +80,10 @@
 
         </div>
       </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-success" role="alert">
+      Actualmente existe un pedido correspondiente de {% now "M Y" %}!
     </div>
 
     {% endfor %}

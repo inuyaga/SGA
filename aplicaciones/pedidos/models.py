@@ -52,7 +52,7 @@ class Producto(models.Model):
         return self.producto_nombre  
 
 
-class Pedido(models.Model):  
+class Pedido(models.Model):   
     pedido_id_pedido = models.AutoField(primary_key=True)
     pedido_fecha_pedido = models.DateTimeField(auto_now_add=True)
     pedido_actualizado = models.DateTimeField(auto_now=True)
@@ -70,17 +70,7 @@ class Pedido(models.Model):
 
     def __str__(self):
         return str(self.pedido_id_pedido)
-    # class Meta:
-    #     permissions = (
-    #         # Permission identifier     human-readable permission name
-    #         ("can_drive",               "Can drive"),
-    #         ("can_vote",                "Can vote in elections"),
-    #         ("can_drink",               "Can drink alcohol"),
-    #     )
-# Obtiene nombre de la sucursal
-
-    
-#
+  
 
 class Detalle_pedido(models.Model):
     detallepedido_pedido_id = models.ForeignKey(Pedido, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Numero de pedido')
@@ -99,3 +89,9 @@ class Detalle_pedido(models.Model):
 
     def __str__(self):
         return str(self.detallepedido_producto_id)
+
+class Configuracion_pedido(models.Model):
+    conf_ID=models.AutoField(primary_key=True)
+    conf_fecha_inicio=models.DateField('Fecha inicio')
+    conf_fecha_fin=models.DateField('Fecha final') 
+    
