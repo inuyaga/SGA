@@ -539,17 +539,22 @@ class Crear_pedido_tiendaView(View):
 class PedidoList(ListView): 
     model = Pedido
     template_name = 'pedidos/pedido/pedido_admin.html'
-    paginate_by = 10 
+    ordering = ['pedido_id_pedido']
     def get_context_data(self, **kwargs):
         context = super(PedidoList, self).get_context_data(**kwargs)
         context['tituloBrea'] = 'Actualizar'
-        context['usuario'] = self.request.user
+        context['usuario'] = self.request.user 
        
         return context
 
     def get_queryset(self):
+        from django.utils.dateparse import parse_datetime
+        import pytz
         queryset = super(PedidoList, self).get_queryset()
         status = self.request.GET.get('status')
+        inicio = self.request.GET.get('inicio')
+        fin = self.request.GET.get('fin')      
+
         if status != None:
             if status == '0':
                 pass
@@ -557,7 +562,10 @@ class PedidoList(ListView):
                 queryset = queryset.filter(pedido_status=status)
         else: 
             queryset = queryset.filter(pedido_status=1)
-     
+
+        if inicio != None and fin != None:            
+            if inicio != '' and fin != '':
+                queryset=Pedido.objects.filter(pedido_fecha_pedido__range=(inicio, fin))
         return queryset
     @method_decorator(permission_required('pedidos.view_pedido',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
@@ -649,10 +657,10 @@ class PedidoUpdate(UpdateView):
                 return super(PedidoUpdate, self).dispatch(*args, **kwargs)
 
 
-class PedidoListSucursal(ListView):
+class PedidoListSucursal(ListView): 
     model = Pedido
     template_name = 'pedidos/pedido/pedido_admin.html'
-    paginate_by = 10
+    ordering = ['pedido_id_pedido']
 
     def get_context_data(self, **kwargs):
         context = super(PedidoListSucursal, self).get_context_data(**kwargs)
@@ -668,13 +676,21 @@ class PedidoListSucursal(ListView):
         # FILTRAMOS EN QUERY PARA MOSTRAR
         
         status = self.request.GET.get('status')
+        inicio = self.request.GET.get('inicio')
+        fin = self.request.GET.get('fin')
+
         if status != None:
             if status == '0':
-                pass
+                queryset = queryset_init.filter(pedido_id_depo=pertenece.pertenece_empresa)
             else:
                 queryset = queryset_init.filter(pedido_status=status, pedido_id_depo=pertenece.pertenece_empresa)
         else:
-            queryset=queryset.filter(pedido_id_depo=pertenece.pertenece_empresa, pedido_status=1)
+            
+            if inicio != None and fin != None:            
+                if inicio != '' and fin != '':
+                    queryset=Pedido.objects.filter(pedido_id_depo=pertenece.pertenece_empresa, pedido_fecha_pedido__range=(inicio, fin))
+            else:
+                queryset=queryset.filter(pedido_id_depo=pertenece.pertenece_empresa, pedido_status=1)
 
         return queryset
  
