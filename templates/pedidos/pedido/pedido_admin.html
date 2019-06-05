@@ -14,70 +14,93 @@
         <li class="breadcrumb-item active" aria-current="page">Pedidos</li>
     </ol>
 </nav>
+
+
+
+
 <div class="row">
-    <div class="col-sm-9">
 
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col"><small>##</small></th>
-                    <th scope="col"><small>CREADO</small></th>
-                    <th scope="col"><small>DEPARTAMENTO</small></th>
-                    <th scope="col"><small>SUCURSAL</small></th>
-
-                    <th scope="col"><small>TOTAL</small></th>
-                    <th scope="col"><small>AUTORIZO</small></th>
-                    <th scope="col"><small>RECHAZÓ</small></th>
-                    <th scope="col"><small>STATUS</small></th>
-                    <th scope="col"><small>TIPO</small></th>
-                    <th scope="col">
-                        {% if perms.pedidos.add_configuracion_pedido %}
-                          
-                        <a href="{% url 'pedidos:pedido_config' %}" title="Configuracion de pedidos"
-                        class="btn btn-secondary btn-sm"><i class="material-icons">build</i>
+        <div class="col-sm-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Pedidos</h4>
+                        <ul class="card-actions">
+                            <li>
+                                <button type="button" data-toggle="tooltip" title="" data-original-title="Undo"><i class="ion-action-undo"></i></button>
+                            </li>
+                            <li>
+                                <button type="button" data-toggle="tooltip" title="" data-original-title="Redo"><i class="ion-action-redo"></i></button>
+                            </li>
+                            <li>
+                                <button type="button" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ion-pencil"></i></button>
+                            </li>
+                            <li class="dropdown">
+                                <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span class="caret"></span></button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li class="dropdown-header">Accion</li>
+                                    <li>
+                                        {% if perms.pedidos.add_configuracion_pedido %}  
+                                        <a tabindex="-1" href="{% url 'pedidos:pedido_config' %}">Configurar pedidos</a>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <!-- .card-actions -->
+                    </div>
+                    <div class="card-block">
+                            <table class="table">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col"><small>##</small></th>
+                                            <th scope="col"><small>CREADO</small></th>
+                                            <th scope="col"><small>DEPARTAMENTO</small></th>
+                                            <th scope="col"><small>SUCURSAL</small></th>
                         
-                    </a>
-                    {% endif %}
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for pedido in object_list %}
-                <tr>
-                    <th scope="row"><small>{{pedido.pedido_id_pedido}}</small></th>
-                    <th scope="row"><small>{{pedido.pedido_fecha_pedido}}</small></th>
-                    <td><small>{{pedido.pedido_id_depo}}</small></td>
-                    <td><small>{{pedido.pedido_id_depo.departamento_id_sucursal}}</small></td>
-                    <td><small>{{pedido.get_total}}</small></td>
-                    <td><small>{{pedido.pedido_autorizo}}</small></td>
-                    <td><small>{{pedido.pedido_rechazado}}</small></td>
-                    <td><small>
-                            <span class="badge badge-{% if pedido.pedido_status == 1 %}info{% endif %}{% if pedido.pedido_status == 2 %}success{% endif %}{% if pedido.pedido_status == 3 %}danger{% endif %}">
-                                {{pedido.get_pedido_status_display}}
-                            </span>
-                        </small></td>
-                    <td><small>{{pedido.get_pedido_tipo_display}}</small></td>
-                    <td><small>
-                            {% if perms.pedidos.change_pedido %}
-                            {% if pedido.pedido_status == 1 %}
-                            <a class="btn btn-outline-warning btn-sm"
-                                href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}" role="button"><i
-                                    class="material-icons">border_color</i></a>
-                            {% endif %}
+                                            <th scope="col"><small>TOTAL</small></th>
+                                            <th scope="col"><small>AUTORIZO</small></th>
+                                            <th scope="col"><small>RECHAZÓ</small></th>
+                                            <th scope="col"><small>STATUS</small></th>
+                                            <th scope="col"><small>TIPO</small></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for pedido in object_list %}
+                                        <tr>
+                                            <th scope="row"><small>{{pedido.pedido_id_pedido}}</small></th>
+                                            <th scope="row"><small>{{pedido.pedido_fecha_pedido}}</small></th>
+                                            <td><small>{{pedido.pedido_id_depo}}</small></td>
+                                            <td><small>{{pedido.pedido_id_depo.departamento_id_sucursal}}</small></td>
+                                            <td><small>{{pedido.get_total}}</small></td>
+                                            <td><small>{{pedido.pedido_autorizo}}</small></td>
+                                            <td><small>{{pedido.pedido_rechazado}}</small></td>
+                                            <td><small>
+                                                    <span class="badge badge-{% if pedido.pedido_status == 1 %}info{% endif %}{% if pedido.pedido_status == 2 %}success{% endif %}{% if pedido.pedido_status == 3 %}danger{% endif %}">
+                                                        {{pedido.get_pedido_status_display}}
+                                                    </span>
+                                                </small></td>
+                                            <td><small>{{pedido.get_pedido_tipo_display}}</small></td>
+                                            <td><small>
+                                                    <div class="btn-group">
+                                                    {% if perms.pedidos.change_pedido %}
+                                                    {% if pedido.pedido_status == 1 %}
+                                                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>
+                                                    {% endif %}
+                                                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:pedidos_list_detalles' pedido.pedido_id_pedido %}" type="button" data-toggle="tooltip" title="" data-original-title="Descargar Pedido"><i class="fa fa-arrow-circle-o-down"></i></a>                        
+                                                    {% endif %}
+                                                </div>
+                                                </small>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                        
+                                    </tbody>
+                                </table>
+                    </div>
+                </div>
+            </div>
 
-                            <a class="btn btn-outline-success btn-sm"
-                                href="{% url 'pedidos:pedidos_list_detalles' pedido.pedido_id_pedido %}"
-                                role="button"><i class="material-icons">arrow_downward</i></a>
-
-                            {% endif %}
-                        </small>
-                    </td>
-                </tr>
-                {% endfor %}
-
-            </tbody>
-        </table>
-    </div>
+    
 
     <div class="col-sm-3">
         <ul class="list-group">

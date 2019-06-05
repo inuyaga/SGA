@@ -38,7 +38,7 @@ urlpatterns = [
 
     path('list/pedidos/', PedidoList.as_view(), name='pedidos_list'), 
     path('list/pedidos/detalles/<int:pk>', dowload_pedido_detalles.as_view(), name='pedidos_list_detalles'), 
-    path('list/pedidos/update/<int:pk>/', PedidoUpdate.as_view(), name='pedido_update'),
+    path('list/pedidos/update/<int:pk>/', PedidoUpdate.as_view(), name='pedido_update'), 
 
     path('config/list/', ConfigPedidoListView.as_view(), name='pedido_config'),
     path('config/crar/', ConfigPedidoCreate.as_view(), name='pedido_config_crear'),

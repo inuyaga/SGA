@@ -471,12 +471,13 @@ def Obtenernumero(numero):
     else:
         return numero
 
-class DetalleList(ListView): 
+class DetalleList(ListView):  
     paginate_by = 10
     model = Detalle_pedido
     template_name = 'pedidos/listado_pre_pedido.html' 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['conteo'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False).count()
         context['usuario'] = self.request.user
         context['Limpieza'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False, detallepedido_categoria=1)
         context['Papeleria'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False, detallepedido_categoria=2)
@@ -530,7 +531,7 @@ class Crear_pedido_tiendaView(View):
             pedido.save()
             Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_categoria=3).update(detallepedido_pedido_id=pedido.pk, detallepedido_status=True)
 
-        return redirect('pedidos:pedido_tienda_listado')
+        return redirect('pedidos:pedido_tienda_listado') 
 
     def post(self, request, *args, **kwargs):
         return HttpResponse('POST request!')
@@ -634,7 +635,7 @@ class dowload_pedido_detalles(TemplateView):
 
 class PedidoUpdate(UpdateView): 
     model = Pedido
-    form_class = PedidoForm
+    form_class = PedidoForm 
     template_name = 'pedidos/pedido/pedido_create.html'
     success_url = reverse_lazy('pedidos:pedidos_list')
 
@@ -700,6 +701,7 @@ class SelectTipoCompraView(TemplateView):
         import datetime
         context = super(SelectTipoCompraView, self).get_context_data(**kwargs)
         context['conf'] = Configuracion_pedido.objects.all()
+        context['conteo'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False).count()
         hoy=datetime.datetime.now()
         for config in context['conf']:
             if config.conf_fecha_inicio <= hoy.date() and config.conf_fecha_fin >= hoy.date():

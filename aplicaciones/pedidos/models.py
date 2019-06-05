@@ -49,7 +49,7 @@ class Producto(models.Model):
      
 
     def __str__(self):
-        return self.producto_nombre  
+        return self.producto_nombre   
 
 
 class Pedido(models.Model):    
@@ -63,6 +63,8 @@ class Pedido(models.Model):
     pedido_rechazado=models.ForeignKey(Usuario, verbose_name='Rechazado Por', related_name='Cancelo', blank=True, null=True, on_delete=models.CASCADE)
     CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
     pedido_tipo=models.IntegerField('Categoria de producto', choices=CATEGORIA, default=1)
+    pedido_n_factura=models.CharField('Folio Factura', max_length=14, blank=True, null=True)
+    pedido_n_cresscedo=models.CharField('Venta Cresscendo', max_length=14, blank=True, null=True)
 
     def get_total(self):
         total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))['suma_total']
