@@ -166,7 +166,7 @@ class FudList(ListView):
         cajaform= self.request.GET.get("Busqueda")
         if(cajaform != None or cajaform != "0"):
             queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
-        return queryset
+        return queryset 
         
 
 
