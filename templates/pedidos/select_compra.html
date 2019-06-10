@@ -1,4 +1,95 @@
 {% extends 'index/base.html'%}
+
+{% block navbar %} 
+{% load static %}
+
+  <nav class="navbar navbar-default">
+      <div class="container-fluid">
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                  data-target="#header-navbar-collapse" aria-expanded="false">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <button class="pull-left hidden-lg hidden-md navbar-toggle" type="button"
+                  data-toggle="layout" data-action="sidebar_toggle">
+                  <span class="sr-only">Toggle drawer</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <span class="navbar-page-title">
+
+                  Dashboard
+              </span>
+          </div>
+
+          <div class="collapse navbar-collapse" id="header-navbar-collapse">
+              <!-- Header search form -->
+              <form class="navbar-form navbar-left app-search-form" role="search">
+                  <div class="form-group">
+                      <div class="input-group">
+                          <input class="form-control" name="buscar" type="search" id="search-input"
+                              placeholder="Buscar..." />
+                          <span class="input-group-btn">
+                              <button class="btn" type="button"><i
+                                      class="ion-ios-search-strong"></i></button>
+                          </span>
+                      </div>
+                  </div>
+              </form>
+
+              <ul class="nav navbar-nav navbar-right navbar-toolbar hidden-sm hidden-xs">
+                  <li>
+                      <!-- Opens the modal found at the bottom of the page -->
+                      <a href="javascript:void(0)" data-toggle="modal" data-target="#apps-modal"><i
+                              class="ion-grid"></i></a>
+                  </li>
+
+                  <li class="dropdown">
+                          <a href="javascript:void(0)" data-toggle="dropdown"><i class="material-icons">shopping_cart</i><span id="conteo" class="badge">{% if conteo > 0 %}{{conteo}}{% endif %}</span></a>
+                          <ul class="dropdown-menu dropdown-menu-right">
+                              <li class="dropdown-header">Pedidos</li>
+                              <li>
+                                  <a tabindex="-1" href="{% url 'pedidos:pedido_tienda_listado' %}"> Carrito compras <span id="conteo2" class="badge pull-right">{% if conteo > 0 %}{{conteo}}{% endif %}</span> </a>
+                              </li>
+                              <li class="divider"></li>
+                              <li>
+                                  <a tabindex="-1" href="{% url 'pedidos:pedido_sucursal_list' %}">Pedidos </a>
+                              </li>
+                          </ul>
+                      </li> 
+
+                  <li class="dropdown dropdown-profile">
+                      <a href="javascript:void(0)" data-toggle="dropdown">
+                          <span class="m-r-sm">{{user}} <span class="caret"></span></span>
+                          <img class="img-avatar img-avatar-48" src="{% static 'Profile-512.png' %}"
+                              alt="User profile pic" />
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-right">
+                          <li class="dropdown-header">
+                              Accesos
+                          </li>
+                          <li>
+                              <a href="{% url 'admin:index' %}">Admin Panel</a>
+                          </li>
+
+                          <li>
+                              <a href="{% url 'salir' %}">Salir</a>
+                          </li>
+                      </ul>
+                  </li>
+              </ul>
+              <!-- .navbar-right -->
+          </div>
+      </div>
+      <!-- .container-fluid -->
+  </nav>
+{% endblock navbar %}
+
+
 {% block contenido %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'ihover.css' %}" media="all">

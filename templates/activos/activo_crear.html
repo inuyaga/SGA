@@ -1,0 +1,18 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            {% for input in form %}
+            <div class="col-sm-4">
+                {{input.label}}
+                {{input}}
+            </div>
+            {% endfor %}
+        </div>
+        <button class="form-control btn btn-outline-success" type="submit">Guardar Cambios</button>
+    </form>
+</div>
+
+{% endblock contenido %}

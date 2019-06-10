@@ -1,0 +1,80 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+{% load humanize %}
+<div class="container">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">Añadir
+        especificación</button>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Activo</th>
+                <th scope="col">Item</th>
+                <th scope="col">Especificación</th>
+                <th scope="col">Costo</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Accion</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for item in obj_list %}
+            <tr>
+                <th scope="row">{{item.esp_activo}}</th>
+                <td>{{item.esp_item}}</td>
+                <td>{{item.esp_valor}}</td>
+                <td>
+                    {% if item.esp_tiene_costo %}
+                    <i class="material-icons text-success">monetization_on</i>
+                      {% else %}
+                      <i class="material-icons text-danger">highlight_off</i>
+                    {% endif %}
+                <td>{{item.esp_costo|intcomma}}</td>
+                <td>
+                        <a class="text-danger" title="Elimar" href="{% url 'activos:activo_esp_delete' view.kwargs.pk item.especificacion %}" role="button"><i class="material-icons">delete_forever</i></a>
+                        <a class="text-primary" title="Actualizar" href="{% url 'activos:activo_esp_update' view.kwargs.pk item.especificacion %}" role="button"><i class="material-icons">edit</i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Agregar nueva especifcación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {{form.esp_item.label}}
+                    {{form.esp_item}}
+                    {{form.esp_valor.label}}
+                    {{form.esp_valor}}
+                    <div class="custom-control custom-switch">
+                        {{form.esp_tiene_costo}}
+                        <label class="custom-control-label" for="id_esp_tiene_costo">{{form.esp_tiene_costo.label}}</label>
+                    </div>
+                    {{form.esp_costo.label}}
+                    {{form.esp_costo}}
+                    <button class="form-control btn btn-success" type="submit">Guardar Cambios</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

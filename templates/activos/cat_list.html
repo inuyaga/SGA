@@ -1,0 +1,50 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<div class="container">
+        <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Categorias</h4>
+                        <ul class="card-actions">
+                            <li class="dropdown">
+                                <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span class="caret"></span></button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li class="dropdown-header">Categoria</li>
+                                    <li>
+                                        <a tabindex="-1" href="{% url 'activos:create_categorias' %}">Añadir categoria</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <!-- .card-actions -->
+                    </div>
+                    <div class="card-block">
+                            <table class="table">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Area</th>
+                                            <th scope="col">Categoria</th>
+                                            <th scope="col">Accion</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in object_list %}
+                                        <tr>
+                                            <th scope="row">{{item.id}}</th>
+                                            <td>{{item.cat_area}}</td>
+                                            <td>{{item.cat_nombre}}</td>
+                                            <td>
+                                                <a class="btn btn-outline-danger btn-sm" href="{% url 'activos:cat_delete' item.id %}" role="button"><i class="material-icons">delete_forever</i></a>
+                                                <a class="btn btn-outline-success btn-sm" href="{% url 'activos:cat_update' item.id %}" role="button"><i class="material-icons">edit</i></a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                    </div>
+                </div>
+            </div>
+    
+</div>
+{% endblock contenido %}

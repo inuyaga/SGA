@@ -22,7 +22,7 @@
 </div>
 {% endif %}
 
-<div class="container">
+
 
     <table class="table table-sm">
         <thead class="thead-light">
@@ -37,44 +37,38 @@
             <th scope="col"><small>AREA</small></th>
             <th scope="col"><small>PRECIO</small></th>
             <th scope="col"><small>TIPO</small></th>
-            <th scope="col"><small>ACCION</small></th>
+            <th scope="col"><small>ACCIÓN</small></th>
           </tr>
         </thead>
         <tbody>
         {% for producto in object_list %}
         <tr>
             <th scope="row"><small>{{producto.producto_codigo}}</small></th>
-            <td><small>{{producto.producto_nombre}}</small></td>
-            <td><small>{{producto.producto_descripcion}}</small></td>
+            <td><small>{{producto.producto_nombre|truncatewords:3}}</small></td>
+            <td><small>{{producto.producto_descripcion|truncatewords:5}}</small></td>
             <td>
             <img src="{{producto.producto_imagen.url}}" alt="..." class="img-thumbnail" height="80" width="80">
             </td>
             <td><small>{{producto.producto_marca}}</small></td>
-            <td><small>{{producto.producto_area}}</small></td>
-            <td><small>{{producto.producto_precio}}</small></td>
+            <td><small>{{producto.producto_area}}</small></td> 
+            <td><small>{{producto.producto_precio}}</small></td> 
+            <td>{{producto.get_tipo_producto_display}}</td>
             <td>
-                {% if  producto.tipo_producto == 1%}
-                 <small>Uso Interno</small>
-                {% else %}
-                <small>Activo Fijo</small>
-                {% endif %}
-
-            </td>
-            <td>
-
-                {% if producto.producto_kit %}
-                <a class="btn btn-outline-info btn-sm" href="{% url 'pedidos:update_producto_kit' producto.producto_codigo %}" role="button"><i class="material-icons">border_color</i></a>
-                {% else %}
-                <a class="btn btn-outline-info btn-sm" href="{% url 'pedidos:update_producto' producto.producto_codigo %}" role="button"><i class="material-icons">border_color</i></a>
-                {% endif %}
-                <a class="btn btn-outline-danger btn-sm" href="{% url 'pedidos:eliminar_producto' producto.producto_codigo %}" role="button"><i class="material-icons">delete_forever</i></a>
+                <div class="btn-group">
+                    {% if producto.producto_kit %} 
+                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:update_producto_kit' producto.producto_codigo %}" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>
+                    {% else %}
+                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:update_producto' producto.producto_codigo %}" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>
+                    {% endif %}
+                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:eliminar_producto' producto.producto_codigo %}" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i class="ion-close"></i></a>
+                </div>
             </td>
           </tr>
         {% endfor %}
 
         </tbody>
       </table>
-</div>
+
 
 
 <div class="row justify-content-md-center">

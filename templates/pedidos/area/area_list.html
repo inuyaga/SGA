@@ -36,8 +36,10 @@
             <th scope="row">{{area.area_id_area}}</th>
             <td>{{area.area_nombre}}</td>
             <td>
-                <a class="btn btn-outline-info btn-sm" href="{% url 'pedidos:update_area' area.area_id_area %}" role="button"><i class="material-icons">border_color</i></a>
-                <a class="btn btn-outline-danger btn-sm" href="{% url 'pedidos:eliminar_area' area.area_id_area %}" role="button"><i class="material-icons">delete_forever</i></a>
+                <div class="btn-group">
+                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:update_area' area.area_id_area %}" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>
+                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:eliminar_area' area.area_id_area %}" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i class="ion-close"></i></a>
+                </div>
             </td>
           </tr>
         {% endfor %}

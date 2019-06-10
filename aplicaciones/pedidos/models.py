@@ -49,12 +49,12 @@ class Producto(models.Model):
      
 
     def __str__(self):
-        return self.producto_nombre  
+        return self.producto_nombre   
 
 
-class Pedido(models.Model):   
+class Pedido(models.Model):    
     pedido_id_pedido = models.AutoField(primary_key=True)
-    pedido_fecha_pedido = models.DateTimeField(auto_now_add=True)
+    pedido_fecha_pedido = models.DateField(auto_now_add=True)
     pedido_actualizado = models.DateTimeField(auto_now=True)
     pedido_id_depo = models.ForeignKey(Departamento, null=False, blank=False, on_delete=models.CASCADE, verbose_name='Departamento')
     STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Rechazado'),)
@@ -63,10 +63,14 @@ class Pedido(models.Model):
     pedido_rechazado=models.ForeignKey(Usuario, verbose_name='Rechazado Por', related_name='Cancelo', blank=True, null=True, on_delete=models.CASCADE)
     CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
     pedido_tipo=models.IntegerField('Categoria de producto', choices=CATEGORIA, default=1)
+    pedido_n_factura=models.CharField('Folio Factura', max_length=14, blank=True, null=True)
+    pedido_n_cresscedo=models.CharField('Venta Cresscendo', max_length=14, blank=True, null=True)
 
     def get_total(self):
-        total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))
-        return total['suma_total']
+        total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))['suma_total']
+        if total != None:
+            total=round(total, 3)
+        return total
 
     def __str__(self):
         return str(self.pedido_id_pedido)
