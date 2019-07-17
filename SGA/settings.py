@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'aplicaciones.pedidos',
     'aplicaciones.fuds',
     'aplicaciones.activos',
+    'aplicaciones.inicio',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +73,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            
         },
     },
 ]

@@ -21,7 +21,7 @@ class Zona(models.Model):
         return self.zona_nombre
 
 
-class Sucursal(models.Model):
+class Sucursal(models.Model): 
     id_sucursal = models.AutoField(primary_key=True)
     sucursal_nombre = models.CharField(max_length=150, verbose_name='Nombre de Sucursal')
     sucursal_direccion = models.CharField(max_length=250, verbose_name='Direccion')

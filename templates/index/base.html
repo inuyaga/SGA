@@ -36,59 +36,72 @@
     <!-- End Stylesheets -->
 
     <!-- Alertas y plugin para generar PDF -->
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/alertify.min.css"/>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/themes/default.min.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/alertify.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/themes/default.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
+        integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
+        crossorigin="anonymous"></script>
     <script src="https://unpkg.com/jspdf-autotable@3.1.1/dist/jspdf.plugin.autotable.js"></script>
     <!-- FIN Alertas y plugin para generar PDF -->
 
     <style>
-    .badge {
-  padding: 1px 9px 2px;
-  font-size: 12.025px;
-  font-weight: bold;
-  white-space: nowrap;
-  color: #ffffff;
-  background-color: #999999;
-  -webkit-border-radius: 9px;
-  -moz-border-radius: 9px;
-  border-radius: 9px;
-}
-.badge:hover {
-  color: #ffffff;
-  text-decoration: none;
-  cursor: pointer;
-}
-.badge-danger {
-  background-color: #b94a48;
-}
-.badge-danger:hover {
-  background-color: #953b39;
-}
-.badge-warning {
-  background-color: #f89406;
-}
-.badge-warning:hover {
-  background-color: #c67605;
-}
-.badge-success {
-  background-color: #468847;
-}
-.badge-success:hover {
-  background-color: #356635;
-}
-.badge-info {
-  background-color: #3a87ad;
-}
-.badge-info:hover {
-  background-color: #2d6987;
-}
-.badge-inverse {
-  background-color: #333333;
-}
-.badge-inverse:hover {
-  background-color: #1a1a1a;
-}
+        .badge {
+            padding: 1px 9px 2px;
+            font-size: 12.025px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #ffffff;
+            background-color: #999999;
+            -webkit-border-radius: 9px;
+            -moz-border-radius: 9px;
+            border-radius: 9px;
+        }
+
+        .badge:hover {
+            color: #ffffff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .badge-danger {
+            background-color: #b94a48;
+        }
+
+        .badge-danger:hover {
+            background-color: #953b39;
+        }
+
+        .badge-warning {
+            background-color: #f89406;
+        }
+
+        .badge-warning:hover {
+            background-color: #c67605;
+        }
+
+        .badge-success {
+            background-color: #468847;
+        }
+
+        .badge-success:hover {
+            background-color: #356635;
+        }
+
+        .badge-info {
+            background-color: #3a87ad;
+        }
+
+        .badge-info:hover {
+            background-color: #2d6987;
+        }
+
+        .badge-inverse {
+            background-color: #333333;
+        }
+
+        .badge-inverse:hover {
+            background-color: #1a1a1a;
+        }
     </style>
 </head>
 
@@ -103,8 +116,8 @@
                 <div class="app-layout-drawer-scroll">
                     <!-- Drawer logo -->
                     <div id="logo" class="drawer-header">
-                        <a href="{% url 'inicio:index' %}"><img class="img-responsive"
-                                src="{% static 'ccs.png' %}" title="SGA" alt="SGA" /></a>
+                        <a href="{% url 'inicio:index' %}"><img class="img-responsive" src="{% static 'ccs.png' %}"
+                                title="SGA" alt="SGA" /></a>
                     </div>
 
                     <!-- Drawer navigation -->
@@ -183,7 +196,7 @@
                             <li class="nav-item nav-item-has-subnav">
                                 <a href="javascript:void(0)"><i class="ion-document-text"></i> FUDS</a>
                                 <ul class="nav nav-subnav">
-                                    {% if perms.fuds.view_conformidad %}                               
+                                    {% if perms.fuds.view_conformidad %}
                                     <li>
                                         <a href="{% url 'fuds:ListarConformidad' %}">Conformidades</a>
                                     </li>
@@ -204,7 +217,7 @@
                                     </li>
                                     {% endif %}
                                     {% if perms.fuds.view_zonas %}
-                                    <li> 
+                                    <li>
                                         <a href="{% url 'fuds:ListarZona' %}">Zonas</a>
                                     </li>
                                     {% endif %}
@@ -220,7 +233,7 @@
                             <li class="nav-item nav-item-has-subnav">
                                 <a href="javascript:void(0)"><i class="ion-settings"></i> Activos</a>
                                 <ul class="nav nav-subnav">
-                                    {% if perms.activos.view_categoria %}  
+                                    {% if perms.activos.view_categoria %}
                                     <li>
                                         <a href="{% url 'activos:cat_list' %}">Categoria</a>
                                     </li>
@@ -370,15 +383,16 @@
                 <!-- Page Content -->
                 <div class="container-fluid p-y-md">
 
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div {% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
                     {% block contenido %}
-
-                    
-
                     {% endblock contenido %}
-
-
-
-
 
                 </div>
                 <!-- .container-fluid -->
@@ -442,7 +456,7 @@
     <script src="{% static 'assets/js/core/jquery.placeholder.min.js' %}"></script>
     <script src="{% static 'assets/js/app.js' %}"></script>
     <script src="{% static 'assets/js/app-custom.js' %}"></script>
-    
+
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     {% block script %}

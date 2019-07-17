@@ -53,7 +53,7 @@ class Producto(models.Model):
 
 
 class Pedido(models.Model):    
-    pedido_id_pedido = models.AutoField(primary_key=True)
+    pedido_id_pedido = models.AutoField(primary_key=True) 
     pedido_fecha_pedido = models.DateField(auto_now_add=True)
     pedido_actualizado = models.DateTimeField(auto_now=True)
     pedido_id_depo = models.ForeignKey(Departamento, null=False, blank=False, on_delete=models.CASCADE, verbose_name='Departamento')
@@ -93,6 +93,11 @@ class Detalle_pedido(models.Model):
 
     def __str__(self):
         return str(self.detallepedido_producto_id)
+
+    def sucursal(self):
+        suc=Pedido.objects.get(pedido_id_pedido=self.detallepedido_pedido_id)
+        return suc.pedido_id_depo.departamento_id_sucursal.sucursal_nombre
+    
 
 class Configuracion_pedido(models.Model):
     conf_ID=models.AutoField(primary_key=True)

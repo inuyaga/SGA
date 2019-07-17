@@ -4,7 +4,7 @@ from aplicaciones.pedidos.views import AreaCreate, AreaList, AreaUpdate, AreaDel
 MarcaUpdate, MarcaDelete, ProductoCreate, ProductoList, ProductoDelete, ProductoUpdate, ProductoCompraList, \
 DetalleList, DetalleDelete, PedidoList, PedidoUpdate, PedidoListSucursal, ProductokitCreate, \
 ProductoKitUpdate, dowload_pedido_detalles, SelectTipoCompraView, Crear_pedido_tiendaView, ConfigPedidoListView, \
-ConfigPedidoCreate, ConfigPedidoUpdate
+ConfigPedidoCreate, ConfigPedidoUpdate, dowload_report_pedidos
 from django.conf import settings
 from django.conf.urls.static import static
 app_name = "pedidos"
@@ -33,10 +33,10 @@ urlpatterns = [
     path('compra_sucursal/pre_pedido', DetalleList.as_view(), name='pedido_tienda_listado'), 
     path('compra_sucursal/pre_pedido/delete/<int:pk>/', DetalleDelete.as_view(), name='detalle_producto_delete'),
     path('compra_sucursal/pre_pedido/confirm_pedido/add/<int:tipo>/', Crear_pedido_tiendaView.as_view(), name='creacion_pedido_sucursal'),
-    path('compra_sucursal/pedido/list/', PedidoListSucursal.as_view(), name='pedido_sucursal_list'),
+    path('compra_sucursal/pedido/list/', PedidoListSucursal.as_view(), name='pedido_sucursal_list'), 
 
 
-    path('list/pedidos/', PedidoList.as_view(), name='pedidos_list'), 
+    path('list/pedidos/', PedidoList.as_view(), name='pedidos_list'),  
     path('list/pedidos/detalles/<int:pk>', dowload_pedido_detalles.as_view(), name='pedidos_list_detalles'), 
     path('list/pedidos/update/<int:pk>/', PedidoUpdate.as_view(), name='pedido_update'), 
 
@@ -44,9 +44,7 @@ urlpatterns = [
     path('config/crar/', ConfigPedidoCreate.as_view(), name='pedido_config_crear'),
     path('config/crar/<int:pk>/', ConfigPedidoUpdate.as_view(), name='pedido_config_update'),
 
-
-    
-
+    path('descargar/report/sucursales/', dowload_report_pedidos.as_view(), name='down_report_suc'),
 
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

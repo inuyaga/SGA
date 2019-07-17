@@ -106,3 +106,4 @@ sga_win/
 media/
 env_sga/
 sga_win/
+XDG_CACHE_HOME/

@@ -15,9 +15,6 @@
     </ol>
 </nav>
 
-
-
-
 <div class="row">
 
         <div class="col-sm-9">
@@ -39,29 +36,42 @@
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li class="dropdown-header">Accion</li>
                                     <li>
-                                        {% if perms.pedidos.add_configuracion_pedido %}  
+                                        {% if perms.pedidos.add_configuracion_pedido %}
                                         <a tabindex="-1" href="{% url 'pedidos:pedido_config' %}">Configurar pedidos</a>
                                         {% endif %}
                                     </li>
+                                    
+                                    {% if view.request.GET %}
+                                    {% if user.is_superuser %} 
+                                    <li>
+                                        
+                                        <a tabindex="-1" href="{% url 'pedidos:down_report_suc' %}?status={{view.request.GET.status}}{% if view.request.GET.inicio != None and view.request.GET.fin %}&inicio={{view.request.GET.inicio}}&fin={{view.request.GET.fin}}{% endif %}">Descargar Reporte filtrado</a>
+                                        
+                                    </li>
+                                    {% endif %}
+                                    {% endif %}
                                 </ul>
                             </li>
                         </ul>
                         <!-- .card-actions -->
                     </div>
                     <div class="card-block">
-                            <table class="table">
+                    <div class="table-responsive">
+                            <table class="table-condensed">
                                     <thead class="thead-light">
                                         <tr>
                                             <th scope="col"><small>##</small></th>
                                             <th scope="col"><small>CREADO</small></th>
                                             <th scope="col"><small>DEPARTAMENTO</small></th>
                                             <th scope="col"><small>SUCURSAL</small></th>
-                        
+
                                             <th scope="col"><small>TOTAL</small></th>
                                             <th scope="col"><small>AUTORIZO</small></th>
                                             <th scope="col"><small>RECHAZÓ</small></th>
+                                            <th scope="col"><small>Factura/Venta</small></th>
                                             <th scope="col"><small>STATUS</small></th>
                                             <th scope="col"><small>TIPO</small></th>
+                                            <th scope="col"><small>ACCION</small></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -74,6 +84,7 @@
                                             <td><small>{{pedido.get_total}}</small></td>
                                             <td><small>{{pedido.pedido_autorizo}}</small></td>
                                             <td><small>{{pedido.pedido_rechazado}}</small></td>
+                                            <td><small>{{pedido.pedido_n_factura}}/{{pedido.pedido_n_cresscedo}}</small></td>
                                             <td><small>
                                                     <span class="badge badge-{% if pedido.pedido_status == 1 %}info{% endif %}{% if pedido.pedido_status == 2 %}success{% endif %}{% if pedido.pedido_status == 3 %}danger{% endif %}">
                                                         {{pedido.get_pedido_status_display}}
@@ -83,24 +94,25 @@
                                             <td><small>
                                                     <div class="btn-group">
                                                     {% if perms.pedidos.change_pedido %}
-                                                    {% if pedido.pedido_status == 1 %}
+
                                                     <a class="btn btn-xs btn-default" href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>
-                                                    {% endif %}
-                                                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:pedidos_list_detalles' pedido.pedido_id_pedido %}" type="button" data-toggle="tooltip" title="" data-original-title="Descargar Pedido"><i class="fa fa-arrow-circle-o-down"></i></a>                        
+
+                                                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:pedidos_list_detalles' pedido.pedido_id_pedido %}" type="button" data-toggle="tooltip" title="" data-original-title="Descargar Pedido"><i class="fa fa-arrow-circle-o-down"></i></a>
                                                     {% endif %}
                                                 </div>
                                                 </small>
                                             </td>
                                         </tr>
                                         {% endfor %}
-                        
+
                                     </tbody>
                                 </table>
+                    </div>
                     </div>
                 </div>
             </div>
 
-    
+
 
     <div class="col-sm-3">
         <ul class="list-group">
@@ -123,12 +135,21 @@
                 <form action="" method="GET">
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Fecha inicial</label>
-                        <input name="inicio" type="date" class="form-control" required>
+                        <input name="inicio" type="date" class="form-control" value="{{view.request.GET.inicio}}" required>
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Fecha Final</label>
-                        <input name="fin" type="date" class="form-control" required>
+                        <input name="fin" type="date" class="form-control" value="{{view.request.GET.fin}}" required>
                     </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">Status Pedido</label>
+                        <select class="form-control" id="exampleFormControlSelect1" name="status">
+                          <option value="0" {% if view.request.GET.status == '0' %}selected{% endif %}>Todo</option>
+                          <option value="1" {% if view.request.GET.status == '1' %}selected{% endif %}>Creado</option>
+                          <option value="2" {% if view.request.GET.status == '2' %}selected{% endif %}>Aprobado</option>
+                          <option value="3" {% if view.request.GET.status == '3' %}selected{% endif %}>Rechazado</option>
+                        </select>
+                      </div>
                     <button class="btn btn-primary" type="submit">Buscar</button>
                 </form>
             </div>
