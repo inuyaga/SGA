@@ -143,10 +143,16 @@
         </a>
     </div>
     {% empty %}
-    <div class="alert alert-success" role="alert">
-      Actualmente existe un pedido correspondiente de {% now "M Y" %}!
-    </div>
-
+    {% if msn_condicion != None %}
+      <div class="alert alert-success" role="alert">
+        {{msn_condicion}}!
+      </div>
+      {% else %}
+      <div class="alert alert-success" role="alert">
+        Actualmente existe un pedido correspondiente de {% now "M Y" %}!
+      </div>
+    {% endif %}
+    
     {% endfor %}
   </div>
 </div>

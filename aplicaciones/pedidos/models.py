@@ -46,6 +46,7 @@ class Producto(models.Model):
     producto_productos=models.ManyToManyField("Producto")
     CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
     producto_categoria=models.IntegerField('Categoria de producto', choices=CATEGORIA, default=1)
+    producto_visible=models.BooleanField('¿Producto visible?', default=True)
      
 
     def __str__(self):

@@ -69,7 +69,7 @@ class AreaUpdate(UpdateView):
     def dispatch(self, *args, **kwargs):
                 return super(AreaUpdate, self).dispatch(*args, **kwargs)
 
-class AreaDelete(DeleteView):
+class AreaDelete(DeleteView): 
     model = Area
     template_name = "pedidos/delete_forever.html"
     success_url = reverse_lazy('pedidos:listar_area')
@@ -292,6 +292,11 @@ class ProductoCompraList(ListView):
         context['usuario'] = self.request.user
         context['conteo'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False).count()
         context['msn_empresa'] = None
+        context['msn_condicion'] = None
+        tipo_pedido=self.kwargs.get('tipo')
+        queryset = Producto.objects.filter(producto_es_kit=False,producto_visible=True, producto_categoria=tipo_pedido)
+        if queryset != None:
+            context['msn_condicion'] = 'No hay productos habilitados o no se ha agregado algun producto'
         try:
             empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=self.request.user)
         except ObjectDoesNotExist as error:
@@ -301,7 +306,7 @@ class ProductoCompraList(ListView):
     def get_queryset(self):
         from datetime import datetime, date
         import calendar
-        queryset = super(ProductoCompraList, self).get_queryset()
+        queryset = super(ProductoCompraList, self).get_queryset() 
         try:
             departamento=Pertenece_empresa.objects.get(pertenece_id_usuario=self.request.user)
             # ESTABLECEMOS LA FECHA ACTUAL
@@ -314,25 +319,26 @@ class ProductoCompraList(ListView):
             end_date = datetime(today.year, today.month, last_day)
 
             tipo_pedido=self.kwargs.get('tipo')
-            queryset = queryset.filter(producto_es_kit=False, producto_categoria=tipo_pedido)
+            queryset = queryset.filter(producto_es_kit=False,producto_visible=True, producto_categoria=tipo_pedido)
             
 
             if tipo_pedido == 1:
                 conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).exclude(pedido_status=3).count()
                 if conteo_pedido > 1:
-                    queryset=''
+                    queryset=Producto.objects.none()
             if tipo_pedido == 2:
                 conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).exclude(pedido_status=3).count()
                 if conteo_pedido > 1:
-                    queryset=''
+                    queryset=Producto.objects.none()
             if tipo_pedido == 3:
                 conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).exclude(pedido_status=3).count()
                 if conteo_pedido > 1:
-                    queryset=''
+                    queryset=Producto.objects.none()
 
             return queryset
         except ObjectDoesNotExist as error:
-            return queryset.filter(producto_es_kit=False, producto_categoria=self.kwargs.get('tipo'))        
+            return queryset.filter(producto_es_kit=False, producto_visible=True, producto_categoria=self.kwargs.get('tipo'))        
+            
         
 
     @method_decorator(login_required)

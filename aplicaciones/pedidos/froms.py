@@ -20,7 +20,7 @@ class MarcaForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
-class ProductoForm(forms.ModelForm):
+class ProductoForm(forms.ModelForm): 
     class Meta:
         model = Producto
         # fields = '__all__'
@@ -31,6 +31,7 @@ class ProductoForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
         self.fields['producto_es_kit'].widget.attrs.update({'class': 'form-check-input'})
+        self.fields['producto_visible'].widget.attrs.update({'class': 'form-check-input'})
 
 class ProductoKitForm(forms.ModelForm):
     class Meta:
@@ -43,6 +44,7 @@ class ProductoKitForm(forms.ModelForm):
         self.fields['producto_productos'].queryset = Producto.objects.filter(producto_es_kit=True)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+            self.fields['producto_visible'].widget.attrs.update({'class': 'form-check-input'})
 
 class PedidoForm(forms.ModelForm):
     class Meta:
