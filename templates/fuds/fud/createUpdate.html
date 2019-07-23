@@ -172,13 +172,14 @@ function genera_pdf(){
   doc.text(100, 32,"FOLIO: {{ view.kwargs.pk }}");
   doc.setFontSize(8);
   doc.text(10, 40,"PEDIDO: "+$("#id_NumeroVenta").val());
+  //doc.text(42, 40,"VENDEDOR: "+$("#id_VendedorCliente option:selected").text());
   doc.text(42, 40,"VENDEDOR: "+$("#id_VendedorCliente option:selected").text());
   //doc.text(125, 40,"# CLIENTE: "+$("#id_NumeroCliente").val());
   //doc.text(165, 40,"FECHA: "+$("#id_fecha_creacion").val());
   doc.text(140, 40,"FECHA: {{ fecha_hoy }}");
   doc.text(10, 45,"FACTURA: "+$("#id_Factura").val());
   doc.text(50, 45,"FECHA FACTURA: {{ fecha_factura.FechaFactura }}");
-  doc.text(120, 45,"CLIENTE: "+$("#id_NumeroCliente").val());
+  doc.text(120, 45,"CLIENTE: {{fecha_factura.NumeroCliente}}");
   doc.autoTable({html: '#tabla_fud', startY: 47,styles:{fontSize:6}});
   var splitTitle = doc.splitTextToSize("OBSERVACIONES: "+$("#id_observaciones").val(), 180);
   doc.text(10, doc.previousAutoTable.finalY + 2,splitTitle);
