@@ -184,9 +184,10 @@ function genera_pdf(){
   var splitTitle = doc.splitTextToSize("OBSERVACIONES: "+$("#id_observaciones").val(), 180);
   doc.text(10, doc.previousAutoTable.finalY + 2,splitTitle);
   doc.text(30, doc.previousAutoTable.finalY + 52,"Cliente");
-  doc.text(70, doc.previousAutoTable.finalY + 52,"Almacen");
+  doc.text(60, doc.previousAutoTable.finalY + 52,"Distribución");
+  doc.text(90, doc.previousAutoTable.finalY + 52,"Almacen");
   doc.text(120, doc.previousAutoTable.finalY + 52,"Acomodo");
-  doc.text(160, doc.previousAutoTable.finalY + 52,"Gerente Zona");
+  doc.text(160, doc.previousAutoTable.finalY + 52,"Autorizado por");
   doc.save('Fud'+{{ view.kwargs.pk }}+'.pdf');
   }
 </script>
