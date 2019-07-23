@@ -92,7 +92,7 @@
 <hr>
 <div class="container">
   <div class="row">
-    <button type="button" onclick="genera_pdf()" class="btn btn-dark">Generar PDF</button>
+    <button type="button" onclick="genera_pdf()" class="btn btn-dark">Generar PDF </button>
     <table class="table table-bordered" id="tabla_fud">
       <thead>
           <tr>
@@ -169,15 +169,16 @@ function genera_pdf(){
   doc.text(10, 28,"CÓDIGO: CC-AC-R06");
   doc.text(10, 32,"EDICIÓN: 02 25 DE OCTUBRE DE 2018");
   doc.setFontSize(14);
-  doc.text(100, 32,"FOLIO: "+{{ view.kwargs.pk }});
+  doc.text(100, 32,"FOLIO: {{ view.kwargs.pk }}");
   doc.setFontSize(8);
-  doc.text(10, 40,"PEDIDO: "+{{ view.kwargs.pk }});
+  doc.text(10, 40,"PEDIDO: "+$("#id_NumeroVenta").val());
   doc.text(42, 40,"VENDEDOR: "+$("#id_VendedorCliente option:selected").text());
-  doc.text(125, 40,"# CLIENTE: "+$("#id_NumeroCliente").val());
-  doc.text(165, 40,"FECHA: "+$("#id_fecha_creacion").val());
+  //doc.text(125, 40,"# CLIENTE: "+$("#id_NumeroCliente").val());
+  //doc.text(165, 40,"FECHA: "+$("#id_fecha_creacion").val());
+  doc.text(140, 40,"FECHA: {{ fecha_hoy }}");
   doc.text(10, 45,"FACTURA: "+$("#id_Factura").val());
-  doc.text(50, 45,"FECHA FACTURA: "+$("#id_FechaFactura").val());
-  doc.text(100, 45,"CLIENTE: "+$("#id_NombreCliente").val());
+  doc.text(50, 45,"FECHA FACTURA: {{ fecha_factura.FechaFactura }}");
+  doc.text(120, 45,"CLIENTE: "+$("#id_NumeroCliente").val());
   doc.autoTable({html: '#tabla_fud', startY: 47,styles:{fontSize:6}});
   var splitTitle = doc.splitTextToSize("OBSERVACIONES: "+$("#id_observaciones").val(), 180);
   doc.text(10, doc.previousAutoTable.finalY + 2,splitTitle);

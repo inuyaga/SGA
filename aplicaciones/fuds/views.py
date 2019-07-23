@@ -245,17 +245,15 @@ class FudUpdate(UpdateView):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
         context['resultados'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk'))
+        context['fecha_factura']=Fud.objects.get(Folio = self.kwargs.get('pk'))
         context['total_partidas'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() ))['total']
         context['total_iva'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_iva=Sum( F('Partida_Cantidad') * F('Partida_Precio')*0.16, output_field=FloatField() ))['total_iva']
+        context['fecha_hoy']=datetime.now();
         total_total = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_total=Sum( F('Partida_Cantidad') * F('Partida_Precio')*1.16, output_field=FloatField() ))['total_total']
         if total_total == None :
             context['total_total'] = 0
         else:
             context['total_total'] = round(total_total,2)
-
-        
-
-
         return context
 
 class FudDelete(DeleteView): 
