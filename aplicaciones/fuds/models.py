@@ -59,7 +59,7 @@ class Clientes(models.Model):
 
 class Fud(models.Model):
     Folio = models.AutoField(primary_key=True)
-    NumeroVenta=models.IntegerField(verbose_name="Número de venta")
+    NumeroVenta=models.IntegerField(verbose_name="Número de venta", default='')
     FechaFactura = models.DateField(null=True, blank=True)
     NumeroCliente = models.ForeignKey(Clientes, null= True, blank=True, on_delete = models.PROTECT, verbose_name="Número de cliente")
     VendedorCliente = models.ForeignKey(Vendedores, null= True, blank=True, on_delete = models.PROTECT, verbose_name="Vendedor asignado al cliente")
