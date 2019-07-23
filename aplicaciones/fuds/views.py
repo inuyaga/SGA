@@ -77,7 +77,7 @@ class ClientCreate(CreateView):
     model= Clientes
     form_class = ClientForm
     template_name='fuds/CreateMotivo.html'
-    success_url=reverse_lazy("fuds:ClientList")
+    success_url=reverse_lazy("fuds:ListarClientes")
 
     @method_decorator(permission_required('fuds.add_clientes',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
