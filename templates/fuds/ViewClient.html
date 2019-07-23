@@ -1,0 +1,31 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<div class="container">
+    {% if perms.fuds.add_clientes %}
+    <a href="{% url 'fuds:NuevoCliente' %}"><i class="material-icons">
+            add_circle
+            </i>Agregar nuevo</a>
+    {% endif %}
+    
+    <table class="table table-reposive">
+        <tr>
+            <td><b>Número de cliente</b></td>
+            <td><b>Nombre del cliente</b></td>
+            <td><b>Estatus</b></td>
+            <td><b>Fecha alta</b></td>
+            <td class="text-center">Editar</td>
+            <td class="text-center">Eliminar</td>
+        </tr>
+        {% for dataclientes in object_list %}
+        <tr>
+            <td>{{ dataclientes.Client_numero }}</td>
+            <td>{{ dataclientes.Client_Nombre }}</td>
+            <td>{{ dataclientes.Client_Estatus }}</td>
+            <td>{{ dataclientes.Client_FechaAlta }}</td>
+            <td class="text-center"><a href="{% url 'fuds:EditarCliente' dataclientes.Client_numero %}"><i class="material-icons">edit</i></a></td>
+            <td class="text-center"><a href="{% url 'fuds:EliminarCliente' dataclientes.Client_numero %}"><i class="material-icons">delete</i></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div><!-- fin container-->
+{% endblock contenido %}

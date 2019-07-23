@@ -7,7 +7,8 @@ ZonaCreate,ZonaList,ZonaUpdate,ZonaDelete,\
 VendedorCreate,VendedorList, VendedorUpdate,VendedorDelete,\
 FudCreate, FudList, FudUpdate, FudDelete,\
 PartidaCreate, PartidaView, \
-TramiteCreate,TramiteUpdate,TramiteDelete,TramiteList
+TramiteCreate,TramiteUpdate,TramiteDelete,TramiteList, \
+ClientCreate,ClientUpdate,ClientList,ClientDelete
 
 app_name = "fuds"
 urlpatterns = [
@@ -20,6 +21,11 @@ urlpatterns = [
     path('EditarConformidad/<int:pk>/', ConformidadUpdate.as_view(), name='EditarConformidad'),
     path('ListarConformidad/', ConformidadList.as_view(), name='ListarConformidad'),
     path('EliminarConformidad/<int:pk>/', ConformidadDelete.as_view(), name='EliminarConformidad'),
+
+    path('NuevoCliente/', ClientCreate.as_view(), name='NuevoCliente'),
+    path('EditarCliente/<int:pk>/', ClientUpdate.as_view(), name='EditarCliente'),
+    path('ListarClientes/', ClientList.as_view(), name='ListarClientes'),
+    path('EliminarCliente/<int:pk>/', ClientDelete.as_view(), name='EliminarCliente'),
 
     path('NuevoTramite/', TramiteCreate.as_view(), name='NuevoTramite'),
     path('EditarTramite/<int:pk>/', TramiteUpdate.as_view(), name='EditarTramite'),

@@ -26,14 +26,14 @@
         <div class="row rayas ">
           {% csrf_token %}
           <div class="col-sm-3">
+            {{ form.NumeroVenta.label }}
+            {{ form.NumeroVenta.errors }}
+            {{ form.NumeroVenta }}
+          </div>
+          <div class="col-sm-3">
             {{ form.NumeroCliente.label }}
             {{ form.NumeroCliente.errors }}
             {{ form.NumeroCliente }}
-          </div>
-          <div class="col-sm-3">
-            {{ form.NombreCliente.label }}
-            {{ form.NombreCliente.errors }}
-            {{ form.NombreCliente }}
           </div>
           <div class="col-sm-3">
             {{ form.VendedorCliente.label }}

@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedores,Zona,PartidasFud
 from django.contrib import messages
 from datetime import datetime, timedelta
-from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit,FudFormEdit2,ZonaForm,VendedorForm,PartidaFudForm
+from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit,FudFormEdit2,ZonaForm,VendedorForm,PartidaFudForm,Clientes,ClientForm,ClientEditForm
 from django.db.models import Sum,F
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 from aplicaciones.pedidos.models import Producto
@@ -72,6 +72,64 @@ class MotivoDelete(DeleteView):
         context['model_count']=dict(model_count).items()
         context['protected']=protected
         return context
+
+class ClientCreate(CreateView):
+    model= Clientes
+    form_class = ClientForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ClientList")
+
+    @method_decorator(permission_required('fuds.add_clientes',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ClientCreate, self).dispatch(*args, **kwargs)
+    
+
+class ClientList(ListView):
+    model= Clientes
+    template_name='fuds/ViewClient.html'
+
+    @method_decorator(permission_required('fuds.view_clientes',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(ClientList, self).dispatch(*args, **kwargs)
+
+class ClientUpdate(UpdateView):
+    model= Clientes
+    form_class = ClientEditForm
+    template_name='fuds/CreateMotivo.html'
+    success_url=reverse_lazy("fuds:ListarClientes")
+
+    @method_decorator(permission_required('fuds.change_clientes',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ClientUpdate, self).dispatch(*args, **kwargs)
+
+class ClientDelete(DeleteView):
+    model= Clientes
+    template_name='fuds/DeleteMotivo.html'
+    success_url=reverse_lazy("fuds:ListarClientes")
+
+    @method_decorator(permission_required('fuds.delete_clientes',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(ClientDelete, self).dispatch(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.delete(request, *args, **kwargs)
+        except ProtectedError:
+            contex = {
+        'proveedores': 'proveedor'
+                        }
+        return render(request, 'pagoproveedor/protecteError.html', contex)
+
+
+        
 
 class ConformidadCreate(CreateView):
     model= Conformidad
@@ -146,6 +204,9 @@ class FudCreate(CreateView):
         context['usuario'] = self.request.user
         context['tituloBrea'] = 'Crear Fud'
         return context
+    def form_valid(self, form):
+        form.instance.creado_por=self.request.user
+        return super().form_valid(form)
 
 class FudList(ListView):
     model = Fud

@@ -34,8 +34,7 @@
         <tr>
             <th scope="col" class="text-center"> <small><b>#</b></small></th>
             <th scope="col" class="text-center"> <small><b>Fecha Factura</b></small></th>
-            <th scope="col" class="text-center"> <small><b>N° Cliente</b></small></th>
-            <th scope="col" class="text-center"> <small><b>Nombre</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Cliente</b></small></th>
             <th scope="col" class="text-center"> <small><b>Zona</b></small></th>
             <th scope="col" class="text-center"> <small><b>Vendedor</b></small></th>
             <th scope="col" class="text-center"> <small><b>Conformidad</b></small></th>
@@ -57,7 +56,6 @@
             <th scope="row"><b>{{fud.Folio}}</b></th>
             <td><small>{{fud.FechaFactura}}</small></td>
             <td><small>{{fud.NumeroCliente}}</small></td>
-            <td><small>{{fud.NombreCliente}}</small></td>
             <td><small>{{fud.VendedorCliente.Vend_Zona.Zona_nombre}}</small></td>
             <td><small>{{fud.VendedorCliente}}</small></td>
             <td><small>{{fud.Motivo.motivo_idconformidad.conformidad_descripcion}}</small></td>
@@ -65,7 +63,7 @@
             <td><small>{{fud.tramite}}</small></td>
             <td><small>{{fud.get_devolucion_display}}</small></td>
             <td><small>{{fud.responsable}}</small></td>
-            <td><small>{{fud.observaciones}}</small></td>
+            <td><small>{{fud.observaciones|truncatewords:5}}</small></td>
             <td><small>{{fud.fecha_creacion}}</small></td>
             <td><small>{{fud.creado_por}}</small></td>
             <td><small>{{fud.get_EstadoFud_display}}</small></td>

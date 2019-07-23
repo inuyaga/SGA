@@ -208,7 +208,7 @@
                                     {% endif %}
                                     {% if perms.fuds.view_tramite %}
                                     <li>
-                                        <a href="{% url 'fuds:ListarTramites' %}">Tramite validos</a>
+                                        <a href="{% url 'fuds:ListarTramites' %}">Trámites válidos</a>
                                     </li>
                                     {% endif %}
                                     {% if perms.fuds.view_fud %}
@@ -224,6 +224,11 @@
                                     {% if perms.fuds.view_vendedores %}
                                     <li>
                                         <a href="{% url 'fuds:ListarVendedor' %}">Vendedores</a>
+                                    </li>
+                                    {% endif %}
+                                    {% if perms.fuds.view_clientes %}
+                                    <li>
+                                        <a href="{% url 'fuds:ListarClientes' %}">Clientes</a>
                                     </li>
                                     {% endif %}
                                 </ul>

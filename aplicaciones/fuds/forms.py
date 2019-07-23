@@ -1,5 +1,5 @@
 from django import forms
-from aplicaciones.fuds.models import Fud,Motivo,Conformidad,Tramite,Zona,Vendedores,PartidasFud
+from aplicaciones.fuds.models import Fud,Motivo,Conformidad,Tramite,Zona,Vendedores,PartidasFud,Clientes
 from datetime import datetime, timedelta
 # pylint: disable = E1101
 class FudForm(forms.ModelForm):
@@ -60,7 +60,6 @@ class FudFormEdit2(forms.ModelForm):
         exclude = ['creado_por','FechaFactura']
 
         widgets ={
-            'FechaFactura': forms.DateInput(attrs={'type':'date', 'min':context['minimo'],'max':context['maximo']}),
             'observaciones': forms.Textarea(),
         }
 
@@ -75,7 +74,6 @@ class MotivoForm(forms.ModelForm):
     class Meta:
         model = Motivo
         fields = ('__all__')
-
 
     def __init__(self, *args, **kwargs):
         super(MotivoForm, self).__init__(*args, **kwargs)
@@ -92,6 +90,28 @@ class ConformidadForm(forms.ModelForm):
         super(ConformidadForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class ClientForm(forms.ModelForm):
+    class Meta:
+        model = Clientes
+        fields = ('__all__')
+
+    def __init__(self, *args, **kwargs):
+        super(ClientForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class ClientEditForm(forms.ModelForm):
+    class Meta:
+        model = Clientes
+        exclude = ['Client_FechaAlta']
+
+    def __init__(self, *args, **kwargs):
+        super(ClientEditForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+
 class TramiteForm(forms.ModelForm):
     class Meta:
         model = Tramite
