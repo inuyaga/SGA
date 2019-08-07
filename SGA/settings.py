@@ -90,8 +90,8 @@ DATABASES = {
         'NAME': 'dj_sga',
         'USER': 'externo',
         'PASSWORD': '0102261218',
-        'HOST': '192.168.1.228',
-        'PORT': '3306',
+        'HOST': '201.163.99.83',
+        'PORT': '3307',
     }
 }
 

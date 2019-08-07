@@ -50,10 +50,10 @@ class Producto(models.Model):
      
 
     def __str__(self):
-        return self.producto_nombre   
+        return self.producto_codigo   
 
 
-class Pedido(models.Model):    
+class Pedido(models.Model):     
     pedido_id_pedido = models.AutoField(primary_key=True) 
     pedido_fecha_pedido = models.DateField(auto_now_add=True)
     pedido_actualizado = models.DateTimeField(auto_now=True)
@@ -82,7 +82,6 @@ class Detalle_pedido(models.Model):
     detallepedido_producto_id = models.ForeignKey(Producto, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Producto')
     detallepedido_cantidad = models.FloatField(null=True, blank=True, verbose_name='Cantidad')
     detallepedido_creado_por = models.ForeignKey(Usuario, null=True, blank=True, on_delete=models.PROTECT,)
-    #precio = auto_save_precio(self)
     detallepedido_precio = models.FloatField(null=False, blank=False, default=0)
     detallepedido_status = models.BooleanField(default=False)
     CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
@@ -93,7 +92,7 @@ class Detalle_pedido(models.Model):
         verbose_name_plural = "Detalle de pedidos"
 
     def __str__(self):
-        return str(self.detallepedido_producto_id)
+        return str(self.detallepedido_pedido_id)
 
     def sucursal(self):
         suc=Pedido.objects.get(pedido_id_pedido=self.detallepedido_pedido_id)

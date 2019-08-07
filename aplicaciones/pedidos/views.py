@@ -591,7 +591,7 @@ class dowload_pedido_detalles(TemplateView):
         wb = Workbook()
         ws=wb.active
         id_pedido=self.kwargs.get('pk')
-        ped = Pedido.objects.get(pedido_id_pedido=id_pedido)
+        ped = Pedido.objects.get(pedido_id_pedido=id_pedido) 
         query = Departamento.objects.get(departamento_id_depo=ped.pedido_id_depo.departamento_id_depo)
         nombre_sucursal = query.departamento_id_sucursal
 
@@ -609,10 +609,11 @@ class dowload_pedido_detalles(TemplateView):
         ws['E2'] = 'Precio'
         ws['F2'] = 'Total'
         cont = 3
-        detalle=Detalle_pedido.objects.filter(detallepedido_pedido_id=id_pedido)
-        for cto in detalle:
-            ws.cell(row=cont, column=1).value = str(cto.detallepedido_producto_id.producto_codigo)
-            ws.cell(row=cont, column=2).value = str(cto.detallepedido_producto_id.producto_descripcion)
+        detalle=Detalle_pedido.objects.filter(detallepedido_pedido_id=492)
+        
+        for cto in detalle:            
+            ws.cell(row=cont, column=1).value = str(cto.detallepedido_producto_id)
+            # ws.cell(row=cont, column=2).value = str(cto.detallepedido_producto_id.producto_descripcion)
             ws.cell(row=cont, column=3).value = str(cto.detallepedido_pedido_id.pedido_id_depo)
             ws.cell(row=cont, column=4).value = cto.detallepedido_cantidad
             ws.cell(row=cont, column=5).value = cto.detallepedido_precio
@@ -623,15 +624,15 @@ class dowload_pedido_detalles(TemplateView):
         ws["F"+str(cont)] = "=SUM(F3:F"+str(cont-1)+")"
         ws["F"+str(cont)].number_format = '#,##0'
 
-        dims = {}
-        for row in ws.rows:
-            for cell in row:
-                if cell.value:
-                    if cell.row != 1:
-                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+        # dims = {}
+        # for row in ws.rows:
+        #     for cell in row:
+        #         if cell.value:
+        #             if cell.row != 1:
+        #                 dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
 
-        for col, value in dims.items():
-            ws.column_dimensions[get_column_letter(col)].width = value+1
+        # for col, value in dims.items():
+        #     ws.column_dimensions[get_column_letter(col)].width = value+1
 
 
 
