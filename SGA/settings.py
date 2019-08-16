@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'SGA.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dj_sga',
+        'NAME': 'dj_p_sga',
         'USER': 'externo',
         'PASSWORD': '0102261218',
         'HOST': '201.163.99.83',

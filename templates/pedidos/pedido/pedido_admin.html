@@ -44,9 +44,10 @@
                                     {% if view.request.GET %}
                                     {% if user.is_superuser %} 
                                     <li>
-                                        
-                                        <a tabindex="-1" href="{% url 'pedidos:down_report_suc' %}?status={{view.request.GET.status}}{% if view.request.GET.inicio != None and view.request.GET.fin %}&inicio={{view.request.GET.inicio}}&fin={{view.request.GET.fin}}{% endif %}">Descargar Reporte filtrado</a>
-                                        
+                                        <a tabindex="-1" href="{% url 'pedidos:down_report_suc' %}?{{view.request.GET.urlencode}}">Descargar reporte filtrado</a>
+                                    </li>
+                                    <li>
+                                        <a tabindex="-1" href="{% url 'pedidos:down_report_detalle_pedido' %}?{{view.request.GET.urlencode}}">Descargar reporte detalle por pedido</a>
                                     </li>
                                     {% endif %}
                                     {% endif %}
@@ -54,6 +55,7 @@
                             </li>
                         </ul>
                         <!-- .card-actions -->
+                        
                     </div>
                     <div class="card-block">
                     <div class="table-responsive">
@@ -141,6 +143,15 @@
                         <label for="exampleFormControlInput1">Fecha Final</label>
                         <input name="fin" type="date" class="form-control" value="{{view.request.GET.fin}}" required>
                     </div>
+                    <div class="form-group">
+                        <label for="sucursal_selec">Sucursal</label>
+                        <select class="form-control" id="sucursal_selec" name="sucursal_selec">
+                            <option value="0" {% if view.request.GET.sucursal_selec == '0' %}selected{% endif %}>Todo</option>
+                            {% for item in list_sucursal %}
+                            <option value="{{item.id_sucursal}}" {% if view.request.GET.sucursal_selec == item.id_sucursal|striptags  %}selected{% endif %}>{{item.sucursal_nombre}}</option>
+                            {% endfor %}
+                        </select>
+                      </div>
                     <div class="form-group">
                         <label for="exampleFormControlSelect1">Status Pedido</label>
                         <select class="form-control" id="exampleFormControlSelect1" name="status">

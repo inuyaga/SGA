@@ -4,7 +4,7 @@ from aplicaciones.pedidos.views import AreaCreate, AreaList, AreaUpdate, AreaDel
 MarcaUpdate, MarcaDelete, ProductoCreate, ProductoList, ProductoDelete, ProductoUpdate, ProductoCompraList, \
 DetalleList, DetalleDelete, PedidoList, PedidoUpdate, PedidoListSucursal, ProductokitCreate, \
 ProductoKitUpdate, dowload_pedido_detalles, SelectTipoCompraView, Crear_pedido_tiendaView, ConfigPedidoListView, \
-ConfigPedidoCreate, ConfigPedidoUpdate, dowload_report_pedidos
+ConfigPedidoCreate, ConfigPedidoUpdate, dowload_report_pedidos, DowloadDetallesporPedido
 from django.conf import settings
 from django.conf.urls.static import static
 app_name = "pedidos"
@@ -45,6 +45,7 @@ urlpatterns = [
     path('config/crar/<int:pk>/', ConfigPedidoUpdate.as_view(), name='pedido_config_update'),
 
     path('descargar/report/sucursales/', dowload_report_pedidos.as_view(), name='down_report_suc'),
+    path('descargar/report/detalles/pedidos/', DowloadDetallesporPedido.as_view(), name='down_report_detalle_pedido'),
 
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

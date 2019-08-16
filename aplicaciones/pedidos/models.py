@@ -32,7 +32,7 @@ class Area(models.Model):
 
 
 class Producto(models.Model):
-    producto_codigo = models.CharField(max_length=15, primary_key=True)
+    producto_codigo = models.CharField(max_length=15, primary_key=True) 
     producto_nombre = models.CharField(max_length=50, verbose_name='Nombre')
     producto_descripcion = models.CharField(max_length=150, verbose_name='Descripcion')
     producto_imagen = models.ImageField(blank=False, null=False, upload_to="img_productos/", verbose_name='Imagen')
@@ -54,7 +54,7 @@ class Producto(models.Model):
 
 
 class Pedido(models.Model):     
-    pedido_id_pedido = models.AutoField(primary_key=True) 
+    pedido_id_pedido = models.AutoField(primary_key=True)  
     pedido_fecha_pedido = models.DateField(auto_now_add=True)
     pedido_actualizado = models.DateTimeField(auto_now=True)
     pedido_id_depo = models.ForeignKey(Departamento, null=False, blank=False, on_delete=models.CASCADE, verbose_name='Departamento')
@@ -72,6 +72,22 @@ class Pedido(models.Model):
         if total != None:
             total=round(total, 3)
         return total
+
+    def get_total_limpieza(self):
+        total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido, detallepedido_pedido_id__pedido_tipo=1).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))['suma_total']
+        if total != None:
+            total=round(total, 3)
+        return 0 if total == None else total
+    def get_total_papeleria(self):
+        total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido, detallepedido_pedido_id__pedido_tipo=2).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))['suma_total']
+        if total != None:
+            total=round(total, 3)
+        return 0 if total == None else total
+    def get_total_venta(self):
+        total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido, detallepedido_pedido_id__pedido_tipo=3).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))['suma_total']
+        if total != None:
+            total=round(total, 3)
+        return 0 if total == None else total
 
     def __str__(self):
         return str(self.pedido_id_pedido)
@@ -97,6 +113,9 @@ class Detalle_pedido(models.Model):
     def sucursal(self):
         suc=Pedido.objects.get(pedido_id_pedido=self.detallepedido_pedido_id)
         return suc.pedido_id_depo.departamento_id_sucursal.sucursal_nombre
+    def subtotal(self):
+        total=self.detallepedido_cantidad * self.detallepedido_precio
+        return 0 if total == None else round(total)
     
 
 class Configuracion_pedido(models.Model):

@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
+from aplicaciones.empresa.models import Sucursal
 
 from django.db.models import ProtectedError
 
@@ -553,6 +554,9 @@ class PedidoList(ListView):
         context = super(PedidoList, self).get_context_data(**kwargs)
         context['tituloBrea'] = 'Actualizar'
         context['usuario'] = self.request.user 
+        context['list_sucursal'] = Sucursal.objects.all() 
+
+
        
         return context
 
@@ -563,10 +567,15 @@ class PedidoList(ListView):
         status = self.request.GET.get('status')
         inicio = self.request.GET.get('inicio')
         fin = self.request.GET.get('fin')      
+        sucursal_selec = self.request.GET.get('sucursal_selec')      
 
         if inicio != None and fin != None:            
             if inicio != '' and fin != '':
                 queryset=Pedido.objects.filter(pedido_fecha_pedido__range=(inicio, fin))
+        
+        if sucursal_selec != None:
+            if sucursal_selec != '0':
+                queryset = queryset.filter(pedido_id_depo__departamento_id_sucursal=sucursal_selec)
 
         if status != None:
             if status == '0':
@@ -609,11 +618,11 @@ class dowload_pedido_detalles(TemplateView):
         ws['E2'] = 'Precio'
         ws['F2'] = 'Total'
         cont = 3
-        detalle=Detalle_pedido.objects.filter(detallepedido_pedido_id=492)
+        detalle=Detalle_pedido.objects.filter(detallepedido_pedido_id=id_pedido)
         
         for cto in detalle:            
             ws.cell(row=cont, column=1).value = str(cto.detallepedido_producto_id)
-            # ws.cell(row=cont, column=2).value = str(cto.detallepedido_producto_id.producto_descripcion)
+            ws.cell(row=cont, column=2).value = str(cto.detallepedido_producto_id.producto_descripcion)
             ws.cell(row=cont, column=3).value = str(cto.detallepedido_pedido_id.pedido_id_depo)
             ws.cell(row=cont, column=4).value = cto.detallepedido_cantidad
             ws.cell(row=cont, column=5).value = cto.detallepedido_precio
@@ -624,15 +633,15 @@ class dowload_pedido_detalles(TemplateView):
         ws["F"+str(cont)] = "=SUM(F3:F"+str(cont-1)+")"
         ws["F"+str(cont)].number_format = '#,##0'
 
-        # dims = {}
-        # for row in ws.rows:
-        #     for cell in row:
-        #         if cell.value:
-        #             if cell.row != 1:
-        #                 dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
 
-        # for col, value in dims.items():
-        #     ws.column_dimensions[get_column_letter(col)].width = value+1
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
 
 
 
@@ -642,6 +651,89 @@ class dowload_pedido_detalles(TemplateView):
         response['Content-Disposition']=content
         wb.save(response)
         return response
+
+# DESCARGA DE DETALLE DE PEDIDOS EN ADMIN
+class DowloadDetallesporPedido(View):
+    def get(self, request , *args, **kwargs):
+        from openpyxl.styles import Font, Fill, Alignment
+        from django.http import HttpResponse
+        from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        from decimal import Decimal
+        wb = Workbook()
+        ws=wb.active
+
+        inicio=request.GET.get('inicio')
+        fin=request.GET.get('fin')
+        sucursal_selec=request.GET.get('sucursal_selec')
+        status=request.GET.get('status')
+                
+        query = Detalle_pedido.objects.filter(detallepedido_pedido_id__pedido_fecha_pedido__range=(inicio, fin))
+
+        if sucursal_selec != '0':
+            query=query.filter(detallepedido_pedido_id__pedido_id_depo__departamento_id_sucursal=sucursal_selec)
+        if status != '0':
+            query=query.filter(detallepedido_pedido_id__pedido_status=status)
+
+        query=query.order_by('detallepedido_pedido_id')
+        # query=query.order_by('detallepedido_pedido_id__pedido_tipo')
+
+        ws['A1'] = 'Detalle pedidos filtrado'
+        st=ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:F1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = '#Pedido'
+        ws['B2'] = 'Departamento'
+        ws['C2'] = 'Sucursal'
+        ws['D2'] = 'Tipo Ped' 
+        ws['E2'] = 'Producto'
+        ws['F2'] = 'Descripcion'
+        ws['G2'] = 'Cantidad'
+        ws['H2'] = 'Precio'
+        ws['I2'] = 'Subtotal'
+        cont = 3
+        
+        
+        for cto in query:            
+            ws.cell(row=cont, column=1).value = cto.detallepedido_pedido_id.pedido_id_pedido
+            ws.cell(row=cont, column=2).value = str(cto.detallepedido_pedido_id.pedido_id_depo.departamento_nombre)
+            ws.cell(row=cont, column=3).value = str(cto.detallepedido_pedido_id.pedido_id_depo.departamento_id_sucursal)
+            ws.cell(row=cont, column=4).value = str(cto.detallepedido_pedido_id.get_pedido_tipo_display())
+            ws.cell(row=cont, column=5).value = str(cto.detallepedido_producto_id)
+            ws.cell(row=cont, column=6).value = str(cto.detallepedido_producto_id.producto_nombre)
+            ws.cell(row=cont, column=7).value = cto.detallepedido_cantidad
+            ws.cell(row=cont, column=8).value = cto.detallepedido_precio
+            ws.cell(row=cont, column=9).value = '=PRODUCT(G'+str(cont)+':H'+str(cont)+')'
+            ws.cell(row=cont, column=9).number_format = '#,##0.00'
+            cont += 1
+
+        ws["I"+str(cont)] = "=SUM(I3:I"+str(cont-1)+")"
+        ws["I"+str(cont)].number_format = '#,##0.00'
+
+
+        # CODIGO PARA AJUSTAR LAS CELDAS EN EL EXCEL
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+
+
+        nombre_archivo='detalle_pedido_filtrado.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
+
 
 class PedidoUpdate(UpdateView):
     model = Pedido
@@ -679,7 +771,7 @@ class PedidoListSucursal(ListView):
     model = Pedido
     template_name = 'pedidos/pedido/pedido_admin.html'
     ordering = ['pedido_id_pedido']
-
+ 
     def get_context_data(self, **kwargs):
         context = super(PedidoListSucursal, self).get_context_data(**kwargs)
         context['tituloBrea'] = 'Actualizar'
@@ -761,8 +853,11 @@ class dowload_report_pedidos(View):
         status = self.request.GET.get('status')
         inicio = self.request.GET.get('inicio')
         fin = self.request.GET.get('fin')
+        sucursal_selec = self.request.GET.get('sucursal_selec')   
 
         query_list=Pedido.objects.none()
+
+        
 
         if inicio != None and fin != None:
             if status == '0':
@@ -774,6 +869,9 @@ class dowload_report_pedidos(View):
                 query_list=Pedido.objects.all()
             else:
                 query_list=Pedido.objects.filter(pedido_status=status)
+
+        if sucursal_selec != '0':
+            query_list = query_list.filter(pedido_id_depo__departamento_id_sucursal=sucursal_selec)
             
 
         ws['A1'] = 'Reporte de pedidos sucursales'
@@ -790,7 +888,7 @@ class dowload_report_pedidos(View):
         ws['E2'] = 'GA L'
         ws['F2'] = 'GA P'
         ws['G2'] = 'GA V'
-        ws['H2'] = 'TOTAL'
+        ws['H2'] = 'SUBTOTAL'
         ws['I2'] = 'AUTORIZO'
         ws['J2'] = 'RECHAZÓ'
         ws['K2'] = 'Factura/Venta'
@@ -803,20 +901,21 @@ class dowload_report_pedidos(View):
             ws.cell(row=cont, column=2).value = naturalday(cto.pedido_fecha_pedido)
             ws.cell(row=cont, column=3).value = str(cto.pedido_id_depo)
             ws.cell(row=cont, column=4).value = cto.pedido_id_depo.departamento_nombre
-            ws.cell(row=cont, column=5).value = cto.pedido_id_depo.departamento_limite_limpieza
-            ws.cell(row=cont, column=6).value = cto.pedido_id_depo.departamento_limite_papeleria
-            ws.cell(row=cont, column=7).value = cto.pedido_id_depo.departamento_limite_venta
+            ws.cell(row=cont, column=5).value = cto.get_total_limpieza()
+            ws.cell(row=cont, column=6).value = cto.get_total_papeleria()
+            ws.cell(row=cont, column=7).value = cto.get_total_venta()
             ws.cell(row=cont, column=8).value = cto.get_total()
             ws.cell(row=cont, column=9).value = 'NO' if cto.pedido_autorizo == None else cto.pedido_autorizo.username
             ws.cell(row=cont, column=10).value = 'NO' if cto.pedido_rechazado == None else cto.pedido_rechazado.username
             ws.cell(row=cont, column=11).value = '' if cto.pedido_n_factura == None else cto.pedido_n_factura  +'/'+ '' if cto.pedido_n_cresscedo == None else cto.pedido_n_cresscedo
             ws.cell(row=cont, column=12).value = cto.get_pedido_status_display()
             ws.cell(row=cont, column=13).value = cto.get_pedido_tipo_display()
-            # ws.cell(row=cont, column=6).number_format = '#,##0'
+            ws.cell(row=cont, column=8).number_format = '#,##0.00'
             cont += 1
 
+        ws.cell(row=cont, column=7).value = 'TOTAL'
         ws["H"+str(cont)] = "=SUM(H3:H"+str(cont-1)+")"
-        ws["H"+str(cont)].number_format = '#,##0'
+        ws["H"+str(cont)].number_format = '#,##0.00'
 
         dims = {}
         for row in ws.rows:

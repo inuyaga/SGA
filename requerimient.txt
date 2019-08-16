@@ -1,0 +1,9 @@
+Django==2.1.7
+django-simple-history==2.7.0
+et-xmlfile==1.0.1
+jdcal==1.4
+#mysqlclient==1.4.2.post1
+openpyxl==2.6.1
+Pillow==5.4.1
+pytz==2018.9
+reportlab==3.5.13
