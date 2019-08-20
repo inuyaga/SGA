@@ -45,7 +45,7 @@ urlpatterns = [
     path('nuevo_fud/', FudCreate.as_view(), name='fud_create'),
     path('list/fud/', FudList.as_view(), name='fud_list'),
     path('update/fud/<int:pk>/', FudUpdate.as_view(), name='fud_update'),
-    path('eliminar/fud/<int:pk>/', FudDelete.as_view(), name='fud_delete'),
+    path('eliminar/fud/<int:pk>', FudDelete.as_view(), name='fud_delete'),
 
     path('Partida/<int:pk>/', PartidaCreate.as_view(), name='Partida'),
     path('PartidaSearch/', PartidaView.as_view(), name='PartidaSearch'),

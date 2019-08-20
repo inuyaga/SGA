@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DeleteView, UpdateView, CreateView, View
+from django.views.generic import ListView, DeleteView, UpdateView, CreateView, View, TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseRedirect, JsonResponse
@@ -241,6 +241,12 @@ class FudUpdate(UpdateView):
     def dispatch(self, *args, **kwargs):
         return super(FudUpdate, self).dispatch(*args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        identificador=self.request.GET.get('q')
+        if identificador != None :
+            Fud.objects.filter(Folio=identificador).update(EstadoFud=2)
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
@@ -255,6 +261,16 @@ class FudUpdate(UpdateView):
         else:
             context['total_total'] = round(total_total,2)
         return context
+
+# class FudEnviar(TemplateView): 
+#     template_name = 'fuds/fud/createUpdate.html'
+#     success_url = reverse_lazy('fuds:fud_list')
+#     def get(self, request, *args, **kwargs):
+#         identificador=self.request.GET.get('q')
+#         Fud.objects.filter(Folio=identificador).update(EstadoFud=2)
+#         context = self.get_context_data(**kwargs)
+#         return self.render_to_response(context)
+
 
 class FudDelete(DeleteView): 
     model= Fud

@@ -93,6 +93,7 @@
 <div class="container">
   <div class="row">
     <button type="button" onclick="genera_pdf()" class="btn btn-dark">Generar PDF </button>
+    <a href="{% url 'fuds:fud_update' view.kwargs.pk %}?q={{view.kwargs.pk}}" class="btn btn-success">Finalizar Pedido</a>
     <table class="table table-bordered" id="tabla_fud">
       <thead>
           <tr>
