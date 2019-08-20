@@ -4,6 +4,7 @@
 {% endblock titulo %}
 
 {% block contenido %}
+{% load personalizacion_tag %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
@@ -22,7 +23,59 @@
 </div>
 {% endif %}
 
+<div class="container">
+<div class="row">
 
+  <form action="" method="GET">
+<div class="col-sm-3">
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Categoria</label>
+    <select multiple name="producto_categoria" class="form-control" id="id_producto_categoria">
+      <option value="1" {% if '1' in view.request.GET|get_item:'producto_categoria' %}selected{% endif %}>Limpieza</option>
+      <option value="2" {% if '2' in view.request.GET|get_item:'producto_categoria' %}selected{% endif %}>Papeleria</option>
+      <option value="3" {% if '3' in view.request.GET|get_item:'producto_categoria' %}selected{% endif %}>Consumo Venta</option>
+      <option value="4" {% if '4' in view.request.GET|get_item:'producto_categoria' %}selected{% endif %}>Herramientas</option>
+    
+    </select>
+  </div>
+
+  
+</div>
+<div class="col-sm-3">
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Tipo producto</label>
+    <select multiple name="tipo_producto" class="form-control" id="id_tipo_producto">
+      <option value="1" {% if '1' in view.request.GET|get_item:'tipo_producto' %}selected{% endif %}>Uso Interno</option>
+      <option value="2" {% if '2' in view.request.GET|get_item:'tipo_producto' %}selected{% endif %}>Activo Fijo</option>
+    </select>
+  </div> 
+</div>
+<div class="col-sm-3">
+  <br>
+  <div class="form-check">
+    <input class="form-check-input" name="checkbox_visible" type="checkbox" {% if 'True' in view.request.GET|get_item:'checkbox_visible' %}checked{% endif %}
+     value="True" id="defaultCheck1">
+    <label class="form-check-label" for="defaultCheck1">
+      Visible
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" name="checkbox_visible" type="checkbox" {% if 'False' in view.request.GET|get_item:'checkbox_visible' %}checked{% endif %}
+     value="False" id="defaultCheck2">
+    <label class="form-check-label" for="defaultCheck2">
+      No visible
+    </label>
+  </div>
+</div>
+<div class="col-sm-3">
+  <br>
+    <input class="btn btn-primary" type="submit" value="Buscar">
+</div>
+
+
+</form>
+</div>
+</div>
 
     <table class="table table-sm">
         <thead class="thead-light">
@@ -69,7 +122,7 @@
         </tbody>
       </table>
 
-
+{{urls_formateada}}
 
 <div class="row justify-content-md-center">
     {% block pagination %}
@@ -77,7 +130,7 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i
                         class="material-icons">
                         navigate_before
                     </i></a></li>
@@ -87,7 +140,7 @@
                 <span class="sr-only">(current)</span>
             </span>
             {% if page_obj.has_next %}
-            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i
                         class="material-icons">
                         navigate_next
                     </i></a></li>

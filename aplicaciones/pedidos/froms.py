@@ -1,5 +1,6 @@
 from django import forms
-from aplicaciones.pedidos.models import Area, Marca, Producto, Pedido, Configuracion_pedido
+from aplicaciones.pedidos.models import Area, Marca, Producto, Pedido, Configuracion_pedido, Tipo_Pedido
+
 class AreaForm(forms.ModelForm):
     class Meta:
         model = Area
@@ -67,5 +68,15 @@ class ConfigForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ConfigForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class Tipo_PedidoForm(forms.ModelForm):
+    class Meta:
+        model = Tipo_Pedido
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(Tipo_PedidoForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})

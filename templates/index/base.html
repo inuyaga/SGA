@@ -162,6 +162,11 @@
                                         <a href="{% url 'pedidos:pedidos_list' %}">Pedidos</a>
                                     </li>
                                     {% endif %}
+                                    {% if perms.pedidos.view_tipo_pedido %}
+                                    <li>
+                                        <a href="{% url 'pedidos:config_tipo_pedido_crear' %}">Tipo de pedido</a> 
+                                    </li>
+                                    {% endif %}
                                     {% if perms.pedidos.add_pedido %}
                                     <li>
                                         <a href="{% url 'pedidos:pedido_select_compra' %}">Comprar</a>
@@ -293,10 +298,10 @@
 
                         <div class="collapse navbar-collapse" id="header-navbar-collapse">
                             <!-- Header search form -->
-                            <form class="navbar-form navbar-left app-search-form" role="search">
+                            <form class="navbar-form navbar-left app-search-form" role="search" method="GET">
                                 <div class="form-group">
                                     <div class="input-group">
-                                        <input class="form-control" type="search" id="search-input"
+                                        <input class="form-control" type="search" id="search-input" name="Buscar"
                                             placeholder="Buscar..." />
                                         <span class="input-group-btn">
                                             <button class="btn" type="button"><i

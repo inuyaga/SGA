@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView, View
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
-from aplicaciones.pedidos.models import Area, Marca, Producto, Detalle_pedido, Pedido, Configuracion_pedido
-from aplicaciones.pedidos.froms import AreaForm, MarcaForm, ProductoForm, PedidoForm, ProductoKitForm, ConfigForm
+from aplicaciones.pedidos.models import Area, Marca, Producto, Detalle_pedido, Pedido, Configuracion_pedido, Tipo_Pedido
+from aplicaciones.pedidos.froms import AreaForm, MarcaForm, ProductoForm, PedidoForm, ProductoKitForm, ConfigForm, Tipo_PedidoForm
 from aplicaciones.empresa.models import Pertenece_empresa
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from aplicaciones.empresa.models import Sucursal
@@ -210,7 +210,30 @@ class ProductoList(ListView):
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['usuario'] = self.request.user
+
+        urls_formateada = self.request.GET.copy()
+        if 'page' in urls_formateada:
+            del urls_formateada['page']
+        context['urls_formateada'] = urls_formateada
         return context
+    
+    def get_queryset(self):
+        queryset = super(ProductoList, self).get_queryset()
+        producto_categoria=self.request.GET.getlist('producto_categoria') 
+        tipo_producto=self.request.GET.getlist('tipo_producto')
+        checkbox_visible=self.request.GET.getlist('checkbox_visible')
+        Buscar=self.request.GET.get('Buscar')
+        if len(tipo_producto) != 0:
+            queryset=queryset.filter(tipo_producto__in=tipo_producto)
+        if len(producto_categoria) != 0:
+            queryset=queryset.filter(producto_categoria__in=producto_categoria)
+        if len(checkbox_visible) != 0:
+            queryset=queryset.filter(producto_visible__in=checkbox_visible)
+        if Buscar != None:
+            queryset=queryset.filter(Q(producto_codigo=Buscar) | Q(producto_nombre__icontains=Buscar))
+
+        
+        return queryset
 
     @method_decorator(permission_required('pedidos.view_producto',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
@@ -321,20 +344,10 @@ class ProductoCompraList(ListView):
 
             tipo_pedido=self.kwargs.get('tipo')
             queryset = queryset.filter(producto_es_kit=False,producto_visible=True, producto_categoria=tipo_pedido)
-            
 
-            if tipo_pedido == 1:
-                conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).exclude(pedido_status=3).count()
-                if conteo_pedido > 1:
-                    queryset=Producto.objects.none()
-            if tipo_pedido == 2:
-                conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).exclude(pedido_status=3).count()
-                if conteo_pedido > 1:
-                    queryset=Producto.objects.none()
-            if tipo_pedido == 3:
-                conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).exclude(pedido_status=3).count()
-                if conteo_pedido > 1:
-                    queryset=Producto.objects.none()
+            conteo_pedido=Pedido.objects.filter(pedido_tipo=tipo_pedido, pedido_id_depo=departamento.pertenece_empresa, pedido_fecha_pedido__range=(start_date,end_date)).exclude(pedido_status=3).count()
+            if conteo_pedido > 1:
+                queryset=Producto.objects.none()
 
             return queryset
         except ObjectDoesNotExist as error:
@@ -936,5 +949,13 @@ class dowload_report_pedidos(View):
         wb.save(response)
         return response
 
+class TipoPedidoList(ListView):
+    template_name = 'pedidos/tipo_pedido/tipopedido_list.html'
+    model=Tipo_Pedido
 
+class TipoPedidoCrear(CreateView):
+    model=Tipo_Pedido
+    template_name = 'pedidos/tipo_pedido/tipo_pedido_crear.html'
+    form_class=Tipo_PedidoForm
+    success_url = reverse_lazy('pedidos:config_tipo_pedido_list')
 # ---------------------------------------------------------------------------------------------------------

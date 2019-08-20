@@ -28,10 +28,10 @@
 
           <div class="collapse navbar-collapse" id="header-navbar-collapse">
               <!-- Header search form -->
-              <form class="navbar-form navbar-left app-search-form" role="search">
+              <form class="navbar-form navbar-left app-search-form" role="search" method="GET">
                   <div class="form-group">
                       <div class="input-group">
-                          <input class="form-control" name="buscar" type="search" id="search-input"
+                          <input class="form-control" name="buscar" type="search" id="search-input" name="Buscar"
                               placeholder="Buscar..." />
                           <span class="input-group-btn">
                               <button class="btn" type="button"><i
@@ -101,7 +101,7 @@
 
     {% if estado_rango_fechas %}
     <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <!-- normal -->
                 <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 1 %}">
                         <div class="img"><img src="{% static 'limpieza-kufG--620x349@abc.jpg' %}" alt="img"></div>
@@ -114,7 +114,7 @@
                     </a></div>
                 <!-- end normal -->
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <!-- normal -->
                 <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 2 %}">
                         <div class="img"><img src="{% static 'ERP-de-Gestion-y-Distribucion-de-Papeleria-1030x686.jpg' %}"
@@ -128,7 +128,7 @@
                     </a></div>
                 <!-- end normal -->
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <!-- normal -->
                 <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 3 %}">
                         <div class="img"><img src="{% static 'Compras-en-linea.jpg' %}" alt="img"></div>
@@ -137,6 +137,19 @@
                         <div class="info">
                             <h3>Comsumo venta</h3>
                             <p>Productos para consumo de ventas</p>
+                        </div>
+                    </a></div>
+                <!-- end normal -->
+            </div>
+            <div class="col-sm-3">
+                <!-- normal -->
+                <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 4 %}">
+                        <div class="img"><img src="{% static 'tools.jpg' %}" alt="img"></div>
+                        <div class="mask1"></div>
+                        <div class="mask2"></div>
+                        <div class="info">
+                            <h3>Herramientas</h3>
+                            <p>Productos Herramientas</p>
                         </div>
                     </a></div>
                 <!-- end normal -->

@@ -41,11 +41,9 @@ class Producto(models.Model):
     producto_precio = models.DecimalField('Precio', max_digits=7, decimal_places=2, default=0.00)
     TIPO_PRODUCTO = ((1, 'Uso Interno'), (2, 'Activo Fijo'),)
     tipo_producto = models.IntegerField(choices=TIPO_PRODUCTO, null=True, blank=True)
-    producto_es_kit=models.BooleanField(verbose_name='Pertenecera a un Kit', default=False)
+    producto_es_kit=models.BooleanField(verbose_name='¿Pertenecerá a un Kit?', default=False)
     producto_kit=models.BooleanField(verbose_name='Kit', default=False)
     producto_productos=models.ManyToManyField("Producto")
-    CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
-    producto_categoria=models.IntegerField('Categoria de producto', choices=CATEGORIA, default=1)
     producto_visible=models.BooleanField('¿Producto visible?', default=True)
      
 
@@ -53,18 +51,28 @@ class Producto(models.Model):
         return self.producto_codigo   
 
 
+class Tipo_Pedido(models.Model):
+    tp=models.AutoField(primary_key=True)
+    tp_nombre=models.CharField('Nombre', max_length=30)
+    tp_descripcion=models.CharField('Descripción', max_length=50)
+    tp_imagen=models.ImageField('Imagen', upload_to='imgCategoria/', max_length=10)
+    tp_productos=models.ManyToManyField(Producto, verbose_name='Productos')
+    def __str__(self):
+        return self.tp_nombre
+
+
 class Pedido(models.Model):     
     pedido_id_pedido = models.AutoField(primary_key=True)  
     pedido_fecha_pedido = models.DateField(auto_now_add=True)
     pedido_actualizado = models.DateTimeField(auto_now=True)
     pedido_id_depo = models.ForeignKey(Departamento, null=False, blank=False, on_delete=models.CASCADE, verbose_name='Departamento')
-    STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Rechazado'),)
+    STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Descargado'),(4, 'Venta'),(5, 'Facturado'), (6, 'Finalizado'))
     pedido_status = models.IntegerField(choices=STATUS, default=1, verbose_name='Status')
     pedido_autorizo=models.ForeignKey(Usuario, verbose_name='Autorizado Por', related_name='Autorizador', blank=True, null=True, on_delete=models.CASCADE)
     pedido_rechazado=models.ForeignKey(Usuario, verbose_name='Rechazado Por', related_name='Cancelo', blank=True, null=True, on_delete=models.CASCADE)
-    CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
-    pedido_tipo=models.IntegerField('Categoria de producto', choices=CATEGORIA, default=1)
+    pedido_tipoPedido=models.ForeignKey(Tipo_Pedido, verbose_name='Tipo de pedido', blank=True, null=True, on_delete=models.PROTECT)
     pedido_n_factura=models.CharField('Folio Factura', max_length=14, blank=True, null=True)
+    pedido_n_factura=models.CharField('Numero Salida', max_length=8, blank=True, null=True)
     pedido_n_cresscedo=models.CharField('Venta Cresscendo', max_length=14, blank=True, null=True)
 
     def get_total(self):
@@ -100,8 +108,6 @@ class Detalle_pedido(models.Model):
     detallepedido_creado_por = models.ForeignKey(Usuario, null=True, blank=True, on_delete=models.PROTECT,)
     detallepedido_precio = models.FloatField(null=False, blank=False, default=0)
     detallepedido_status = models.BooleanField(default=False)
-    CATEGORIA=((1,'Limpieza'), (2, 'Papeleria'), (3, 'Consumo Venta'))
-    detallepedido_categoria=models.IntegerField('Pedido', choices=CATEGORIA, default=1)
 
     class Meta:
         ordering = ["detallepedido_pedido_id"]
