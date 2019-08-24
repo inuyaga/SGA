@@ -1,102 +1,101 @@
-{% extends 'index/base.html'%} 
+{% extends 'index/base.html'%}
 {% block titulo %}
 <title>Lista Productos</title>
 {% endblock titulo %}
 
-{% block navbar %} 
+{% block navbar %}
 {% load static %}
 
-  <nav class="navbar navbar-default">
-      <div class="container-fluid">
-          <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                  data-target="#header-navbar-collapse" aria-expanded="false">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-              </button>
-              <button class="pull-left hidden-lg hidden-md navbar-toggle" type="button"
-                  data-toggle="layout" data-action="sidebar_toggle">
-                  <span class="sr-only">Toggle drawer</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-              </button>
-              <span class="navbar-page-title">
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-navbar-collapse"
+        aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <button class="pull-left hidden-lg hidden-md navbar-toggle" type="button" data-toggle="layout"
+        data-action="sidebar_toggle">
+        <span class="sr-only">Toggle drawer</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-page-title">
 
-                  Dashboard
-              </span>
+        Dashboard
+      </span>
+    </div>
+
+    <div class="collapse navbar-collapse" id="header-navbar-collapse">
+      <!-- Header search form -->
+      <form class="navbar-form navbar-left app-search-form" role="search" method="GET">
+        <div class="form-group">
+          <div class="input-group">
+            <input class="form-control" name="buscar" type="search" id="search-input" name="Buscar"
+              placeholder="Buscar..." />
+            <span class="input-group-btn">
+              <button class="btn" type="button"><i class="ion-ios-search-strong"></i></button>
+            </span>
           </div>
+        </div>
+      </form>
 
-          <div class="collapse navbar-collapse" id="header-navbar-collapse">
-              <!-- Header search form -->
-              <form class="navbar-form navbar-left app-search-form" role="search" method="GET">
-                  <div class="form-group">
-                      <div class="input-group">
-                          <input class="form-control" name="buscar" type="search" id="search-input" name="Buscar"
-                              placeholder="Buscar..."  />
-                          <span class="input-group-btn">
-                              <button class="btn" type="button"><i
-                                      class="ion-ios-search-strong"></i></button>
-                          </span>
-                      </div>
-                  </div>
-              </form>
+      <ul class="nav navbar-nav navbar-right navbar-toolbar hidden-sm hidden-xs">
+        <li>
+          <!-- Opens the modal found at the bottom of the page -->
+          <a href="javascript:void(0)" data-toggle="modal" data-target="#apps-modal"><i class="ion-grid"></i></a>
+        </li>
 
-              <ul class="nav navbar-nav navbar-right navbar-toolbar hidden-sm hidden-xs">
-                  <li>
-                      <!-- Opens the modal found at the bottom of the page -->
-                      <a href="javascript:void(0)" data-toggle="modal" data-target="#apps-modal"><i
-                              class="ion-grid"></i></a>
-                  </li>
+        <li class="dropdown">
+          <a href="javascript:void(0)" data-toggle="dropdown"><i class="material-icons">shopping_cart</i><span
+              id="conteo" class="badge">{% if conteo > 0 %}{{conteo}}{% endif %}</span></a>
+          <ul class="dropdown-menu dropdown-menu-right">
+            <li class="dropdown-header">Pedidos</li>
+            <li>
+              <a tabindex="-1" href="{% url 'pedidos:pedido_tienda_listado' %}"> Carrito compras <span id="conteo2"
+                  class="badge pull-right">{% if conteo > 0 %}{{conteo}}{% endif %}</span> </a>
+            </li>
+            <li class="divider"></li>
+            <li>
+              <a tabindex="-1" href="{% url 'pedidos:pedido_sucursal_list' %}">Pedidos </a>
+            </li>
+          </ul>
+        </li>
 
-                  <li class="dropdown">
-                          <a href="javascript:void(0)" data-toggle="dropdown"><i class="material-icons">shopping_cart</i><span id="conteo" class="badge">{% if conteo > 0 %}{{conteo}}{% endif %}</span></a>
-                          <ul class="dropdown-menu dropdown-menu-right">
-                              <li class="dropdown-header">Pedidos</li>
-                              <li>
-                                  <a tabindex="-1" href="{% url 'pedidos:pedido_tienda_listado' %}"> Carrito compras <span id="conteo2" class="badge pull-right">{% if conteo > 0 %}{{conteo}}{% endif %}</span> </a>
-                              </li>
-                              <li class="divider"></li>
-                              <li>
-                                  <a tabindex="-1" href="{% url 'pedidos:pedido_sucursal_list' %}">Pedidos </a>
-                              </li>
-                          </ul>
-                      </li>
+        <li class="dropdown dropdown-profile">
+          <a href="javascript:void(0)" data-toggle="dropdown">
+            <span class="m-r-sm">{{user}} <span class="caret"></span></span>
+            <img class="img-avatar img-avatar-48" src="{% static 'Profile-512.png' %}" alt="User profile pic" />
+          </a>
+          <ul class="dropdown-menu dropdown-menu-right">
+            <li class="dropdown-header">
+              Accesos
+            </li>
+            <li>
+              <a href="{% url 'admin:index' %}">Admin Panel</a>
+            </li>
 
-                  <li class="dropdown dropdown-profile">
-                      <a href="javascript:void(0)" data-toggle="dropdown">
-                          <span class="m-r-sm">{{user}} <span class="caret"></span></span>
-                          <img class="img-avatar img-avatar-48" src="{% static 'Profile-512.png' %}"
-                              alt="User profile pic" />
-                      </a>
-                      <ul class="dropdown-menu dropdown-menu-right">
-                          <li class="dropdown-header">
-                              Accesos
-                          </li>
-                          <li>
-                              <a href="{% url 'admin:index' %}">Admin Panel</a>
-                          </li>
-
-                          <li>
-                              <a href="{% url 'salir' %}">Salir</a>
-                          </li>
-                      </ul>
-                  </li>
-              </ul>
-              <!-- .navbar-right -->
-          </div>
-      </div>
-      <!-- .container-fluid -->
-  </nav>
-{% endblock navbar %} 
+            <li>
+              <a href="{% url 'salir' %}">Salir</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <!-- .navbar-right -->
+    </div>
+  </div>
+  <!-- .container-fluid -->
+</nav>
+{% endblock navbar %}
 
 {% block contenido %}
 {% if msn_empresa != None %}
 <div class="alert alert-danger" role="alert">
-    {{msn_empresa}}
-  </div>
+  {{msn_empresa}}
+</div>
 {% endif %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
@@ -106,140 +105,122 @@
 </nav>
 <div class="container">
 
-
-
+  {{objeto}}
+  {{msn_empresa}}
   <div class="row">
-     
-    {% for producto in object_list %}
+
+    {% if msn_empresa != None %}
+
+    <div class="alert alert-danger" role="alert">{{msn_empresa}}.</div>
+
+    {% else %}
+
+    {% if pedidos_del_mes >= objeto.tp_max_ped_mes %}
+    <div class="alert alert-danger" role="alert">Actualmente existe un pedido o pedidos correspondiente al mes de
+      {% now "M Y" %}!.</div>
+    {% else %}
+
+    {% for producto in objeto.tp_productos.all %}
     <div class="col-sm-6 col-lg-3">
-        <a class="card" href="javascript:void(0)">
-            <div class="card-block text-center">
-                <img class="img-avatar img-avatar-96" src="{{ producto.producto_imagen.url }}" alt="">
-                <p class="h6 profile-title">{{producto.producto_codigo}}</p>
+      <a class="card" href="javascript:void(0)">
+        <div class="card-block text-center">
+          <img class="img-avatar img-avatar-96" src="{{ producto.producto_imagen.url }}" alt="">
+          <p class="h6 profile-title">{{producto.producto_codigo}}</p>
+        </div>
+        <div class="card-block bg-gray-lighter-o">
+          <div class="text-center text-muted" data-toggle="tooltip" title=""
+            data-original-title="{{producto.producto_descripcion}}">{{producto.producto_descripcion|truncatewords:5}}
+          </div>
+          <div class="form-group col-md-12 row justify-content-md-center">
+            <label for="inputEmail4">Cantidad</label>
+            <input type="number" id="{{producto.producto_codigo}}" class="form-control" min="1" value="1">
+          </div>
+        </div>
+        {% if msn_empresa is None %}
+        <div class="card-block">
+          <div class="row text-center">
+            <div class="col-xs-6">
+              <i class="ion-ribbon-b fa-1-5x"></i>
+              <div class="row justify-content-md-center">
+                <button type="button" onclick="agregar('{{producto.producto_codigo}}')"
+                  class="btn btn-primary">Agregar</button>
+              </div>
             </div>
-            <div class="card-block bg-gray-lighter-o">
-                <div class="text-center text-muted" data-toggle="tooltip" title="" data-original-title="{{producto.producto_descripcion}}">{{producto.producto_descripcion|truncatewords:5}}</div>
-                <div class="form-group col-md-12 row justify-content-md-center">
-                    <label for="inputEmail4">Cantidad</label>
-                    <input type="number" id="{{producto.producto_codigo}}" class="form-control" min="1" value="1">
-                  </div>
+            <div class="col-xs-6">
+              <i class="ion-social-usd fa-1-5x"></i>
+              <div><small class="text-muted">$ {{producto.producto_precio}}</small></div>
             </div>
-            {% if msn_empresa is None %}              
-            <div class="card-block">
-                <div class="row text-center"> 
-                    <div class="col-xs-6">
-                        <i class="ion-ribbon-b fa-1-5x"></i>
-                        <div class="row justify-content-md-center">
-                            <button type="button" onclick="agregar('{{producto.producto_codigo}}')" class="btn btn-primary">Agregar</button>
-                          </div>
-                    </div>
-                    <div class="col-xs-6">
-                        <i class="ion-social-usd fa-1-5x"></i>
-                        <div><small class="text-muted">$ {{producto.producto_precio}}</small></div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-        </a>
+          </div>
+        </div>
+        {% endif %}
+      </a>
     </div>
+
     {% empty %}
-    {% if msn_condicion != None %}
-      <div class="alert alert-success" role="alert">
-        {{msn_condicion}}!
-      </div>
-      {% else %}
-      <div class="alert alert-success" role="alert">
-        Actualmente existe un pedido correspondiente de {% now "M Y" %}!
-      </div>
-    {% endif %}
-    
+    <div class="alert alert-warning" role="alert">No hay productos habilitados o no se ha agregado algun producto.</div>
     {% endfor %}
-  </div>
-</div>
+
+    {% endif %}
+
+    {% endif %}
 
 
-<div class="row justify-content-md-center">
-  {% block pagination %}
-  {% if is_paginated %}
-  <nav aria-label="Page navigation example">
-    <ul class="pagination">
-      {% if page_obj.has_previous %}
-      <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i
-            class="material-icons">
-            navigate_before
-          </i></a></li>
-      {% endif %}
-      <span class="page-link">
-        Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
-        <span class="sr-only">(current)</span>
-      </span>
-      {% if page_obj.has_next %}
-      <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i
-            class="material-icons">
-            navigate_next
-          </i></a></li>
-      {% endif %}
-    </ul>
-  </nav>
-  {% endif %}
-  {% endblock %}
-</div>
 
-{% endblock %}
+    {% endblock %}
 
-{% block script %}
+    {% block script %}
 
-<script>
-  // var frm = $('#');
-  // var id_form = frm.attr('id')
-  // frm.submit(function (e) {
+    <script>
+      // var frm = $('#');
+      // var id_form = frm.attr('id')
+      // frm.submit(function (e) {
 
-  //   e.preventDefault();
+      //   e.preventDefault();
 
-  //   $.ajax({
-  //     type: frm.attr('method'),
-  //     url: frm.attr('action'),
-  //     data: frm.serialize(),
-  //     success: function (data) {
-  //       var message = data.content.mensaje
-  //       alert(id_form)
-  //     },
-  //     error: function (data) {
-  //       console.log('An error occurred.');
-  //       console.log(data);
-  //     },
-  //   });
-  // });
+      //   $.ajax({
+      //     type: frm.attr('method'),
+      //     url: frm.attr('action'),
+      //     data: frm.serialize(),
+      //     success: function (data) {
+      //       var message = data.content.mensaje
+      //       alert(id_form)
+      //     },
+      //     error: function (data) {
+      //       console.log('An error occurred.');
+      //       console.log(data);
+      //     },
+      //   });
+      // });
 
 
-  function agregar(codigo) {
-    $.ajax({
-      type: "POST",
-      url: "",
-      data: {
-        csrfmiddlewaretoken: '{{ csrf_token }}',
-        nombre: codigo,
-        catidad: $('#' + codigo).val()
-      },
-      success: function (data) {
-        var message = data.content.mensaje
-        var contado = data.content.conteo
-        var tipo_mensaje = data.content.tipo_mensaje
-        if (tipo_mensaje) {
-          alertify.success(message);
-        } else {
-          alertify.error(message);
-        }
-        $('#conteo').replaceWith('<span class="badge badge-light" id="conteo">' + contado + '</span>');
-        $('#conteo2').replaceWith('<span class="badge badge-light" id="conteo">' + contado + '</span>');
+      function agregar(codigo) {
+        $.ajax({
+          type: "POST",
+          url: "",
+          data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            nombre: codigo,
+            catidad: $('#' + codigo).val()
+          },
+          success: function (data) {
+            var message = data.content.mensaje
+            var contado = data.content.conteo
+            var tipo_mensaje = data.content.tipo_mensaje
+            if (tipo_mensaje) {
+              alertify.success(message);
+            } else {
+              alertify.error(message);
+            }
+            $('#conteo').replaceWith('<span class="badge badge-light" id="conteo">' + contado + '</span>');
+            $('#conteo2').replaceWith('<span class="badge badge-light" id="conteo">' + contado + '</span>');
 
-      },
-      error: function (data) {
-        console.log('An error occurred.');
-        console.log(data);
-      },
-    });
-  }
-</script>
+          },
+          error: function (data) {
+            console.log('An error occurred.');
+            console.log(data);
+          },
+        });
+      }
+    </script>
 
-{% endblock script %}
+    {% endblock script %}

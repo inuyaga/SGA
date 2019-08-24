@@ -1,0 +1,81 @@
+{% extends 'index/base.html'%}
+
+{% block contenido %}
+<div class="card">
+    <div class="card-header">
+        <h4>Asignar Gastos</h4>
+        <ul class="card-actions">
+
+            <li class="dropdown">
+                <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span
+                        class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li class="dropdown-header">Accion</li>
+                    <li>
+                        {% if perms.pedidos.add_asignar_gasto_sucursal %}
+                        <a tabindex="-1" href="{% url 'pedidos:asig_gasto_create' %}">Añadir</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <!-- .card-actions -->
+
+    </div>
+
+
+    <div class="card-block">
+
+        <div class="row">
+            <form class="form-inline" method="GET">
+                <select class="form-control" name="tip_pedido">
+                    <option selected disabled>Tipo pedido</option>
+                    
+                    {% for item in tipo_pedido_list %}
+                    <option value="{{item.tp}}">{{item.tp_nombre}}</option>
+                    {% endfor %}
+                        
+                </select>
+                <select class="form-control" name="sucursal">
+                    <option selected disabled>Sucursal</option>
+                    {% for item in sucursal_list %}
+                    <option value="{{item.id_sucursal}}">{{item.sucursal_nombre}}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-default">Filtrar</button>
+            </form>
+        </div>
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Tipo pedido</th>
+                    <th scope="col">Sucursal</th>
+                    <th scope="col">Departamento</th>
+                    <th scope="col">Maximo gasto</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object_list %}
+                <tr>
+                    <td>{{item.ags_tipo_ped}}</td>
+                    <td>{{item.ags_sucursal.departamento_id_sucursal}}</td>
+                    <td>{{item.ags_sucursal}}</td>
+                    <td>{{item.ags_maximo_gasto}}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a class="btn btn-xs btn-default" href="{% url 'pedidos:asig_gasto_update' item.ags %}"
+                                type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i
+                                    class="ion-edit"></i></a>
+                            <a class="btn btn-xs btn-default" href="{% url 'pedidos:asig_gasto_delete' item.ags %}"
+                                type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i
+                                    class="ion-close"></i></a>
+                        </div>
+                        <ion-icon name="cash"></ion-icon>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock contenido %}

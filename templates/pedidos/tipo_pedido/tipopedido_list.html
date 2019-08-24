@@ -3,7 +3,7 @@
 {% block contenido %}
 <div class="card">
     <div class="card-header">
-        <h4>Pedidos</h4>
+        <h4>Tipo de Pedidos</h4>
         <ul class="card-actions">
 
             <li class="dropdown">
@@ -36,7 +36,13 @@
                 <tr>
                     <td>{{item.tp_nombre}}</td>
                     <td>{{item.tp_descripcion}}</td>
-                    <td>{{item.tp_imagen.url}}</td>
+                    <td><img src="{{item.tp_imagen.url}}" alt="Smiley face" height="42" width="42"></td>
+                    <td>
+                    <div class="btn-group">
+                        <a class="btn btn-xs btn-default" href="{% url 'pedidos:config_tipo_pedido_update' item.tp %}" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>
+                        <a class="btn btn-xs btn-default" href="{% url 'pedidos:config_tipo_pedido_delete' item.tp %}" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i class="ion-close"></i></a>
+                    </div><ion-icon name="cash"></ion-icon>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

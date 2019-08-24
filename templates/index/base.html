@@ -157,14 +157,19 @@
                                         <a href="{% url 'pedidos:listar_producto' %}">Productos</a>
                                     </li>
                                     {% endif %}
+                                    {% if perms.pedidos.view_tipo_pedido %}
+                                    <li>
+                                        <a href="{% url 'pedidos:config_tipo_pedido_list' %}">Tipo de pedido</a> 
+                                    </li>
+                                    {% endif %}
+                                    {% if perms.pedidos.view_asignar_gasto_sucursal %}
+                                    <li>
+                                        <a href="{% url 'pedidos:asig_gasto_list' %}">Asignar Gastos</a> 
+                                    </li>
+                                    {% endif %}
                                     {% if  perms.pedidos.view_pedido %}
                                     <li>
                                         <a href="{% url 'pedidos:pedidos_list' %}">Pedidos</a>
-                                    </li>
-                                    {% endif %}
-                                    {% if perms.pedidos.view_tipo_pedido %}
-                                    <li>
-                                        <a href="{% url 'pedidos:config_tipo_pedido_crear' %}">Tipo de pedido</a> 
                                     </li>
                                     {% endif %}
                                     {% if perms.pedidos.add_pedido %}

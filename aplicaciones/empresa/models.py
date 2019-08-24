@@ -41,10 +41,10 @@ class Sucursal(models.Model):
 class Departamento(models.Model):
     departamento_id_depo = models.AutoField(primary_key=True)
     departamento_nombre = models.CharField(max_length=80, verbose_name='Nombre')
-    departamento_limite_limpieza = models.FloatField(verbose_name='Limite de gastos limpieza', default=0)
-    departamento_limite_papeleria = models.FloatField(verbose_name='Limite de gastos papeleria', default=0)
-    departamento_limite_venta = models.FloatField(verbose_name='Limite de gastos consumo venta', default=0)
     departamento_id_sucursal = models.ForeignKey(Sucursal, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Sucursal')
+
+    class Meta:
+        ordering = ["departamento_nombre"]
 
     def __str__(self):
         return str(self.departamento_nombre)

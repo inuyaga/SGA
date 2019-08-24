@@ -1,92 +1,94 @@
 {% extends 'index/base.html'%}
 
-{% block navbar %} 
+{% block navbar %}
 {% load static %}
 
-  <nav class="navbar navbar-default">
-      <div class="container-fluid">
-          <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                  data-target="#header-navbar-collapse" aria-expanded="false">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-              </button>
-              <button class="pull-left hidden-lg hidden-md navbar-toggle" type="button"
-                  data-toggle="layout" data-action="sidebar_toggle">
-                  <span class="sr-only">Toggle drawer</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-              </button>
-              <span class="navbar-page-title">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                data-target="#header-navbar-collapse" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <button class="pull-left hidden-lg hidden-md navbar-toggle" type="button" data-toggle="layout"
+                data-action="sidebar_toggle">
+                <span class="sr-only">Toggle drawer</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <span class="navbar-page-title">
 
-                  Dashboard
-              </span>
-          </div>
+                Dashboard
+            </span>
+        </div>
 
-          <div class="collapse navbar-collapse" id="header-navbar-collapse">
-              <!-- Header search form -->
-              <form class="navbar-form navbar-left app-search-form" role="search" method="GET">
-                  <div class="form-group">
-                      <div class="input-group">
-                          <input class="form-control" name="buscar" type="search" id="search-input" name="Buscar"
-                              placeholder="Buscar..." />
-                          <span class="input-group-btn">
-                              <button class="btn" type="button"><i
-                                      class="ion-ios-search-strong"></i></button>
-                          </span>
-                      </div>
-                  </div>
-              </form>
+        <div class="collapse navbar-collapse" id="header-navbar-collapse">
+            <!-- Header search form -->
+            <form class="navbar-form navbar-left app-search-form" role="search" method="GET">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input class="form-control" name="buscar" type="search" id="search-input" name="Buscar"
+                            placeholder="Buscar..." />
+                        <span class="input-group-btn">
+                            <button class="btn" type="button"><i class="ion-ios-search-strong"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </form>
 
-              <ul class="nav navbar-nav navbar-right navbar-toolbar hidden-sm hidden-xs">
-                  <li>
-                      <!-- Opens the modal found at the bottom of the page -->
-                      <a href="javascript:void(0)" data-toggle="modal" data-target="#apps-modal"><i
-                              class="ion-grid"></i></a>
-                  </li>
+            <ul class="nav navbar-nav navbar-right navbar-toolbar hidden-sm hidden-xs">
+                <li>
+                    <!-- Opens the modal found at the bottom of the page -->
+                    <a href="javascript:void(0)" data-toggle="modal" data-target="#apps-modal"><i
+                            class="ion-grid"></i></a>
+                </li>
 
-                  <li class="dropdown">
-                          <a href="javascript:void(0)" data-toggle="dropdown"><i class="material-icons">shopping_cart</i><span id="conteo" class="badge">{% if conteo > 0 %}{{conteo}}{% endif %}</span></a>
-                          <ul class="dropdown-menu dropdown-menu-right">
-                              <li class="dropdown-header">Pedidos</li>
-                              <li>
-                                  <a tabindex="-1" href="{% url 'pedidos:pedido_tienda_listado' %}"> Carrito compras <span id="conteo2" class="badge pull-right">{% if conteo > 0 %}{{conteo}}{% endif %}</span> </a>
-                              </li>
-                              <li class="divider"></li>
-                              <li>
-                                  <a tabindex="-1" href="{% url 'pedidos:pedido_sucursal_list' %}">Pedidos </a>
-                              </li>
-                          </ul>
-                      </li> 
+                <li class="dropdown">
+                    <a href="javascript:void(0)" data-toggle="dropdown"><i class="material-icons">shopping_cart</i><span
+                            id="conteo" class="badge">{% if conteo > 0 %}{{conteo}}{% endif %}</span></a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li class="dropdown-header">Pedidos</li>
+                        <li>
+                            <a tabindex="-1" href="{% url 'pedidos:pedido_tienda_listado' %}"> Carrito compras <span
+                                    id="conteo2"
+                                    class="badge pull-right">{% if conteo > 0 %}{{conteo}}{% endif %}</span> </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a tabindex="-1" href="{% url 'pedidos:pedido_sucursal_list' %}">Pedidos </a>
+                        </li>
+                    </ul>
+                </li>
 
-                  <li class="dropdown dropdown-profile">
-                      <a href="javascript:void(0)" data-toggle="dropdown">
-                          <span class="m-r-sm">{{user}} <span class="caret"></span></span>
-                          <img class="img-avatar img-avatar-48" src="{% static 'Profile-512.png' %}"
-                              alt="User profile pic" />
-                      </a>
-                      <ul class="dropdown-menu dropdown-menu-right">
-                          <li class="dropdown-header">
-                              Accesos
-                          </li>
-                          <li>
-                              <a href="{% url 'admin:index' %}">Admin Panel</a>
-                          </li>
+                <li class="dropdown dropdown-profile">
+                    <a href="javascript:void(0)" data-toggle="dropdown">
+                        <span class="m-r-sm">{{user}} <span class="caret"></span></span>
+                        <img class="img-avatar img-avatar-48" src="{% static 'Profile-512.png' %}"
+                            alt="User profile pic" />
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li class="dropdown-header">
+                            Accesos
+                        </li>
+                        <li>
+                            <a href="{% url 'admin:index' %}">Admin Panel</a>
+                        </li>
 
-                          <li>
-                              <a href="{% url 'salir' %}">Salir</a>
-                          </li>
-                      </ul>
-                  </li>
-              </ul>
-              <!-- .navbar-right -->
-          </div>
-      </div>
-      <!-- .container-fluid -->
-  </nav>
+                        <li>
+                            <a href="{% url 'salir' %}">Salir</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- .navbar-right -->
+        </div>
+    </div>
+    <!-- .container-fluid -->
+</nav>
 {% endblock navbar %}
 
 
@@ -96,78 +98,42 @@
 
 <div class="container">
 
-    
+
     {% for item in conf %}
 
     {% if estado_rango_fechas %}
     <div class="row">
-            <div class="col-sm-3">
-                <!-- normal -->
-                <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 1 %}">
-                        <div class="img"><img src="{% static 'limpieza-kufG--620x349@abc.jpg' %}" alt="img"></div>
-                        <div class="mask1"></div>
-                        <div class="mask2"></div>
-                        <div class="info">
-                            <h3>Limpieza</h3>
-                            <p>Productos de limpieza</p>
-                        </div>
-                    </a></div>
-                <!-- end normal -->
-            </div>
-            <div class="col-sm-3">
-                <!-- normal -->
-                <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 2 %}">
-                        <div class="img"><img src="{% static 'ERP-de-Gestion-y-Distribucion-de-Papeleria-1030x686.jpg' %}"
-                                alt="img"></div>
-                        <div class="mask1"></div>
-                        <div class="mask2"></div>
-                        <div class="info">
-                            <h3>Papeleria</h3>
-                            <p>Productos de papeleria</p>
-                        </div>
-                    </a></div>
-                <!-- end normal -->
-            </div>
-            <div class="col-sm-3">
-                <!-- normal -->
-                <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 3 %}">
-                        <div class="img"><img src="{% static 'Compras-en-linea.jpg' %}" alt="img"></div>
-                        <div class="mask1"></div>
-                        <div class="mask2"></div>
-                        <div class="info">
-                            <h3>Comsumo venta</h3>
-                            <p>Productos para consumo de ventas</p>
-                        </div>
-                    </a></div>
-                <!-- end normal -->
-            </div>
-            <div class="col-sm-3">
-                <!-- normal -->
-                <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' 4 %}">
-                        <div class="img"><img src="{% static 'tools.jpg' %}" alt="img"></div>
-                        <div class="mask1"></div>
-                        <div class="mask2"></div>
-                        <div class="info">
-                            <h3>Herramientas</h3>
-                            <p>Productos Herramientas</p>
-                        </div>
-                    </a></div>
-                <!-- end normal -->
-            </div>
+        {% for item in object_list %}
+        <div class="col-sm-3">
+            <!-- normal -->
+            <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' item.tp %}">
+                    <div class="img"><img src="{{item.tp_imagen.url}}" alt="img"></div>
+                    <div class="mask1"></div>
+                    <div class="mask2"></div>
+                    <div class="info">
+                        <h3>{{item.tp_nombre}}</h3>
+                        <p>{{item.tp_descripcion}}</p>
+                    </div>
+                </a></div>
+            <!-- end normal -->
         </div>
-      {% else %}
-      <div class="alert alert-warning" role="alert">
-            ¡Aun no es fecha de pedido!. Fechas para proximo pedido {{item.conf_fecha_inicio}} al {{item.conf_fecha_fin}}!
-          </div>
+        {% endfor %}
+
+
+    </div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        ¡Aun no es fecha de pedido!. Fechas para proximo pedido {{item.conf_fecha_inicio}} al {{item.conf_fecha_fin}}!
+    </div>
     {% endif %}
 
-    
-        {% empty %}
-        <div class="alert alert-danger" role="alert">
-                Es necesario configurar fechas para realizar pedidos, contacte con el administrador del sitio! 
-              </div>
+
+    {% empty %}
+    <div class="alert alert-danger" role="alert">
+        Es necesario configurar fechas para realizar pedidos, contacte con el administrador del sitio!
+    </div>
     {% endfor %}
-        
-    
+
+
 </div>
 {% endblock contenido %}

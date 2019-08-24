@@ -3,7 +3,7 @@
 <title>Crear Producto</title>
 {% endblock titulo %}
 
-{% block contenido %}
+{% block contenido %} 
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -13,6 +13,7 @@
   </nav> 
 
 <div class="container">
+    {{ form.media }}
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 

@@ -32,7 +32,7 @@ class Area(models.Model):
 
 
 class Producto(models.Model):
-    producto_codigo = models.CharField(max_length=15, primary_key=True) 
+    producto_codigo = models.CharField(max_length=15, primary_key=True)  
     producto_nombre = models.CharField(max_length=50, verbose_name='Nombre')
     producto_descripcion = models.CharField(max_length=150, verbose_name='Descripcion')
     producto_imagen = models.ImageField(blank=False, null=False, upload_to="img_productos/", verbose_name='Imagen')
@@ -48,17 +48,29 @@ class Producto(models.Model):
      
 
     def __str__(self):
-        return self.producto_codigo   
+        return self.producto_codigo
 
 
 class Tipo_Pedido(models.Model):
     tp=models.AutoField(primary_key=True)
     tp_nombre=models.CharField('Nombre', max_length=30)
     tp_descripcion=models.CharField('Descripción', max_length=50)
-    tp_imagen=models.ImageField('Imagen', upload_to='imgCategoria/', max_length=10)
-    tp_productos=models.ManyToManyField(Producto, verbose_name='Productos')
+    tp_max_ped_mes=models.IntegerField('Cantidad de pedidos por mes', default=1)
+    tp_imagen=models.ImageField('Imagen', upload_to='imgCategoria/')
+    tp_productos=models.ManyToManyField(Producto, verbose_name='Productos') 
     def __str__(self):
         return self.tp_nombre
+    
+class Asignar_gasto_sucursal(models.Model):
+    ags=models.AutoField(primary_key=True)
+    ags_tipo_ped=models.ForeignKey(Tipo_Pedido,on_delete=models.CASCADE, verbose_name='Tipo pedido')
+    ags_sucursal=models.ForeignKey(Departamento, on_delete=models.CASCADE,verbose_name='Departamento')
+    ags_maximo_gasto=models.FloatField('Maximo de gasto')
+    class Meta: 
+        unique_together = (("ags_tipo_ped", "ags_sucursal"),)
+        # ordering = ['-tareaDocumento_actualizado']
+    def __str__(self):
+        return str(self.ags)
 
 
 class Pedido(models.Model):     
@@ -75,7 +87,7 @@ class Pedido(models.Model):
     pedido_n_factura=models.CharField('Numero Salida', max_length=8, blank=True, null=True)
     pedido_n_cresscedo=models.CharField('Venta Cresscendo', max_length=14, blank=True, null=True)
 
-    def get_total(self):
+    def get_total(self): 
         total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))['suma_total']
         if total != None:
             total=round(total, 3)
@@ -107,6 +119,7 @@ class Detalle_pedido(models.Model):
     detallepedido_cantidad = models.FloatField(null=True, blank=True, verbose_name='Cantidad')
     detallepedido_creado_por = models.ForeignKey(Usuario, null=True, blank=True, on_delete=models.PROTECT,)
     detallepedido_precio = models.FloatField(null=False, blank=False, default=0)
+    detallepedido_tipo_pedido = models.IntegerField(null=False, blank=False, default=0)
     detallepedido_status = models.BooleanField(default=False)
 
     class Meta:
