@@ -92,11 +92,7 @@
 {% endblock navbar %}
 
 {% block contenido %}
-{% if msn_empresa != None %}
-<div class="alert alert-danger" role="alert">
-  {{msn_empresa}}
-</div>
-{% endif %}
+
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
@@ -105,8 +101,9 @@
 </nav>
 <div class="container">
 
-  {{objeto}}
-  {{msn_empresa}}
+  
+  <h5 class="text-center">{{objeto}}</h5>
+  
   <div class="row">
 
     {% if msn_empresa != None %}

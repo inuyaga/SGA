@@ -14,7 +14,7 @@ urlpatterns = [
     path('update/marca/<int:pk>/', PedidoViews.MarcaUpdate.as_view(), name='update_marca'),
     path('delete/marca/<int:pk>/', PedidoViews.MarcaDelete.as_view(), name='eliminar_marca'), 
     path('list/marca/', PedidoViews.MarcaList.as_view(), name='listar_marca'),
-    path('add/marca/', PedidoViews.MarcaCreate.as_view(), name='crear_marca'),  
+    path('add/marca/', PedidoViews.MarcaCreate.as_view(), name='crear_marca'),   
 
 
     path('update/producto/<slug:pk>/', PedidoViews.ProductoUpdate.as_view(), name='update_producto'),
@@ -33,8 +33,13 @@ urlpatterns = [
 
 
     path('list/pedidos/', PedidoViews.PedidoList.as_view(), name='pedidos_list'),   
-    path('list/pedidos/detalles/<int:pk>', PedidoViews.dowload_pedido_detalles.as_view(), name='pedidos_list_detalles'), 
+    # path('list/pedidos/autorizar/', PedidoViews.AutorizarPedidoView.as_view(), name='pedido_autorizar_user'),   
+    path('list/pedidos/detalles/<int:pk>/', PedidoViews.dowload_pedido_detalles.as_view(), name='pedidos_list_detalles'), 
     path('list/pedidos/update/<int:pk>/', PedidoViews.PedidoUpdate.as_view(), name='pedido_update'), 
+
+    path('update/venta_pedido/<int:pk>/', PedidoViews.CapturaNoVentaPedido.as_view(), name='pedido_update_venta'), 
+    path('update/factura_pedido/<int:pk>/', PedidoViews.CapturaFacturaPedido.as_view(), name='pedido_update_factura'), 
+    path('update/salida_pedido/<int:pk>/', PedidoViews.CapturaSalidaPedido.as_view(), name='pedido_update_salida'), 
 
     path('config/list/', PedidoViews.ConfigPedidoListView.as_view(), name='pedido_config'),
     path('config/crar/', PedidoViews.ConfigPedidoCreate.as_view(), name='pedido_config_crear'),

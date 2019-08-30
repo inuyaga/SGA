@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 Usuario = get_user_model()
 
 # Create your models here.
-
+STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Cancelado'),(4, 'Venta'),(5, 'Facturado'), (6, 'Finalizado'), (7, 'Descargado'))
 
 class Marca(models.Model):
     marca_id_marca = models.AutoField(primary_key=True)
@@ -78,13 +78,19 @@ class Pedido(models.Model):
     pedido_fecha_pedido = models.DateField(auto_now_add=True)
     pedido_actualizado = models.DateTimeField(auto_now=True)
     pedido_id_depo = models.ForeignKey(Departamento, null=False, blank=False, on_delete=models.CASCADE, verbose_name='Departamento')
-    STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Descargado'),(4, 'Venta'),(5, 'Facturado'), (6, 'Finalizado'))
     pedido_status = models.IntegerField(choices=STATUS, default=1, verbose_name='Status')
+
     pedido_autorizo=models.ForeignKey(Usuario, verbose_name='Autorizado Por', related_name='Autorizador', blank=True, null=True, on_delete=models.CASCADE)
     pedido_rechazado=models.ForeignKey(Usuario, verbose_name='Rechazado Por', related_name='Cancelo', blank=True, null=True, on_delete=models.CASCADE)
+
+    pedido_Venta=models.ForeignKey(Usuario, verbose_name='Venta Por', related_name='Venta', blank=True, null=True, on_delete=models.CASCADE)
+    pedido_Facturado=models.ForeignKey(Usuario, verbose_name='Facturado Por', related_name='Facturado', blank=True, null=True, on_delete=models.CASCADE)
+    pedido_Finalizado=models.ForeignKey(Usuario, verbose_name='Finalizado Por', related_name='Finalizado', blank=True, null=True, on_delete=models.CASCADE)
+    pedido_Descargado=models.ForeignKey(Usuario, verbose_name='Descargado Por', related_name='Descargado', blank=True, null=True, on_delete=models.CASCADE)
+
     pedido_tipoPedido=models.ForeignKey(Tipo_Pedido, verbose_name='Tipo de pedido', blank=True, null=True, on_delete=models.PROTECT)
     pedido_n_factura=models.CharField('Folio Factura', max_length=14, blank=True, null=True)
-    pedido_n_factura=models.CharField('Numero Salida', max_length=8, blank=True, null=True)
+    pedido_n_salida=models.CharField('Numero Salida', max_length=8, blank=True, null=True)
     pedido_n_cresscedo=models.CharField('Venta Cresscendo', max_length=14, blank=True, null=True)
 
     def get_total(self): 
@@ -92,23 +98,7 @@ class Pedido(models.Model):
         if total != None:
             total=round(total, 3)
         return total
-
-    def get_total_limpieza(self):
-        total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido, detallepedido_pedido_id__pedido_tipo=1).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))['suma_total']
-        if total != None:
-            total=round(total, 3)
-        return 0 if total == None else total
-    def get_total_papeleria(self):
-        total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido, detallepedido_pedido_id__pedido_tipo=2).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))['suma_total']
-        if total != None:
-            total=round(total, 3)
-        return 0 if total == None else total
-    def get_total_venta(self):
-        total=Detalle_pedido.objects.filter(detallepedido_pedido_id=self.pedido_id_pedido, detallepedido_pedido_id__pedido_tipo=3).aggregate(suma_total=Sum(F('detallepedido_precio') * F('detallepedido_cantidad')))['suma_total']
-        if total != None:
-            total=round(total, 3)
-        return 0 if total == None else total
-
+   
     def __str__(self):
         return str(self.pedido_id_pedido)
   
@@ -127,7 +117,7 @@ class Detalle_pedido(models.Model):
         verbose_name_plural = "Detalle de pedidos"
 
     def __str__(self):
-        return str(self.detallepedido_pedido_id)
+        return str(self.detallepedido_pedido_id) 
 
     def sucursal(self):
         suc=Pedido.objects.get(pedido_id_pedido=self.detallepedido_pedido_id)

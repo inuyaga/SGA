@@ -3,6 +3,7 @@
 <title>Lista Pedidos</title>
 {% endblock titulo %}
 {% block contenido %}
+{% load personalizacion_tag %}
 {% if msn_empresa != None %}
 <div class="alert alert-danger" role="alert">
     {{msn_empresa}}
@@ -17,156 +18,236 @@
 
 <div class="row">
 
-        <div class="col-sm-9">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Pedidos</h4>
-                        <ul class="card-actions">
-                            <li>
-                                <button type="button" data-toggle="tooltip" title="" data-original-title="Undo"><i class="ion-action-undo"></i></button>
-                            </li>
-                            <li>
-                                <button type="button" data-toggle="tooltip" title="" data-original-title="Redo"><i class="ion-action-redo"></i></button>
-                            </li>
-                            <li>
-                                <button type="button" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ion-pencil"></i></button>
-                            </li>
-                            <li class="dropdown">
-                                <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span class="caret"></span></button>
-                                <ul class="dropdown-menu dropdown-menu-right">
-                                    <li class="dropdown-header">Accion</li>
-                                    <li>
-                                        {% if perms.pedidos.add_configuracion_pedido %}
-                                        <a tabindex="-1" href="{% url 'pedidos:pedido_config' %}">Configurar pedidos</a>
-                                        {% endif %}
-                                    </li>
-                                    
-                                    {% if view.request.GET %}
-                                    {% if user.is_superuser %} 
-                                    <li>
-                                        <a tabindex="-1" href="{% url 'pedidos:down_report_suc' %}?{{view.request.GET.urlencode}}">Descargar reporte filtrado</a>
-                                    </li>
-                                    <li>
-                                        <a tabindex="-1" href="{% url 'pedidos:down_report_detalle_pedido' %}?{{view.request.GET.urlencode}}">Descargar reporte detalle por pedido</a>
-                                    </li>
-                                    {% endif %}
-                                    {% endif %}
-                                </ul>
-                            </li>
-                        </ul>
-                        <!-- .card-actions -->
+    <!-- <ul class="list-group">
+                    <li class="list-group-item active">Filtros</li>
+                    <li class="list-group-item">
+                        <a href="?status=1" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Creado</a>
+                        <a href="?status=2" class="btn btn-secondary btn-sm active" role="button"
+                            aria-pressed="true">Aprobado</a>
+                        <a href="?status=3" class="btn btn-secondary btn-sm active" role="button"
+                            aria-pressed="true">Rechazado</a>
+                        <a href="?status=0" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Todo</a>
+                    </li>
+                    {% comment %} <li class="list-group-item">Morbi leo risus</li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li> {% endcomment %}
+                </ul> -->
+
+    <div class="card">
+        <div class="card-body">
+            <form action="" method="GET">
+                <div class="form-group col-sm-2">
+                    <label for="exampleFormControlInput1">Fecha inicial</label>
+                    <input name="inicio" type="date" class="form-control" value="{{view.request.GET.inicio}}" required>
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="exampleFormControlInput1">Fecha Final</label>
+                    <input name="fin" type="date" class="form-control" value="{{view.request.GET.fin}}" required>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="sucursal_selec">Sucursal</label>
+                    <select class="form-control" id="sucursal_selec" name="sucursal_selec">
+                        <option value="0" {% if view.request.GET.sucursal_selec == '0' %}selected{% endif %}>Todo
+                        </option>
+                        {% for item in list_sucursal %}
+                        <option value="{{item.id_sucursal}}"
+                            {% if view.request.GET.sucursal_selec == item.id_sucursal|striptags  %}selected{% endif %}>
+                            {{item.sucursal_nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="exampleFormControlSelect1">Status Pedido</label>
+                    <select class="form-control" id="exampleFormControlSelect1" name="status">
+                        <option value="0" {% if view.request.GET.status == '0' %}selected{% endif %}>Todo</option>
+                        {% for item in status_list %}
+                        <li>{{item.1}}</li>
+                        <option value="{{item.0}}" {% if view.request.GET.status == item.0|striptags %}selected{% endif %}>{{item.1}}</option>
+                        {% endfor %}
                         
-                    </div>
-                    <div class="card-block">
-                    <div class="table-responsive">
-                            <table class="table-condensed">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th scope="col"><small>##</small></th>
-                                            <th scope="col"><small>CREADO</small></th>
-                                            <th scope="col"><small>DEPARTAMENTO</small></th>
-                                            <th scope="col"><small>SUCURSAL</small></th>
+                    </select>
+                </div>
+                <div class="col-sm-1">
+                    <br>
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                                            <th scope="col"><small>TOTAL</small></th>
-                                            <th scope="col"><small>AUTORIZO</small></th>
-                                            <th scope="col"><small>RECHAZÓ</small></th>
-                                            <th scope="col"><small>Factura/Venta</small></th>
-                                            <th scope="col"><small>STATUS</small></th>
-                                            <th scope="col"><small>TIPO</small></th>
-                                            <th scope="col"><small>ACCION</small></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for pedido in object_list %}
-                                        <tr>
-                                            <th scope="row"><small>{{pedido.pedido_id_pedido}}</small></th>
-                                            <th scope="row"><small>{{pedido.pedido_fecha_pedido}}</small></th>
-                                            <td><small>{{pedido.pedido_id_depo}}</small></td>
-                                            <td><small>{{pedido.pedido_id_depo.departamento_id_sucursal}}</small></td>
-                                            <td><small>{{pedido.get_total}}</small></td>
-                                            <td><small>{{pedido.pedido_autorizo}}</small></td>
-                                            <td><small>{{pedido.pedido_rechazado}}</small></td>
-                                            <td><small>{{pedido.pedido_n_factura}}/{{pedido.pedido_n_cresscedo}}</small></td>
-                                            <td><small>
-                                                    <span class="badge badge-{% if pedido.pedido_status == 1 %}info{% endif %}{% if pedido.pedido_status == 2 %}success{% endif %}{% if pedido.pedido_status == 3 %}danger{% endif %}">
-                                                        {{pedido.get_pedido_status_display}}
-                                                    </span>
-                                                </small></td>
-                                            <td><small>{{pedido.get_pedido_tipo_display}}</small></td>
-                                            <td><small>
-                                                    <div class="btn-group">
-                                                    {% if perms.pedidos.change_pedido %}
+</div>
 
-                                                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>
+<div class="row">
 
-                                                    <a class="btn btn-xs btn-default" href="{% url 'pedidos:pedidos_list_detalles' pedido.pedido_id_pedido %}" type="button" data-toggle="tooltip" title="" data-original-title="Descargar Pedido"><i class="fa fa-arrow-circle-o-down"></i></a>
-                                                    {% endif %}
-                                                </div>
-                                                </small>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Pedidos</h4>
+                <ul class="card-actions">
+                    <li>
+                        <button type="button" data-toggle="tooltip" title="" data-original-title="Undo"><i
+                                class="ion-action-undo"></i></button>
+                    </li>
+                    <li>
+                        <button type="button" data-toggle="tooltip" title="" data-original-title="Redo"><i
+                                class="ion-action-redo"></i></button>
+                    </li>
+                    <li>
+                        <button type="button" data-toggle="tooltip" title="" data-original-title="Edit"><i
+                                class="ion-pencil"></i></button>
+                    </li>
+                    <li class="dropdown">
+                        <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span
+                                class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li class="dropdown-header">Accion</li>
+                            <li>
+                                {% if perms.pedidos.add_configuracion_pedido %}
+                                <a tabindex="-1" href="{% url 'pedidos:pedido_config' %}">Configurar pedidos</a>
+                                {% endif %}
+                            </li>
 
-                                    </tbody>
-                                </table>
-                    </div>
-                    </div>
+                            {% if view.request.GET %}
+                            {% if user.is_superuser %}
+                            <li>
+                                <a tabindex="-1"
+                                    href="{% url 'pedidos:down_report_suc' %}?{{view.request.GET.urlencode}}">Descargar
+                                    reporte filtrado</a>
+                            </li>
+                            <li>
+                                <a tabindex="-1"
+                                    href="{% url 'pedidos:down_report_detalle_pedido' %}?{{view.request.GET.urlencode}}">Descargar
+                                    reporte detalle por pedido</a>
+                            </li>
+                            {% endif %}
+                            {% endif %}
+                        </ul>
+                    </li>
+                </ul>
+                <!-- .card-actions -->
+
+            </div>
+            <div class="card-block">
+                <div class="table-responsive">
+                    <table class="table-condensed">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col"><small>##</small></th>
+                                <th scope="col"><small>CREADO</small></th>
+                                <th scope="col"><small>DEPARTAMENTO</small></th>
+                                <th scope="col"><small>SUCURSAL</small></th>
+
+                                <th scope="col"><small>TOTAL</small></th>
+                                <th scope="col"><small>AUTORIZÓ</small></th>
+                                <th scope="col"><small>RECHAZÓ</small></th>
+
+                                <th scope="col"><small>DESCARGO</small></th>
+                                <th scope="col"><small>VENTA</small></th>
+                                <th scope="col"><small>FACTURADO</small></th>
+                                <th scope="col"><small>FINALIZADO</small></th>
+
+                                <th scope="col"><small>Factura/Venta</small></th>
+                                <th scope="col"><small>STATUS</small></th>
+                                <th scope="col"><small>TIPO</small></th>
+                                <th scope="col"><small>ACCIÓN</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pedido in object_list %}
+                            <tr>
+                                <th scope="row"><small>{{pedido.pedido_id_pedido}}</small></th>
+                                <th scope="row"><small>{{pedido.pedido_fecha_pedido}}</small></th>
+                                <td><small>{{pedido.pedido_id_depo}}</small></td>
+                                <td><small>{{pedido.pedido_id_depo.departamento_id_sucursal}}</small></td>
+                                <td><small>{{pedido.get_total}}</small></td>
+                                <td><small>{{pedido.pedido_autorizo}}</small></td>
+                                <td><small>{{pedido.pedido_rechazado}}</small></td>
+
+                                <td><small>{{pedido.pedido_Descargado}}</small></td>
+                                <td><small>{{pedido.pedido_Venta}}</small></td>
+                                <td><small>{{pedido.pedido_Facturado}}</small></td>
+                                <td><small>{{pedido.pedido_Finalizado}}</small></td>
+
+                                <td><small>{{pedido.pedido_n_factura}}/{{pedido.pedido_n_cresscedo}}</small></td>
+                                <td><small>
+                                        <span
+                                            class="badge badge-{{pedido.pedido_status|get_color_class_badge}}">
+                                            {{pedido.get_pedido_status_display}}
+                                        </span>
+                                    </small></td>
+                                <td><small>{{pedido.pedido_tipoPedido}}</small></td>
+                                <td><small>
+                                        <div class="btn-group">
+                                            {% if perms.pedidos.change_pedido %}
+
+                                            
+                                            {% if user.is_superuser %}
+                                            <a class="btn btn-xs btn-default"
+                                            href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}"
+                                            type="button" data-toggle="tooltip" title=""
+                                            data-original-title="Editar"><i class="ion-edit"></i></a>
+                                            {% endif %}
+
+                                            
+                                            {% if pedido.pedido_status == 1 %}
+                                            <a class="btn btn-xs btn-default"
+                                            href="{% url 'pedidos:pedidos_list' %}?{{url_format.urlencode}}&autoriza={{pedido.pedido_id_pedido}}" 
+                                            type="button" data-toggle="tooltip" title=""
+                                            data-original-title="Autorizar"><i
+                                                class="fa fa-thumbs-o-up"></i></a>
+
+                                            <a class="btn btn-xs btn-default"
+                                            href="{% url 'pedidos:pedidos_list' %}?{{url_format.urlencode}}&cancela={{pedido.pedido_id_pedido}}"
+                                            type="button" data-toggle="tooltip" title=""
+                                            data-original-title="Cancelar"><i
+                                                class="fa fa-thumbs-o-down"></i></a>
+                                            
+                                            {% elif pedido.pedido_status == 2 %}
+                                            <a class="btn btn-xs btn-default"
+                                            href="{% url 'pedidos:pedidos_list_detalles' pedido.pedido_id_pedido %}?{{view.request.GET.urlencode}}"
+                                            type="button" data-toggle="tooltip" title=""
+                                            data-original-title="Descargar Pedido"><i
+                                            class="fa fa-arrow-circle-o-down"></i></a>
+                                            
+                                            {% elif pedido.pedido_status == 7 %}
+                                            <a class="btn btn-xs btn-default"
+                                            href="{% url 'pedidos:pedido_update_venta' pedido.pedido_id_pedido %}?{{view.request.GET.urlencode}}"
+                                            type="button" data-toggle="tooltip" title=""
+                                            data-original-title="Venta"><i
+                                            class="fa fa-credit-card"></i></a>
+
+                                            {% elif pedido.pedido_status == 4 %}
+                                            <a class="btn btn-xs btn-default"
+                                            href="{% url 'pedidos:pedido_update_factura' pedido.pedido_id_pedido %}?{{view.request.GET.urlencode}}"
+                                            type="button" data-toggle="tooltip" title=""
+                                            data-original-title="Facturado"><i
+                                            class="fa fa-file-pdf-o"></i></a>
+                                            
+                                            {% elif pedido.pedido_status == 5 %}
+                                            <a class="btn btn-xs btn-default"
+                                                href="{% url 'pedidos:pedido_update_salida' pedido.pedido_id_pedido %}?{{view.request.GET.urlencode}}"
+                                                type="button" data-toggle="tooltip" title=""
+                                                data-original-title="Salida"><i
+                                                    class="fa fa-external-link-square"></i></a>
+                                            {% endif %}
+                                                
+                                            {% endif %}
+                                        </div>
+                                    </small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
-
-
-    <div class="col-sm-3">
-        <ul class="list-group">
-            <li class="list-group-item active">Filtros</li>
-            <li class="list-group-item">
-                <a href="?status=1" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Creado</a>
-                <a href="?status=2" class="btn btn-secondary btn-sm active" role="button"
-                    aria-pressed="true">Aprobado</a>
-                <a href="?status=3" class="btn btn-secondary btn-sm active" role="button"
-                    aria-pressed="true">Rechazado</a>
-                <a href="?status=0" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Todo</a>
-            </li>
-            {% comment %} <li class="list-group-item">Morbi leo risus</li>
-            <li class="list-group-item">Porta ac consectetur ac</li>
-            <li class="list-group-item">Vestibulum at eros</li> {% endcomment %}
-        </ul>
-
-        <div class="card">
-            <div class="card-body">
-                <form action="" method="GET">
-                    <div class="form-group">
-                        <label for="exampleFormControlInput1">Fecha inicial</label>
-                        <input name="inicio" type="date" class="form-control" value="{{view.request.GET.inicio}}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleFormControlInput1">Fecha Final</label>
-                        <input name="fin" type="date" class="form-control" value="{{view.request.GET.fin}}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="sucursal_selec">Sucursal</label>
-                        <select class="form-control" id="sucursal_selec" name="sucursal_selec">
-                            <option value="0" {% if view.request.GET.sucursal_selec == '0' %}selected{% endif %}>Todo</option>
-                            {% for item in list_sucursal %}
-                            <option value="{{item.id_sucursal}}" {% if view.request.GET.sucursal_selec == item.id_sucursal|striptags  %}selected{% endif %}>{{item.sucursal_nombre}}</option>
-                            {% endfor %}
-                        </select>
-                      </div>
-                    <div class="form-group">
-                        <label for="exampleFormControlSelect1">Status Pedido</label>
-                        <select class="form-control" id="exampleFormControlSelect1" name="status">
-                          <option value="0" {% if view.request.GET.status == '0' %}selected{% endif %}>Todo</option>
-                          <option value="1" {% if view.request.GET.status == '1' %}selected{% endif %}>Creado</option>
-                          <option value="2" {% if view.request.GET.status == '2' %}selected{% endif %}>Aprobado</option>
-                          <option value="3" {% if view.request.GET.status == '3' %}selected{% endif %}>Rechazado</option>
-                        </select>
-                      </div>
-                    <button class="btn btn-primary" type="submit">Buscar</button>
-                </form>
-            </div>
         </div>
-
     </div>
+
+
+
+
 </div>
 
 <div class="row justify-content-md-center">
@@ -197,3 +278,7 @@
 </div>
 
 {% endblock contenido %}
+
+
+
+    

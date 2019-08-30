@@ -59,6 +59,35 @@ class PedidoForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
+class PedidoVentaForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ('pedido_n_cresscedo', )
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoVentaForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class PedidoFacturaForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ('pedido_n_factura', )
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoFacturaForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+class PedidoSalidaForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ('pedido_n_salida', )
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoSalidaForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
 class ConfigForm(forms.ModelForm):
     class Meta:
         model = Configuracion_pedido
