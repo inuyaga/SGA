@@ -274,6 +274,11 @@
                                         <a href="{% url 'activos:activo_list' %}">Activos</a>
                                     </li>
                                     {% endif %}
+                                    {% if perms.activos.view_asignacion %}
+                                    <li>
+                                        <a href="{% url 'activos:activo_asignar_list' %}">Asignar</a>
+                                    </li>
+                                    {% endif %}
                                 </ul>
                             </li>
                             {% endif %}

@@ -2,14 +2,13 @@
 {% block contenido %}
 {% load humanize %}
 <div class="row">
-
-
     <form class="form-inline col-sm-6" method="GET" action="">
         <div class="form-group">
             <select class="form-control" id="exampleFormControlSelect1" name="categoria">
                 <option selected disabled>Categoria</option>
                 {% for item in obj_list %}
-                <option value="{{item.id}}">{{item}}</option>
+                <option value="{{item.id}}" {% if item.id|striptags == view.request.GET.categoria %}
+                    selected{% endif %}>{{item}}</option>
                 {% endfor %}
             </select>
         </div>
@@ -17,7 +16,8 @@
             <select class="form-control" id="exampleFormControlSelect1" name="marca">
                 <option selected disabled>Marca</option>
                 {% for item in list_marca %}
-                <option value="{{item.marca_id_marca}}">{{item}}</option>
+                <option value="{{item.marca_id_marca}}" {% if item.marca_id_marca|striptags == view.request.GET.marca %}
+                    selected{% endif %}>{{item}}</option>
                 {% endfor %}
             </select>
         </div>
@@ -54,81 +54,97 @@
             <!-- .card-actions -->
         </div>
         <div class="card-block">
-            <table class="table">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Categoria</th>
-                        <th scope="col">Marca</th>
-                        <th scope="col">Modelo</th>
-                        <th scope="col">Serie</th>
-                        <th scope="col">Codigo B</th>
-                        <th scope="col">Costo</th>
-                        <th scope="col">Observación</th>
-                        <th scope="col">Accion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in object_list %}
-                    <tr>
-                        <th scope="row">{{item.activo}}</th>
-                        <td>{{item.activo_nombre}}</td>
-                        <td>{{item.activo_categoria}}</td>
-                        <td>{{item.activo_marca}}</td>
-                        <td>{{item.activo_modelo}}</td>
-                        <td>{{item.activo_serie}}</td>
-                        <td>{{item.activo_codigo_barra}}</td>
-                        <td>{{item.activo_costo|intcomma}}</td>
-                        <td>{{item.activo_observacion|truncatewords:5}}</td>
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    Opciones
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <li><a class="btn btn-xs btn-default" href="{% url 'activos:activo_especificacion_crear' item.activo %}" type="button" data-toggle="tooltip" title="" data-original-title="Añadir especificacion">Agregar<i class="fa fa-plus-circle"></i></a></li>
-                                    <li><a class="btn btn-xs btn-default"
-                                            href="{% url 'activos:activo_update' item.activo %}" type="button"
-                                            data-toggle="tooltip" title="" data-original-title="Editar">Editar<i
-                                                class="ion-edit"></i></a></li>
-                                    <li><a class="btn btn-xs btn-default"
-                                            href="{% url 'activos:activo_delete' item.activo %}" type="button"
-                                            data-toggle="tooltip" title="" data-original-title="Elimar">Eliminar<i
-                                                class="ion-close"></i></a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table-condensed">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Categoria</th>
+                            <th scope="col">Marca</th>
+                            <th scope="col">Modelo</th>
+                            <th scope="col">Serie</th>
+                            <th scope="col">Codigo B</th>
+                            <th scope="col">Costo</th>
+                            <th scope="col">Observación</th>
+                            <th scope="col">Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in object_list %}
+                        <tr>
+                            <th scope="row">{{item.activo}}</th>
+                            <td>{{item.activo_nombre}}</td>
+                            <td>{{item.activo_categoria}}</td>
+                            <td>{{item.activo_marca}}</td>
+                            <td>{{item.activo_modelo}}</td>
+                            <td>{{item.activo_serie|truncatechars:7}}</td>
+                            <td>{{item.activo_codigo_barra|truncatechars:7}}</td>
+                            <td>{{item.activo_costo|intcomma}}</td>
+                            <td>{{item.activo_observacion|truncatewords:3}}</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a class="btn btn-xs btn-default"
+                                        href="{% url 'activos:activo_especificacion_crear' item.activo %}" type="button"
+                                        data-toggle="tooltip" title="" data-original-title="Añadir especificacion"><i
+                                            class="fa fa-plus-circle"></i></a>
+                                    <a class="btn btn-xs btn-default"
+                                        href="{% url 'activos:activo_update' item.activo %}" type="button"
+                                        data-toggle="tooltip" title="" data-original-title="Editar"><i
+                                            class="fa fa-pencil-square-o"></i></a>
+                                    <a class="btn btn-xs btn-default"
+                                        href="{% url 'activos:activo_delete' item.activo %}" type="button"
+                                        data-toggle="tooltip" title="" data-original-title="Eliminar"><i
+                                            class="fa fa-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-<!-- <div class="col-sm-6">
-        <div class="card">
-            <div class="card-header">
-                <h4>Activos</h4>
-                <ul class="card-actions">
-                    <li class="dropdown">
-                        <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span class="caret"></span></button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li class="dropdown-header">Activo</li>
-                            <li>
-                                <a tabindex="-1" href="javascript:void(0)"><span class="badge pull-right">3</span> Añadir activo</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-block">
-                <p>With button actions...</p>
-            </div>
-        </div>
-    </div> -->
 
+
+    
+
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+            {% block pagination %}
+            {% if is_paginated %}
+            <nav>
+                <ul class="pagination pagination-lg">
+
+                    {% if page_obj.has_previous %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i class="ion-chevron-left"></i></a></li>
+                    {% endif %}
+
+                    
+                    {% for page in page_obj.paginator.page_range %}
+                    <!-- {% if forloop.counter != 1 %} | {% endif %} -->
+                    <li class="{% if page|striptags == view.request.GET.page %}active{% endif %}">
+                       <a href="{{ request.path }}?page={{page}}&{{urls_formateada.urlencode}}">{{ page }}</a>
+                    </li>
+                    
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li>
+                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i class="ion-chevron-right"></i></a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+            {% endif %}
+        {% endblock pagination %}
+        </div>
+    </div>
+
+
+
+
+</div>
 
 {% endblock contenido %}

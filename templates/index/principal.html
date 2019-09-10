@@ -2,147 +2,236 @@
 
 {% block contenido %}
 {% load humanize %}
+{% load personalizacion_tag %}
 {% if user.is_superuser %}
 
 
 <div class="row">
-        <div class="col-sm-6 col-lg-3"> 
-            <a class="card" href="javascript:void(0)">
-                <div class="card-block clearfix">
-                    <div class="pull-right">
-                        <p class="h6 text-muted m-t-0 m-b-xs">Pedidos {% now "M Y" %}</p>
-                        <p class="h3 text-blue m-t-sm m-b-0">{{pedido}}</p>
-                    </div>
-                    <div class="pull-left m-r"> 
-                        <span class="img-avatar img-avatar-48 bg-blue bg-inverse"><i class="ion-ios-bell fa-1-5x"></i></span>
-                    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a class="card" href="javascript:void(0)">
+            <div class="card-block clearfix">
+                <div class="pull-right">
+                    <p class="h6 text-muted m-t-0 m-b-xs">Pedidos {% now "M Y" %}</p>
+                    <p class="h3 text-blue m-t-sm m-b-0">{{pedido}}</p>
                 </div>
-            </a>
-        </div>
-        <!-- .col-sm-6 -->
-
-        <div class="col-sm-6 col-lg-3">
-            <a class="card bg-green bg-inverse" href="javascript:void(0)">
-                <div class="card-block clearfix">
-                    <div class="pull-right">
-                        <p class="h6 text-muted m-t-0 m-b-xs">Gastos {% now "M Y" %} Ped. Suc.</p>
-                        <p class="h3 m-t-sm m-b-0">{{total_mes|floatformat:3|intcomma}}</p>
-                    </div>
-                    <div class="pull-left m-r">
-                        <span class="img-avatar img-avatar-48 bg-gray-light-o"><i class="ion-ios-people fa-1-5x"></i></span>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <!-- .col-sm-6 -->
-
-        <div class="col-sm-6 col-lg-3">
-            <a class="card bg-blue bg-inverse" href="javascript:void(0)">
-                <div class="card-block clearfix">
-                    <div class="pull-right">
-                        <p class="h6 text-muted m-t-0 m-b-xs">Pedidos pendientes</p>
-                        <p class="h3 m-t-sm m-b-0">{{ped_pendientes}}</p>
-                    </div>
-                    <div class="pull-left m-r">
-                        <span class="img-avatar img-avatar-48 bg-gray-light-o"><i class="ion-ios-speedometer fa-1-5x"></i></span>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <!-- .col-sm-6 -->
-
-        <div class="col-sm-6 col-lg-3">
-            <a class="card bg-purple bg-inverse" href="javascript:void(0)">
-                <div class="card-block clearfix">
-                    <div class="pull-right">
-                        <p class="h6 text-muted m-t-0 m-b-xs">Gasto Maximo {% now "Y" %} - {{maximo_gasto.gasto|floatformat:2|intcomma}}</p>
-                        <p class="h6 m-t-sm m-b-0">{{maximo_gasto.sucursal}}</p>
-                    </div>
-                    <div class="pull-left m-r">
-                        <span class="img-avatar img-avatar-48 bg-gray-light-o"><i class="ion-ios-email fa-1-5x"></i></span>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <!-- .col-sm-6 --> 
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12">
-            <!-- Weekly users Widget -->
-            <div class="card">
-                <div class="card-header">
-                    <h4>Gastos Mes {% now "M Y" %} por sucursal</h4>
-                    <ul class="card-actions">
-                        
-                    </ul>
-                </div>
-                <div class="card-block">
-                    <div>
-                        <canvas id="myChart"></canvas>
-                    </div> 
-                </div>
-                <div class="card-block text-center">
-                    <span class="label bg-green m-r-xs">Estadistica <i class="ion-connection-bars"></i></span> <small>para <a href="javascript:void(0)">{% now "M Y" %}</a></small>
+                <div class="pull-left m-r">
+                    <span class="img-avatar img-avatar-48 bg-blue bg-inverse"><i
+                            class="ion-ios-bell fa-1-5x"></i></span>
                 </div>
             </div>
-            <!-- .card -->
-            <!-- End Weekly users Widget -->
-        </div>
+        </a>
     </div>
+    <!-- .col-sm-6 -->
+
+    <div class="col-sm-6 col-lg-3">
+        <a class="card bg-green bg-inverse" href="javascript:void(0)">
+            <div class="card-block clearfix">
+                <div class="pull-right">
+                    <p class="h6 text-muted m-t-0 m-b-xs">Gastos {% now "M Y" %} Ped. Suc.</p>
+                    <p class="h3 m-t-sm m-b-0">{{total_mes|floatformat:3|intcomma}}</p>
+                </div>
+                <div class="pull-left m-r">
+                    <span class="img-avatar img-avatar-48 bg-gray-light-o"><i class="ion-ios-people fa-1-5x"></i></span>
+                </div>
+            </div>
+        </a>
+    </div>
+    <!-- .col-sm-6 -->
+
+    <div class="col-sm-6 col-lg-3">
+        <a class="card bg-blue bg-inverse" href="javascript:void(0)">
+            <div class="card-block clearfix">
+                <div class="pull-right">
+                    <p class="h6 text-muted m-t-0 m-b-xs">Pedidos pendientes</p>
+                    <p class="h3 m-t-sm m-b-0">{{ped_pendientes}}</p>
+                </div>
+                <div class="pull-left m-r">
+                    <span class="img-avatar img-avatar-48 bg-gray-light-o"><i
+                            class="ion-ios-speedometer fa-1-5x"></i></span>
+                </div>
+            </div>
+        </a>
+    </div>
+    <!-- .col-sm-6 -->
+
+    <div class="col-sm-6 col-lg-3">
+        <a class="card bg-purple bg-inverse" href="javascript:void(0)">
+            <div class="card-block clearfix">
+                <div class="pull-right">
+                    <p class="h6 text-muted m-t-0 m-b-xs">Gasto Maximo {% now "Y" %} -
+                        {{maximo_gasto.gasto|floatformat:2|intcomma}}</p>
+                    <p class="h6 m-t-sm m-b-0">{{maximo_gasto.sucursal}}</p>
+                </div>
+                <div class="pull-left m-r">
+                    <span class="img-avatar img-avatar-48 bg-gray-light-o"><i class="ion-ios-email fa-1-5x"></i></span>
+                </div>
+            </div>
+        </a>
+    </div>
+    <!-- .col-sm-6 -->
+</div>
 
 
-    {% else %}
 
-    {% endif %}
-{% endblock contenido %} 
+
+<div class="row">
+    <div class="col-lg-12">
+        <!-- Weekly users Widget -->
+        <div class="card">
+            <div class="card-header">
+                <h4>Gastos Mes {% now "M Y" %} por sucursal</h4>
+                <ul class="card-actions">
+
+                </ul>
+            </div>
+            <div class="card-block">
+                <div>
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+            <div class="card-block text-center">
+                <span class="label bg-green m-r-xs">Estadistica <i class="ion-connection-bars"></i></span> <small>para
+                    <a href="javascript:void(0)">{% now "M Y" %}</a></small>
+            </div>
+        </div>
+        <!-- .card -->
+        <!-- End Weekly users Widget -->
+    </div>
+</div>
+
+
+
+    
+
+<div class="row">
+    <div class="col-lg-7">
+        <!-- Weekly users Widget -->
+        <div class="card">
+            <div class="card-header">
+                <h4>Gastos Mensual de {% now "Y" %}</h4>
+                <ul class="card-actions">
+
+                </ul>
+            </div>
+            <div class="card-block">
+                <div>
+                    <canvas id="linea_char"></canvas>
+                </div>
+            </div>
+            <div class="card-block text-center">
+                <span class="label bg-green m-r-xs">Estadistica <i class="ion-connection-bars"></i></span> <small>para
+                    <a href="javascript:void(0)">{% now "Y" %}</a></small>
+            </div>
+        </div>
+        <!-- .card -->
+        <!-- End Weekly users Widget -->
+    </div>
+</div>
+
+
+
+    
+
+
+{% else %}
+
+{% endif %}
+{% endblock contenido %}
 {% block script %}
 {% load random_numbers %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
-  <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+<script>
+
+var speedData = {
+  labels: [
+      {% for mes in pedidos_anual %}
+      "{{mes.detallepedido_pedido_id__pedido_fecha_pedido__month|get_nombre_mes}}",
+      {% endfor %}
+       ],
+  datasets: [{
+    label: "Gasto mensual",
+    data: [
+    {% for mes in pedidos_anual %}
+      {{mes.total|floatformat}},
+    {% endfor %}
+    ],
+    lineTension: 0.4,
+    fill: false,
+    borderColor: 'rgba(63, 191, 191, 0.5)',
+    backgroundColor: 'transparent',
+    // borderDash: [5, 5],
+    pointBorderColor: 'rgba(62, 187, 187, 1)',
+    pointBackgroundColor: 'rgba(62, 187, 187, 1)',
+    pointRadius: 5,
+    pointHoverRadius: 10,
+    pointHitRadius: 30,
+    pointBorderWidth: 2,
+    pointStyle: 'rectRounded'
+  }]
+};
+ 
+var chartOptions = {
+  legend: {
+    display: true,
+    position: 'top',
+    labels: {
+      boxWidth: 80,
+      fontColor: 'black'
+    }
+  }
+};
     var ctx = document.getElementById('myChart');
+    var linea = document.getElementById('linea_char');
+
+    var myLineChart = new Chart(linea, {
+        type: 'line',
+        data: speedData,
+        options: chartOptions
+    });
+
+
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: [
-            {% for item in total_gatos_suc2  %}
+                {% for item in total_gatos_suc2 %}
                 '{{item.detallepedido_pedido_id__pedido_id_depo__departamento_id_sucursal__sucursal_nombre}}',
             {% endfor %}
                 ],
-            datasets: [{
-                label: '# Total gastos',
-                data: [
-                {% for item in total_gatos_suc2  %}
+    datasets: [{
+        label: '# Total gastos',
+        data: [
+            {% for item in total_gatos_suc2 %}
                 '{{item.suma|floatformat:3}}',
-                {% endfor %}
-                    ],
-                backgroundColor: [
-                {% for item in total_gatos_suc2  %}
-                'rgba({% random_int 1 255 %}, {% random_int 1 255 %}, {% random_int 1 255 %}, 0.2)',
-                {% endfor %}
+    {% endfor %}
+    ],
+        backgroundColor: [
+            {% for item in total_gatos_suc2 %}
+    'rgba({% random_int 1 255 %}, {% random_int 1 255 %}, {% random_int 1 255 %}, 0.2)',
+        {% endfor %}
                     
                 ],
-                borderColor: [
-                    {% for item in total_gatos_suc2  %}
-                    'rgba({% random_int 1 255 %}, {% random_int 1 255 %}, {% random_int 1 255 %}, 1)',
-                {% endfor %}
+    borderColor: [
+        {% for item in total_gatos_suc2 %}
+    'rgba({% random_int 1 255 %}, {% random_int 1 255 %}, {% random_int 1 255 %}, 1)',
+        {% endfor %}
                    
                 ],
-                borderWidth: 1
+    borderWidth: 1
             }]
         },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
         }
+    }
     });
 
 
-    
-    </script>
+
+</script>
 {% endblock script %}

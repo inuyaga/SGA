@@ -178,9 +178,8 @@
                                 <td><small>{{pedido.pedido_tipoPedido}}</small></td>
                                 <td><small>
                                         <div class="btn-group">
-                                            {% if perms.pedidos.change_pedido %}
-
                                             
+                                            {% if perms.pedidos.change_pedido %}
                                             {% if user.is_superuser %}
                                             <a class="btn btn-xs btn-default"
                                             href="{% url 'pedidos:pedido_update' pedido.pedido_id_pedido %}"
@@ -231,6 +230,13 @@
                                                     class="fa fa-external-link-square"></i></a>
                                             {% endif %}
                                                 
+                                            {% endif %}
+
+                                            {% if perms.pedidos.delete_pedido %}
+                                            <a class="btn btn-xs btn-default"
+                                            href="{% url 'pedidos:pedido_delete' pedido.pedido_id_pedido %}"
+                                            type="button" data-toggle="tooltip" title=""
+                                            data-original-title="Eliminar"><i class="ion-android-delete"></i></a>
                                             {% endif %}
                                         </div>
                                     </small>

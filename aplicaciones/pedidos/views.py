@@ -212,6 +212,7 @@ class ProductoList(ListView):
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['usuario'] = self.request.user
+        context['tipo_ped_list'] = Tipo
 
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
@@ -350,6 +351,8 @@ class ProductoCompraList(DetailView):
         cantidad = request.POST.get('catidad')
         tipo_mensaje=True 
         mensaje=''
+        tipo_pedido=self.kwargs.get('pk')
+        print(tipo_pedido)
         
 
         if Decimal(cantidad) <= 0:
@@ -357,7 +360,7 @@ class ProductoCompraList(DetailView):
             tipo_mensaje=False
         else:
             # OBTENER ID DE TIPO PEDIDO 
-            tipo_pedido=self.kwargs.get('pk')
+            
             get_tipo_pedido=Tipo_Pedido.objects.get(tp=tipo_pedido)
             # OBTENER QUE DEPARTAMENTO PERTENECE
             get_depo = Pertenece_empresa.objects.get(pertenece_id_usuario=request.user)
@@ -394,9 +397,9 @@ class ProductoCompraList(DetailView):
                 else:
                     tipo_mensaje=False
                     mensaje='Supera el limite admitido para '+ str(get_tipo_pedido.tp_nombre)
-            except ObjectDoesNotExist as NoExiste:
+            except ObjectDoesNotExist as NoExiste: 
                 tipo_mensaje=False
-                mensaje='Por el momento no ha sido asignado a un departamento es necesario pertenecer a uno para proceder hacer pedido contacte con el administrador'
+                mensaje='Por el momento no ha sido asignado a un departamento o no se a asignado un gasto a la sucursal, contacte con el administrador'
             
             
 
@@ -468,9 +471,11 @@ class Crear_pedido_tiendaView(View):
         departamento=empresa_pertenece.pertenece_empresa.departamento_id_depo
         tipo_pedido=self.kwargs.get('tipo')
 
-        pedido=Pedido(pedido_id_depo_id=departamento, pedido_tipoPedido_id=tipo_pedido)
-        pedido.save()
-        Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_tipo_pedido=tipo_pedido).update(detallepedido_pedido_id=pedido.pk, detallepedido_status=True)
+        conteo_tip_ped=Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_tipo_pedido=tipo_pedido).count()
+        if conteo_tip_ped > 0:
+            pedido=Pedido(pedido_id_depo_id=departamento, pedido_tipoPedido_id=tipo_pedido)
+            pedido.save()
+            Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_tipo_pedido=tipo_pedido).update(detallepedido_pedido_id=pedido.pk, detallepedido_status=True)
 
         return redirect('pedidos:pedido_tienda_listado') 
 
@@ -497,7 +502,6 @@ class PedidoList(ListView):
         if 'cancela' in urls_formateada:
             Pedido.objects.filter(pedido_id_pedido=self.request.GET.get('cancela')).update(pedido_status=3,pedido_rechazado=self.request.user)
             del urls_formateada['cancela']
-
         context['url_format'] = urls_formateada
         print()
         return context
@@ -509,7 +513,9 @@ class PedidoList(ListView):
         status = self.request.GET.get('status')
         inicio = self.request.GET.get('inicio')
         fin = self.request.GET.get('fin')      
-        sucursal_selec = self.request.GET.get('sucursal_selec')      
+        sucursal_selec = self.request.GET.get('sucursal_selec')    
+        busqueda=self.request.GET.get('Buscar')
+         
 
         if inicio != None and fin != None:            
             if inicio != '' and fin != '':
@@ -526,6 +532,9 @@ class PedidoList(ListView):
                 queryset = queryset.filter(pedido_status=status)
         else: 
             queryset = queryset.filter(pedido_status=1)
+        
+        if busqueda != None:
+            queryset=Pedido.objects.filter(pedido_id_pedido=busqueda) 
 
         return queryset
     @method_decorator(permission_required('pedidos.view_pedido',reverse_lazy('inicio:need_permisos')))
@@ -684,6 +693,20 @@ class PedidoUpdate(UpdateView):
     @method_decorator(permission_required('pedidos.change_pedido',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(PedidoUpdate, self).dispatch(*args, **kwargs)
+
+
+class PedidoDelete(DeleteView):
+    model = Pedido
+    template_name = "pedidos/delete_forever.html"
+    success_url = reverse_lazy('pedidos:pedidos_list')
+    def get_context_data(self, **kwargs):
+        context = super(PedidoDelete, self).get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        #
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
 
 
 class PedidoListSucursal(ListView): 
@@ -982,7 +1005,7 @@ class TipoPedidoDelete(DeleteView):
         context['protected']=protected 
         return context 
 
-class AsigGastoList(ListView): 
+class AsigGastoList(ListView):  
     model=Asignar_gasto_sucursal
     template_name = 'pedidos/tipo_pedido/asignar_gasto_list.html'
     def get_context_data(self, **kwargs):

@@ -32,10 +32,11 @@ urlpatterns = [
     path('compra_sucursal/pedido/list/', PedidoViews.PedidoListSucursal.as_view(), name='pedido_sucursal_list'), 
 
 
-    path('list/pedidos/', PedidoViews.PedidoList.as_view(), name='pedidos_list'),   
+    path('list/pedidos/', PedidoViews.PedidoList.as_view(), name='pedidos_list'),    
     # path('list/pedidos/autorizar/', PedidoViews.AutorizarPedidoView.as_view(), name='pedido_autorizar_user'),   
     path('list/pedidos/detalles/<int:pk>/', PedidoViews.dowload_pedido_detalles.as_view(), name='pedidos_list_detalles'), 
     path('list/pedidos/update/<int:pk>/', PedidoViews.PedidoUpdate.as_view(), name='pedido_update'), 
+    path('list/pedidos/delete/<int:pk>/', PedidoViews.PedidoDelete.as_view(), name='pedido_delete'), 
 
     path('update/venta_pedido/<int:pk>/', PedidoViews.CapturaNoVentaPedido.as_view(), name='pedido_update_venta'), 
     path('update/factura_pedido/<int:pk>/', PedidoViews.CapturaFacturaPedido.as_view(), name='pedido_update_factura'), 

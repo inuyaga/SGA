@@ -96,6 +96,19 @@ DATABASES = {
     }
 }
 
+# PRODUCCION
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'dj_p_sga',
+#         'USER': 'externo',
+#         'PASSWORD': '0102261218',
+#         'HOST': '201.163.99.83',
+#         'PORT': '3307',
+#     }
+# }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

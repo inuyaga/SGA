@@ -124,7 +124,7 @@
                 <th scope="row"><small>{{detalle.detallepedido_producto_id.producto_codigo}}</small></th>
                 <th scope="row"><small>{{detalle.detallepedido_producto_id.producto_nombre}}</small></th>
                 <td><small>{{detalle.detallepedido_cantidad}}</small></td>
-                <td><small>{{detalle.detallepedido_tipo_pedido|get_tipoPedido}}</small></td>
+                <td><small>{{detalle.detallepedido_tipo_pedido|get_tipoPedido}}</small></td> 
                 <td><small><a class="btn btn-outline-danger btn-sm"
                             href="{% url 'pedidos:detalle_producto_delete' detalle.id %}" role="button"><i
                                 class="material-icons">delete_forever</i></a></small></td>
@@ -134,20 +134,16 @@
     </table>
 
 
-    {% for item in tipos_pe_list %}
-    {{item.tp|get_count_tipo_pedido}}
     <div class="row">
-
-        {% if item.tp|get_count_tipo_pedido > 0 %}
-        <div class="col-sm-3">
+        {% for item in tipos_pe_list %}
+        {% if item.tp|get_count_tipo_pedido:user.id > 0 %}
+        <div class="col-sm-2">
             <a href="{% url 'pedidos:creacion_pedido_sucursal' item.tp %}"
                 class="btn btn-{{colors_butons|random }} btn-lg active" role="button">{{item}}</a>
         </div>
         {% endif %}
-
-
+        {% endfor %}
     </div>
-    {% endfor %}
 
 </div>
 

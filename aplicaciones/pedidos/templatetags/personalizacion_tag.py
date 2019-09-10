@@ -14,8 +14,8 @@ def get_tipoPedido(key):
     return t_p.tp_nombre
 
 @register.filter
-def get_count_tipo_pedido(key):
-    detalle_tipo_pedido_conteo=Detalle_pedido.objects.filter(detallepedido_tipo_pedido=key, detallepedido_status=False).count()
+def get_count_tipo_pedido(key, user_id):
+    detalle_tipo_pedido_conteo=Detalle_pedido.objects.filter(detallepedido_tipo_pedido=key, detallepedido_creado_por=user_id, detallepedido_status=False).count()
     return detalle_tipo_pedido_conteo
 
 @register.filter
@@ -36,4 +36,33 @@ def get_color_class_badge(num_status):
     if num_status == 7:
         color = 'dark'
     return color
+
+@register.filter
+def get_nombre_mes(num_mes):
+    mes=''
+    if num_mes == 1:
+        mes = 'Enero'
+    if num_mes == 2:
+        mes = 'Febrero'
+    if num_mes == 3:
+        mes = 'Marzo'
+    if num_mes == 4:
+        mes = 'Abril'
+    if num_mes == 5:
+        mes = 'Mayo'
+    if num_mes == 6:
+        mes = 'Junio'
+    if num_mes == 7:
+        mes = 'Julio'
+    if num_mes == 8:
+        mes = 'Agosto'
+    if num_mes == 9:
+        mes = 'Septiembre'
+    if num_mes == 10:
+        mes = 'Octubre'
+    if num_mes == 11:
+        mes = 'Noviembre'
+    if num_mes == 12:
+        mes = 'Diciembre'
+    return mes
     

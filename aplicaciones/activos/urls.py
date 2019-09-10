@@ -16,4 +16,8 @@ urlpatterns = [
     path('activo/especificacion/agreagar/<int:pk>/', Vactivos.EspecificacioCreate.as_view(), name='activo_especificacion_crear'),
     path('activo/especific/<int:activo>/<int:pk>/', Vactivos.EspUpdate.as_view(), name='activo_esp_update'),
     path('activo/especific/delete/<int:activo>/<int:pk>/', Vactivos.EspDelete.as_view(), name='activo_esp_delete'),
+
+    path('activo/asignacion/user/list/', Vactivos.AsignacionList.as_view(), name='activo_asignar_list'),
+    path('activo/asignacion/user/crear/', Vactivos.AsignacionCrear.as_view(), name='activo_asignar'),
+    path('activo/asignacion/user/pdf/', Vactivos.GeneraPdfAsignacion.as_view(), name='activo_asignar_pdf'),
 ]
