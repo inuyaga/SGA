@@ -40,13 +40,16 @@ class Especificacion(models.Model):
 
 class Asignacion(models.Model):
     asig_activo=models.ForeignKey(Activo, verbose_name='Seleccione activo', on_delete=models.CASCADE)
-    asig_user=models.ForeignKey(Usuario, verbose_name='Usuario a asignar', on_delete=models.CASCADE)
+    asig_user=models.ForeignKey(Usuario, verbose_name='Usuario a asignar', on_delete=models.CASCADE) 
     asig_fecha_adicion=models.DateField(auto_now_add=True)
     asig_fecha_actualizacion=models.DateField(auto_now=True)
     asig_estado=models.IntegerField(choices=ESTADO, verbose_name='Status Asignación', default=3)
     asig_user_edit=models.ForeignKey(Usuario, verbose_name='Ultimo usuario editó', on_delete=models.CASCADE, related_name='UserEdit', blank=True, null=True)
-    asig_archivo_dig=models.FileField('Archivo digitalizado', upload_to='AsignacionFiles/', blank=True, null=True)
+    asig_archivo_dig=models.FileField('Archivo digitalizado', upload_to='AsignacionFiles/', blank=False, null=True)
     asig_observacion=models.CharField('Observacion', max_length=300)
+
+    class Meta:
+        ordering = ["asig_fecha_adicion"]
 
     def __str__(self):
         return "{} --> {}".format(self.asig_activo, self.asig_user)
@@ -55,14 +58,14 @@ class Asignacion(models.Model):
     #     unique_together = (("asig_activo", "asig_user"),)
 
 class TramiteBaja(models.Model):
-    tb_activo=models.ForeignKey(Activo, verbose_name='Seleccione activo', on_delete=models.CASCADE)
+    tb_activo=models.ForeignKey(Asignacion, verbose_name='Seleccione activo asignado', on_delete=models.CASCADE)
     tb_fecha_creacion=models.DateField(auto_now_add=True)
     tb_fecha_actualizacion=models.DateField(auto_now=True)
-    tb_observacion=models.CharField('Observacion o motivo por el cual se dara de baja',max_length=600)
+    tb_observacion=models.CharField('Observacion o motivo por el cual se dará de baja',max_length=600)
     tb_validacion=models.FileField(upload_to='TramitesBajas/Files/', blank=True, null=True)
-    tb_user_edit=models.ForeignKey(Usuario, verbose_name='Ultimo usuario editó', on_delete=models.CASCADE)
-    tb_user_edit=models.ForeignKey(Usuario, verbose_name='Usuario validó', on_delete=models.CASCADE, related_name='UserValido', blank=True, null=True)
-    tb_validado=models.BooleanField(default=0)
+    tb_user_edit=models.ForeignKey(Usuario, verbose_name='Ultimo usuario editó', on_delete=models.CASCADE, blank=False, null=True)
+    tb_user_valido=models.ForeignKey(Usuario, verbose_name='Usuario validó', on_delete=models.CASCADE, related_name='UserValido', blank=True, null=True)
+    tb_validado=models.BooleanField('Validar Baja',default=0)
     class Meta:
         permissions = [('puede_validar_Tramite', 'Puede validar tramite de baja')]
 

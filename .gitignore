@@ -107,4 +107,5 @@ media/
 env_sga/
 sga_win/
 env_windowns/
+sga_env/
 XDG_CACHE_HOME/

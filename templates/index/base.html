@@ -279,6 +279,11 @@
                                         <a href="{% url 'activos:activo_asignar_list' %}">Asignar</a>
                                     </li>
                                     {% endif %}
+                                    {% if perms.activos.view_tramitebaja %}
+                                    <li>
+                                        <a href="{% url 'activos:tb_list' %}">Baja</a> 
+                                    </li>
+                                    {% endif %}
                                 </ul>
                             </li>
                             {% endif %}

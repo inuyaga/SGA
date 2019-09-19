@@ -1,6 +1,49 @@
 {% extends 'index/base.html'%}
 
 {% block contenido %}
+{{view.request.search_status}}
+<div class="card">
+    <div class="card-header">
+        <h4>Filtro</h4>
+        <ul class="card-actions">
+            <li>
+                <button type="button"><i class="ion-more"></i></button>
+            </li>
+        </ul>
+    </div>
+    <div class="card-block card-block-full">
+        <div class="row">
+            <div class="col-md-2">
+                    <form class="form-inline" action="" method="GET"> 
+                        <div class="form-group">
+                            <select class="form-control" id="example-select" name="search_status" size="1">
+                                {% for item in estado %}
+                                <option value="{{item.0}}" {% if view.request.GET.search_status == item.0|striptags %}selected{% endif %}>{{item.1}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group m-b-0">
+                            <button class="btn btn-xs btn-pill btn-default" type="submit"><i class="ion-ios-search-strong fa-2x"></i></button>
+                        </div> 
+                    </form>
+            </div>
+            <div class="col-md-6">
+                    <form class="form-inline" action="" method="GET">
+                        <div class="form-group">
+                                
+                            <input class="form-control" type="text" value="{{view.request.GET.search_id}}" name="search_id" placeholder="# a encontrar...">
+                            <!-- <div class="help-block">Further info about this input</div> -->
+                            
+                        </div>
+                        <div class="form-group m-b-0">
+                            <button class="btn btn-xs btn-pill btn-default" type="submit"><i class="ion-ios-search-strong fa-2x"></i></button>
+                        </div> 
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="col-lg-12 col-md-12">
     <!-- Weekly users Widget -->
     <div class="card">
@@ -34,7 +77,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
+
                     {% for item in object_list %}
                     <tr>
                         <td class="text-center">{{item.id}}</td>
@@ -47,8 +90,19 @@
                         <td>{{item.get_asig_estado_display}}</td>
                         <td class="text-center">
                             <div class="btn-group">
-                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></button>
-                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i class="ion-close"></i></button>
+                                {% if item.asig_estado == 3 %}
+                                <a href="{% url 'activos:activo_asignar_pdf' item.id  %}" class="btn btn-xs btn-default"
+                                    type="button" data-toggle="tooltip" title=""
+                                    data-original-title="Imprimir resguardo"><i class="fa fa-file-pdf-o"></i></a>
+                                <a href="{% url 'activos:activo_validar_asignacion' item.id  %}?{{view.request.GET.urlencode}}"
+                                    class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title=""
+                                    data-original-title="Validar asignación"><i class="fa fa-check-square-o"></i></a>
+                                {% endif %}
+                                {% if item.asig_estado == 1 %}
+                                <a href="{% url 'activos:reasignacion_activo' item.id  %}?{{view.request.GET.urlencode}}"
+                                    class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title=""
+                                    data-original-title="Reasignación"><i class="ion-edit"></i></a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
@@ -56,20 +110,47 @@
                 </tbody>
             </table>
         </div>
-        
+
     </div>
     <!-- .card -->
     <!-- End Weekly users Widget -->
 </div>
 
 
+<div class="row">
+        <div class="col-lg-12 col-centered">
+            {% block pagination %}
+            {% if is_paginated %}
+            <nav>
+                <ul class="pagination pagination-lg">
 
-{% for item in pedidos %}
-    <li>{{item.}}</li>
-{% endfor %}
-    
+                    {% if page_obj.has_previous %}
+                    <li><a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i class="ion-chevron-left"></i></a></li>
+                    {% endif %}
+
+                    
+                    {% for page in page_obj.paginator.page_range %}
+                    <!-- {% if forloop.counter != 1 %} | {% endif %} -->
+                    <li class="{% if page|striptags == view.request.GET.page %}active{% endif %}">
+                       <a href="{{ request.path }}?page={{page}}&{{urls_formateada.urlencode}}">{{ page }}</a>
+                    </li>
+                    
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li>
+                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i class="ion-chevron-right"></i></a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+            {% endif %}
+        {% endblock pagination %}
+        </div>
+    </div>
 
 
-    
+
+
 {% endblock contenido %}
-    

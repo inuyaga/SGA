@@ -21,6 +21,24 @@
                 {% endfor %}
             </select>
         </div>
+        <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="status">
+                <option selected disabled>Status</option>
+                {% for item in vida %}
+                <option value="{{item.0}}" {% if item.0|striptags == view.request.GET.status %}
+                    selected{% endif %}>{{item.1}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="situacion">
+                <option selected disabled>Situación</option>
+                {% for item in situacion %}
+                <option value="{{item.0}}" {% if item.0|striptags == view.request.GET.situacion %}
+                    selected{% endif %}>{{item.1}}</option>
+                {% endfor %}
+            </select>
+        </div>
 
 
         <button type="submit" class="btn btn-primary mb-2">Filtrar</button>
@@ -78,10 +96,10 @@
                             <td>{{item.activo_categoria}}</td>
                             <td>{{item.activo_marca}}</td>
                             <td>{{item.activo_modelo}}</td>
-                            <td>{{item.activo_serie|truncatechars:7}}</td>
+                            <td>{{item.activo_serie}}</td>
                             <td>{{item.activo_codigo_barra|truncatechars:7}}</td>
                             <td>{{item.activo_costo|intcomma}}</td>
-                            <td>{{item.activo_observacion|truncatewords:3}}</td>
+                            <td>{{item.activo_observacion}}</td>
                             <td class="text-center">
                                 <div class="btn-group">
                                     <a class="btn btn-xs btn-default"

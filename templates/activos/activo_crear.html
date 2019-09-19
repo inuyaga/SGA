@@ -1,18 +1,21 @@
 {% extends 'index/base.html'%}
 {% block contenido %}
 <div class="container">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="row">
             {% for input in form %}
             <div class="col-sm-4">
                 {{input.label}}
                 {{input}}
+                <small class="form-text text-muted">{{input.help_text}}.</small>
                 {{input.errors}}
             </div>
             {% endfor %}
         </div>
-        <button class="form-control btn btn-app-teal" type="submit">Guardar Cambios</button>
+        <div class="col-sm-2">
+            <button class="form-control btn btn-app-teal" type="submit">Guardar Cambios</button>
+        </div>
     </form>
 </div>
 
