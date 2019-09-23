@@ -27,4 +27,17 @@ urlpatterns = [
     path('activo/baja/list/activo/', Vactivos.TramiteBajaList.as_view(), name='tb_list'),  
     path('activo/baja/crear/', Vactivos.TramiteBajaCrear.as_view(), name='tb_crear'),  
     path('activo/baja/validar/<int:pk>/', Vactivos.TramiteBajaUpdate.as_view(), name='tb_validacion'),  
+    path('activo/mis/asignaciones/list/', Vactivos.MiAsignacionList.as_view(), name='mis_asignaciones_list'),  
+
+    path('activo/template/item/list/', Vactivos.TemplateItemList.as_view(), name='tem_item_list'),   
+    path('activo/template/item/crear/', Vactivos.TemplateItemCreate.as_view(), name='tem_item_create'),   
+    path('activo/template/item/update/<int:pk>/', Vactivos.TemplateItemUpdate.as_view(), name='tem_item_update'),   
+    path('activo/template/item/delete/<int:pk>/', Vactivos.TemplateItemDelete.as_view(), name='tem_item_delete'), 
+
+    path('activo/template/item/grupo/list/', Vactivos.TemplateItemGrupoList.as_view(), name='tem_item_grup_list'),   
+    path('activo/template/item/grupo/crear/', Vactivos.TemplateItemGrupoCreate.as_view(), name='tem_item_grup_crear'),   
+    path('activo/template/item/grupo/update/<int:pk>/', Vactivos.TemplateItemGrupoUpdate.as_view(), name='tem_item_grup_update'),   
+    path('activo/template/item/grupo/delete/<int:pk>/', Vactivos.TemplateItemGrupoDelete.as_view(), name='tem_item_grup_delete'),   
+
+    path('activo/template/item/grupo/select/automatic/create/<int:id_activo>/', Vactivos.EspTemplateCreate.as_view(), name='templ_at_create'),   
 ]

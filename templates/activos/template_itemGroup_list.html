@@ -1,0 +1,50 @@
+{% extends 'index/base.html'%}
+
+{% block contenido %}
+<div class="card">
+    <div class="card-header">
+        <h4>Items Grupo</h4>
+        <div class="card-actions">
+            <code><a href="{% url 'activos:tem_item_grup_crear' %}">Añadir</a></code>
+        </div>
+    </div>
+    <div class="card-block">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 50px;">#</th>
+                    <th>Nombre Grupo</th>
+                    <th>Items</th>
+                    <th class="text-center" style="width: 100px;">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object_list %}
+                <tr>
+                    <td class="text-center">{{item.itmg}}</td>
+                    <td>{{item.itmg_name}}</td>
+                    <td>
+                        {{item.item_nombre}}
+
+                        {% for list in item.itmg_items.all %}
+                        <li>{{list}}</li>
+                        {% endfor %}
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a class="btn btn-xs btn-default" href="{% url 'activos:tem_item_grup_update' item.itmg %}"
+                                type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i
+                                    class="ion-edit"></i></a>
+                            <a class="btn btn-xs btn-default" href="{% url 'activos:tem_item_grup_delete' item.itmg %}"
+                                type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i
+                                    class="ion-close"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- .card-block -->
+</div>
+{% endblock contenido %}

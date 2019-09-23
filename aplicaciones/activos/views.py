@@ -1,9 +1,12 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render
+from django.contrib import messages
 from django.views.generic import TemplateView, CreateView, ListView, DeleteView, UpdateView, View
-from aplicaciones.activos.models import Categoria, Activo, Especificacion, Asignacion, TramiteBaja, ESTADO, VIDA_ACTIVO, SITUACION
+from aplicaciones.activos.models import (Categoria, Activo, Especificacion, Asignacion, TramiteBaja, ESTADO, VIDA_ACTIVO, SITUACION, TemplateItem,
+TemplateItemGroup)
 from aplicaciones.pedidos.models import Marca
 from aplicaciones.activos.forms import (CategoriaForm, EspecificacionForm, ActivoForm, AsignacionForm, AsignacionValidarForm, AsignacionReasignacionForm,
-TramiteBajaForm, TramiteBajaValidarForm)
+TramiteBajaForm, TramiteBajaValidarForm, TemplateItemForm, TemplateItemGroupForm, ActivoInitForm)
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
@@ -11,7 +14,7 @@ from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 from io import BytesIO
-
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.sites.shortcuts import get_current_site
 
 from django.utils.formats import localize
@@ -95,7 +98,7 @@ class CategoriaDelete(DeleteView):
 class ActivoList(ListView):
     model=Activo
     template_name='activos/activo_list.html'  
-    paginate_by=50
+    paginate_by=200
 
     @method_decorator(permission_required('activos.view_activo',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
@@ -105,8 +108,8 @@ class ActivoList(ListView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
-        context['obj_list'] = Categoria.objects.all()
-        context['list_marca'] = Marca.objects.all() 
+        context['obj_list'] = Categoria.objects.all().order_by('cat_nombre')
+        context['list_marca'] = Marca.objects.all().order_by('marca_nombre')
         context['vida'] = VIDA_ACTIVO 
         context['situacion'] = SITUACION 
         urls_formateada = self.request.GET.copy()
@@ -141,13 +144,22 @@ class ActivoList(ListView):
 
 class ActivoCrear(CreateView): 
     model=Activo
-    form_class=ActivoForm
+    form_class=ActivoInitForm
     template_name='activos/activo_crear.html' 
     success_url=reverse_lazy('activos:activo_list')
 
     @method_decorator(permission_required('activos.add_activo',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(ActivoCrear, self).dispatch(*args, **kwargs)
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        status=form.instance.activo_status
+        if status == 5 or status == 6:
+            messages.error(self.request, 'No esposible agregar activo en status, (Tramite de baja) o (Baja)', extra_tags='alert-danger')
+            context = super().get_context_data()
+            return render(self.request, self.template_name, context=context)
+        else:
+            return super().form_valid(form)
 
 class ActivoUpdate(UpdateView): 
     model=Activo
@@ -176,6 +188,78 @@ class ActivoDelete(DeleteView):
         context['model_count']=dict(model_count).items()
         context['protected']=protected
         return context
+
+
+class TemplateItemList(ListView):
+    model=TemplateItem
+    template_name='activos/template_item_list.html'  
+    
+    
+
+class TemplateItemCreate(CreateView):
+    model=TemplateItem
+    form_class=TemplateItemForm
+    template_name='activos/activo_crear.html' 
+    success_url=reverse_lazy('activos:tem_item_list')
+
+class TemplateItemUpdate(UpdateView):
+    model=TemplateItem
+    form_class=TemplateItemForm
+    template_name='activos/activo_crear.html' 
+    success_url=reverse_lazy('activos:tem_item_list')
+
+class TemplateItemDelete(DeleteView):
+    model = TemplateItem
+    template_name = "pedidos/delete_forever.html"
+    success_url=reverse_lazy('activos:tem_item_list') 
+
+    @method_decorator(permission_required('activos.delete_templateitem',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(TemplateItemDelete, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(TemplateItemDelete, self).get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        #
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+class TemplateItemGrupoList(ListView):
+    model=TemplateItemGroup
+    template_name='activos/template_itemGroup_list.html'  
+
+class TemplateItemGrupoCreate(CreateView):
+    model=TemplateItemGroup
+    form_class=TemplateItemGroupForm
+    template_name='activos/activo_crear.html' 
+    success_url=reverse_lazy('activos:tem_item_grup_list')
+
+class TemplateItemGrupoUpdate(UpdateView):
+    model=TemplateItemGroup
+    form_class=TemplateItemGroupForm
+    template_name='activos/activo_crear.html' 
+    success_url=reverse_lazy('activos:tem_item_grup_list')
+
+class TemplateItemGrupoDelete(DeleteView):
+    model = TemplateItemGroup
+    template_name = "pedidos/delete_forever.html"
+    success_url=reverse_lazy('activos:tem_item_grup_list') 
+
+    @method_decorator(permission_required('activos.delete_templateitemgroup',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(TemplateItemGrupoDelete, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(TemplateItemGrupoDelete, self).get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        #
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
 
 class EspecificacioCreate(CreateView):
     model=Especificacion
@@ -232,6 +316,33 @@ class EspDelete(DeleteView):
     def get_success_url(self):
         return reverse_lazy('activos:activo_especificacion_crear', kwargs={'pk':self.kwargs.get('activo')})
 
+class EspTemplateCreate(TemplateView):
+    template_name = "activos/template_atutomatic_crear.html"
+
+    def post(self, request, *args, **kwargs):
+        id_item_grop_template=request.POST.get('grup_item_template')
+        ID_activo=kwargs.get('id_activo')
+        try:
+            get_it_grup=TemplateItemGroup.objects.get(itmg=id_item_grop_template)
+            for item in get_it_grup.itmg_items.all():
+                esp=Especificacion(
+                    esp_activo_id=ID_activo,
+                    esp_item=item.item_nombre,
+                    esp_valor='Sin especificar',
+                )
+                esp.save()
+        except ObjectDoesNotExist:
+            pass
+        
+        url = reverse('activos:activo_especificacion_crear', kwargs={'pk':ID_activo})
+        return redirect(url)
+    def get_context_data(self, **kwargs):
+        context = super(EspTemplateCreate, self).get_context_data(**kwargs)
+        #
+        context['TemplateItemGroup']=TemplateItemGroup.objects.all()
+       
+        return context
+
 
 
 class AsignacionList(ListView):
@@ -243,6 +354,7 @@ class AsignacionList(ListView):
         # from aplicaciones.pedidos.models import Detalle_pedido, Tipo_Pedido, Pedido
         context = super(AsignacionList, self).get_context_data(**kwargs)
         context['estado'] = ESTADO
+        context['usuaris'] = User.objects.all().order_by('username')
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
             del urls_formateada['page']
@@ -252,11 +364,17 @@ class AsignacionList(ListView):
         queryset = super().get_queryset()
         search_status=self.request.GET.get('search_status')
         search_id=self.request.GET.get('search_id')
+        activo_id=self.request.GET.get('activo_id')
+        id_user=self.request.GET.get('id_user')
         if search_status != None:
             queryset=queryset.filter(asig_estado=search_status)
         
         if search_id != None:
             queryset=queryset.filter(id=search_id)
+        if activo_id != None:
+            queryset=queryset.filter(asig_activo=activo_id)
+        if id_user != None:
+            queryset=queryset.filter(asig_user=id_user)
         
         return queryset
 
@@ -485,7 +603,7 @@ class TramiteBajaCrear(CreateView):
         """If the form is valid, save the associated model."""
         form.instance.tb_user_edit=self.request.user
         asignacion=form.instance.tb_activo
-        asg=Asignacion.objects.get(id=asignacion)
+        asg=Asignacion.objects.get(id=asignacion.id)
         Activo.objects.filter(activo=asg.asig_activo.activo).update(activo_status=5)
         return super().form_valid(form) 
 
@@ -504,3 +622,38 @@ class TramiteBajaUpdate(UpdateView):
         Asignacion.objects.filter(id=asignacion).update(asig_estado=2)
         Activo.objects.filter(activo=asg.asig_activo.activo).update(activo_status=6)
         return super().form_valid(form) 
+
+
+class MiAsignacionList(ListView):
+    model=Asignacion
+    paginate_by=100
+    template_name='activos/asignacion_list.html'  
+
+    def get_context_data(self, **kwargs):
+        # from aplicaciones.pedidos.models import Detalle_pedido, Tipo_Pedido, Pedido
+        context = super(MiAsignacionList, self).get_context_data(**kwargs)
+        context['estado'] = ESTADO
+        # context['usuaris'] = User.objects.all().order_by('username')
+        urls_formateada = self.request.GET.copy()
+        if 'page' in urls_formateada:
+            del urls_formateada['page']
+        context['urls_formateada'] = urls_formateada 
+        return context
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset=queryset.filter(asig_user=self.request.user)
+        search_status=self.request.GET.get('search_status')
+        search_id=self.request.GET.get('search_id')
+        activo_id=self.request.GET.get('activo_id')
+        id_user=self.request.GET.get('id_user')
+        if search_status != None:
+            queryset=queryset.filter(asig_estado=search_status)
+        
+        if search_id != None:
+            queryset=queryset.filter(id=search_id)
+        if activo_id != None:
+            queryset=queryset.filter(asig_activo=activo_id)
+        if id_user != None:
+            queryset=queryset.filter(asig_user=id_user)
+        
+        return queryset

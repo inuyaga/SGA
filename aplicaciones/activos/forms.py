@@ -1,6 +1,16 @@
 from django import forms
-from aplicaciones.activos.models import Activo, Especificacion, Categoria, Asignacion, TramiteBaja
+from aplicaciones.activos.models import Activo, Especificacion, Categoria, Asignacion, TramiteBaja, TemplateItem, TemplateItemGroup
 
+class ActivoInitForm(forms.ModelForm):
+    class Meta:
+        model = Activo
+        # fields = '__all__'
+        exclude = ['activo_situacion']
+
+    def __init__(self, *args, **kwargs):
+        super(ActivoInitForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
 class ActivoForm(forms.ModelForm):
     class Meta:
         model = Activo
@@ -94,6 +104,28 @@ class TramiteBajaValidarForm(forms.ModelForm):
         fields = ('tb_validado',)
     def __init__(self, *args, **kwargs):
         super(TramiteBajaValidarForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class TemplateItemForm(forms.ModelForm):
+    class Meta:
+        model = TemplateItem
+        fields = '__all__'
+        # fields = ('tb_validado',)
+    def __init__(self, *args, **kwargs):
+        super(TemplateItemForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class TemplateItemGroupForm(forms.ModelForm):
+    class Meta:
+        model = TemplateItemGroup
+        fields = '__all__'
+        widgets = {
+            'itmg_items': forms.SelectMultiple(attrs={'size': 30,}), 
+        }
+    def __init__(self, *args, **kwargs):
+        super(TemplateItemGroupForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
         

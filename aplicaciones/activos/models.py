@@ -28,6 +28,21 @@ class Activo(models.Model):
     def __str__(self):
         return "ID:{} Activo:{} NS:{} --- CB:{}".format(self.activo, self.activo_nombre, self.activo_serie, self.activo_codigo_barra)
 
+
+class TemplateItem(models.Model):
+    item=models.AutoField(primary_key=True)
+    item_nombre=models.CharField('Nombre item', max_length=100, unique=True)
+    def __str__(self):
+        return self.item_nombre
+
+class TemplateItemGroup(models.Model):
+    itmg=models.AutoField(primary_key=True)
+    itmg_name=models.CharField('Nombre de grupo',max_length=100, unique=True)
+    itmg_items=models.ManyToManyField(TemplateItem, verbose_name='Items')
+    def __str__(self):
+        return self.itmg_name
+
+
 class Especificacion(models.Model):
     especificacion=models.AutoField(primary_key=True)
     esp_activo=models.ForeignKey(Activo, verbose_name='Activo perteneciente', on_delete=models.CASCADE)
@@ -52,7 +67,7 @@ class Asignacion(models.Model):
         ordering = ["asig_fecha_adicion"]
 
     def __str__(self):
-        return "{} --> {}".format(self.asig_activo, self.asig_user)
+        return "{} --> {} --> {}".format(self.asig_activo, self.asig_user, self.asig_user.get_full_name())
 
     # class Meta: 
     #     unique_together = (("asig_activo", "asig_user"),)

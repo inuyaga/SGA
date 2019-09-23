@@ -1,0 +1,23 @@
+{% extends 'index/base.html'%}
+
+{% block contenido %}
+<form action="" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label class="col-xs-12" for="example-select">Seleccione una plantilla</label>
+        <div class="col-sm-7">
+            <select class="form-control"  name="grup_item_template" size="1" required>
+                <option value="0" selected disabled>Favor de elegir alguno</option>   
+                {% for itemGr in TemplateItemGroup %}
+                <option value="{{itemGr.itmg}}">{{itemGr}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <button class="form-control btn btn-success" type="submit">Guardar Cambios</button>
+        </div>
+    </div>
+</form>
+{% endblock contenido %}
