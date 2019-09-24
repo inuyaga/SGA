@@ -19,6 +19,6 @@ class OrdenServicio(models.Model):
     ods_falla_rep=models.CharField('Falla reportada por el usuario', max_length=600)
     ods_diagnostico=models.CharField('Diagnostico Tecnico', max_length=600)
     ods_observacion=models.CharField('Observaciones', max_length=600)
-    ods_doc=models.FileField('PDF fimrado', upload_to='ods/documento/validacion')
+    ods_doc=models.FileField('PDF firmado', upload_to='ods/documento/validacion')
     ods_status=models.IntegerField('Estatus',choices=STATUS)
 
