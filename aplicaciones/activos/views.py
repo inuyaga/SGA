@@ -170,6 +170,16 @@ class ActivoUpdate(UpdateView):
     @method_decorator(permission_required('activos.change_activo',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(ActivoUpdate, self).dispatch(*args, **kwargs)
+    
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        status=form.instance.activo_status
+        if status == 5 or status == 6:
+            messages.error(self.request, 'No esposible agregar activo en status, (Tramite de baja) o (Baja)', extra_tags='alert-danger')
+            context = super().get_context_data()
+            return render(self.request, self.template_name, context=context)
+        else:
+            return super().form_valid(form)
 
 class ActivoDelete(DeleteView):
     model = Activo
@@ -287,7 +297,7 @@ class EspecificacioCreate(CreateView):
 class EspUpdate(UpdateView):
     model=Especificacion
     form_class=EspecificacionForm
-    template_name='activos/categoria_crear.html' 
+    template_name='activos/categoria_crear.html'  
     success_url=reverse_lazy('activos:cat_list')
 
     @method_decorator(permission_required('activos.change_especificacion',reverse_lazy('inicio:need_permisos')))

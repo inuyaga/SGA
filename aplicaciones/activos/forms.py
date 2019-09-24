@@ -15,7 +15,7 @@ class ActivoForm(forms.ModelForm):
     class Meta:
         model = Activo
         # fields = '__all__'
-        exclude = ['activo_status', 'activo_situacion']
+        exclude = ['activo_situacion']
 
     def __init__(self, *args, **kwargs):
         super(ActivoForm, self).__init__(*args, **kwargs)
@@ -31,7 +31,7 @@ class EspecificacionForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
             
-        self.fields['esp_tiene_costo'].widget.attrs.update({'class': 'custom-control-input'})
+        # self.fields['esp_tiene_costo'].widget.attrs.update({'class': 'custom-control-input'})
 
 class CategoriaForm(forms.ModelForm):
     class Meta:

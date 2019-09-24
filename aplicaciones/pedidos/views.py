@@ -212,7 +212,7 @@ class ProductoList(ListView):
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['usuario'] = self.request.user
-        context['tipo_ped_list'] = Tipo
+        # context['tipo_ped_list'] = Tipo_Pedido.objects.all() 
 
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
