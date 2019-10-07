@@ -1,4 +1,4 @@
-{% extends 'index/base.html'%} 
+{% extends 'index/base.html'%}
 {% block contenido %}
 <div class="container">
         {% if messages %}
@@ -11,7 +11,7 @@
         {% endif %}
 
 
-        
+        {{ form.media }}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="row">

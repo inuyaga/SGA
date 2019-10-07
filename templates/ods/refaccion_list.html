@@ -1,0 +1,108 @@
+{% extends 'index/base.html'%}
+
+{% block contenido %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'orden_serv:list_ods' %}?{{view.request.GET.urlencode}}">Orden de servicio</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Refacciones</li>
+    </ol>
+  </nav>
+
+<div class="row">
+    <div class="col-lg-12">
+        <!-- Condensed Table -->
+        <div class="card">
+            <div class="card-header">
+                <h4>Refacciones para la orden de servicio N°:{{view.kwargs.pk}}</h4>
+                <div class="card-actions">
+                        <code>Total:{{total_refaccion}}</code>
+                        <li class="dropdown">
+                                <button type="button" data-toggle="dropdown" aria-expanded="false"><i class="ion-more"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li class="dropdown-header">Refacción</li>
+                                    <li>
+                                        <a tabindex="-1" href="{% url 'orden_serv:ods_crear_refaccion' view.kwargs.pk %}?{{view.request.GET.urlencode}}">Añadir</a>
+                                    </li>
+                              
+                                </ul>
+                            </li>
+                </div>
+            </div>
+            <div class="card-block">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Descripcion</th>
+                            <th class="text-center" style="width: 50px;">Precio</th>
+                            <th class="hidden-xs w-15">Cantidad</th>
+                            <th class="hidden-xs w-15">Observación</th>
+                            <th class="hidden-xs w-15">Subtotal</th>
+                            <th class="text-center" style="width: 100px;">Actions</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {% for item in object_list %}     
+                        <tr>
+                            <td class="text-left">{{item.ref_produc}}</td>
+                            <td class="text-left">{{item.ref_produc.producto_nombre}}</td>
+                            <td class="hidden-xs">{{item.ref_precio}}</td>
+                            <td class="hidden-xs">{{item.ref_cantidad}}</td>
+                            <td class="hidden-xs">{{item.ref_obsrv}}</td>
+                            <td class="hidden-xs">{{item.subtotal}}</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'orden_serv:ods_delete_refaccion' item.ref view.kwargs.pk %}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i class="ion-close"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                            
+                        
+                        
+                    </tbody>
+                </table>
+            </div>
+            <!-- .card-block -->
+        </div>
+        <!-- .card -->
+        <!-- End Condensed Table -->
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12 col-centered">
+        {% block pagination %}
+        {% if is_paginated %}
+        <nav>
+            <ul class="pagination pagination-lg">
+
+                {% if page_obj.has_previous %}
+                <li><a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i class="ion-chevron-left"></i></a></li>
+                {% endif %}
+
+                
+                {% for page in page_obj.paginator.page_range %}
+                <!-- {% if forloop.counter != 1 %} | {% endif %} -->
+                <li class="{% if page|striptags == view.request.GET.page %}active{% endif %}">
+                   <a href="{{ request.path }}?page={{page}}&{{urls_formateada.urlencode}}">{{ page }}</a>
+                </li>
+                
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li>
+                    <a href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i class="ion-chevron-right"></i></a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        {% endif %}
+    {% endblock pagination %}
+    </div>
+</div>
+{% endblock contenido %}
+    

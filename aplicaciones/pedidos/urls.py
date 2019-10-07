@@ -24,7 +24,7 @@ urlpatterns = [
     path('add/producto/', PedidoViews.ProductoCreate.as_view(), name='crear_producto'),
     path('add/producto/kit/', PedidoViews.ProductokitCreate.as_view(), name='crear_producto_kit'),
  
-    path('compra_sucursal/seleccion-tipo-de-compra', PedidoViews.SelectTipoCompraView.as_view(), name='pedido_select_compra'),  
+    path('compra_sucursal/seleccion-tipo-de-compra/', PedidoViews.SelectTipoCompraView.as_view(), name='pedido_select_compra'),  
     path('compra_sucursal/<int:pk>/', PedidoViews.ProductoCompraList.as_view(), name='pedido_tienda'), 
     path('compra_sucursal/pre_pedido', PedidoViews.DetalleList.as_view(), name='pedido_tienda_listado'), 
     path('compra_sucursal/pre_pedido/delete/<int:pk>/', PedidoViews.DetalleDelete.as_view(), name='detalle_producto_delete'),

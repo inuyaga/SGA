@@ -287,6 +287,18 @@
                                 </ul>
                             </li>
                             {% endif %}
+                            {% if perms.ods %}
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="fa fa-list-alt"></i> ODS</a> 
+                                <ul class="nav nav-subnav">
+                                    {% if perms.ods.view_ordenservicio %} 
+                                    <li>
+                                        <a href="{% url 'orden_serv:list_ods' %}">Orden Servicios</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% endif %}
 
                         </ul>
                     </nav>
@@ -335,7 +347,7 @@
                                         <input class="form-control" type="search" id="search-input" name="Buscar"
                                             placeholder="Buscar..." />
                                         <span class="input-group-btn">
-                                            <button class="btn" type="button"><i
+                                            <button class="btn" type="submit"><i
                                                     class="ion-ios-search-strong"></i></button>
                                         </span>
                                     </div>

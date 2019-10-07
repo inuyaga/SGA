@@ -26,7 +26,7 @@ class Activo(models.Model):
     activo_status=models.IntegerField('Status', choices=VIDA_ACTIVO, default=2)
     activo_situacion=models.IntegerField('Situación del activo', choices=SITUACION, default=2)
     def __str__(self):
-        return "ID:{} Activo:{} NS:{} --- CB:{}".format(self.activo, self.activo_nombre, self.activo_serie, self.activo_codigo_barra)
+        return "[Activo ID:{}, {}, NS:{} --- CB:{}]".format(self.activo, self.activo_nombre, self.activo_serie, self.activo_codigo_barra)
 
 
 class TemplateItem(models.Model):
@@ -67,7 +67,7 @@ class Asignacion(models.Model):
         ordering = ["asig_fecha_adicion"]
 
     def __str__(self):
-        return "{} --> {} --> {}".format(self.asig_activo, self.asig_user, self.asig_user.get_full_name())
+        return "ID Asignacion:{} <---> {} --> {} --> {}".format(self.id, self.asig_activo, self.asig_user, self.asig_user.get_full_name())
 
     # class Meta: 
     #     unique_together = (("asig_activo", "asig_user"),)

@@ -79,7 +79,14 @@
         <!-- Weekly users Widget -->
         <div class="card">
             <div class="card-header">
-                <h4>Gastos Mes {% now "M Y" %} por sucursal</h4>
+                
+                
+                {% if view.request.GET.fin_pedido == None %}
+                <h4>Gastos Mes {% now "F Y" %} por sucursal</h4>
+                {% else %}
+                <h4>Gastos de {{init_pedido|date:"d F Y"}} al {{fin_pedido|date:"d F Y"}} por sucursal</h4>
+                {% endif %}
+                    
                 <ul class="card-actions">
 
                 </ul>
@@ -90,8 +97,33 @@
                 </div>
             </div>
             <div class="card-block text-center">
-                <span class="label bg-green m-r-xs">Estadistica <i class="ion-connection-bars"></i></span> <small>para
-                    <a href="javascript:void(0)">{% now "M Y" %}</a></small>
+                    <div class="row">
+                            <form class="form-inline" action="" method="GET">
+                                <div class="form-group">
+                                    <select class="form-control" id="example-select" name="pedido_empresa" required>
+                                        <option selected disabled>Elija una empresa</option>
+                                        
+                                        {% for item in list_empresas %}
+                                        <option value="{{item.id}}" {% if item.id|striptags == view.request.GET.pedido_empresa %}selected{% endif %}>{{item.empresa_nombre}}</option>
+                                        {% endfor %}
+                                            
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="init_pedido">Inicio</label>
+                                    <input class="form-control" value="{{view.request.GET.init_pedido}}" type="date" id="init_pedido" name="init_pedido" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="fin_pedido">Fin</label>
+                                    <input class="form-control" value="{{view.request.GET.fin_pedido}}" type="date" id="fin_pedido"
+                                        name="fin_pedido" required>
+                                </div>
+                                <div class="form-group m-b-0">
+                                    <button class="btn btn-default" type="submit"><i class="ion-android-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                <span class="label bg-green m-r-xs">Estadistica <i class="ion-connection-bars"></i></span>
             </div>
         </div>
         <!-- .card -->
@@ -101,10 +133,10 @@
 
 
 
-    
+
 
 <div class="row">
-    <div class="col-lg-7">
+    <div class="col-lg-5">
         <!-- Weekly users Widget -->
         <div class="card">
             <div class="card-header">
@@ -126,11 +158,72 @@
         <!-- .card -->
         <!-- End Weekly users Widget -->
     </div>
+
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">
+
+                {% if view.request.GET.fin_ods == None %}
+                <h4>Gastos Mes {% now "F Y" %} por sucursal</h4>
+                {% else %}
+                <h4>Gastos de {{init_ods|date:"d F Y"}} al {{fin_ods|date:"d F Y"}} por sucursal</h4>
+                {% endif %}
+
+
+                <ul class="card-actions">
+                    <li class="dropdown">
+                        <button type="button" data-toggle="dropdown" aria-expanded="false"><i
+                                class="ion-more"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li class="dropdown-header">Reporte</li>
+                            <li>
+                                <a tabindex="-1" href="javascript:void(0)">Descargar</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- .card-actions -->
+            </div>
+            <!-- .card-header -->
+            <div class="card-block p-b-0">
+                <canvas id="gasto_ods"></canvas>
+            </div>
+            <div class="card-block text-center">
+                <div class="row">
+                    <form class="form-inline" action="" method="GET">
+                        <div class="form-group">
+                            <select class="form-control" id="example-select" name="empresa_ods" required>
+                                <option selected disabled>Elija una empresa</option>
+                                
+                                {% for item in list_empresas %}
+                                <option value="{{item.id}}" {% if item.id|striptags == view.request.GET.empresa_ods %}selected{% endif %}>{{item.empresa_nombre}}</option>
+                                {% endfor %}
+                                    
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="init_ods">Inicio</label>
+                            <input class="form-control" type="date" id="init_ods" name="init_ods" value="{{view.request.GET.init_ods}}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="fin_ods">Fin</label>
+                            <input class="form-control" type="date" id="fin_ods" value="{{view.request.GET.fin_ods}}"
+                                name="fin_ods" required>
+                        </div>
+                        <div class="form-group m-b-0">
+                            <button class="btn btn-default" type="submit"><i class="ion-android-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+                <span class="label bg-green m-r-xs">Reporte</small>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 
-    
+
 
 
 {% else %}
@@ -142,45 +235,45 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
 <script>
 
-var speedData = {
-  labels: [
-      {% for mes in pedidos_anual %}
-      "{{mes.detallepedido_pedido_id__pedido_fecha_pedido__month|get_nombre_mes}}",
-      {% endfor %}
+    var speedData = {
+        labels: [
+            {% for mes in pedidos_anual %}
+    "{{mes.detallepedido_pedido_id__pedido_fecha_pedido__month|get_nombre_mes}}",
+        {% endfor %}
        ],
-  datasets: [{
-    label: "Gasto mensual",
-    data: [
-    {% for mes in pedidos_anual %}
-      {{mes.total|floatformat}},
+    datasets: [{
+        label: "Gasto mensual",
+        data: [
+            {% for mes in pedidos_anual %}
+      {{ mes.total | floatformat }},
     {% endfor %}
     ],
-    lineTension: 0.4,
-    fill: false,
-    borderColor: 'rgba(63, 191, 191, 0.5)',
-    backgroundColor: 'transparent',
-    // borderDash: [5, 5],
-    pointBorderColor: 'rgba(62, 187, 187, 1)',
-    pointBackgroundColor: 'rgba(62, 187, 187, 1)',
-    pointRadius: 5,
-    pointHoverRadius: 10,
-    pointHitRadius: 30,
-    pointBorderWidth: 2,
-    pointStyle: 'rectRounded'
+        lineTension: 0.4,
+            fill: false,
+                borderColor: 'rgba(63, 191, 191, 0.5)',
+                    backgroundColor: 'transparent',
+                        // borderDash: [5, 5],
+                        pointBorderColor: 'rgba(62, 187, 187, 1)',
+                            pointBackgroundColor: 'rgba(62, 187, 187, 1)',
+                                pointRadius: 5,
+                                    pointHoverRadius: 10,
+                                        pointHitRadius: 30,
+                                            pointBorderWidth: 2,
+                                                pointStyle: 'rectRounded'
   }]
 };
- 
-var chartOptions = {
-  legend: {
-    display: true,
-    position: 'top',
-    labels: {
-      boxWidth: 80,
-      fontColor: 'black'
-    }
-  }
-};
-    var ctx = document.getElementById('myChart');
+
+    var chartOptions = {
+        legend: {
+            display: true,
+            position: 'top',
+            labels: {
+                boxWidth: 80,
+                fontColor: 'black'
+            }
+        }
+    };
+
     var linea = document.getElementById('linea_char');
 
     var myLineChart = new Chart(linea, {
@@ -188,6 +281,11 @@ var chartOptions = {
         data: speedData,
         options: chartOptions
     });
+
+
+
+    var ctx = document.getElementById('myChart');
+
 
 
     var myChart = new Chart(ctx, {
@@ -213,6 +311,52 @@ var chartOptions = {
                 ],
     borderColor: [
         {% for item in total_gatos_suc2 %}
+    'rgba({% random_int 1 255 %}, {% random_int 1 255 %}, {% random_int 1 255 %}, 1)',
+        {% endfor %}
+                   
+                ],
+    borderWidth: 1
+            }]
+        },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+    });
+
+
+    var div_ods = document.getElementById('gasto_ods');
+
+
+
+    var ods_char = new Chart(div_ods, {
+        type: 'bar',
+        data: {
+            labels: [
+                {% for item in query_gasto_ods %}
+                '{{item.ref_departamento__departamento_id_sucursal__sucursal_nombre}}',
+            {% endfor %}
+                ],
+    datasets: [{
+        label: '# Total gastos',
+        data: [
+            {% for item in query_gasto_ods %}
+                '{{item.suma|floatformat:3}}',
+    {% endfor %}
+    ],
+        backgroundColor: [
+            {% for item in query_gasto_ods %}
+    'rgba({% random_int 1 255 %}, {% random_int 1 255 %}, {% random_int 1 255 %}, 0.2)',
+        {% endfor %}
+                    
+                ],
+    borderColor: [
+        {% for item in query_gasto_ods %}
     'rgba({% random_int 1 255 %}, {% random_int 1 255 %}, {% random_int 1 255 %}, 1)',
         {% endfor %}
                    

@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "sga_env/bin/python",
+    "python.pythonPath": "env_sga/bin/python",
     "python.linting.enabled": true,
     "python.linting.pylintArgs": ["--reports", "12", "--disable-msg", "I0011"],
 }

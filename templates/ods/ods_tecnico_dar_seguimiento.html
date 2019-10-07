@@ -1,4 +1,4 @@
-{% extends 'index/base.html'%} 
+{% extends 'index/base.html'%}
 {% block contenido %}
 <div class="container">
         {% if messages %}
@@ -11,7 +11,9 @@
         {% endif %}
 
 
-        
+        <div class="alert alert-info">
+            <p><strong>Aceptar! </strong>Esta apunto de dar seguimiento ala Orden de servicio N° {{view.kwargs.pk}}.</p>
+        </div>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="row">
@@ -25,7 +27,7 @@
             {% endfor %}
         </div>
         <div class="col-sm-2">
-            <button class="form-control btn btn-app-teal" type="submit">Guardar Cambios</button>
+            <button class="form-control btn btn-app-teal" type="submit">Aceptar y seguir</button>
         </div>
     </form>
 </div>

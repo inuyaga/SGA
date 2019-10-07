@@ -752,6 +752,18 @@ class PedidoListSucursal(ListView):
 class SelectTipoCompraView(ListView):
     model=Tipo_Pedido
     template_name = "pedidos/select_compra.html"
+
+    def get_queryset(self):
+        queryset = super(SelectTipoCompraView, self).get_queryset()
+        try:
+            object_empresa_user=Pertenece_empresa.objects.get(pertenece_id_usuario=self.request.user)
+            queryset = queryset.filter(tp_empresa=object_empresa_user.pertenece_empresa.departamento_id_sucursal.sucursal_empresa_id)
+        except ObjectDoesNotExist as error:
+            messages.info(self.request, 'No ha sido asignado a una empresa, contacte con el administrador del sitio.')
+            queryset=queryset.none()
+        
+        return queryset
+
     def get_context_data(self, **kwargs):
         import datetime
         context = super(SelectTipoCompraView, self).get_context_data(**kwargs)

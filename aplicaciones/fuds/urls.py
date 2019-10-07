@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from aplicaciones.inicio.views import inicio, err_permisos
+from aplicaciones.inicio.views import err_permisos
 from aplicaciones.fuds.views import MotivoCreate, MotivoUpdate, MotivoList, MotivoDelete,\
 ConformidadCreate,ConformidadUpdate,ConformidadList,ConformidadDelete,\
 ZonaCreate,ZonaList,ZonaUpdate,ZonaDelete,\

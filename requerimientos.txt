@@ -13,7 +13,6 @@ mccabe==0.6.1
 mysqlclient==1.4.1
 openpyxl==2.6.1
 Pillow==5.4.1
-pkg-resources==0.0.0
 pylint==2.3.1
 pytz==2018.9
 qrcode==6.1

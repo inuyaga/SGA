@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 
 from django.db import models
-from aplicaciones.empresa.models import Departamento, Sucursal
+from aplicaciones.empresa.models import Departamento, Sucursal, Empresa
 from django.db.models import Avg, Sum, F
 
 from django.contrib.auth import get_user_model
@@ -53,6 +53,7 @@ class Producto(models.Model):
 
 class Tipo_Pedido(models.Model):
     tp=models.AutoField(primary_key=True)
+    tp_empresa=models.ForeignKey(Empresa, on_delete=models.CASCADE, verbose_name='Empresa', null=True, blank=False)
     tp_nombre=models.CharField('Nombre', max_length=30)
     tp_descripcion=models.CharField('Descripción', max_length=50)
     tp_max_ped_mes=models.IntegerField('Cantidad de pedidos por mes', default=1)
