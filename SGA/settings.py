@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'aplicaciones.activos',
     'aplicaciones.inicio',
     'aplicaciones.ods',
+    'aplicaciones.plan_de_trabajo.apps.PlanDeTrabajoConfig',
 ]
 
 MIDDLEWARE = [

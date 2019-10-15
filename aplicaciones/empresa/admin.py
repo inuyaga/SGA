@@ -1,5 +1,5 @@
 from django.contrib import admin
-from aplicaciones.empresa.models import Empresa, Sucursal, Zona, Departamento, Pertenece_empresa
+from aplicaciones.empresa.models import Empresa, Sucursal, Zona, Departamento, Pertenece_empresa, Cliente
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 # Register your models here.
@@ -40,6 +40,23 @@ class ConfigEmpresa(admin.StackedInline):
 class UserAdminConfig(BaseUserAdmin):
     inlines = (ConfigEmpresa,)
 
+class ClienteConfigAdmin(admin.ModelAdmin):
+    list_display = [
+        'cli',
+        'cli_clave',
+        'cli_nombre',
+        'cli_calle',
+        'cli_colonia',
+        'cli_cp',
+        'cli_estado',
+        'cli_telefono',
+        'cli_rfc',
+        'cli_email',
+        'cli_status',
+        'cli_vndedor_asignado',
+        ]
+    search_fields = ['cli_clave', 'cli_nombre']
+    list_filter = ['cli_status']
 
 # Re-register UserAdmin
 admin.site.unregister(User)
@@ -48,3 +65,4 @@ admin.site.register(Sucursal, Suc)
 admin.site.register(Zona)
 admin.site.register(Departamento, DepoConfig)
 admin.site.register(User, UserAdminConfig)
+admin.site.register(Cliente, ClienteConfigAdmin)
