@@ -2,6 +2,12 @@ from django.contrib import admin
 from aplicaciones.plan_de_trabajo.models import Plan_trabajo, Registro_actividad
 from aplicaciones.empresa.models import Cliente
 from aplicaciones.plan_de_trabajo.forms import Registro_actividadForm
+from django.db.models import Sum, F, Count, Max, Min
+
+
+from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+
+
 from django.utils.functional import curry
 import datetime
 from django.utils import timezone
@@ -84,7 +90,7 @@ class Plan_trabajoAdmin(admin.ModelAdmin):
 class AdminRegistroActividad(admin.ModelAdmin):
     exclude = ('ra_user',)
     actions = ['DownloadReportSelected']
-    list_filter = ['ra_fecha_creacion', UserStafActividadFilter]
+    list_filter = [('ra_fecha_creacion', DateRangeFilter), UserStafActividadFilter]
     list_display_links=['ra_cliente', 'ra']
     date_hierarchy = 'ra_fecha_creacion'
     list_display = [
@@ -101,7 +107,64 @@ class AdminRegistroActividad(admin.ModelAdmin):
     form = Registro_actividadForm
 
     def DownloadReportSelected(self, request, queryset):
-        pass
+        from openpyxl.styles import Font, Fill, Alignment
+        from django.http import HttpResponse
+        from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        from decimal import Decimal
+        wb = Workbook()
+        ws=wb.active
+        ws['A1'] = 'Reporte por vendedor'+request.GET.urlencode()
+        st=ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:F1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = 'Usuario'
+        ws['B2'] = 'suma'
+        ws['C2'] = 'Registros'
+        ws['D2'] = 'Max Venta'
+        ws['E2'] = 'Min Venta'
+
+        queryset = queryset.values('ra_user__username').annotate(
+            total=Sum('ra_monto_compra'), 
+            conteo=Count('ra'),
+            maximo=Max('ra_monto_compra'),
+            minimo=Min('ra_monto_compra'),
+            ).order_by('ra_user')
+        cont = 3
+
+        for item in queryset:
+            ws.cell(row=cont, column=1).value = item['ra_user__username']
+            ws.cell(row=cont, column=2).value = item['total']
+            ws.cell(row=cont, column=3).value = item['conteo']
+            ws.cell(row=cont, column=4).value = item['maximo']
+            ws.cell(row=cont, column=5).value = item['minimo']
+            cont += 1
+        
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+
+        nombre_archivo='rep_vend.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
+
+        # for it in queryset: 
+        #     print(it)
+        
     DownloadReportSelected.short_description = "Descargar reporte por vendedor"
 
     def get_queryset(self, request):

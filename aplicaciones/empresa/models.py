@@ -76,7 +76,7 @@ class Cliente(models.Model):
     cli_colonia=models.CharField('Colonia',max_length=250)
     cli_cp=models.CharField('Codigo Postal',max_length=5)
     cli_estado=models.CharField('Estado',max_length=100)
-    cli_telefono=models.CharField('Telefono',max_length=11)
+    cli_telefono=models.CharField('Telefono',max_length=300)
     cli_rfc=models.CharField('R.F.C',max_length=15)
     cli_email=models.CharField('Email',max_length=80)
     cli_status=models.IntegerField('Status',choices=STATUS)

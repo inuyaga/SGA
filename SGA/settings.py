@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rangefilter',  # <-   add the app
     'ajax_select',  # <-   add the app
     'django.contrib.admin',
     'django.contrib.humanize', 
