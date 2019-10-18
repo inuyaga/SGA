@@ -8,6 +8,7 @@ class Empresa(models.Model):
     empresa_nombre = models.CharField(max_length=120, verbose_name='Nombre')
     empresa_tipo = models.CharField(max_length=20, verbose_name='Tipo de empresa')
     empresa_abrebiacion = models.CharField(max_length=10, verbose_name='Abrebiacion')
+    empresa_logo=models.ImageField(verbose_name='Logo empresa',upload_to='empresa/logo/', blank=False, null=True)
 
     def __str__(self):
         return self.empresa_nombre
