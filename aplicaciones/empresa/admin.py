@@ -24,8 +24,8 @@ class Suc(admin.ModelAdmin):
 
 class DepoConfig(admin.ModelAdmin):
     list_display = ('departamento_nombre',
-                    'departamento_id_sucursal', 'nombre_empresa',)
-    list_filter = ('departamento_id_sucursal',)
+                    'departamento_id_sucursal', 'nombre_empresa',) 
+    list_filter = ('departamento_id_sucursal__sucursal_empresa_id', 'departamento_id_sucursal')
 
 
 class ConfigEmpresa(admin.StackedInline):
