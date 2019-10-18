@@ -136,5 +136,21 @@ class Configuracion_pedido(models.Model):
 class Catalogo_Productos(models.Model):
     tp_empresa=models.ForeignKey(Empresa, on_delete=models.CASCADE, verbose_name='Empresa', null=True, blank=False)
     tp_catalogo=models.CharField('Nombre', max_length=30)
-     tp_productos=models.ManyToManyField(Producto, verbose_name='Productos') 
     tp_descripcion=models.CharField('Descripción', max_length=50)
+    tp_productos=models.ManyToManyField(Producto, verbose_name='Productos')
+
+# class PDFCatalogo(models.Model):
+#     pdf_empresa=models.ForeignKey(Empresa, on_delete=models.CASCADE, verbose_name='Nombre de la Empresa', null=True, blank=False)
+#     pdf_imagen=models.ImageField('Imagen de la Empresa', upload_to='imgEmpresa/')
+#     pdf_codigo = models.CharField(max_length=15, primary_key=True)
+#     pdf_catalogo=models.CharField('Nombre', max_length=30) 
+#     pdf_descripcion=models.CharField('Descripción', max_length=50)
+#     pdf_imagen=models.ImageField('Imagen', upload_to='imgCategoria/')
+
+
+
+
+
+
+
+    

@@ -7,7 +7,7 @@ from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 from aplicaciones.pedidos.models import (Area, Marca, Producto, Detalle_pedido, Pedido, Configuracion_pedido, Tipo_Pedido, Asignar_gasto_sucursal, Tipo_Pedido, Catalogo_Productos,
  Asignar_gasto_sucursal, STATUS)
 from aplicaciones.pedidos.froms import (AreaForm, MarcaForm, ProductoForm, PedidoForm, ProductoKitForm, ConfigForm, Tipo_PedidoForm, AsigGastoForm,
-PedidoVentaForm, PedidoFacturaForm, PedidoSalidaForm)
+PedidoVentaForm, PedidoFacturaForm, PedidoSalidaForm, Catalogo_ProductosForm)
 from aplicaciones.empresa.models import Pertenece_empresa
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, Q
@@ -18,6 +18,18 @@ from aplicaciones.empresa.models import Sucursal
 from django.db.models import ProtectedError
 
 from django.http import JsonResponse
+
+#Librerias reportlab a usar:
+from django.http import HttpResponse
+from io import BytesIO
+from reportlab.platypus import (SimpleDocTemplate, PageBreak, Image, Spacer,Paragraph, Table, TableStyle, Spacer)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import A4, letter, landscape
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT, TA_LEFT
+PAGE_WIDTH = letter[0]
+PAGE_HEIGHT = letter[1]
 
 from aplicaciones.empresa.models import Departamento 
 # Create your views here.
@@ -1073,17 +1085,99 @@ class AsigGastoDelete(DeleteView):
 
 # CLASES PARA GENERAR CATALOGO DE PEDIDOS
 
-class CatalogoProductos(DetailView):
+class CatalogoProductosList(ListView):
     model = Catalogo_Productos
     template_name = 'pedidos/catalogo/listado_catalogo.html'
 
 class CatalogoCreate(CreateView):
     model = Catalogo_Productos
-    template_name ='pedidos/catalogo/listado_catalogo.html'
+    form_class = Catalogo_ProductosForm
+    template_name ='pedidos/catalogo/create_catalogo.html'
+    success_url = reverse_lazy('pedidos:listar_catalogo')
 
-class EliminarCatalogo(DeleteView):
+class CatalogoDelete(DeleteView):
     model = Catalogo_Productos
-    template_name = 'pedidos/catalogo/delete_catalogo'
+    template_name = 'pedidos/catalogo/delete_catalogo.html'
+    success_url = reverse_lazy('pedidos:listar_catalogo')
 
 
-# ---------------------------------------------------------------------------------------------------------
+class PDFCatalogoProd(View):
+    def myFirstPage(self, canvas, doc):
+        print('soy lo encabezado')
+        # CABECERA DE PAGINA 
+        Title = "ORDEN DE SERVICIO"
+        canvas.saveState()
+        canvas.setFont('Times-Bold', 16)
+        
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 50, Title)
+        canvas.restoreState() 
+        # # Footer.
+        # canvas.setFont('Times-Roman', 7)
+        # canvas.drawString( PAGE_WIDTH/6, 1.5*cm, '{}'.format(self.ods_object.ods_user_seguimiento.get_full_name()))
+        # canvas.drawString( PAGE_WIDTH/6, 0.9*cm, '______________________    __________________    ____________________')
+        # canvas.drawString( PAGE_WIDTH/6, 0.5*cm, 'Realizo Servicio   Asigna Sub Gerente TI    Nombre y Firma usuario')
+        # stylo = ParagraphStyle('firma_style', alignment=TA_CENTER, fontSize=6, fontName="Times-Roman")
+        # stylo2 = ParagraphStyle('firma_style', alignment=TA_CENTER, fontSize=8, fontName="Times-Bold")
+        # dta=[
+        #     (Paragraph('Realizo Servicio', stylo2), Paragraph('Vo Bo', stylo2), Paragraph('Recibio', stylo2)),
+        #     (Paragraph('{}({})'.format(self.ods_object.ods_user_seguimiento.get_full_name(), self.ods_object.ods_user_seguimiento), stylo), Paragraph('', stylo), Paragraph("{}".format(self.ods_object.ods_asignacion.asig_user.get_full_name()), stylo)),
+        #     (Paragraph('Nombre y firma', stylo), Paragraph('Gerente o Sub Gerente', stylo), Paragraph('Nombre y firma usuario', stylo)),
+        #     ]
+
+        # tabla=Table(dta, colWidths=[6 * cm, 6 * cm, 6 * cm])
+        # tabla.setStyle(TableStyle(
+        #     [
+        #         ('GRID', (0, 0), (2, -1), 1, colors.dodgerblue),
+        #         # ('LINEBELOW', (0, 0), (-1, 0), 0, colors.darkblue),
+        #         ('BACKGROUND', (0, 0), (-1, 0), colors.transparent)
+        #     ]
+        # ))
+        # tabla.wrapOn(canvas, PAGE_WIDTH, PAGE_HEIGHT)
+        # tabla.drawOn(canvas, 50, 0.6*cm)
+
+
+
+        
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='application/pdf')
+        buff = BytesIO()
+        doc = SimpleDocTemplate(buff, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=60, bottomMargin=18, title='CATALOGO PRODUCTOS')
+        items = []
+
+        ID_CATALOGO = self.kwargs.get('pk')
+        object_catalogo=Catalogo_Productos.objects.get(id=ID_CATALOGO)
+
+        stylo_p = ParagraphStyle('parrafo', alignment=TA_LEFT, fontSize=11, fontName="Times-Roman") 
+        stylo_titulo = ParagraphStyle('titulo', alignment=TA_CENTER, fontSize=11, fontName="Times-Bold")
+        # folio_format = ParagraphStyle('folio_serv', alignment = TA_LEFT, fontSize = 9, fontName="Times-Roman")
+        # fecha_format = ParagraphStyle('fecha_stylo', alignment = TA_RIGHT, fontSize = 9, fontName="Times-Roman")
+
+ 
+        
+        texto="{}".format(object_catalogo.tp_empresa)
+        p1=Paragraph(texto, stylo_titulo)
+        items.append(p1)
+
+        texto="{}".format(object_catalogo.tp_catalogo)
+        p1=Paragraph(texto, stylo_p)
+        items.append(p1)
+
+        texto="{}".format(object_catalogo.tp_descripcion)
+        p1=Paragraph(texto, stylo_p)
+        items.append(p1)
+
+
+    
+        
+
+        for item in object_catalogo.tp_productos.all():
+            pass
+
+       
+        
+
+        doc.build(items, onFirstPage=self.myFirstPage) 
+        response.write(buff.getvalue())
+        buff.close()
+        return response
+

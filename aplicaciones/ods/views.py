@@ -23,6 +23,7 @@ from reportlab.lib.units import cm
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT, TA_LEFT
 PAGE_WIDTH = letter[0]
 PAGE_HEIGHT = letter[1]
+
 from aplicaciones.empresa.models import Departamento, Pertenece_empresa
 class OrdenServiciotListView(ListView): 
     model = OrdenServicio
@@ -333,7 +334,7 @@ class OdsGeneraPDF(View):
         data_tabla +=[[p]]
         
 
-        tabla=Table(data_tabla, colWidths=[18 * cm])
+        tabla=Table(data_tabla, colWidths=[18 * cm]) 
         tabla.setStyle(TableStyle(
             [
                 ('GRID', (0, 0), (0, -1), 1, colors.dodgerblue),

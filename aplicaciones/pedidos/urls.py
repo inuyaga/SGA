@@ -58,7 +58,11 @@ urlpatterns = [
     path('asig/gastos/depos/update/<int:pk>/', PedidoViews.AsigGastoUpdate.as_view(), name='asig_gasto_update'), 
     path('asig/gastos/depos/delete/<int:pk>/', PedidoViews.AsigGastoDelete.as_view(), name='asig_gasto_delete'), 
 
-    path('list/catalogo_producto/', PedidoViews.CatalogoList.as_view(), name='listar_catalogo'),
+    path('list/catalogo_producto/', PedidoViews.CatalogoProductosList.as_view(), name='listar_catalogo'),
+    path('create/catalogo_producto/', PedidoViews.CatalogoCreate.as_view(), name='crear_catalogo'),
+    path('delete/catalogo_producto/<int:pk>/', PedidoViews.CatalogoDelete.as_view(), name='eliminar_catalogo'),
+    path('catalogo/producto/pdf/<int:pk>/', PedidoViews.PDFCatalogoProd.as_view(), name='pdf_cat_prod'), 
+
 
 
 

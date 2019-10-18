@@ -1,0 +1,19 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Eliminacion</title>
+{% endblock titulo %}
+{% block contenido %}
+
+<div class="container">
+  <form method="post">
+    {% csrf_token %}
+    <div class="alert alert-danger" role="alert">
+      ¿Esta seguro de eliminar?
+    </div>
+    <input class="btn btn-danger" type="submit" value="Si estoy seguro!">
+    <a class="btn btn-primary" href="#" onClick="javascript:history.go(-1);" role="button">Cancelar</a>
+  </form>
+</div>
+
+{{protected}}
+{% endblock %}
