@@ -485,7 +485,7 @@ class Crear_pedido_tiendaView(View):
 
 class PedidoList(ListView): 
     model = Pedido
-    template_name = 'pedidos/pedido/pedido_admin.html'
+    template_name = 'pedidos/pedido/pedido_admin.html' 
     ordering = ['pedido_id_pedido']
     def get_context_data(self, **kwargs):
         context = super(PedidoList, self).get_context_data(**kwargs)
@@ -543,6 +543,14 @@ class PedidoList(ListView):
 
 
 
+class DetallePedidoListView(ListView):
+    model = Detalle_pedido
+    template_name = 'pedidos/pedido/detalle_list.html'
+
+    def get_queryset(self):
+        queryset = super(DetallePedidoListView, self).get_queryset()
+        queryset = queryset.filter(detallepedido_pedido_id=self.kwargs.get('pk'))
+        return queryset
 
 
 class dowload_pedido_detalles(TemplateView):

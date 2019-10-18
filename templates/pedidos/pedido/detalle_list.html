@@ -1,0 +1,45 @@
+{% extends 'index/base.html'%}
+
+{% block contenido %}
+<div class="col-lg-6">
+        <!-- Condensed Table -->
+        <div class="card">
+            <div class="card-header">
+                <h4>Detalle de pedido</h4>
+                <div class="card-actions">
+                    <code>N° {{view.kwargs.pk}}</code>
+                </div>
+            </div>
+            <div class="card-block">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th class="hidden-xs w-15">Img</th>
+                            <th class="hidden-xs w-15">Cantidad</th>
+                            <th class="hidden-xs w-15">Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {% for item in object_list %}    
+                        <tr>
+                            <td>{{item.detallepedido_producto_id}}</td>
+                            <td><img src="{{item.detallepedido_producto_id.producto_imagen.url}}" alt="..." class="img-thumbnail" height="80" width="80"></td>
+                            <td>{{item.detallepedido_cantidad}}</td>
+                            <td class="hidden-xs">{{item.detallepedido_precio}}</td>
+                        </tr>
+                        {% endfor %}
+                            
+                        
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- .card-block -->
+        </div>
+        <!-- .card -->
+        <!-- End Condensed Table -->
+    </div>
+{% endblock contenido %}
+    

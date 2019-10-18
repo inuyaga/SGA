@@ -38,6 +38,10 @@ PAGE_HEIGHT = letter[1]
 
 
 
+from django.db.models import Sum
+
+
+
 import qrcode.image.svg
 from svglib.svglib import svg2rlg
 import tempfile
@@ -107,11 +111,18 @@ class ActivoList(ListView):
     def get_context_data(self, **kwargs): 
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
+        queryset = self.get_queryset()
+
+        print(queryset)
+
         context['obj_list'] = Categoria.objects.all().order_by('cat_nombre')
         context['list_marca'] = Marca.objects.all().order_by('marca_nombre')
         context['vida'] = VIDA_ACTIVO 
-        context['situacion'] = SITUACION 
+        context['situacion'] = SITUACION         
+        context['total_filter'] = queryset
+        context['total_precio'] = queryset.aggregate(Sum('activo_costo')) 
+        ##############################################################
+        
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
             del urls_formateada['page']

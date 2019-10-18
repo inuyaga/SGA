@@ -178,6 +178,10 @@
                                 <td><small>{{pedido.pedido_tipoPedido}}</small></td>
                                 <td><small>
                                         <div class="btn-group">
+                                            <a class="btn btn-xs btn-default"
+                                            href="{% url 'pedidos:pedido_detalle_view' pedido.pedido_id_pedido %}"
+                                            type="button" data-toggle="tooltip" title=""
+                                            data-original-title="Visualizar"><i class="ion-ios-eye"></i></a>
                                             
                                             {% if perms.pedidos.change_pedido %}
                                             {% if user.is_superuser %}
@@ -238,6 +242,7 @@
                                             type="button" data-toggle="tooltip" title=""
                                             data-original-title="Eliminar"><i class="ion-android-delete"></i></a>
                                             {% endif %}
+                                            
                                         </div>
                                     </small>
                                 </td>
