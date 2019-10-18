@@ -1,0 +1,38 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<div class="card">
+    <div class="card-header">
+        <h4>Catálogo de Productos</h4>
+
+    </div>
+    <div class="card-block">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Empresa</th>
+                    <th scope="col">Nombre de catálogo</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in tp_empresa %}
+                <tr>
+                    <td>{{item.tp_empresa}}</td>
+                    <td>{{item.tp_catalogo}}</td>
+                    <td>{{item.tp_producto}}</td>
+                    <td>{{item.tp_descripcion}}</td>
+                    <td>
+                    <div class="btn-group">
+                        <a class="btn btn-xs btn-default" href="{% url 'pedidos:config_tipo_pedido_update' item.tp %}" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>
+                        <a class="btn btn-xs btn-default" href="{% url 'pedidos:config_tipo_pedido_delete' item.tp %}" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i class="ion-close"></i></a>
+                    </div><ion-icon name="cash"></ion-icon>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock contenido %}
