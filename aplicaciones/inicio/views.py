@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from aplicaciones.activos.models import Activo
 class InicioSga(LoginRequiredMixin, TemplateView):
     template_name = 'index/principal.html'
     login_url = '/login/'
@@ -64,19 +65,25 @@ class InicioSga(LoginRequiredMixin, TemplateView):
 
         # QUERY PARA INFORMACION DE GASTOS DE REFACCIONES DE ORDENES DE SERVICIOS
         if init_ods == None or fin_ods == None or empresa_ods == None:
-            gasto_refaccion_query_group=Refaccion.objects.filter(ref_add_fecha__range=(start_date,end_date)).values('ref_departamento__departamento_id_sucursal__sucursal_nombre').order_by('ref_departamento__departamento_id_sucursal').annotate(suma=Sum(F('ref_precio')*F('ref_cantidad')))
+            gasto_refaccion_query_group=Refaccion.objects.values('ref_departamento__departamento_id_sucursal__sucursal_nombre').filter(ref_add_fecha__range=(start_date,end_date)).order_by('ref_departamento__departamento_id_sucursal').annotate(suma=Sum(F('ref_precio')*F('ref_cantidad')))
             if empresa_ods == None and (init_ods != None and fin_ods != None):
                 messages.info(self.request, 'Elija una empresa')
         else:
             gasto_refaccion_query_group=Refaccion.objects.filter(ref_departamento__departamento_id_sucursal__sucursal_empresa_id=empresa_ods, ref_add_fecha__range=(init_ods,fin_ods)).values('ref_departamento__departamento_id_sucursal__sucursal_nombre').order_by('ref_departamento__departamento_id_sucursal').annotate(suma=Sum(F('ref_precio')*F('ref_cantidad')))
             context['init_ods']=datetime.strptime(init_ods, '%Y-%m-%d')
             context['fin_ods']=datetime.strptime(fin_ods, '%Y-%m-%d')
+
+        
+        # SUMA TOTAL DE COSTO DE ACTIVOS SEGUN CATEGORIA
+        sum_cat_activo=Activo.objects.values('activo_categoria__cat_nombre').order_by('activo_categoria__cat_nombre').annotate(suma=Sum('activo_costo'))
+
             
 
 
         context['list_empresas']=Empresa.objects.all()
+        context['sum_cat_activo']=sum_cat_activo
         context['usuario']=self.request.user
-        context['query_gasto_ods']=gasto_refaccion_query_group
+        context['query_gasto_ods']=gasto_refaccion_query_group 
         context['total_mes']=pedidos_list['total']
         context['ped_pendientes']=ped_pendientes
         context['total_gatos_suc2']=query_group
