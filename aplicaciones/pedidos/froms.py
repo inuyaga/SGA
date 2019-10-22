@@ -1,7 +1,6 @@
 from django import forms
 from aplicaciones.pedidos.models import Area, Marca, Producto, Pedido, Configuracion_pedido, Tipo_Pedido, Asignar_gasto_sucursal, Catalogo_Productos
 from ajax_select.fields import AutoCompleteSelectMultipleField
-
 class AreaForm(forms.ModelForm):
     class Meta:
         model = Area
@@ -106,7 +105,7 @@ class ConfigForm(forms.ModelForm):
 class Tipo_PedidoForm(forms.ModelForm):
     class Meta:
         model = Tipo_Pedido
-        fields = '__all__' 
+        fields = '__all__'
 
     tp_productos = AutoCompleteSelectMultipleField('productos_tags',required=False, help_text='Codigo producto')
     def __init__(self, *args, **kwargs):

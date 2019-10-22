@@ -79,14 +79,14 @@
         <!-- Weekly users Widget -->
         <div class="card">
             <div class="card-header">
-                
-                
+
+
                 {% if view.request.GET.fin_pedido == None %}
                 <h4>Gastos Mes {% now "F Y" %} por sucursal</h4>
                 {% else %}
                 <h4>Gastos de {{init_pedido|date:"d F Y"}} al {{fin_pedido|date:"d F Y"}} por sucursal</h4>
                 {% endif %}
-                    
+
                 <ul class="card-actions">
 
                 </ul>
@@ -97,32 +97,35 @@
                 </div>
             </div>
             <div class="card-block text-center">
-                    <div class="row">
-                            <form class="form-inline" action="" method="GET">
-                                <div class="form-group">
-                                    <select class="form-control" id="example-select" name="pedido_empresa" required>
-                                        <option selected disabled>Elija una empresa</option>
-                                        
-                                        {% for item in list_empresas %}
-                                        <option value="{{item.id}}" {% if item.id|striptags == view.request.GET.pedido_empresa %}selected{% endif %}>{{item.empresa_nombre}}</option>
-                                        {% endfor %}
-                                            
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="sr-only" for="init_pedido">Inicio</label>
-                                    <input class="form-control" value="{{view.request.GET.init_pedido}}" type="date" id="init_pedido" name="init_pedido" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="sr-only" for="fin_pedido">Fin</label>
-                                    <input class="form-control" value="{{view.request.GET.fin_pedido}}" type="date" id="fin_pedido"
-                                        name="fin_pedido" required>
-                                </div>
-                                <div class="form-group m-b-0">
-                                    <button class="btn btn-default" type="submit"><i class="ion-android-search"></i></button>
-                                </div>
-                            </form>
+                <div class="row">
+                    <form class="form-inline" action="" method="GET">
+                        <div class="form-group">
+                            <select class="form-control" id="example-select" name="pedido_empresa" required>
+                                <option selected disabled>Elija una empresa</option>
+
+                                {% for item in list_empresas %}
+                                <option value="{{item.id}}"
+                                    {% if item.id|striptags == view.request.GET.pedido_empresa %}selected{% endif %}>
+                                    {{item.empresa_nombre}}</option>
+                                {% endfor %}
+
+                            </select>
                         </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="init_pedido">Inicio</label>
+                            <input class="form-control" value="{{view.request.GET.init_pedido}}" type="date"
+                                id="init_pedido" name="init_pedido" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="fin_pedido">Fin</label>
+                            <input class="form-control" value="{{view.request.GET.fin_pedido}}" type="date"
+                                id="fin_pedido" name="fin_pedido" required>
+                        </div>
+                        <div class="form-group m-b-0">
+                            <button class="btn btn-default" type="submit"><i class="ion-android-search"></i></button>
+                        </div>
+                    </form>
+                </div>
                 <span class="label bg-green m-r-xs">Estadistica <i class="ion-connection-bars"></i></span>
             </div>
         </div>
@@ -136,7 +139,7 @@
 
 
 <div class="row">
-    <div class="col-lg-5">
+    <div class="col-lg-6">
         <!-- Weekly users Widget -->
         <div class="card">
             <div class="card-header">
@@ -159,14 +162,14 @@
         <!-- End Weekly users Widget -->
     </div>
 
-    <div class="col-lg-7">
+    <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
 
                 {% if view.request.GET.fin_ods == None %}
-                <h4>Gastos Mes {% now "F Y" %} por sucursal</h4>
+                <h4>Gastos en refacciones Mes {% now "F Y" %} por sucursal</h4>
                 {% else %}
-                <h4>Gastos de {{init_ods|date:"d F Y"}} al {{fin_ods|date:"d F Y"}} por sucursal</h4>
+                <h4>Gastos en refacciones del {{init_ods|date:"d F Y"}} al {{fin_ods|date:"d F Y"}} por sucursal</h4>
                 {% endif %}
 
 
@@ -194,16 +197,19 @@
                         <div class="form-group">
                             <select class="form-control" id="example-select" name="empresa_ods" required>
                                 <option selected disabled>Elija una empresa</option>
-                                
+
                                 {% for item in list_empresas %}
-                                <option value="{{item.id}}" {% if item.id|striptags == view.request.GET.empresa_ods %}selected{% endif %}>{{item.empresa_nombre}}</option>
+                                <option value="{{item.id}}"
+                                    {% if item.id|striptags == view.request.GET.empresa_ods %}selected{% endif %}>
+                                    {{item.empresa_nombre}}</option>
                                 {% endfor %}
-                                    
+
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="sr-only" for="init_ods">Inicio</label>
-                            <input class="form-control" type="date" id="init_ods" name="init_ods" value="{{view.request.GET.init_ods}}" required>
+                            <input class="form-control" type="date" id="init_ods" name="init_ods"
+                                value="{{view.request.GET.init_ods}}" required>
                         </div>
                         <div class="form-group">
                             <label class="sr-only" for="fin_ods">Fin</label>
@@ -216,6 +222,65 @@
                     </form>
                 </div>
                 <span class="label bg-green m-r-xs">Reporte</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+
+                <h4>Suma de activo por categoria</h4>
+
+
+                <ul class="card-actions">
+                    <li class="dropdown">
+                        <button type="button" data-toggle="dropdown" aria-expanded="false"><i
+                                class="ion-more"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li class="dropdown-header">Reporte</li>
+                            <li>
+                                <a tabindex="-1" href="javascript:void(0)">Descargar</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- .card-actions -->
+            </div>
+            <!-- .card-header -->
+            <div class="card-block p-b-0">
+                <canvas id="activo_suma"></canvas>
+            </div>
+            <div class="card-block text-center">
+                <!-- <div class="row">
+                    <form class="form-inline" action="" method="GET">
+                        <div class="form-group">
+                            <select class="form-control" id="example-select" name="empresa_ods" required>
+                                <option selected disabled>Elija una empresa</option>
+
+                                {% for item in list_empresas %}
+                                <option value="{{item.id}}"
+                                    {% if item.id|striptags == view.request.GET.empresa_ods %}selected{% endif %}>
+                                    {{item.empresa_nombre}}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="init_ods">Inicio</label>
+                            <input class="form-control" type="date" id="init_ods" name="init_ods"
+                                value="{{view.request.GET.init_ods}}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="fin_ods">Fin</label>
+                            <input class="form-control" type="date" id="fin_ods" value="{{view.request.GET.fin_ods}}"
+                                name="fin_ods" required>
+                        </div>
+                        <div class="form-group m-b-0">
+                            <button class="btn btn-default" type="submit"><i class="ion-android-search"></i></button>
+                        </div>
+                    </form>
+                </div> -->
+                <span class="label bg-green m-r-xs">Activos</small>
             </div>
         </div>
     </div>
@@ -377,5 +442,40 @@
 
 
 
+
+    var activo_sum = document.getElementById('activo_suma');
+
+    var myPieChart = new Chart(activo_sum, {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: [
+                    {% for item in sum_cat_activo %}
+                    {{item.suma}},
+                    {% endfor %}
+                    ],
+                backgroundColor:[
+                {% for item in sum_cat_activo %}
+                'rgba({% random_int 100 255 %}, {% random_int 1 255 %}, {% random_int 1 255 %}, 0.8)',
+                {% endfor %}
+                    ],
+                hoverBackgroundColor:[
+                {% for item in sum_cat_activo %}
+                '#75B5FF',
+                {% endfor %}
+                ]
+            }],
+
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+            {% for item in sum_cat_activo %}
+            '{{item.activo_categoria__cat_nombre}}',
+            {% endfor %}
+            ], 
+
+            
+        },
+        options: {}
+    });
 </script>
 {% endblock script %}
