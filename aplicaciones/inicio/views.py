@@ -74,8 +74,8 @@ class InicioSga(LoginRequiredMixin, TemplateView):
             context['fin_ods']=datetime.strptime(fin_ods, '%Y-%m-%d')
 
         
-        # SUMA TOTAL DE COSTO DE ACTIVOS SEGUN CATEGORIA
-        sum_cat_activo=Activo.objects.values('activo_categoria__cat_nombre').order_by('activo_categoria__cat_nombre').annotate(suma=Sum('activo_costo'))
+        # SUMA TOTAL DE COSTO DE ACTIVOS SEGUN CATEGORIA 
+        sum_cat_activo=Activo.objects.values('activo_categoria__cat_nombre').exclude(activo_status=6).order_by('activo_categoria__cat_nombre').annotate(suma=Sum('activo_costo'))
 
             
 
