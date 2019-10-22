@@ -128,6 +128,7 @@ class Catalogo_ProductosForm(forms.ModelForm):
     class Meta:
         model = Catalogo_Productos
         fields = '__all__'
+    tp_productos = AutoCompleteSelectMultipleField('productos_tags',required=False, help_text='Codigo producto')
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:

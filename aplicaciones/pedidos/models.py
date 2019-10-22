@@ -139,6 +139,8 @@ class Catalogo_Productos(models.Model):
     tp_descripcion=models.CharField('Descripción', max_length=50)
     tp_productos=models.ManyToManyField(Producto, verbose_name='Productos')
 
+
+
 # class PDFCatalogo(models.Model):
 #     pdf_empresa=models.ForeignKey(Empresa, on_delete=models.CASCADE, verbose_name='Nombre de la Empresa', null=True, blank=False)
 #     pdf_imagen=models.ImageField('Imagen de la Empresa', upload_to='imgEmpresa/')

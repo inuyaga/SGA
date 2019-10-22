@@ -1,68 +1,59 @@
 {% extends 'index/base.html'%}
 {% block contenido %}
 
-<div class="col-sm-12">
-    <div class="card">
-        <div class="card-header">
-            <h4>Catálogo de Productos</h4>
-            <ul class="card-actions">
-                <li>
-                    <button type="button" data-toggle="tooltip" title="" data-original-title="Undo"><i class="ion-action-undo"></i></button>
-                </li>
-                <li>
-                    <button type="button" data-toggle="tooltip" title="" data-original-title="Redo"><i class="ion-action-redo"></i></button>
-                </li>
-                <li>
-                    <button type="button" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ion-pencil"></i></button>
-                </li>
-                <li class="dropdown">
-                    <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span class="caret"></span></button>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="dropdown-header">Accion</li>
-                        <li>
-                            
-                            <a tabindex="-1" href="{% url 'pedidos:crear_catalogo' %}">Añadir</a>
-                            
-                        </li>
 
-                        
-                    </ul>
-                </li>
-            </ul>
-            <!-- .card-actions -->
-
-        </div>
-        <div class="card-block">
-            <div class="table-responsive">
-                <table class="table-condensed">
-                    <thead class="thead-light">
+<div class="col-lg-12">
+        <!-- Condensed Table -->
+        <div class="card">
+            <div class="card-header">
+                    <h4>Catálogo de Productos</h4>
+                <div class="card-actions">
+                        <li class="dropdown">
+                                <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span class="caret"></span></button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li class="dropdown-header">Accion</li>
+                                    <li>
+                                        
+                                        <a tabindex="-1" href="{% url 'pedidos:crear_catalogo' %}">Añadir</a>
+                                        
+                                    </li>
+            
+                                    
+                                </ul>
+                            </li>
+                </div>
+            </div>
+            <div class="card-block">
+                <table class="table table-condensed">
+                    <thead>
                         <tr>
-                            <th scope="col">Empresa</th>
-                            <th scope="col">Nombre de catálogo</th>
-                            <th scope="col">Descripcion</th>
-                            <th scope="col">Accion</th>
-                            <th scope="col">PDF</th>
+                                <th scope="col">Empresa</th>
+                                <th scope="col">Nombre de catálogo</th>
+                                <th scope="col">Descripcion</th>
+                                <th scope="col">Accion</th>
                         </tr>
                     </thead>
                     <tbody>
-                        
-                        {% for item in object_list %} 
-                        <tr>
-                            <td>{{item.tp_empresa}}</td>
-                            <td>{{item.tp_catalogo}}</td>
-                            <td>{{item.tp_descripcion}}</td>
-                            <td><a class="btn btn-outline-danger btn-sm"
-                                href="{% url 'pedidos:eliminar_catalogo' item.id %}" role="button"><i
-                                    class="material-icons">delete_forever</i></a></td></td>
-                            <td><a href="{% url 'pedidos:pdf_cat_prod' item.id %}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Formato PDF"><i class="fa fa-file-pdf-o"></i></a></td>
-                        </tr>
-                        {% endfor %}
-                            
-
+                            {% for item in object_list %} 
+                            <tr>
+                                <td>{{item.tp_empresa}}</td>
+                                <td>{{item.tp_catalogo}}</td>
+                                <td>{{item.tp_descripcion}}</td>
+                                <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'pedidos:pdf_cat_prod' item.id %}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="PDF"><i class="fa fa-file-pdf-o"></i></a>
+                                    <a href="{% url 'pedidos:update_catalogo' item.id %}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>
+                                    <a href="{% url 'pedidos:eliminar_catalogo' item.id %}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i class="ion-close"></i></a>
+                                </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
                     </tbody>
                 </table>
             </div>
+            <!-- .card-block -->
         </div>
+        <!-- .card -->
+        <!-- End Condensed Table -->
     </div>
-</div>
 {% endblock contenido %}

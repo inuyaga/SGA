@@ -22,6 +22,7 @@ from django.http import JsonResponse
 #Librerias reportlab a usar:
 from django.http import HttpResponse
 from io import BytesIO
+from django.conf import settings
 from reportlab.platypus import (SimpleDocTemplate, PageBreak, Image, Spacer,Paragraph, Table, TableStyle, Spacer)
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import A4, letter, landscape
@@ -31,7 +32,7 @@ from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT, TA_LEFT
 PAGE_WIDTH = letter[0]
 PAGE_HEIGHT = letter[1]
 
-from aplicaciones.empresa.models import Departamento 
+from aplicaciones.empresa.models import Departamento
 # Create your views here.
 # pylint: disable=no-member
 # pylint: disable = E1101
@@ -68,7 +69,7 @@ class AreaList(ListView):
     def dispatch(self, *args, **kwargs):
                 return super(AreaList, self).dispatch(*args, **kwargs)
 
-class AreaUpdate(UpdateView): 
+class AreaUpdate(UpdateView):
     model = Area
     form_class = AreaForm
     template_name = "pedidos/area/area_create.html"
@@ -84,7 +85,7 @@ class AreaUpdate(UpdateView):
     def dispatch(self, *args, **kwargs):
                 return super(AreaUpdate, self).dispatch(*args, **kwargs)
 
-class AreaDelete(DeleteView): 
+class AreaDelete(DeleteView):
     model = Area
     template_name = "pedidos/delete_forever.html"
     success_url = reverse_lazy('pedidos:listar_area')
@@ -198,7 +199,7 @@ class ProductoCreate(CreateView):
     def dispatch(self, *args, **kwargs):
                 return super(ProductoCreate, self).dispatch(*args, **kwargs)
 
-class ProductokitCreate(CreateView):  
+class ProductokitCreate(CreateView):
     model = Producto
     form_class = ProductoKitForm
     template_name = "pedidos/producto/producto_create.html"
@@ -224,17 +225,17 @@ class ProductoList(ListView):
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['usuario'] = self.request.user
-        # context['tipo_ped_list'] = Tipo_Pedido.objects.all() 
+        # context['tipo_ped_list'] = Tipo_Pedido.objects.all()
 
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
             del urls_formateada['page']
         context['urls_formateada'] = urls_formateada
         return context
-    
+
     def get_queryset(self):
         queryset = super(ProductoList, self).get_queryset()
-        producto_categoria=self.request.GET.getlist('producto_categoria') 
+        producto_categoria=self.request.GET.getlist('producto_categoria')
         tipo_producto=self.request.GET.getlist('tipo_producto')
         checkbox_visible=self.request.GET.getlist('checkbox_visible')
         Buscar=self.request.GET.get('Buscar')
@@ -247,7 +248,7 @@ class ProductoList(ListView):
         if Buscar != None:
             queryset=queryset.filter(Q(producto_codigo=Buscar) | Q(producto_nombre__icontains=Buscar))
 
-        
+
         return queryset
 
     @method_decorator(permission_required('pedidos.view_producto',reverse_lazy('inicio:need_permisos')))
@@ -287,7 +288,7 @@ class ProductoKitUpdate(UpdateView):
     def dispatch(self, *args, **kwargs):
                 return super(ProductoKitUpdate, self).dispatch(*args, **kwargs)
 
-class ProductoDelete(DeleteView): 
+class ProductoDelete(DeleteView):
     model = Producto
     template_name = "pedidos/delete_forever.html"
     success_url = reverse_lazy('pedidos:listar_producto')
@@ -319,11 +320,11 @@ class ProductoDelete(DeleteView):
 
 
 
-class ProductoCompraList(DetailView):  
+class ProductoCompraList(DetailView):
     # paginate_by = 20
     context_object_name = 'objeto'
     model = Tipo_Pedido
-    template_name='pedidos/compra_tiendas.html' 
+    template_name='pedidos/compra_tiendas.html'
 
     def get_context_data(self, **kwargs):
         from datetime import datetime, date
@@ -333,7 +334,7 @@ class ProductoCompraList(DetailView):
         tipo_pedido=self.kwargs.get('pk')
         context['msn_empresa'] = None
         context['conteo'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False).count()
-        
+
         # ESTABLECEMOS LA FECHA ACTUAL
         today = datetime.now()
         # CONSULTAMOS CUAL ES EL ULTIMO DIA DEL MES ACTUAL
@@ -349,30 +350,30 @@ class ProductoCompraList(DetailView):
             context['pedidos_del_mes'] = conteo_pedido
         except ObjectDoesNotExist as error:
             context['msn_empresa'] = 'Para poder hacer pedidos es nesesario que pertenesca a una empresa, ¡comuniquese con el administrador del sistema!'
-        
+
         return context
-           
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        return super(ProductoCompraList, self).dispatch(request, *args, **kwargs)           
+        return super(ProductoCompraList, self).dispatch(request, *args, **kwargs)
 
 
     def post(self, request, *args, **kwargs):
         from decimal import Decimal
         codigo = request.POST.get('nombre')
         cantidad = request.POST.get('catidad')
-        tipo_mensaje=True 
+        tipo_mensaje=True
         mensaje=''
         tipo_pedido=self.kwargs.get('pk')
         print(tipo_pedido)
-        
+
 
         if Decimal(cantidad) <= 0:
             mensaje='Ingrese un numero positivo por favor'
             tipo_mensaje=False
         else:
-            # OBTENER ID DE TIPO PEDIDO 
-            
+            # OBTENER ID DE TIPO PEDIDO
+
             get_tipo_pedido=Tipo_Pedido.objects.get(tp=tipo_pedido)
             # OBTENER QUE DEPARTAMENTO PERTENECE
             get_depo = Pertenece_empresa.objects.get(pertenece_id_usuario=request.user)
@@ -392,28 +393,28 @@ class ProductoCompraList(DetailView):
                         queryset = producto.producto_productos.all()
                         for producto_list in queryset:
                             GuardaDetallePedido(
-                                producto_list.producto_codigo, 
-                                cantidad, 
-                                request.user, 
-                                producto_list.producto_precio, 
+                                producto_list.producto_codigo,
+                                cantidad,
+                                request.user,
+                                producto_list.producto_precio,
                                 tipo_pedido)
                         mensaje='Agregado Correctamente'
                     else:
                         GuardaDetallePedido(
-                            producto.producto_codigo, 
-                            cantidad, 
-                            request.user, 
-                            producto.producto_precio, 
+                            producto.producto_codigo,
+                            cantidad,
+                            request.user,
+                            producto.producto_precio,
                             tipo_pedido)
                         mensaje='Agregado Correctamente'
                 else:
                     tipo_mensaje=False
                     mensaje='Supera el limite admitido para '+ str(get_tipo_pedido.tp_nombre)
-            except ObjectDoesNotExist as NoExiste: 
+            except ObjectDoesNotExist as NoExiste:
                 tipo_mensaje=False
                 mensaje='Por el momento no ha sido asignado a un departamento o no se a asignado un gasto a la sucursal, contacte con el administrador'
-            
-            
+
+
 
         pedido_conteo=Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False).count()
         json = JsonResponse(
@@ -444,16 +445,16 @@ def Obtenernumero(numero):
     else:
         return numero
 
-class DetalleList(ListView):   
+class DetalleList(ListView):
     paginate_by = 10
     model = Detalle_pedido
-    template_name = 'pedidos/listado_pre_pedido.html' 
-    def get_context_data(self, **kwargs): 
+    template_name = 'pedidos/listado_pre_pedido.html'
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['conteo'] = Detalle_pedido.objects.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False).count()
         context['tipos_pe_list'] = Tipo_Pedido.objects.all()
         context['colors_butons'] = ['default', 'primary', 'success', 'info']
-       
+
         return context
     def get_queryset(self):
         queryset = super(DetalleList, self).get_queryset()
@@ -477,7 +478,7 @@ class DetalleDelete(DeleteView):
 
 
 
-class Crear_pedido_tiendaView(View): 
+class Crear_pedido_tiendaView(View):
     def get(self, request, *args, **kwargs):
         empresa_pertenece = Pertenece_empresa.objects.get(pertenece_id_usuario=request.user)
         departamento=empresa_pertenece.pertenece_empresa.departamento_id_depo
@@ -489,22 +490,22 @@ class Crear_pedido_tiendaView(View):
             pedido.save()
             Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_tipo_pedido=tipo_pedido).update(detallepedido_pedido_id=pedido.pk, detallepedido_status=True)
 
-        return redirect('pedidos:pedido_tienda_listado') 
+        return redirect('pedidos:pedido_tienda_listado')
 
     def post(self, request, *args, **kwargs):
         return HttpResponse('POST request!')
 
 
-class PedidoList(ListView): 
+class PedidoList(ListView):
     model = Pedido
-    template_name = 'pedidos/pedido/pedido_admin.html' 
+    template_name = 'pedidos/pedido/pedido_admin.html'
     ordering = ['pedido_id_pedido']
     def get_context_data(self, **kwargs):
         context = super(PedidoList, self).get_context_data(**kwargs)
         context['tituloBrea'] = 'Actualizar'
-        context['usuario'] = self.request.user 
-        context['list_sucursal'] = Sucursal.objects.all() 
-        context['status_list'] = STATUS 
+        context['usuario'] = self.request.user
+        context['list_sucursal'] = Sucursal.objects.all()
+        context['status_list'] = STATUS
 
         urls_formateada = self.request.GET.copy()
         if 'autoriza' in urls_formateada:
@@ -524,15 +525,15 @@ class PedidoList(ListView):
         queryset = super(PedidoList, self).get_queryset()
         status = self.request.GET.get('status')
         inicio = self.request.GET.get('inicio')
-        fin = self.request.GET.get('fin')      
-        sucursal_selec = self.request.GET.get('sucursal_selec')    
+        fin = self.request.GET.get('fin')
+        sucursal_selec = self.request.GET.get('sucursal_selec')
         busqueda=self.request.GET.get('Buscar')
-         
 
-        if inicio != None and fin != None:            
+
+        if inicio != None and fin != None:
             if inicio != '' and fin != '':
                 queryset=Pedido.objects.filter(pedido_fecha_pedido__range=(inicio, fin))
-        
+
         if sucursal_selec != None:
             if sucursal_selec != '0':
                 queryset = queryset.filter(pedido_id_depo__departamento_id_sucursal=sucursal_selec)
@@ -542,11 +543,11 @@ class PedidoList(ListView):
                 pass
             else:
                 queryset = queryset.filter(pedido_status=status)
-        else: 
+        else:
             queryset = queryset.filter(pedido_status=1)
-        
+
         if busqueda != None:
-            queryset=Pedido.objects.filter(pedido_id_pedido=busqueda) 
+            queryset=Pedido.objects.filter(pedido_id_pedido=busqueda)
 
         return queryset
     @method_decorator(permission_required('pedidos.view_pedido',reverse_lazy('inicio:need_permisos')))
@@ -575,7 +576,7 @@ class dowload_pedido_detalles(TemplateView):
         wb = Workbook()
         ws=wb.active
         id_pedido=self.kwargs.get('pk')
-        ped = Pedido.objects.get(pedido_id_pedido=id_pedido) 
+        ped = Pedido.objects.get(pedido_id_pedido=id_pedido)
         query = Departamento.objects.get(departamento_id_depo=ped.pedido_id_depo.departamento_id_depo)
         nombre_sucursal = query.departamento_id_sucursal
 
@@ -594,8 +595,8 @@ class dowload_pedido_detalles(TemplateView):
         ws['F2'] = 'Total'
         cont = 3
         detalle=Detalle_pedido.objects.filter(detallepedido_pedido_id=id_pedido)
-        
-        for cto in detalle:            
+
+        for cto in detalle:
             ws.cell(row=cont, column=1).value = str(cto.detallepedido_producto_id)
             ws.cell(row=cont, column=2).value = str(cto.detallepedido_producto_id.producto_descripcion)
             ws.cell(row=cont, column=3).value = str(cto.detallepedido_pedido_id.pedido_id_depo)
@@ -631,7 +632,7 @@ class dowload_pedido_detalles(TemplateView):
 
 class CapturaNoVentaPedido(UpdateView):
     model = Pedido
-    form_class = PedidoVentaForm 
+    form_class = PedidoVentaForm
     template_name = 'pedidos/pedido/pedido_create.html'
     success_url = reverse_lazy('pedidos:pedidos_list')
 
@@ -648,7 +649,7 @@ class CapturaNoVentaPedido(UpdateView):
 
 class CapturaFacturaPedido(UpdateView):
     model = Pedido
-    form_class = PedidoFacturaForm 
+    form_class = PedidoFacturaForm
     template_name = 'pedidos/pedido/pedido_create.html'
     success_url = reverse_lazy('pedidos:pedidos_list')
 
@@ -665,7 +666,7 @@ class CapturaFacturaPedido(UpdateView):
 
 class CapturaSalidaPedido(UpdateView):
     model = Pedido
-    form_class = PedidoSalidaForm 
+    form_class = PedidoSalidaForm
     template_name = 'pedidos/pedido/pedido_create.html'
     success_url = reverse_lazy('pedidos:pedidos_list')
 
@@ -685,7 +686,7 @@ class CapturaSalidaPedido(UpdateView):
 
 class PedidoUpdate(UpdateView):
     model = Pedido
-    form_class = PedidoForm 
+    form_class = PedidoForm
     template_name = 'pedidos/pedido/pedido_create.html'
     success_url = reverse_lazy('pedidos:pedidos_list')
 
@@ -693,15 +694,15 @@ class PedidoUpdate(UpdateView):
         context = super(PedidoUpdate, self).get_context_data(**kwargs)
         context['tituloBrea'] = 'Actualizar'
         context['usuario'] = self.request.user
-        return context 
-    
+        return context
+
     def get_success_url(self):
         messages.success(self.request, 'Actualizado Correctamente.')
         # messages.add_message(self.request, messages.ERROR, 'Over 9000!', extra_tags='danger')
         # messages.info(self.request, 'info.')
         # messages.warning(self.request, 'warnin.')
         return reverse_lazy('pedidos:pedido_update', kwargs={'pk':self.kwargs.get('pk')})
-    
+
     def form_valid(self, form):
         self.object = form.save()
         if form.instance.pedido_status == 2:
@@ -729,16 +730,16 @@ class PedidoDelete(DeleteView):
         return context
 
 
-class PedidoListSucursal(ListView): 
+class PedidoListSucursal(ListView):
     model = Pedido
     template_name = 'pedidos/pedido/pedido_admin.html'
     ordering = ['pedido_id_pedido']
- 
+
     def get_context_data(self, **kwargs):
         context = super(PedidoListSucursal, self).get_context_data(**kwargs)
         context['tituloBrea'] = 'Actualizar'
         context['usuario'] = self.request.user
-        context['status_list'] = STATUS 
+        context['status_list'] = STATUS
         return context
 
     def get_queryset(self):
@@ -751,7 +752,7 @@ class PedidoListSucursal(ListView):
             inicio = self.request.GET.get('inicio')
             fin = self.request.GET.get('fin')
 
-            if inicio != None and fin != None:             
+            if inicio != None and fin != None:
                 if inicio != '' and fin != '':
                     queryset=queryset.filter(pedido_id_depo=pertenece.pertenece_empresa, pedido_fecha_pedido__range=(inicio, fin))
 
@@ -768,7 +769,7 @@ class PedidoListSucursal(ListView):
             queryset=Pedido.objects.none()
 
         return queryset
- 
+
 class SelectTipoCompraView(ListView):
     model=Tipo_Pedido
     template_name = "pedidos/select_compra.html"
@@ -781,7 +782,7 @@ class SelectTipoCompraView(ListView):
         except ObjectDoesNotExist as error:
             messages.info(self.request, 'No ha sido asignado a una empresa, contacte con el administrador del sitio.')
             queryset=queryset.none()
-        
+
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -792,8 +793,8 @@ class SelectTipoCompraView(ListView):
         hoy=datetime.datetime.now()
         for config in context['conf']:
             if config.conf_fecha_inicio <= hoy.date() and config.conf_fecha_fin >= hoy.date():
-                context['estado_rango_fechas']=True  
-        return context 
+                context['estado_rango_fechas']=True
+        return context
 
 
 class ConfigPedidoListView(ListView):
@@ -802,12 +803,12 @@ class ConfigPedidoListView(ListView):
 
 class ConfigPedidoCreate(CreateView):
     model = Configuracion_pedido
-    form_class = ConfigForm 
+    form_class = ConfigForm
     template_name = "pedidos/pedido/conf_create.html"
     success_url = reverse_lazy('pedidos:pedido_config')
 class ConfigPedidoUpdate(UpdateView):
     model = Configuracion_pedido
-    form_class = ConfigForm 
+    form_class = ConfigForm
     template_name = "pedidos/pedido/conf_create.html"
     success_url = reverse_lazy('pedidos:pedido_config')
 
@@ -828,17 +829,17 @@ class dowload_report_pedidos(View):
         inicio = self.request.GET.get('inicio')
         fin = self.request.GET.get('fin')
         status = self.request.GET.get('status')
-        sucursal_selec = self.request.GET.get('sucursal_selec')   
+        sucursal_selec = self.request.GET.get('sucursal_selec')
 
         query_list=Pedido.objects.all()
 
-        
+
 
         if inicio != None and fin != None:
             if status == '0':
-                query_list=query_list.filter(pedido_fecha_pedido__range=(inicio, fin)) 
+                query_list=query_list.filter(pedido_fecha_pedido__range=(inicio, fin))
             else:
-                query_list=query_list.filter(pedido_fecha_pedido__range=(inicio, fin), pedido_status=status) 
+                query_list=query_list.filter(pedido_fecha_pedido__range=(inicio, fin), pedido_status=status)
         # else:
         #     if status == '0':
         #         query_list=Pedido.objects.all()
@@ -847,7 +848,7 @@ class dowload_report_pedidos(View):
 
         if sucursal_selec != '0':
             query_list = query_list.filter(pedido_id_depo__departamento_id_sucursal=sucursal_selec)
-            
+
 
         ws['A1'] = 'Reporte de pedidos sucursales'
         st=ws['A1']
@@ -858,7 +859,7 @@ class dowload_report_pedidos(View):
 
         ws['A2'] = '##'
         ws['B2'] = 'CREADO'
-        ws['C2'] = 'DEPARTAMENTO' 
+        ws['C2'] = 'DEPARTAMENTO'
         ws['D2'] = 'SUCURSAL'
         ws['E2'] = 'SUBTOTAL'
         ws['F2'] = 'AUTORIZO'
@@ -869,7 +870,7 @@ class dowload_report_pedidos(View):
         ws['K2'] = 'TIPO'
         cont = 3
         for cto in query_list:
-            
+
             ws.cell(row=cont, column=1).value = str(cto.pedido_id_pedido)
             ws.cell(row=cont, column=2).value = str(cto.pedido_fecha_pedido)
             ws.cell(row=cont, column=3).value = str(cto.pedido_id_depo)
@@ -925,7 +926,7 @@ class DowloadDetallesporPedido(View):
         fin=request.GET.get('fin')
         sucursal_selec=request.GET.get('sucursal_selec')
         status=request.GET.get('status')
-                
+
         query = Detalle_pedido.objects.filter(detallepedido_pedido_id__pedido_fecha_pedido__range=(inicio, fin))
 
         if sucursal_selec != '0':
@@ -946,7 +947,7 @@ class DowloadDetallesporPedido(View):
         ws['A2'] = '#Pedido'
         ws['B2'] = 'Departamento'
         ws['C2'] = 'Sucursal'
-        ws['D2'] = 'Tipo Ped' 
+        ws['D2'] = 'Tipo Ped'
         ws['E2'] = 'Producto'
         ws['F2'] = 'Descripcion'
         ws['G2'] = 'Cantidad'
@@ -955,12 +956,12 @@ class DowloadDetallesporPedido(View):
         cont = 3
         colors_rbga=['EFA8D3', 'BEABF6', 'F3B8F8', '6FE3F5', 'F4B2B2', 'FFB7D5', 'A7ABFA', '94F4B5', 'F7D896', 'D4D3D3', 'FFBCBC', 'F8CEA4', 'CEF683', 'C8FBC0', '87C8E2', 'A7C4FA', 'F49495', 'D4B1EB']
         tem_cont_ped=0
-        
-        
+
+
         for cto in query:
             # CONDICIONAL PARA CAMBIO DE COLOR
             if cto.detallepedido_pedido_id.pedido_id_pedido != tem_cont_ped:
-                color_temporal_gen=random.choice(colors_rbga)  
+                color_temporal_gen=random.choice(colors_rbga)
             tem_cont_ped=cto.detallepedido_pedido_id.pedido_id_pedido
             # COLOREAR CELDAS
             ws.cell(row=cont, column=1).fill  = PatternFill(start_color=color_temporal_gen, end_color=color_temporal_gen, fill_type = 'solid')
@@ -984,7 +985,7 @@ class DowloadDetallesporPedido(View):
             ws.cell(row=cont, column=9).value = '=PRODUCT(G'+str(cont)+':H'+str(cont)+')'
             ws.cell(row=cont, column=9).number_format = '#,##0.00'
             cont += 1
-            
+
         ws["I"+str(cont)] = "=SUM(I3:I"+str(cont-1)+")"
         ws["I"+str(cont)].number_format = '#,##0.00'
 
@@ -1034,10 +1035,10 @@ class TipoPedidoDelete(DeleteView):
         deletable_objects, model_count, protected = get_deleted_objects([self.object])
         context['deletable_objects']=deletable_objects
         context['model_count']=dict(model_count).items()
-        context['protected']=protected 
-        return context 
+        context['protected']=protected
+        return context
 
-class AsigGastoList(ListView):  
+class AsigGastoList(ListView):
     model=Asignar_gasto_sucursal
     template_name = 'pedidos/tipo_pedido/asignar_gasto_list.html'
     def get_context_data(self, **kwargs):
@@ -1045,9 +1046,9 @@ class AsigGastoList(ListView):
         context = super(AsigGastoList, self).get_context_data(**kwargs)
         context['sucursal_list'] = Sucursal.objects.all()
         context['tipo_pedido_list'] = Tipo_Pedido.objects.all()
-        
-         
-        return context 
+
+
+        return context
     def get_queryset(self):
         queryset = super(AsigGastoList, self).get_queryset()
         tip_pedido=self.request.GET.get('tip_pedido')
@@ -1056,7 +1057,7 @@ class AsigGastoList(ListView):
             queryset=queryset.filter(ags_tipo_ped=tip_pedido)
         if sucursal != None:
             queryset=queryset.filter(ags_sucursal__departamento_id_sucursal=sucursal)
-        return queryset 
+        return queryset
 
 
 class AsigGastoCrear(CreateView):
@@ -1079,8 +1080,8 @@ class AsigGastoDelete(DeleteView):
         deletable_objects, model_count, protected = get_deleted_objects([self.object])
         context['deletable_objects']=deletable_objects
         context['model_count']=dict(model_count).items()
-        context['protected']=protected 
-        return context 
+        context['protected']=protected
+        return context
 
 
 # CLASES PARA GENERAR CATALOGO DE PEDIDOS
@@ -1095,6 +1096,12 @@ class CatalogoCreate(CreateView):
     template_name ='pedidos/catalogo/create_catalogo.html'
     success_url = reverse_lazy('pedidos:listar_catalogo')
 
+class CatalogoActualizar(UpdateView):
+    model = Catalogo_Productos
+    form_class = Catalogo_ProductosForm
+    template_name ='pedidos/catalogo/create_catalogo.html'
+    success_url = reverse_lazy('pedidos:listar_catalogo')
+
 class CatalogoDelete(DeleteView):
     model = Catalogo_Productos
     template_name = 'pedidos/catalogo/delete_catalogo.html'
@@ -1102,15 +1109,23 @@ class CatalogoDelete(DeleteView):
 
 
 class PDFCatalogoProd(View):
+    object_catalogo=None
     def myFirstPage(self, canvas, doc):
         print('soy lo encabezado')
-        # CABECERA DE PAGINA 
-        Title = "ORDEN DE SERVICIO"
+        # CABECERA DE PAGINA
+        Title = "CATALOGO DE PRODUCTOS"
         canvas.saveState()
         canvas.setFont('Times-Bold', 16)
-        
+
         canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 50, Title)
-        canvas.restoreState() 
+
+        #Utilizamos el archivo logo_django.png que está guardado en la carpeta media/imagenes
+        archivo_imagen = self.object_catalogo.tp_empresa.empresa_logo.path
+        #Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
+        canvas.drawImage(archivo_imagen, 20, 690, 120, 90,preserveAspectRatio=True)
+        #IMAGEN = '/HOME/LCABRERA/IMÁGENES/CAFETERIA/PRINTER.TICKET.LOGO.NUEVO_192X92.PNG'
+
+
         # # Footer.
         # canvas.setFont('Times-Roman', 7)
         # canvas.drawString( PAGE_WIDTH/6, 1.5*cm, '{}'.format(self.ods_object.ods_user_seguimiento.get_full_name()))
@@ -1133,50 +1148,66 @@ class PDFCatalogoProd(View):
         #     ]
         # ))
         # tabla.wrapOn(canvas, PAGE_WIDTH, PAGE_HEIGHT)
-        # tabla.drawOn(canvas, 50, 0.6*cm)
+        # tabla.drawOn(canvas, 50, 0.6*cm) 
+    
+    def dispatch(self, *args, **kwargs):
+        id_obj=self.kwargs.get('pk')
+        self.object_catalogo=Catalogo_Productos.objects.get(id=id_obj)
+        return super().dispatch(*args, **kwargs)
 
 
 
-        
     def get(self, request, *args, **kwargs):
         response = HttpResponse(content_type='application/pdf')
         buff = BytesIO()
         doc = SimpleDocTemplate(buff, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=60, bottomMargin=18, title='CATALOGO PRODUCTOS')
         items = []
+        data_tabla=[]
 
-        ID_CATALOGO = self.kwargs.get('pk')
-        object_catalogo=Catalogo_Productos.objects.get(id=ID_CATALOGO)
 
-        stylo_p = ParagraphStyle('parrafo', alignment=TA_LEFT, fontSize=11, fontName="Times-Roman") 
+
+
+
+
+
+
+        stylo_p_center = ParagraphStyle('parrafo_center', alignment=TA_CENTER, fontSize=11, fontName="Times-Roman")
+        stylo_p = ParagraphStyle('parrafo', alignment=TA_LEFT, fontSize=11, fontName="Times-Roman")
         stylo_titulo = ParagraphStyle('titulo', alignment=TA_CENTER, fontSize=11, fontName="Times-Bold")
         # folio_format = ParagraphStyle('folio_serv', alignment = TA_LEFT, fontSize = 9, fontName="Times-Roman")
         # fecha_format = ParagraphStyle('fecha_stylo', alignment = TA_RIGHT, fontSize = 9, fontName="Times-Roman")
 
- 
-        
-        texto="{}".format(object_catalogo.tp_empresa)
-        p1=Paragraph(texto, stylo_titulo)
-        items.append(p1)
-
-        texto="{}".format(object_catalogo.tp_catalogo)
-        p1=Paragraph(texto, stylo_p)
-        items.append(p1)
-
-        texto="{}".format(object_catalogo.tp_descripcion)
-        p1=Paragraph(texto, stylo_p)
-        items.append(p1)
+        txt = Paragraph("{}".format(self.object_catalogo.tp_empresa), stylo_titulo)
+        items.append(txt)
+        items.append(Spacer(0,5))
+        txt = Paragraph("{}".format(self.object_catalogo.tp_catalogo), stylo_titulo)
+        items.append(txt)
+        items.append(Spacer(0,5))
+        txt = Paragraph("{}".format(self.object_catalogo.tp_descripcion), stylo_p_center)
+        items.append(txt)
+        items.append(Spacer(0,10))
 
 
-    
-        
+        titulos_tabla = [(Paragraph('Codigo', stylo_titulo), Paragraph('Nombre', stylo_titulo), Paragraph('Descripcion', stylo_titulo),Paragraph('Imagen', stylo_titulo))]
+        dta=[(Paragraph("{}".format(item.producto_codigo), stylo_p), Paragraph("{}".format(item.producto_nombre), stylo_p), Paragraph("{}".format(item.producto_descripcion), stylo_p), Image(item.producto_imagen.path, 2*cm, 2*cm)) for item in self.object_catalogo.tp_productos.all()]
 
-        for item in object_catalogo.tp_productos.all():
-            pass
+        tabla=Table(titulos_tabla+dta, colWidths=[5 * cm, 5 * cm, 5 * cm, 5 * cm])
+        tabla.setStyle(TableStyle(
+            [
+                ('GRID', (0, 0), (-1, -1), 1, colors.dodgerblue),
+                # ('LINEBELOW', (0, 0), (-1, 0), 0, colors.darkblue),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.transparent)
+            ]
+        ))
+        items.append(tabla)
+        items.append(Spacer(0,20))
 
-       
-        
 
-        doc.build(items, onFirstPage=self.myFirstPage) 
+
+
+
+
+        doc.build(items, onFirstPage=self.myFirstPage)
         response.write(buff.getvalue())
         buff.close()
         return response

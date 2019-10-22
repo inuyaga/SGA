@@ -62,6 +62,7 @@ urlpatterns = [
     path('create/catalogo_producto/', PedidoViews.CatalogoCreate.as_view(), name='crear_catalogo'),
     path('delete/catalogo_producto/<int:pk>/', PedidoViews.CatalogoDelete.as_view(), name='eliminar_catalogo'),
     path('catalogo/producto/pdf/<int:pk>/', PedidoViews.PDFCatalogoProd.as_view(), name='pdf_cat_prod'), 
+    path('catalogo/producto/edit/<int:pk>/', PedidoViews.CatalogoActualizar.as_view(), name='update_catalogo'), 
 
 
 
