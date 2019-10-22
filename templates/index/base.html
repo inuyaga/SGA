@@ -193,6 +193,11 @@
                                         <a href="{% url 'pedidos:pedido_select_compra' %}">Comprar</a>
                                     </li>
                                     {% endif %}
+                                    {% if perms.pedidos.view_producto %}
+                                    <li>
+                                        <a href="{% url 'pedidos:listar_catalogo' %}">Catálogo de Productos</a>
+                                    </li>
+                                    {% endif %}
                                 </ul>
                             </li>
                             {% endif %}
