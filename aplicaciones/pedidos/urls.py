@@ -58,9 +58,5 @@ urlpatterns = [
     path('asig/gastos/depos/update/<int:pk>/', PedidoViews.AsigGastoUpdate.as_view(), name='asig_gasto_update'), 
     path('asig/gastos/depos/delete/<int:pk>/', PedidoViews.AsigGastoDelete.as_view(), name='asig_gasto_delete'), 
 
-    path('list/catalogo_producto/', PedidoViews.CatalogoList.as_view(), name='listar_catalogo'),
-
-
-
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

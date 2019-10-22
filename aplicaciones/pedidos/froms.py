@@ -1,7 +1,6 @@
 from django import forms
-from aplicaciones.pedidos.models import Area, Marca, Producto, Pedido, Configuracion_pedido, Tipo_Pedido, Asignar_gasto_sucursal, Catalogo_Productos
+from aplicaciones.pedidos.models import Area, Marca, Producto, Pedido, Configuracion_pedido, Tipo_Pedido, Asignar_gasto_sucursal
 from ajax_select.fields import AutoCompleteSelectMultipleField
-
 class AreaForm(forms.ModelForm):
     class Meta:
         model = Area
@@ -106,7 +105,7 @@ class ConfigForm(forms.ModelForm):
 class Tipo_PedidoForm(forms.ModelForm):
     class Meta:
         model = Tipo_Pedido
-        fields = '__all__' 
+        fields = '__all__'
 
     tp_productos = AutoCompleteSelectMultipleField('productos_tags',required=False, help_text='Codigo producto')
     def __init__(self, *args, **kwargs):
@@ -121,14 +120,5 @@ class AsigGastoForm(forms.ModelForm):
     # tp_productos = AutoCompleteSelectMultipleField('productos_tags',required=False, help_text='Codigo producto')
     def __init__(self, *args, **kwargs):
         super(AsigGastoForm, self).__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
-
-class Catalogo_ProductosForm(forms.ModelForm):
-    class Meta:
-        model = Catalogo_Productos
-        fields = '__all__'
-    def __init__(self, *args, **kwargs):
-        super(PedidoVentaForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})

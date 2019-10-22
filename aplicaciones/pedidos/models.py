@@ -131,10 +131,5 @@ class Detalle_pedido(models.Model):
 class Configuracion_pedido(models.Model):
     conf_ID=models.AutoField(primary_key=True)
     conf_fecha_inicio=models.DateField('Fecha inicio')
-    conf_fecha_fin=models.DateField('Fecha final')  
+    conf_fecha_fin=models.DateField('Fecha final') 
     
-class Catalogo_Productos(models.Model):
-    tp_empresa=models.ForeignKey(Empresa, on_delete=models.CASCADE, verbose_name='Empresa', null=True, blank=False)
-    tp_catalogo=models.CharField('Nombre', max_length=30)
-     tp_productos=models.ManyToManyField(Producto, verbose_name='Productos') 
-    tp_descripcion=models.CharField('Descripción', max_length=50)
