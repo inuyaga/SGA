@@ -22,7 +22,7 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from io import BytesIO
 from django.conf import settings
-from reportlab.platypus import (SimpleDocTemplate, PageBreak, Image, Spacer,Paragraph, Table, TableStyle, Spacer)
+from reportlab.platypus import (SimpleDocTemplate, PageBreak, Image, Spacer,Paragraph, Table, TableStyle, Spacer, BaseDocTemplate, Frame, PageTemplate)
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import A4, letter, landscape
 from reportlab.lib import colors
@@ -53,6 +53,7 @@ class AreaCreate(CreateView):
     @method_decorator(permission_required('pedidos.add_area',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(AreaCreate, self).dispatch(*args, **kwargs)
+
 class AreaList(ListView):
     paginate_by = 20
     model = Area
@@ -459,6 +460,10 @@ class DetalleList(ListView):
         queryset = super(DetalleList, self).get_queryset()
         return queryset.filter(detallepedido_creado_por=self.request.user, detallepedido_status=False)
 
+    @method_decorator(permission_required('pedidos.view_detalle_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(DetalleList, self).dispatch(*args, **kwargs)
+
 class DetalleDelete(DeleteView):
     model = Detalle_pedido
     template_name = "pedidos/delete_forever.html"
@@ -475,7 +480,9 @@ class DetalleDelete(DeleteView):
         context['protected']=protected
         return context
 
-
+    @method_decorator(permission_required('pedidos.delete_detalle_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(DetalleDelete, self).dispatch(*args, **kwargs)
 
 class Crear_pedido_tiendaView(View):
     def get(self, request, *args, **kwargs):
@@ -564,6 +571,10 @@ class DetallePedidoListView(ListView):
         queryset = queryset.filter(detallepedido_pedido_id=self.kwargs.get('pk'))
         return queryset
 
+    @method_decorator(permission_required('pedidos.view_detalle_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(DetallePedidoListView, self).dispatch(*args, **kwargs)
+
 
 class dowload_pedido_detalles(TemplateView):
     def get(self, request , *args, **kwargs):
@@ -646,6 +657,10 @@ class CapturaNoVentaPedido(UpdateView):
         url=self.success_url+'?'+get.urlencode()
         return url
 
+    @method_decorator(permission_required('pedidos.change_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(CapturaNoVentaPedido, self).dispatch(*args, **kwargs)
+
 class CapturaFacturaPedido(UpdateView):
     model = Pedido
     form_class = PedidoFacturaForm
@@ -662,6 +677,10 @@ class CapturaFacturaPedido(UpdateView):
         get=self.request.GET.copy()
         url=self.success_url+'?'+get.urlencode()
         return url
+
+    @method_decorator(permission_required('pedidos.change_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(CapturaFacturaPedido, self).dispatch(*args, **kwargs)
 
 class CapturaSalidaPedido(UpdateView):
     model = Pedido
@@ -680,8 +699,9 @@ class CapturaSalidaPedido(UpdateView):
         url=self.success_url+'?'+get.urlencode()
         return url
 
-
-
+    @method_decorator(permission_required('pedidos.change_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(CapturaSalidaPedido, self).dispatch(*args, **kwargs)
 
 class PedidoUpdate(UpdateView):
     model = Pedido
@@ -710,9 +730,11 @@ class PedidoUpdate(UpdateView):
             self.object.pedido_rechazado=self.request.user
             Detalle_pedido.objects.filter(detallepedido_pedido_id=self.kwargs.get('pk')).update(detallepedido_status=False)
         return super().form_valid(form)
+
     @method_decorator(permission_required('pedidos.change_pedido',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
-                return super(PedidoUpdate, self).dispatch(*args, **kwargs)
+        return super(PedidoUpdate, self).dispatch(*args, **kwargs)
+                
 
 
 class PedidoDelete(DeleteView):
@@ -727,6 +749,10 @@ class PedidoDelete(DeleteView):
         context['model_count']=dict(model_count).items()
         context['protected']=protected
         return context
+
+    @method_decorator(permission_required('pedidos.delete_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(PedidoDelete, self).dispatch(*args, **kwargs)
 
 
 class PedidoListSucursal(ListView):
@@ -769,6 +795,10 @@ class PedidoListSucursal(ListView):
 
         return queryset
 
+    @method_decorator(permission_required('pedidos.view_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(PedidoListSucursal, self).dispatch(*args, **kwargs)
+
 class SelectTipoCompraView(ListView):
     model=Tipo_Pedido
     template_name = "pedidos/select_compra.html"
@@ -795,22 +825,39 @@ class SelectTipoCompraView(ListView):
                 context['estado_rango_fechas']=True
         return context
 
+    @method_decorator(permission_required('pedidos.view_tipo_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(SelectTipoCompraView, self).dispatch(*args, **kwargs)
+
 
 class ConfigPedidoListView(ListView):
     model = Configuracion_pedido
     template_name = "pedidos/pedido/config_list.html"
+
+    @method_decorator(permission_required('pedidos.view_configuracion_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(ConfigPedidoListView, self).dispatch(*args, **kwargs)
 
 class ConfigPedidoCreate(CreateView):
     model = Configuracion_pedido
     form_class = ConfigForm
     template_name = "pedidos/pedido/conf_create.html"
     success_url = reverse_lazy('pedidos:pedido_config')
+
+    @method_decorator(permission_required('pedidos.add_configuracion_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(ConfigPedidoCreate, self).dispatch(*args, **kwargs)
+
 class ConfigPedidoUpdate(UpdateView):
     model = Configuracion_pedido
     form_class = ConfigForm
     template_name = "pedidos/pedido/conf_create.html"
     success_url = reverse_lazy('pedidos:pedido_config')
 
+    @method_decorator(permission_required('pedidos.change_configuracion_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(ConfigPedidoUpdate, self).dispatch(*args, **kwargs)
+    
 
 # DESCARGA DE DETALLE DE PEDIDOS EN ADMIN FILTRADO
 
@@ -1013,17 +1060,29 @@ class TipoPedidoList(ListView):
     template_name = 'pedidos/tipo_pedido/tipopedido_list.html'
     model=Tipo_Pedido
 
+    @method_decorator(permission_required('pedidos.view_tipo_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+         return super(TipoPedidoList, self).dispatch(*args, **kwargs)
+
 class TipoPedidoCrear(CreateView):
     model=Tipo_Pedido
     template_name = 'pedidos/tipo_pedido/tipo_pedido_crear.html'
     form_class=Tipo_PedidoForm
     success_url = reverse_lazy('pedidos:config_tipo_pedido_list')
 
+    @method_decorator(permission_required('pedidos.add_tipo_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(TipoPedidoCrear, self).dispatch(*args, **kwargs)
+
 class TipoPedidoEdit(UpdateView):
     model=Tipo_Pedido
     template_name = 'pedidos/tipo_pedido/tipo_pedido_crear.html'
     form_class=Tipo_PedidoForm
     success_url = reverse_lazy('pedidos:config_tipo_pedido_list')
+
+    @method_decorator(permission_required('pedidos.change_tipo_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(TipoPedidoEdit, self).dispatch(*args, **kwargs)
 
 class TipoPedidoDelete(DeleteView):
     model = Tipo_Pedido
@@ -1037,6 +1096,10 @@ class TipoPedidoDelete(DeleteView):
         context['protected']=protected
         return context
 
+    @method_decorator(permission_required('pedidos.delete_tipo_pedido',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(TipoPedidoDelete, self).dispatch(*args, **kwargs)
+
 class AsigGastoList(ListView):
     model=Asignar_gasto_sucursal
     template_name = 'pedidos/tipo_pedido/asignar_gasto_list.html'
@@ -1045,9 +1108,8 @@ class AsigGastoList(ListView):
         context = super(AsigGastoList, self).get_context_data(**kwargs)
         context['sucursal_list'] = Sucursal.objects.all()
         context['tipo_pedido_list'] = Tipo_Pedido.objects.all()
-
-
         return context
+
     def get_queryset(self):
         queryset = super(AsigGastoList, self).get_queryset()
         tip_pedido=self.request.GET.get('tip_pedido')
@@ -1058,22 +1120,36 @@ class AsigGastoList(ListView):
             queryset=queryset.filter(ags_sucursal__departamento_id_sucursal=sucursal)
         return queryset
 
+    @method_decorator(permission_required('pedidos.view_asignar_gasto_sucursal',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+         return super(AsigGastoList, self).dispatch(*args, **kwargs)
+
 
 class AsigGastoCrear(CreateView):
     model=Asignar_gasto_sucursal
     template_name = 'pedidos/tipo_pedido/tipo_pedido_crear.html'
     form_class=AsigGastoForm
     success_url = reverse_lazy('pedidos:asig_gasto_list')
+
+    @method_decorator(permission_required('pedidos.add_asignar_gasto_sucursal',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(AsigGastoCrear, self).dispatch(*args, **kwargs)
+
 class AsigGastoUpdate(UpdateView):
     model=Asignar_gasto_sucursal
     template_name = 'pedidos/tipo_pedido/tipo_pedido_crear.html'
     form_class=AsigGastoForm
     success_url = reverse_lazy('pedidos:asig_gasto_list')
 
+    @method_decorator(permission_required('pedidos.change_asignar_gasto_sucursal',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(AsigGastoUpdate, self).dispatch(*args, **kwargs)
+
 class AsigGastoDelete(DeleteView):
     model = Asignar_gasto_sucursal
     template_name = "pedidos/delete_forever.html"
     success_url = reverse_lazy('pedidos:asig_gasto_list')
+
     def get_context_data(self, **kwargs):
         context = super(AsigGastoDelete, self).get_context_data(**kwargs)
         deletable_objects, model_count, protected = get_deleted_objects([self.object])
@@ -1082,6 +1158,10 @@ class AsigGastoDelete(DeleteView):
         context['protected']=protected
         return context
 
+    @method_decorator(permission_required('pedidos.delete_asignar_gasto_sucursal',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(AsigGastoDelete, self).dispatch(*args, **kwargs)
+
 
 # CLASES PARA GENERAR CATALOGO DE PEDIDOS
 
@@ -1089,11 +1169,19 @@ class CatalogoProductosList(ListView):
     model = Catalogo_Productos
     template_name = 'pedidos/catalogo/listado_catalogo.html'
 
+    @method_decorator(permission_required('pedidos.view_catalogo_productos',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+         return super(CatalogoProductosList, self).dispatch(*args, **kwargs)
+
 class CatalogoCreate(CreateView):
     model = Catalogo_Productos
     form_class = Catalogo_ProductosForm
     template_name ='pedidos/catalogo/create_catalogo.html'
     success_url = reverse_lazy('pedidos:listar_catalogo')
+
+    @method_decorator(permission_required('pedidos.add_catalogo_productos',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(CatalogoCreate, self).dispatch(*args, **kwargs)
 
 class CatalogoActualizar(UpdateView):
     model = Catalogo_Productos
@@ -1101,53 +1189,60 @@ class CatalogoActualizar(UpdateView):
     template_name ='pedidos/catalogo/create_catalogo.html'
     success_url = reverse_lazy('pedidos:listar_catalogo')
 
+    @method_decorator(permission_required('pedidos.change_catalogo_productos',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(CatalogoActualizar, self).dispatch(*args, **kwargs)
+
 class CatalogoDelete(DeleteView):
     model = Catalogo_Productos
     template_name = 'pedidos/catalogo/delete_catalogo.html'
     success_url = reverse_lazy('pedidos:listar_catalogo')
 
+    @method_decorator(permission_required('pedidos.delete_catalogo_productos',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(CatalogoDelete, self).dispatch(*args, **kwargs)
+
 
 class PDFCatalogoProd(View):
     object_catalogo=None
     def myFirstPage(self, canvas, doc):
+        from django.utils.formats import localize
+        from datetime import datetime
         print('soy lo encabezado')
-        # CABECERA DE PAGINA
+        #CABECERA DE PAGINA
         Title = "CATALOGO DE PRODUCTOS"
         canvas.saveState()
         canvas.setFont('Times-Bold', 16)
 
-        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 50, Title)
-
-        #Utilizamos el archivo logo_django.png que está guardado en la carpeta media/imagenes
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 50, Title)       
+        #Logo de empresa
         archivo_imagen = self.object_catalogo.tp_empresa.empresa_logo.path
         #Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
-        canvas.drawImage(archivo_imagen, 20, 690, 120, 90,preserveAspectRatio=True)
-        #IMAGEN = '/HOME/LCABRERA/IMÁGENES/CAFETERIA/PRINTER.TICKET.LOGO.NUEVO_192X92.PNG'
+        canvas.drawImage(archivo_imagen, 20, 690, 120, 90, preserveAspectRatio=True)
+       
+
+        canvas.saveState()
+        canvas.setFont('Times-Roman', 10)
+        
+        page_count = doc.page 
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
+        canvas.restoreState()
+
+        canvas.setFont('Times-Roman', 10)
+        
+        canvas.drawString(420, 30, '{}'.format(localize(datetime.now())))
 
 
-        # # Footer.
-        # canvas.setFont('Times-Roman', 7)
-        # canvas.drawString( PAGE_WIDTH/6, 1.5*cm, '{}'.format(self.ods_object.ods_user_seguimiento.get_full_name()))
-        # canvas.drawString( PAGE_WIDTH/6, 0.9*cm, '______________________    __________________    ____________________')
-        # canvas.drawString( PAGE_WIDTH/6, 0.5*cm, 'Realizo Servicio   Asigna Sub Gerente TI    Nombre y Firma usuario')
-        # stylo = ParagraphStyle('firma_style', alignment=TA_CENTER, fontSize=6, fontName="Times-Roman")
-        # stylo2 = ParagraphStyle('firma_style', alignment=TA_CENTER, fontSize=8, fontName="Times-Bold")
-        # dta=[
-        #     (Paragraph('Realizo Servicio', stylo2), Paragraph('Vo Bo', stylo2), Paragraph('Recibio', stylo2)),
-        #     (Paragraph('{}({})'.format(self.ods_object.ods_user_seguimiento.get_full_name(), self.ods_object.ods_user_seguimiento), stylo), Paragraph('', stylo), Paragraph("{}".format(self.ods_object.ods_asignacion.asig_user.get_full_name()), stylo)),
-        #     (Paragraph('Nombre y firma', stylo), Paragraph('Gerente o Sub Gerente', stylo), Paragraph('Nombre y firma usuario', stylo)),
-        #     ]
+    def myLaterPages(self, canvas, doc):
+        print('pie de pagina')
+        canvas.saveState()
+        canvas.setFont('Times-Roman', 10)
+        
+        page_count = doc.page 
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
+        canvas.restoreState()
 
-        # tabla=Table(dta, colWidths=[6 * cm, 6 * cm, 6 * cm])
-        # tabla.setStyle(TableStyle(
-        #     [
-        #         ('GRID', (0, 0), (2, -1), 1, colors.dodgerblue),
-        #         # ('LINEBELOW', (0, 0), (-1, 0), 0, colors.darkblue),
-        #         ('BACKGROUND', (0, 0), (-1, 0), colors.transparent)
-        #     ]
-        # ))
-        # tabla.wrapOn(canvas, PAGE_WIDTH, PAGE_HEIGHT)
-        # tabla.drawOn(canvas, 50, 0.6*cm) 
+
     
     def dispatch(self, *args, **kwargs):
         id_obj=self.kwargs.get('pk')
@@ -1163,32 +1258,22 @@ class PDFCatalogoProd(View):
         items = []
         data_tabla=[]
 
-
-
-
-
-
-
-
         stylo_p_center = ParagraphStyle('parrafo_center', alignment=TA_CENTER, fontSize=11, fontName="Times-Roman")
         stylo_p = ParagraphStyle('parrafo', alignment=TA_LEFT, fontSize=11, fontName="Times-Roman")
         stylo_titulo = ParagraphStyle('titulo', alignment=TA_CENTER, fontSize=11, fontName="Times-Bold")
-        # folio_format = ParagraphStyle('folio_serv', alignment = TA_LEFT, fontSize = 9, fontName="Times-Roman")
-        # fecha_format = ParagraphStyle('fecha_stylo', alignment = TA_RIGHT, fontSize = 9, fontName="Times-Roman")
+        stylo_portada_title = ParagraphStyle('titulo', alignment=TA_CENTER, fontSize=20, fontName="Times-Bold")
 
-        txt = Paragraph("{}".format(self.object_catalogo.tp_empresa), stylo_titulo)
-        items.append(txt)
-        items.append(Spacer(0,5))
-        txt = Paragraph("{}".format(self.object_catalogo.tp_catalogo), stylo_titulo)
-        items.append(txt)
-        items.append(Spacer(0,5))
-        txt = Paragraph("{}".format(self.object_catalogo.tp_descripcion), stylo_p_center)
-        items.append(txt)
-        items.append(Spacer(0,10))
+        items.append(Image(self.object_catalogo.tp_imagen.path, 8*cm, 8*cm))
+        items.append(Paragraph(self.object_catalogo.tp_catalogo, stylo_portada_title))
+        items.append(Spacer(0,30))
+        items.append(Paragraph(self.object_catalogo.tp_no_licitacion, stylo_portada_title))
+        items.append(Spacer(0,30))
+        items.append(Paragraph(self.object_catalogo.tp_descripcion, stylo_portada_title))
+        items.append(PageBreak())
+        
 
-
-        titulos_tabla = [(Paragraph('Codigo', stylo_titulo), Paragraph('Nombre', stylo_titulo), Paragraph('Descripcion', stylo_titulo),Paragraph('Imagen', stylo_titulo))]
-        dta=[(Paragraph("{}".format(item.producto_codigo), stylo_p), Paragraph("{}".format(item.producto_nombre), stylo_p), Paragraph("{}".format(item.producto_descripcion), stylo_p), Image(item.producto_imagen.path, 2*cm, 2*cm)) for item in self.object_catalogo.tp_productos.all()]
+        titulos_tabla = [(Paragraph('Código', stylo_titulo), Paragraph('Nombre', stylo_titulo), Paragraph('Descripción', stylo_titulo),Paragraph('Imagen', stylo_titulo))]
+        dta=[(Paragraph("{}".format(item.producto_codigo), stylo_p), Paragraph("{}".format(item.producto_nombre), stylo_p), Paragraph("{}".format(item.producto_descripcion), stylo_p), Image(item.producto_imagen.path, 4*cm, 4*cm)) for item in self.object_catalogo.tp_productos.all()]
 
         tabla=Table(titulos_tabla+dta, colWidths=[5 * cm, 5 * cm, 5 * cm, 5 * cm])
         tabla.setStyle(TableStyle(
@@ -1202,11 +1287,7 @@ class PDFCatalogoProd(View):
         items.append(Spacer(0,20))
 
 
-
-
-
-
-        doc.build(items, onFirstPage=self.myFirstPage)
+        doc.build(items, onFirstPage=self.myFirstPage, onLaterPages = self.myLaterPages)
         response.write(buff.getvalue())
         buff.close()
         return response
