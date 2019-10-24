@@ -135,9 +135,12 @@ class Configuracion_pedido(models.Model):
     
 class Catalogo_Productos(models.Model):
     tp_empresa=models.ForeignKey(Empresa, on_delete=models.CASCADE, verbose_name='Empresa', null=True, blank=False)
-    tp_catalogo=models.CharField('Nombre', max_length=30)
-    tp_descripcion=models.CharField('Descripción', max_length=50)
+    tp_catalogo=models.CharField('Nombre', max_length=50)
+    tp_descripcion=models.CharField('Descripción', max_length=100)
+    tp_no_licitacion=models.CharField('N° de Licitacion', max_length=100, blank=False, null=True)
+    tp_imagen = models.ImageField(verbose_name='Imagen empresa a licitar', upload_to='catalogo_prod/licitacion/', blank=False, null=True)
     tp_productos=models.ManyToManyField(Producto, verbose_name='Productos')
+    
 
 
 
