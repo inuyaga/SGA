@@ -1270,15 +1270,19 @@ class PDFCatalogoProd(View):
         items.append(Spacer(0,30))
         items.append(Paragraph(self.object_catalogo.tp_descripcion, stylo_portada_title))
         items.append(PageBreak())
+
         
+        dta=[]
         if self.object_catalogo.tp_orientacion_t == 1:
-            titulos_tabla = [(Paragraph('Imagen', stylo_titulo), Paragraph('Descripción', stylo_titulo))]
-            dta=[(Image(item.producto_imagen.path, 5*cm, 5*cm), Paragraph("{}".format(item.producto_descripcion), stylo_p)) for item in self.object_catalogo.tp_productos.all()]
-            tabla=Table(titulos_tabla+dta, colWidths=[6 * cm, 14 * cm])
+            titulos_tabla = [(Paragraph('##', stylo_titulo),Paragraph('Imagen', stylo_titulo), Paragraph('Descripción', stylo_titulo))]
+            for item, iteracion in zip(self.object_catalogo.tp_productos.all(), range(self.object_catalogo.tp_productos.all().count())):
+                dta.append((iteracion+1,Image(item.producto_imagen.path, 5*cm, 5*cm), item.producto_descripcion))
+            tabla=Table(titulos_tabla+dta, colWidths=[1*cm, 6 * cm, 13 * cm])
         elif self.object_catalogo.tp_orientacion_t == 2:
-            titulos_tabla = [(Paragraph('Descripción', stylo_titulo),Paragraph('Imagen', stylo_titulo))]
-            dta=[(Paragraph("{}".format(item.producto_descripcion), stylo_p), Image(item.producto_imagen.path, 5*cm, 5*cm)) for item in self.object_catalogo.tp_productos.all()]
-            tabla=Table(titulos_tabla+dta, colWidths=[14 * cm, 6 * cm])
+            titulos_tabla = [(Paragraph('##', stylo_titulo),Paragraph('Descripción', stylo_titulo),Paragraph('Imagen', stylo_titulo))]
+            for item, iteracion in zip(self.object_catalogo.tp_productos.all(), range(self.object_catalogo.tp_productos.all().count())):
+                dta.append((iteracion+1, item.producto_descripcion, Image(item.producto_imagen.path, 5*cm, 5*cm)))
+            tabla=Table(titulos_tabla+dta, colWidths=[1*cm, 13 * cm, 6 * cm])
 
         tabla.setStyle(TableStyle(
             [
