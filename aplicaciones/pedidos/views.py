@@ -1271,11 +1271,15 @@ class PDFCatalogoProd(View):
         items.append(Paragraph(self.object_catalogo.tp_descripcion, stylo_portada_title))
         items.append(PageBreak())
         
+        if self.object_catalogo.tp_orientacion_t == 1:
+            titulos_tabla = [(Paragraph('Imagen', stylo_titulo), Paragraph('Descripción', stylo_titulo))]
+            dta=[(Image(item.producto_imagen.path, 5*cm, 5*cm), Paragraph("{}".format(item.producto_descripcion), stylo_p)) for item in self.object_catalogo.tp_productos.all()]
+            tabla=Table(titulos_tabla+dta, colWidths=[6 * cm, 14 * cm])
+        elif self.object_catalogo.tp_orientacion_t == 2:
+            titulos_tabla = [(Paragraph('Descripción', stylo_titulo),Paragraph('Imagen', stylo_titulo))]
+            dta=[(Paragraph("{}".format(item.producto_descripcion), stylo_p), Image(item.producto_imagen.path, 5*cm, 5*cm)) for item in self.object_catalogo.tp_productos.all()]
+            tabla=Table(titulos_tabla+dta, colWidths=[14 * cm, 6 * cm])
 
-        titulos_tabla = [(Paragraph('Código', stylo_titulo), Paragraph('Nombre', stylo_titulo), Paragraph('Descripción', stylo_titulo),Paragraph('Imagen', stylo_titulo))]
-        dta=[(Paragraph("{}".format(item.producto_codigo), stylo_p), Paragraph("{}".format(item.producto_nombre), stylo_p), Paragraph("{}".format(item.producto_descripcion), stylo_p), Image(item.producto_imagen.path, 4*cm, 4*cm)) for item in self.object_catalogo.tp_productos.all()]
-
-        tabla=Table(titulos_tabla+dta, colWidths=[5 * cm, 5 * cm, 5 * cm, 5 * cm])
         tabla.setStyle(TableStyle(
             [
                 ('GRID', (0, 0), (-1, -1), 1, colors.dodgerblue),
