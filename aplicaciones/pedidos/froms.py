@@ -126,7 +126,7 @@ class AsigGastoForm(forms.ModelForm):
 class Catalogo_ProductosForm(forms.ModelForm):
     class Meta:
         model = Catalogo_Productos
-        fields = '__all__'
+        fields = ['tp_empresa','tp_catalogo','tp_descripcion','tp_no_licitacion','tp_imagen','tp_orientacion_t', 'tp_productos']
     tp_productos = AutoCompleteSelectMultipleField('productos_tags_catalogo',required=False, help_text='Codigo producto')
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

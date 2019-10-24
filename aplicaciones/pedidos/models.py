@@ -140,6 +140,9 @@ class Catalogo_Productos(models.Model):
     tp_no_licitacion=models.CharField('N° de Licitacion', max_length=100, blank=False, null=True)
     tp_imagen = models.ImageField(verbose_name='Imagen empresa a licitar', upload_to='catalogo_prod/licitacion/', blank=False, null=True)
     tp_productos=models.ManyToManyField(Producto, verbose_name='Productos')
+    ORIENTACION=((1, 'Derecha'), (2, 'Izquierda'))
+    tp_orientacion_t=models.IntegerField(choices=ORIENTACION, default=1, verbose_name='Orientacion de tabla')
+
     
 
 
