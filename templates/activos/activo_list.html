@@ -74,6 +74,9 @@
                         <li>
                             <a tabindex="-1" href="{% url 'activos:tem_item_grup_list' %}">Grupo</a>
                         </li>
+                        <li>
+                            <a tabindex="-1" href="{% url 'activos:dwload_report_activo' %}?{{view.request.GET.urlencode}}">Descargar XLS</a>
+                        </li>
                     </ul>
                 </li>
             </ul>

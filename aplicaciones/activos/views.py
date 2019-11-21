@@ -50,6 +50,16 @@ import qrcode
 from reportlab.lib.utils import ImageReader
 from io import StringIO
 from reportlab.graphics import renderPDF
+
+
+
+
+
+from openpyxl.styles import Font, Fill, Alignment
+from django.http import HttpResponse
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+from decimal import Decimal
 # Create your views here.
 class Prueba(TemplateView):
     template_name='activos/p.html'
@@ -102,18 +112,17 @@ class CategoriaDelete(DeleteView):
 class ActivoList(ListView):
     model=Activo
     template_name='activos/activo_list.html'  
-    paginate_by=200
+    paginate_by=200 
 
     @method_decorator(permission_required('activos.view_activo',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
-                return super(ActivoList, self).dispatch(*args, **kwargs)
+        return super(ActivoList, self).dispatch(*args, **kwargs)
+
 
     def get_context_data(self, **kwargs): 
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         queryset = self.get_queryset()
-
-        print(queryset)
 
         context['obj_list'] = Categoria.objects.all().order_by('cat_nombre')
         context['list_marca'] = Marca.objects.all().order_by('marca_nombre')
@@ -150,7 +159,104 @@ class ActivoList(ListView):
             queryset=queryset.filter(activo_status=status)
         if situacion != None:
             queryset=queryset.filter(activo_situacion=situacion)
+
+
+        # FASE DE DESCARGA DE XLS
+        # dowload = self.request.GET.get('download')
+        # if dowload != None:
+            
+        
         return queryset
+
+class Download_report_activo(TemplateView):
+    def get(self, request , *args, **kwargs):
+        from openpyxl.styles import Font, Fill, Alignment
+        from django.http import HttpResponse
+        from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        from decimal import Decimal
+        wb = Workbook()
+        ws=wb.active
+
+        queryset = Activo.objects.all()
+        categoria=self.request.GET.get('categoria')
+        marca=self.request.GET.get('marca')
+        serie=self.request.GET.get('serie')
+        barra=self.request.GET.get('barra')
+        status=self.request.GET.get('status')
+        situacion=self.request.GET.get('situacion')
+        if categoria != None:
+            queryset=queryset.filter(activo_categoria=categoria)
+        if marca != None:
+            queryset=queryset.filter(activo_marca=marca)
+        if serie != None:
+            if serie != '':
+                queryset=queryset.filter(activo_serie=serie)
+        if barra != None:
+            if barra != '':
+                 queryset=queryset.filter(activo_codigo_barra=barra)
+        if status != None:
+            queryset=queryset.filter(activo_status=status)
+        if situacion != None:
+            queryset=queryset.filter(activo_situacion=situacion)
+        
+        
+        
+
+        ws['A1'] = 'REPORTE DE ACTIVO'
+        st=ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:F1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = '###'
+        ws['B2'] = 'Nombre'
+        ws['C2'] = 'Categoria'
+        ws['D2'] = 'Marca'
+        ws['E2'] = 'Modelo'
+        ws['F2'] = 'Codigo Barra'
+        ws['G2'] = 'Observación'
+        ws['H2'] = 'Costo'
+        cont = 3
+        
+
+        for item in queryset:
+            ws.cell(row=cont, column=1).value = item.activo
+            ws.cell(row=cont, column=2).value = item.activo_nombre
+            ws.cell(row=cont, column=3).value = item.activo_categoria.cat_nombre
+            ws.cell(row=cont, column=4).value = item.activo_marca.marca_nombre
+            ws.cell(row=cont, column=5).value = item.activo_modelo
+            ws.cell(row=cont, column=6).value = item.activo_codigo_barra
+            ws.cell(row=cont, column=7).value = item.activo_observacion
+            ws.cell(row=cont, column=8).value = item.activo_costo
+            
+            ws.cell(row=cont, column=8).number_format = '#,##0'
+            cont += 1
+
+        penultima_fila=cont-1
+        ws.cell(row=cont, column=7).value = "Total"
+        ws["H"+str(cont)] = "=SUM(H3:H{})".format(penultima_fila)
+        ws["H"+str(cont)].number_format = '#,##0'
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+
+        nombre_archivo='ACTIVO_REPORT.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
+
 
 
 class ActivoCrear(CreateView): 

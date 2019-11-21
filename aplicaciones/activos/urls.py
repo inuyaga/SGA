@@ -5,10 +5,11 @@ urlpatterns = [
     # path('', Vactivos.Prueba.as_view(), name='index'),
     path('categoria/create/', Vactivos.CategoriaCrear.as_view(), name='create_categorias'),
     path('categoria/update/<int:pk>/', Vactivos.CategoriaUpdate.as_view(), name='cat_update'), 
-    path('categoria/listar/', Vactivos.CategoriaList.as_view(), name='cat_list'),
+    path('categoria/listar/', Vactivos.CategoriaList.as_view(), name='cat_list'), 
     path('categoria/delete/<int:pk>/', Vactivos.CategoriaDelete.as_view(), name='cat_delete'),
 
     path('activo/listar/', Vactivos.ActivoList.as_view(), name='activo_list'),
+    path('activo/listar/download/report/', Vactivos.Download_report_activo.as_view(), name='dwload_report_activo'),
     path('activo/crear/', Vactivos.ActivoCrear.as_view(), name='activo_crear'),
     path('activo/update/<int:pk>/', Vactivos.ActivoUpdate.as_view(), name='activo_update'),
     path('activo/delete/<int:pk>/', Vactivos.ActivoDelete.as_view(), name='activo_delete'), 

@@ -825,9 +825,7 @@ class SelectTipoCompraView(ListView):
                 context['estado_rango_fechas']=True
         return context
 
-    @method_decorator(permission_required('pedidos.view_tipo_pedido',reverse_lazy('inicio:need_permisos')))
-    def dispatch(self, *args, **kwargs):
-        return super(SelectTipoCompraView, self).dispatch(*args, **kwargs)
+   
 
 
 class ConfigPedidoListView(ListView):
@@ -1156,7 +1154,7 @@ class AsigGastoDelete(DeleteView):
         context['deletable_objects']=deletable_objects
         context['model_count']=dict(model_count).items()
         context['protected']=protected
-        return context
+        return context 
 
     @method_decorator(permission_required('pedidos.delete_asignar_gasto_sucursal',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
