@@ -21,9 +21,16 @@
     color: white;
   }
   </style>
+  <form action="{% url 'fuds:ClienteSearch' %}" id="form_search_client" method="post">
+      {% csrf_token %}
+      <input type="text" name="txt_search" class="form-control" value="" placeholder="Busqueda de cliente" required>
+      <input type="submit" class="btn btn-info" value="Buscar" placeholder="Busqueda de cliente">
+      <div id="mediocuerpo"></div>
+  </form>
     <form action="" method="post" id="formu">
       <div class="container">
         <div class="row rayas">
+          <input type="text" id="nombredecliente" class="form-control" readonly>
           {% csrf_token %}
           <div class="col-sm-3">
             {{ form.NumeroVenta.label }}
@@ -94,3 +101,25 @@
 </div>
 </div>
 {% endblock contenido %}
+{% block script %}
+<script>
+  var frm = $('#form_search_client');
+  frm.submit(function (e) {
+    e.preventDefault();
+    $.ajax({
+      type: frm.attr('method'),
+      url: frm.attr('action'),
+      data: frm.serialize(),
+      success: function (data) {
+        document.getElementById("mediocuerpo").innerHTML=data.numerodecliente
+        $("#nombredecliente").val(data.nombredecliente)
+        $("#id_NumeroCliente").val(data.numerodecliente)
+      },
+      error: function (data) {
+        console.log('An error occurred.');
+        console.log(data);
+      },
+    });
+  });
+</script>
+{% endblock script %}

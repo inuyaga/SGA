@@ -566,3 +566,20 @@ class PartidaView(View):
                 'cuerpoF': String2,
             }
         return JsonResponse(data)
+
+class ClienteVerCaptura(View):
+    # template_name='fuds/ViewVendedores.html'
+    def post(self, request, *args, **kwargs):
+        resultado = request.POST.get("txt_search")
+        clientes= Clientes.objects.filter(Q(Client_numero__icontains = resultado) | Q(Client_Nombre= resultado) )
+        String = ""
+        String2 = ""
+        for pd in clientes:
+            String = pd.Client_numero,
+            String2 = pd.Client_Nombre,
+
+        data = {
+                'numerodecliente': String,
+                'nombredecliente': String2,
+            }
+        return JsonResponse(data)
