@@ -61,7 +61,7 @@ class Fud(models.Model):
     Folio = models.AutoField(primary_key=True)
     NumeroVenta=models.IntegerField(verbose_name="Número de venta", default='')
     FechaFactura = models.DateField(null=True, blank=True)
-    NumeroCliente = models.ForeignKey(Clientes, null= True, blank=True, on_delete = models.PROTECT, verbose_name="Número de cliente")
+    NumeroCliente = models.ForeignKey(Clientes, null= True, blank=False, default='', on_delete = models.PROTECT, verbose_name="Número de cliente")
     VendedorCliente = models.ForeignKey(Vendedores, null= True, blank=True, on_delete = models.PROTECT, verbose_name="Vendedor asignado al cliente")
     Factura = models.CharField(blank=True, null=True, default="TCA0", max_length=150, verbose_name="Factura")
     FechaFactura = models.DateField(null=False, blank=False, default="2017-01-01")

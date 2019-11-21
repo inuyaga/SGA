@@ -44,7 +44,7 @@
                 {% endfor %}
             </tbody>
         </table>
-
+<a href="{% url 'fuds:fud_update' view.kwargs.pk %}?q={{view.kwargs.pk}}" class="btn btn-success">Finalizar Pedido</a>
 </div>
 </div>
 {% endblock contenido %}

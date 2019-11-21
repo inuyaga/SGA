@@ -16,6 +16,7 @@ class FudForm(forms.ModelForm):
         widgets ={
             'FechaFactura': forms.DateInput(attrs={'type':'date', 'min':context['minimo'],'max':context['maximo']}),
             'observaciones': forms.Textarea(),
+            'NumeroCliente': forms.TextInput(attrs={'readonly':'true'}),
         }
 
 

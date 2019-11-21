@@ -8,7 +8,7 @@ VendedorCreate,VendedorList, VendedorUpdate,VendedorDelete,\
 FudCreate, FudList, FudUpdate, FudDelete,\
 PartidaCreate, PartidaView, \
 TramiteCreate,TramiteUpdate,TramiteDelete,TramiteList, \
-ClientCreate,ClientUpdate,ClientList,ClientDelete
+ClientCreate,ClientUpdate,ClientList,ClientDelete,ClienteVerCaptura
 
 app_name = "fuds"
 urlpatterns = [
@@ -51,6 +51,7 @@ urlpatterns = [
     path('PartidaSearch/', PartidaView.as_view(), name='PartidaSearch'),
 
     path('FudSearch/', PartidaView.as_view(), name='FudSearch'),
+    path('ClienteSearch/', ClienteVerCaptura.as_view(), name='ClienteSearch'),
 
     path('permisos/', err_permisos, name='need_permisos'),
 ]
