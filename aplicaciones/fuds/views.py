@@ -210,8 +210,8 @@ class FudCreate(CreateView):
 
 class FudList(ListView):
     model = Fud
-    paginate_by = 10
-    template_name= 'fuds/fud/list.html'
+    paginate_by = 20
+    template_name= 'fuds/fud/list.html' 
 
     @method_decorator(permission_required('fuds.view_fud',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
@@ -219,14 +219,22 @@ class FudList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['usuario'] = self.request.user
+        context['usuario'] = self.request.user 
+        urls_formateada = self.request.GET.copy()
+        if 'page' in urls_formateada:
+            del urls_formateada['page']
+        context['urls_formateada'] = urls_formateada 
         return context
     
     def get_queryset(self):
         queryset = super(FudList, self).get_queryset()
         cajaform= self.request.GET.get("Busqueda")
-        if(cajaform != None or cajaform != "0"):
-            queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
+        if cajaform != None:
+            if cajaform == '0':
+                queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
+            else:
+                queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
+            
         return queryset 
         
 

@@ -86,7 +86,7 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i
                         class="material-icons">
                         navigate_before
                     </i></a></li>
@@ -96,7 +96,7 @@
                 <span class="sr-only">(current)</span>
             </span>
             {% if page_obj.has_next %}
-            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i
                         class="material-icons">
                         navigate_next
                     </i></a></li>

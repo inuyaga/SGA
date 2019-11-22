@@ -6,7 +6,7 @@ class FudForm(forms.ModelForm):
     class Meta:
         hoy=datetime.now()
         dias = timedelta(days=90)
-        hoy_menos_90_dias=hoy-dias
+        hoy_menos_90_dias=hoy-dias 
         context={}
         context['maximo']= hoy.strftime("%Y-%m-%d")
         context['minimo']= hoy_menos_90_dias.strftime("%Y-%m-%d")
