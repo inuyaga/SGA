@@ -579,7 +579,8 @@ class ClienteVerCaptura(View):
     # template_name='fuds/ViewVendedores.html'
     def post(self, request, *args, **kwargs):
         resultado = request.POST.get("txt_search")
-        clientes= Clientes.objects.filter(Q(Client_numero__icontains = resultado) | Q(Client_Nombre= resultado) )
+        # clientes= Clientes.objects.filter(Q(Client_numero__icontains = resultado) | Q(Client_Nombre= resultado) )
+        clientes= Clientes.objects.filter(Q(Client_numero__exact = resultado) | Q(Client_Nombre= resultado) )
         String = ""
         String2 = ""
         for pd in clientes:
