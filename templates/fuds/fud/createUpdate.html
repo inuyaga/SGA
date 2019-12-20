@@ -103,7 +103,6 @@
             <th scope="col">Cantidad</th>
             <th scope="col">Importe</th>
             <th scope="col">Total</th>
-            {% comment %} <th scope="col">Acciones</th> {% endcomment %}
           </tr>
       </thead>
       {% for partidas in resultados %} 
@@ -117,26 +116,17 @@
       </tr>
       {% endfor %}
       <tr>
-        <th scope="row"></th>
-        <th scope="row"></th>
-        <th scope="row"></th>
-        <th scope="row"></th>
+        <th scope="row" colspan="4">Motivo: {{ fecha_factura.Motivo }}</th>
         <th scope="row">Sub Total</th>
         <th scope="row">{{total_partidas|intcomma}}</th>
       </tr>
       <tr>
-        <th scope="row"></th>
-        <th scope="row"></th>
-        <th scope="row"></th>
-        <th scope="row"></th>
+        <th scope="row" colspan="4"></th>
         <th scope="row">IVA</th>
         <th scope="row">{{total_iva|intcomma}}</th>
       </tr>
       <tr>
-        <th scope="row"></th>
-        <th scope="row"></th>
-        <th scope="row"></th>
-        <th scope="row"></th>
+        <th scope="row" colspan="4"></th>
         <th scope="row">Total</th>
         <th scope="row">{{total_total|intcomma}}</th>
       </tr>
@@ -165,6 +155,7 @@ function genera_pdf(){
   img2.src = "{% static 'ISO.jpg' %}" ;
   doc.addImage(img2, 'JPG', 180, 10, 25, 17);
   doc.setFontSize(14);
+  doc.setFontType("bold");
   doc.text(40, 20,"FORMATO ÚNICO DE DEVOLUCIÓN DE MERCANCÍA");
   doc.setFontSize(6);
   doc.text(10, 28,"CÓDIGO: CC-AC-R06");
@@ -176,12 +167,12 @@ function genera_pdf(){
   //doc.text(42, 40,"VENDEDOR: "+$("#id_VendedorCliente option:selected").text());
   doc.text(42, 40,"VENDEDOR: "+$("#id_VendedorCliente option:selected").text());
   //doc.text(125, 40,"# CLIENTE: "+$("#id_NumeroCliente").val());
-  //doc.text(165, 40,"FECHA: "+$("#id_fecha_creacion").val());
-  doc.text(140, 40,"FECHA: {{ fecha_hoy }}");
+  doc.text(85, 40,"CREACIÓN: {{ fecha_factura.fecha_creacion }} ");
   doc.text(10, 45,"FACTURA: "+$("#id_Factura").val());
   doc.text(50, 45,"FECHA FACTURA: {{ fecha_factura.FechaFactura }}");
   doc.text(120, 45,"CLIENTE: {{fecha_factura.NumeroCliente}}");
-  doc.autoTable({html: '#tabla_fud', startY: 47,styles:{fontSize:6}});
+  doc.setFontType("normal");
+  doc.autoTable({html: '#tabla_fud', startY: 47, styles:{fontSize:6}});
   var splitTitle = doc.splitTextToSize("OBSERVACIONES: "+$("#id_observaciones").val(), 180);
   doc.text(10, doc.previousAutoTable.finalY + 2,splitTitle);
   doc.text(30, doc.previousAutoTable.finalY + 52,"Cliente");
@@ -189,7 +180,8 @@ function genera_pdf(){
   doc.text(90, doc.previousAutoTable.finalY + 52,"Almacen");
   doc.text(120, doc.previousAutoTable.finalY + 52,"Acomodo");
   doc.text(160, doc.previousAutoTable.finalY + 52,"Autorizado por");
-  doc.save('Fud'+{{ view.kwargs.pk }}+'.pdf');
+  doc.text(140, doc.previousAutoTable.finalY + 75,"IMPRESIÓN: {{ fecha_hoy }}");
+  doc.save('Fud_'+{{ view.kwargs.pk }}+'.pdf');
   }
 </script>
 {% endblock script %}

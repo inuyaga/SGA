@@ -210,7 +210,7 @@ class FudCreate(CreateView):
 
 class FudList(ListView):
     model = Fud
-    paginate_by = 20
+    paginate_by = 50
     template_name= 'fuds/fud/list.html' 
 
     @method_decorator(permission_required('fuds.view_fud',reverse_lazy('inicio:need_permisos')))
@@ -236,6 +236,22 @@ class FudList(ListView):
                 queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
             
         return queryset 
+
+    # def post(self, request, *args, **kwargs):
+    #     resultado = request.POST.get("txt_search")
+    #     clientes= Clientes.objects.filter(Q(Client_numero__icontains = resultado) | Q(Client_Nombre= resultado) )
+    #     clientes= Clientes.objects.filter(Q(Client_numero__exact = resultado) | Q(Client_Nombre= resultado) )
+    #     String = ""
+    #     String2 = ""
+    #     for pd in clientes:
+    #         String = pd.Client_numero,
+    #         String2 = pd.Client_Nombre,
+
+    #     data = {
+    #             'numerodecliente': String,
+    #             'nombredecliente': String2,
+    #         }
+    #     return JsonResponse(data)
         
 
 
