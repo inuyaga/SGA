@@ -285,14 +285,23 @@ class FudUpdate(UpdateView):
         context['fecha_factura']=Fud.objects.get(Folio = self.kwargs.get('pk'))
         descuento= context['fecha_factura'].Descuento
         context['total_partidas'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() ))['total']
-        context['total_descuento'] = round(PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() )*(descuento/100))['total'],2)
-        context['total_iva'] = round((context['total_partidas']-context['total_descuento'])*0.16,2)
+        context['total_descuento'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() )*(descuento/100))['total']
         context['fecha_hoy']=datetime.now();
-        total_total = context['total_partidas']-context['total_descuento']+context['total_iva']
-        if total_total == None :
+
+        if context['total_descuento'] == None :
+            context['total_descuento'] = 0
+            context['total_iva'] = 0
             context['total_total'] = 0
         else:
+            context['total_descuento'] = round(context['total_descuento'],2)
+            context['total_iva'] =(context['total_partidas']-context['total_descuento'])*0.16
+            total_total = context['total_partidas']-context['total_descuento']+context['total_iva']
+            context['total_iva'] = round(context['total_iva'],2)
             context['total_total'] = round(total_total,2)
+        if context['total_partidas'] == None :
+            context['total_partidas']=0
+        else:
+            context['total_partidas']=round(context['total_partidas'],2)
         return context
 
 # class FudEnviar(TemplateView): 
