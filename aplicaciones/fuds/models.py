@@ -76,6 +76,8 @@ class Fud(models.Model):
     creado_por = models.ForeignKey(Usuario, null= True, blank=True, on_delete = models.CASCADE)
     ESTADOS = ((1,'Creado'),(2,'Autorizado'),(3,'En transito'),(4,"Entregado"),(5,"Finalizado"))
     EstadoFud=models.IntegerField(null=True, blank=True, choices= ESTADOS, default=1, verbose_name="Estado")
+    Descuento = models.IntegerField(default=0, null=False, blank=False, verbose_name="Descuento %")
+
     def __str__(self):
         return str(self.Folio)
 

@@ -76,6 +76,11 @@
             {{ form.EstadoFud.errors }}
             {{ form.EstadoFud }}
           </div>
+          <div class="col-sm-3">
+            {{ form.Descuento.label }}
+            {{ form.Descuento.errors }}
+            {{ form.Descuento }}
+          </div>
           {% endif %}
           <div class="col-sm-12">
             {{ form.observaciones.label }}
@@ -102,7 +107,7 @@
             <th scope="col">Precio</th>
             <th scope="col">Cantidad</th>
             <th scope="col">Importe</th>
-            <th scope="col">Total</th>
+            <th scope="col">Total S/D</th>
           </tr>
       </thead>
       {% for partidas in resultados %} 
@@ -119,6 +124,11 @@
         <th scope="row" colspan="4">Motivo: {{ fecha_factura.Motivo }}</th>
         <th scope="row">Sub Total</th>
         <th scope="row">{{total_partidas|intcomma}}</th>
+      </tr>
+      <tr>
+        <th scope="row" colspan="4"></th>
+        <th scope="row">Descuento</th>
+        <th scope="row">{{total_descuento|intcomma}}</th>
       </tr>
       <tr>
         <th scope="row" colspan="4"></th>

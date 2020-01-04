@@ -17,6 +17,7 @@ class FudForm(forms.ModelForm):
             'FechaFactura': forms.DateInput(attrs={'type':'date', 'min':context['minimo'],'max':context['maximo']}),
             'observaciones': forms.Textarea(),
             'NumeroCliente': forms.TextInput(attrs={'readonly':'true'}),
+            'Descuento': forms.TextInput(attrs={'min':'0', 'max':'15','type':'number'}),
         }
 
 
@@ -41,6 +42,7 @@ class FudFormEdit(forms.ModelForm):
         widgets ={
             'FechaFactura': forms.DateInput(attrs={'type':'date', 'min':context['minimo'],'max':context['maximo']}),
             'observaciones': forms.Textarea(),
+            'Descuento': forms.TextInput(attrs={'min':'0', 'max':'15','type':'number'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -62,6 +64,7 @@ class FudFormEdit2(forms.ModelForm):
 
         widgets ={
             'observaciones': forms.Textarea(),
+            'Descuento': forms.TextInput(attrs={'min':'0', 'max':'15','type':'number'}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -229,6 +229,13 @@ class FudList(ListView):
     def get_queryset(self):
         queryset = super(FudList, self).get_queryset()
         cajaform= self.request.GET.get("Busqueda")
+        cajaformbarra= self.request.GET.get("Buscar")
+
+        if cajaformbarra != None:
+            queryset= queryset.filter(Q(Folio= cajaformbarra) | Q(NumeroVenta=cajaformbarra) ).order_by("-fecha_creacion")
+        else:
+            queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
+
         if cajaform != None:
             if cajaform == '0':
                 queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
@@ -276,10 +283,12 @@ class FudUpdate(UpdateView):
         context['usuario'] = self.request.user
         context['resultados'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk'))
         context['fecha_factura']=Fud.objects.get(Folio = self.kwargs.get('pk'))
+        descuento= context['fecha_factura'].Descuento
         context['total_partidas'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() ))['total']
-        context['total_iva'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_iva=Sum( F('Partida_Cantidad') * F('Partida_Precio')*0.16, output_field=FloatField() ))['total_iva']
+        context['total_descuento'] = round(PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() )*(descuento/100))['total'],2)
+        context['total_iva'] = round((context['total_partidas']-context['total_descuento'])*0.16,2)
         context['fecha_hoy']=datetime.now();
-        total_total = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_total=Sum( F('Partida_Cantidad') * F('Partida_Precio')*1.16, output_field=FloatField() ))['total_total']
+        total_total = context['total_partidas']-context['total_descuento']+context['total_iva']
         if total_total == None :
             context['total_total'] = 0
         else:
