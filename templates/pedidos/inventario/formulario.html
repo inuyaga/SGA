@@ -1,0 +1,27 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Formulario inventario</title>
+{% endblock titulo %}
+{% block buscador_form %}
+{% endblock buscador_form %}
+{% block contenido %}
+
+
+<div class="container">
+  <form method="post" class="col-sm-4" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-outline-success">Guardar</button>
+  </form>
+</div>
+{% endblock contenido %}
+
+
+{% block script %}
+<script>
+  $('#id_inv_producto').val('{{view.request.GET.codex}}');
+  $("#id_inv_producto").prop("readonly", true);
+</script>
+{% endblock script %}

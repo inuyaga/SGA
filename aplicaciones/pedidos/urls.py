@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from aplicaciones.pedidos import views as PedidoViews
-from django.conf import settings
-from django.conf.urls.static import static
+
 app_name = "pedidos"
 urlpatterns = [
 
@@ -66,6 +65,21 @@ urlpatterns = [
 
 
 
+    path('inventario/busqueda/articulos/', PedidoViews.InventarioBusqueda.as_view(), name='inventarion_look_up'), 
+    path('inventario/agrate/articulos/resguardo', PedidoViews.InvCapturaResguardo.as_view(), name='inventarion_add_resguardo'), 
+    path('inventario/agrate/articulos/piking/', PedidoViews.InvCapturaPikin.as_view(), name='inventarion_add_pikin'), 
+    path('inventario/agrate/articulos/otros/', PedidoViews.InvCapturaOtros.as_view(), name='inventarion_add_otros'), 
+    path('inventario/agrate/articulos/merma/', PedidoViews.InvCapturaMerma.as_view(), name='inventarion_add_merma'), 
+    path('inventario/avance/articulos/', PedidoViews.InventarioAvanceConteo.as_view(), name='inventarion_avance_conteo'), 
+    path('inventario/avance/articulos/global', PedidoViews.InventarioAvanceConteoGlobal.as_view(), name='inventarion_avance_conteo_global'), 
+    path('inventario/avance/valida/merma/', PedidoViews.ValidarConteoMerma.as_view(), name='validar_merma'), 
+    path('inventario/avance/delete/<int:pk>/', PedidoViews.InventarioDelete.as_view(), name='delete_inventario'), 
+    path('inventario/avance/global/download/xls/', PedidoViews.DowloadInventarioGlobal.as_view(), name='down_xls_conteo_global'), 
+    path('inventario/avance/global/download/xls/comparativo/', PedidoViews.DowloadInventarioGlobalComparativo.as_view(), name='down_xls_conteo_global_comparado'), 
+    path('inventario/avance/global/reset/delete/', PedidoViews.ResetInventarioDelete.as_view(), name='reset_inventario_delete'), 
 
 
-]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+]

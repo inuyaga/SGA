@@ -1,5 +1,10 @@
 from django import forms
-from aplicaciones.pedidos.models import Area, Marca, Producto, Pedido, Configuracion_pedido, Tipo_Pedido, Asignar_gasto_sucursal, Catalogo_Productos
+from aplicaciones.pedidos.models import (Area, Marca, Producto, Pedido, Configuracion_pedido, Tipo_Pedido, Asignar_gasto_sucursal, Catalogo_Productos,
+Inventario)
+
+
+from django.contrib.auth import get_user_model
+Usuario = get_user_model()
 from ajax_select.fields import AutoCompleteSelectMultipleField
 class AreaForm(forms.ModelForm):
     class Meta:
@@ -128,6 +133,57 @@ class Catalogo_ProductosForm(forms.ModelForm):
         model = Catalogo_Productos
         fields = ['tp_empresa','tp_catalogo','tp_descripcion','tp_no_licitacion','tp_imagen','tp_orientacion_t', 'tp_productos']
     tp_productos = AutoCompleteSelectMultipleField('productos_tags_catalogo',required=False, help_text='Codigo producto')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+
+class InventarioResguardoForm(forms.ModelForm):
+    class Meta:
+        model = Inventario
+        fields = ['inv_conteo','inv_cant_resguardo']
+    inv_producto = forms.CharField(label='Codigo producto', max_length=100)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class InventarioPikinForm(forms.ModelForm):
+    class Meta:
+        model = Inventario
+        fields = ['inv_conteo','inv_cant_piking']
+    inv_producto = forms.CharField(label='Codigo producto', max_length=100)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class InventarioOtrosForm(forms.ModelForm):
+    class Meta:
+        model = Inventario
+        fields = ['inv_conteo','inv_cant_otros', 'inv_descripcion']
+    inv_producto = forms.CharField(label='Codigo producto', max_length=100)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class InventarioMermaForm(forms.ModelForm):
+    class Meta:
+        model = Inventario
+        fields = ['inv_conteo','inv_cant_merma', 'inv_descripcion', 'inv_sup_autorizo_merma']
+    inv_producto = forms.CharField(label='Codigo producto', max_length=100)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+        self.fields['inv_sup_autorizo_merma'].queryset=Usuario.objects.filter(is_staff=True)
+
+class InventarioEdit(forms.ModelForm):
+    class Meta:
+        model = Inventario
+        fields = ['inv_conteo','inv_cant_resguardo', 'inv_cant_piking', 'inv_cant_otros', 'inv_cant_merma']
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:

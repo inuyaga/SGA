@@ -1,0 +1,134 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Avance Conteo Inventario</title>
+{% endblock titulo %}
+
+{% block contenido %}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col"># Codigo Producto</th>
+            <th scope="col">Prod Descripcion</th>
+            <th scope="col">Resguardo</th>
+            <th scope="col">Piking</th>
+            <th scope="col">Otros</th>
+            <th scope="col">Merma</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Descripcion</th>
+            <th scope="col">Autorizador</th>
+            <th scope="col">Capturador</th>
+            <th scope="col">Status</th>
+            <th scope="col">Conteo</th>
+            <th scope="col">Ubicación</th>
+            <th scope="col">Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for item in object_list %}
+        <tr>
+            <th scope="row">{{item.inv_producto}}</th>
+            <th scope="row">{{item.inv_producto.producto_descripcion}}</th>
+            <td>
+
+                {% if item.inv_cant_resguardo %}
+                {{item.inv_cant_resguardo}}
+                {% endif %}
+
+            </td>
+            <td>
+
+                {% if item.inv_cant_piking %}
+                {{item.inv_cant_piking}}
+                {% endif %}
+
+            </td>
+            <td>
+
+                {% if item.inv_cant_otros %}
+                {{item.inv_cant_otros}}
+                {% endif %}
+
+            </td>
+            <td>
+
+                {% if item.inv_cant_merma %}
+                {{item.inv_cant_merma}}
+                {% endif %}
+
+            </td>
+            <td>{{item.inv_fecha_add}}</td>
+            <td>
+
+                {% if item.inv_descripcion %}
+                {{item.inv_descripcion}}
+                {% endif %}
+
+            </td>
+            <td>
+
+                {% if item.inv_sup_autorizo_merma %}
+                {{item.inv_sup_autorizo_merma}}
+                {% endif %}
+
+            </td>
+            <td>
+
+                
+                {{item.inv_user_catura}}
+                
+
+            </td>
+           
+            <td>
+                {% if item.inv_validacion %}
+                <i class="material-icons text-success">check_circle_outline</i>
+                {% else %}             
+                <i class="material-icons">cancel</i>       
+                {% endif %}
+            </td>
+            <td>{{item.get_inv_conteo_display}}</td>
+            <td>{{item.get_inv_tipo_sitio_display}}</td>
+            <td>
+                
+                {% if perms.pedidos.delete_inventario %}
+                    <a href="{% url 'pedidos:delete_inventario' item.inv %}" class="btn btn-danger btn-sm">Eliminar</a> 
+                {% endif %} 
+                    
+            </td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+
+
+<div class="row justify-content-md-center">
+    {% block pagination %}
+    {% if is_paginated %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link"
+                    href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i class="material-icons">
+                        navigate_before
+                    </i></a></li>
+            {% endif %}
+            <span class="page-link">
+                Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                <span class="sr-only">(current)</span>
+            </span>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i
+                        class="material-icons">
+                        navigate_next
+                    </i></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endblock %}
+</div>
+{% endblock contenido %}

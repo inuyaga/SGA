@@ -12,11 +12,11 @@ Usuario = get_user_model()
 
 # Create your models here.
 STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Cancelado'),(4, 'Venta'),(5, 'Facturado'), (6, 'Finalizado'), (7, 'Descargado'))
-
+CONTEO=((1, 'CONTEO 1'), (2, 'CONTEO 2'), (3, 'CONTEO 3'))
 class Marca(models.Model):
     marca_id_marca = models.AutoField(primary_key=True)
     marca_nombre = models.CharField(
-        max_length=80, verbose_name='Nombre de Marca')
+        max_length=80, verbose_name='Nombre de Marca') 
 
     def __str__(self):
         return self.marca_nombre
@@ -45,10 +45,23 @@ class Producto(models.Model):
     producto_kit=models.BooleanField(verbose_name='Kit', default=False)
     producto_productos=models.ManyToManyField("Producto")
     producto_visible=models.BooleanField('¿Producto visible?', default=True)
+
+    prducto_codigo_barras=models.CharField(max_length=50, verbose_name='Codigo Barras', null=True, blank=True)
+    prducto_localizacion=models.CharField(max_length=50, verbose_name='Localizacion', null=True, blank=True)
+    prducto_unidad=models.CharField(max_length=100, verbose_name='Unidad', null=True, blank=True)
+    prducto_resguardo=models.CharField(max_length=50, verbose_name='Localizacion en resguardo', null=True, blank=True)
+    prducto_existencia=models.IntegerField(verbose_name='Existencia', null=True, blank=True)
      
 
     def __str__(self):
         return self.producto_codigo
+
+    def inventario_conteo_resguardo(self):
+        total=Inventario.objects.filter(inv_producto=self.producto_codigo, inv_cant_resguardo__gt=0).count()
+        return total
+    def inventario_conteo_pikin(self):
+        total=Inventario.objects.filter(inv_producto=self.producto_codigo, inv_cant_piking__gt=0).count()
+        return total
 
 
 class Tipo_Pedido(models.Model):
@@ -149,7 +162,36 @@ class Catalogo_Productos(models.Model):
 
 
 
+# CODIGO PARA INVENTARIO CSS
+class Inventario(models.Model):
+    inv=models.BigAutoField(primary_key=True)
+    inv_producto=models.ForeignKey(Producto, on_delete=models.CASCADE, verbose_name='Codigo producto', null=True, blank=False)
+    
+    inv_cant_resguardo=models.IntegerField('Cantidad encontrada en resguardo', default=0)
+    inv_cant_piking=models.IntegerField('Cantidad encontrada en piking', default=0)
+    inv_cant_otros=models.IntegerField('Cantidad encontrada en otras ubicaciones', default=0)
+    inv_cant_merma=models.IntegerField('Merma', default=0) 
+    
+    inv_fecha_add=models.DateTimeField(auto_now_add=True)
+    inv_user_catura=models.ForeignKey(Usuario, verbose_name='Usuario capturador', on_delete=models.CASCADE)
+    inv_sup_autorizo_merma=models.ForeignKey(Usuario, verbose_name='Supervisor autorizador merma', related_name='autoriza_merma', blank=False, null=True, on_delete=models.CASCADE)
+    inv_descripcion=models.CharField(max_length=500, verbose_name='Descripción', help_text='Describa la ubicacion encontrada y comentarios', blank=True, null=True)
+    inv_validacion=models.BooleanField('Status',default=True)
+    inv_edicion=models.ForeignKey(Usuario, verbose_name='Ultimo Usuario edito', related_name='usr_edit', blank=False, null=True, on_delete=models.CASCADE)
+    inv_conteo=models.IntegerField('Numero de conteo', choices=CONTEO, default=1)
+    UBICATIONS=((1, 'RESGUARDO'), (2, 'PIKING'), (3, 'OTROS'), (4, 'MERMA'))
+    inv_tipo_sitio=models.IntegerField('Ubicacion conteo', choices=UBICATIONS, blank=False, null=True)
+    def __str__(self):
+        return 'ID: {} / Producto: {}'.format(self.inv, self.inv_producto)
+    class Meta:
+        permissions = [
+            ('puede_visualizar_avance_conteo_inventario', 'Puede Ver avance del conteo de inventario'),
+            ('inventario_perm_supervisor', 'Permiso de supervisor para inventario'),
+            ]
+        ordering = ["-inv_fecha_add"]
+        unique_together = (("inv_producto", "inv_conteo", 'inv_tipo_sitio'),)
 
+    
 
 
 

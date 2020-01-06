@@ -1,0 +1,116 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Avance Conteo Inventario</title>
+{% endblock titulo %}
+
+{% block buscador_form %}
+{% endblock buscador_form %}
+
+{% block contenido %}
+<div class="row">
+    <div class="col-sm-4">
+        {% if user.is_superuser %}
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="{% url 'pedidos:down_xls_conteo_global' %}?{{view.request.GET.urlencode}}" class="btn btn-success">Descargar Ecxel</a>
+            <a href="{% url 'pedidos:down_xls_conteo_global_comparado' %}" class="btn btn-primary">Comparativo xls</a>
+            <a href="{% url 'pedidos:reset_inventario_delete' %}" class="btn btn-danger">Reset conteo</a>
+        </div>
+        {% endif %}
+    </div>
+    <form action="" method="GET">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="conteo">Tipo Conteo</label>
+                <select class="form-control" id="conteo" name="conteo">
+                    {% for item in conteo %}
+                    <option value="{{item.0}}"{% if view.request.GET.conteo == item.0|striptags %}selected{% endif %}>{{item.1}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <br>
+            <button type="submit" class="btn btn-info">Visualizar</button>
+        </div>
+    </form>
+</div>
+<br>
+<div class="row">
+    <div class="container">
+        <div class="progress">
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{avance_porcentaje}}"
+                aria-valuemin="0" aria-valuemax="100" style="width:{{avance_porcentaje}}%">
+                {{avance_porcentaje}}% Completado
+            </div>
+        </div>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col"># Codigo Producto</th>
+            <th scope="col">Descripción</th>
+            <th scope="col">Total Resguardo</th>
+            <th scope="col">Total Piking</th>
+            <th scope="col">Total Otros</th>
+            <th scope="col">Total Merma</th>
+            <th scope="col">Total</th>
+            <th scope="col">Existencia</th>
+
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for item in object_list %}
+        <tr>
+            <th scope="row"><a
+                    href="{% url 'pedidos:inventarion_avance_conteo' %}?cod_prod={{item.inv_producto}}">{{item.inv_producto}}</a>
+            </th>
+            <th scope="row">{{item.inv_producto__producto_descripcion}}</th>
+            <td>{{item.total_resguardo}}</td>
+            <td>{{item.total_piking}}</td>
+            <td>{{item.total_otros}}</td>
+            <td>{{item.total_merma}}</td>
+            <td>{{item.suma_total}}</td>
+            <td>
+                {% if user.is_superuser %}
+                {{item.inv_producto__prducto_existencia}}
+                {% endif %}
+
+            </td>
+
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+
+
+<div class="row justify-content-md-center">
+    {% block pagination %}
+    {% if is_paginated %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link"
+                    href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i class="material-icons">
+                        navigate_before
+                    </i></a></li>
+            {% endif %}
+            <span class="page-link">
+                Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                <span class="sr-only">(current)</span>
+            </span>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i
+                        class="material-icons">
+                        navigate_next
+                    </i></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endblock %}
+</div>
+{% endblock contenido %}

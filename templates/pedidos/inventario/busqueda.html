@@ -1,0 +1,111 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Inventario</title>
+{% endblock titulo %}
+
+
+{% block contenido %}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Inventario</h4>
+                <ul class="card-actions">
+
+                    <li class="dropdown">
+                        <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span
+                                class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li class="dropdown-header">Accion</li>
+                            {% if perms.pedidos.puede_visualizar_avance_conteo_inventario %}
+                            <li>
+                                <a tabindex="-1" href="{% url 'pedidos:inventarion_avance_conteo' %}">Conteo actual</a>
+                            </li>
+                            {% endif %}
+                            {% if user.is_staff %}
+                            <li>
+                                <a tabindex="-1" href="{% url 'pedidos:validar_merma' %}">Validar conteo merma</a>
+                            </li>
+                            {% endif %}
+                            
+                            {% if perms.pedidos.inventario_perm_supervisor %}
+                            <li>
+                                <a tabindex="-1" href="{% url 'pedidos:inventarion_avance_conteo_global' %}?conteo=1">Conteo Global</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                </ul>
+                <!-- .card-actions -->
+
+            </div>
+            <div class="card-block">
+            <div class="table-responsive">
+
+                <table class="table-condensed">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Codigo</th>
+                            <th scope="col">Descripcion</th>
+                            <th scope="col">Codigo Barras</th>
+                            <th scope="col">Localizacion</th>
+                            <th scope="col">Unidad</th>
+                            <th scope="col">L. Resguardo</th>
+                            <th scope="col">Resguardo</th>
+                            <th scope="col">Pikin</th>
+                            <th scope="col">Otros</th>
+                            <th scope="col">Merma</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for item in produsctos %}
+                        <tr>
+                            <th scope="row">{{item.producto_codigo}}</th>
+                            <td>{{item.producto_descripcion}}</td>
+                            <td>{{item.prducto_codigo_barras}}</td>
+                            <td>{{item.prducto_localizacion}}</td>
+                            <td>{{item.prducto_unidad}}</td>
+                            <td>{{item.prducto_resguardo}}</td>
+                            <td>
+                                {% if perms.pedidos.add_inventario %}
+                                <a href="{% url 'pedidos:inventarion_add_resguardo' %}?codex={{item.producto_codigo}}"
+                                    class="btn btn-primary">Resguardo</a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if perms.pedidos.add_inventario %}
+                                <a href="{% url 'pedidos:inventarion_add_pikin' %}?codex={{item.producto_codigo}}"
+                                    class="btn btn-warning">Pikin</a>
+                                {% endif %}
+
+                            </td>
+                            <td>
+                                
+                                {% if perms.pedidos.inventario_perm_supervisor %}
+                                <a href="{% url 'pedidos:inventarion_add_otros' %}?codex={{item.producto_codigo}}"
+                                    class="btn btn-success">Otros</a>
+                                {% endif %}
+                                
+                            </td>
+                            <td>
+                                {% if perms.pedidos.add_inventario %}
+                                <a href="{% url 'pedidos:inventarion_add_merma' %}?codex={{item.producto_codigo}}"
+                                    class="btn btn-danger">Merma</a>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+
+
+                    </tbody>
+                </table>
+
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock contenido %}

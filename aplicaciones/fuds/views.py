@@ -211,7 +211,7 @@ class FudCreate(CreateView):
 class FudList(ListView):
     model = Fud
     paginate_by = 20
-    template_name= 'fuds/fud/list.html' 
+    template_name= 'fuds/fud/list.html'  
 
     @method_decorator(permission_required('fuds.view_fud',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):

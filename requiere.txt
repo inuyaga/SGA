@@ -4,7 +4,6 @@ cssselect2==0.2.2
 Django==2.1.7
 django-admin-rangefilter==0.5.1
 django-ajax-selects==1.7.1
-django-simple-history==2.7.0
 et-xmlfile==1.0.1
 isort==4.3.21
 jdcal==1.4

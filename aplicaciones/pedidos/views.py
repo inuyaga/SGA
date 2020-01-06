@@ -4,12 +4,15 @@ from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView, View
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
-from aplicaciones.pedidos.models import (Area, Marca, Producto, Detalle_pedido, Pedido, Configuracion_pedido, Tipo_Pedido, Asignar_gasto_sucursal, Tipo_Pedido, Catalogo_Productos, Asignar_gasto_sucursal, STATUS)
+from aplicaciones.pedidos.models import (Area, Marca, Producto, Detalle_pedido, Pedido, Configuracion_pedido, Tipo_Pedido, Asignar_gasto_sucursal, Tipo_Pedido, 
+Catalogo_Productos, Asignar_gasto_sucursal, STATUS, Inventario, CONTEO)
 from aplicaciones.pedidos.froms import (AreaForm, MarcaForm, ProductoForm, PedidoForm, ProductoKitForm, ConfigForm, Tipo_PedidoForm, AsigGastoForm,
-PedidoVentaForm, PedidoFacturaForm, PedidoSalidaForm, Catalogo_ProductosForm)
+PedidoVentaForm, PedidoFacturaForm, PedidoSalidaForm, Catalogo_ProductosForm, InventarioResguardoForm, InventarioPikinForm,
+InventarioOtrosForm, InventarioMermaForm, InventarioEdit) 
 from aplicaciones.empresa.models import Pertenece_empresa
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, Q
+from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from aplicaciones.empresa.models import Sucursal
@@ -1298,3 +1301,393 @@ class PDFCatalogoProd(View):
         buff.close()
         return response
 
+
+
+
+class InventarioBusqueda(TemplateView):
+    template_name='pedidos/inventario/busqueda.html'
+    def get_context_data(self, **kwargs):
+        context = super(InventarioBusqueda, self).get_context_data(**kwargs)
+        buscar=self.request.GET.get('Buscar')
+        if buscar != '':
+            if buscar != None:
+                context['produsctos'] = Producto.objects.filter(Q(producto_descripcion__icontains=buscar) | Q(producto_codigo__icontains=buscar) | Q(prducto_codigo_barras__icontains=buscar), producto_visible=False)
+        return context
+
+
+class InvCapturaResguardo(CreateView):
+    model = Inventario
+    template_name = 'pedidos/inventario/formulario.html'
+    form_class = InventarioResguardoForm
+    success_url = reverse_lazy('pedidos:inventarion_look_up')
+
+    def form_valid(self, form):
+        try:
+            form.instance.inv_user_catura=self.request.user
+            form.instance.inv_tipo_sitio=1
+            form.instance.inv_producto=Producto.objects.get(producto_codigo=form.cleaned_data['inv_producto'])
+            self.object = form.save()
+            messages.success(self.request, 'Agregado')
+            return super().form_valid(form)
+        except IntegrityError as error:
+            messages.warning(self.request, 'Producto y ubicacion duplicado intente con otra ubicacion'+str(error))
+            url=reverse_lazy('pedidos:inventarion_look_up')
+            url=url+'?Buscar='+form.cleaned_data['inv_producto']
+            return redirect(url)
+        
+
+    @method_decorator(permission_required('pedidos.add_inventario',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(InvCapturaResguardo, self).dispatch(*args, **kwargs)
+
+class InvCapturaPikin(CreateView):
+    model = Inventario
+    template_name = 'pedidos/inventario/formulario.html'
+    form_class = InventarioPikinForm
+    success_url = reverse_lazy('pedidos:inventarion_look_up')
+
+    def form_valid(self, form):
+        try:
+            form.instance.inv_user_catura=self.request.user
+            form.instance.inv_tipo_sitio=2
+            form.instance.inv_producto=Producto.objects.get(producto_codigo=form.cleaned_data['inv_producto'])
+            self.object = form.save()
+            messages.success(self.request, 'Agregado')
+            return super().form_valid(form)
+        except IntegrityError as error:
+            messages.warning(self.request, 'Producto y ubicacion duplicado intente con otra ubicacion'+str(error))
+            url=reverse_lazy('pedidos:inventarion_look_up')
+            url=url+'?Buscar='+form.cleaned_data['inv_producto']
+            return redirect(url)
+        
+
+    @method_decorator(permission_required('pedidos.add_inventario',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(InvCapturaPikin, self).dispatch(*args, **kwargs)
+
+
+class InvCapturaOtros(CreateView):
+    model = Inventario
+    template_name = 'pedidos/inventario/formulario.html'
+    form_class = InventarioOtrosForm
+    success_url = reverse_lazy('pedidos:inventarion_look_up')
+
+    def form_valid(self, form):
+        try:
+            form.instance.inv_user_catura=self.request.user
+            form.instance.inv_tipo_sitio=3
+            form.instance.inv_producto=Producto.objects.get(producto_codigo=form.cleaned_data['inv_producto'])
+            self.object = form.save()
+            messages.success(self.request, 'Agregado')
+            return super().form_valid(form)
+        except IntegrityError as error:
+            messages.warning(self.request, 'Producto y ubicacion duplicado intente con otra ubicacion'+str(error))
+            url=reverse_lazy('pedidos:inventarion_look_up')
+            url=url+'?Buscar='+form.cleaned_data['inv_producto']
+            return redirect(url)
+        
+
+    @method_decorator(permission_required('pedidos.add_inventario',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(InvCapturaOtros, self).dispatch(*args, **kwargs)
+
+
+class InvCapturaMerma(CreateView):
+    model = Inventario
+    template_name = 'pedidos/inventario/formulario.html'
+    form_class = InventarioMermaForm
+    success_url = reverse_lazy('pedidos:inventarion_look_up')
+
+    def form_valid(self, form):
+        try:
+            form.instance.inv_user_catura=self.request.user
+            form.instance.inv_validacion=False
+            form.instance.inv_tipo_sitio=4
+            form.instance.inv_producto=Producto.objects.get(producto_codigo=form.cleaned_data['inv_producto'])
+            self.object = form.save()
+            messages.success(self.request, 'Agregado')
+            return super().form_valid(form)
+        except IntegrityError as error:
+            messages.warning(self.request, 'Producto y ubicacion duplicado intente con otra ubicacion'+str(error))
+            url=reverse_lazy('pedidos:inventarion_look_up')
+            url=url+'?Buscar='+form.cleaned_data['inv_producto']
+            return redirect(url)
+        
+
+    @method_decorator(permission_required('pedidos.add_inventario',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(InvCapturaMerma, self).dispatch(*args, **kwargs)
+
+
+class InventarioAvanceConteo(ListView):
+    model=Inventario
+    paginate_by=300
+    template_name='pedidos/inventario/avance.html'
+
+    @method_decorator(permission_required('pedidos.change_inventario',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(InventarioAvanceConteo, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        queryset = super(InventarioAvanceConteo, self).get_queryset()
+        buscar=self.request.GET.get('Buscar')
+        cod_prod=self.request.GET.get('cod_prod')
+
+        if cod_prod != None:
+            queryset=queryset.filter(inv_producto=cod_prod)
+
+        if buscar != '':
+            if buscar != None:
+                queryset = queryset.filter(Q(inv_producto__producto_descripcion__icontains=buscar) | Q(inv_producto__producto_codigo__icontains=buscar), inv_producto__producto_visible=False)[:100]
+        return queryset
+    
+
+class InventarioAvanceConteoGlobal(ListView):
+    model=Inventario
+    paginate_by = 500
+    template_name='pedidos/inventario/Global.html'
+    def get_queryset(self):
+        queryset = super(InventarioAvanceConteoGlobal, self).get_queryset()
+        tipo_conteo=self.request.GET.get('conteo')
+        queryset=Inventario.objects.values('inv_producto', 'inv_producto__producto_descripcion', 'inv_producto__prducto_existencia').filter(inv_producto__producto_visible=False,inv_validacion=True, inv_conteo=tipo_conteo).annotate(
+            total_resguardo=Sum('inv_cant_resguardo'), 
+            total_piking=Sum('inv_cant_piking'), 
+            total_otros=Sum('inv_cant_otros'), 
+            total_merma=Sum('inv_cant_merma'), 
+            suma_total=Sum(F('inv_cant_resguardo'))+Sum(F('inv_cant_piking'))+Sum(F('inv_cant_otros')),
+            ).order_by('inv_producto')        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super(InventarioAvanceConteoGlobal, self).get_context_data(**kwargs)
+        tipo_conteo=self.request.GET.get('conteo')
+        context['total_conteo_prod'] = Inventario.objects.values('inv_producto').filter(inv_producto__producto_visible=False,inv_validacion=True, inv_conteo=tipo_conteo).annotate(
+            total_resguardo=Sum('inv_cant_resguardo'),
+            ).order_by('inv_producto').count()
+        context['total_productos']=Producto.objects.filter(producto_visible=False).count()
+        avance_porcentaje=(context['total_conteo_prod']*100)/context['total_productos']
+        context['avance_porcentaje']=round(avance_porcentaje, 2)
+        context['conteo']=CONTEO
+        urls_formateada = self.request.GET.copy()
+        if 'page' in urls_formateada:
+            del urls_formateada['page']
+        context['urls_formateada'] = urls_formateada
+        return context
+
+
+class ValidarConteoMerma(TemplateView):
+    template_name = 'pedidos/inventario/validar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ValidarConteoMerma, self).get_context_data(**kwargs)
+        context['inventario'] = Inventario.objects.filter(inv_sup_autorizo_merma=self.request.user, inv_validacion=False)
+        id_inv=self.request.GET.get('autorizo')
+        id_rechazar=self.request.GET.get('rechazar')
+        if id_inv != None:
+            Inventario.objects.filter(inv=id_inv).update(inv_validacion=True)
+
+        if id_rechazar != None:
+            Inventario.objects.filter(inv=id_rechazar).delete()
+        
+        return context
+
+
+class InventarioDelete(DeleteView):
+    model=Inventario
+    template_name="pedidos/delete_forever.html"
+    success_message = "Eliminado correctamente."
+    success_url=reverse_lazy('pedidos:inventarion_avance_conteo')
+    @method_decorator(permission_required('pedidos.delete_inventario',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super(InventarioDelete, self).dispatch(*args, **kwargs)
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(InventarioDelete, self).delete(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(InventarioDelete, self).get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+    
+
+
+
+
+
+class DowloadInventarioGlobal(View):
+    def get(self, request , *args, **kwargs):
+        import random
+        from openpyxl.styles import Font, Fill, Alignment
+        from django.http import HttpResponse
+        from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        from decimal import Decimal
+        from openpyxl.styles import PatternFill
+        wb = Workbook()
+        ws=wb.active
+
+        ws['A1'] = 'INVENTARIO CONTEO GLOBAL N°'+self.request.GET.get('conteo')
+        st=ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:H1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = 'Codigo Producto'
+        ws['B2'] = 'Descripción'
+        ws['C2'] = 'Resguardo'
+        ws['D2'] = 'Piking'
+        ws['E2'] = 'Otros'
+        ws['F2'] = 'Merma'
+        ws['G2'] = 'Total'
+        ws['H2'] = 'Existencia'
+        cont = 3
+        tipo_conteo=self.request.GET.get('conteo')
+        query=Inventario.objects.values('inv_producto', 'inv_producto__producto_descripcion', 'inv_producto__prducto_existencia').filter(inv_producto__producto_visible=False,inv_validacion=True, inv_conteo=tipo_conteo).annotate(
+            total_resguardo=Sum('inv_cant_resguardo'), 
+            total_piking=Sum('inv_cant_piking'), 
+            total_otros=Sum('inv_cant_otros'), 
+            total_merma=Sum('inv_cant_merma'), 
+            suma_total=Sum(F('inv_cant_resguardo'))+Sum(F('inv_cant_piking'))+Sum(F('inv_cant_otros')),
+            ).order_by('inv_producto')
+        
+
+
+        for cto in query:
+            # INCRUSTAR CONTENIDO DE CELDA
+            ws.cell(row=cont, column=1).value = cto['inv_producto']
+            ws.cell(row=cont, column=2).value = cto['inv_producto__producto_descripcion']
+            ws.cell(row=cont, column=3).value = cto['total_resguardo']
+            ws.cell(row=cont, column=4).value = cto['total_piking']
+            ws.cell(row=cont, column=5).value = cto['total_otros']
+            ws.cell(row=cont, column=6).value = cto['total_merma']
+            ws.cell(row=cont, column=7).value = cto['suma_total']
+            ws.cell(row=cont, column=8).value = cto['inv_producto__prducto_existencia']
+
+            ws.cell(row=cont, column=3).number_format = '#,##0'
+            ws.cell(row=cont, column=4).number_format = '#,##0'
+            ws.cell(row=cont, column=5).number_format = '#,##0'
+            ws.cell(row=cont, column=6).number_format = '#,##0'
+            ws.cell(row=cont, column=7).number_format = '#,##0'
+            ws.cell(row=cont, column=8).number_format = '#,##0'
+            cont += 1
+
+
+        # CODIGO PARA AJUSTAR LAS CELDAS EN EL EXCEL
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+
+
+        nombre_archivo='conteo_global_inventario_no_'+tipo_conteo+'.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
+
+class DowloadInventarioGlobalComparativo(View):
+    def get(self, request , *args, **kwargs):
+        import random
+        from openpyxl.styles import Font, Fill, Alignment
+        from django.http import HttpResponse
+        from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        from decimal import Decimal
+        from openpyxl.styles import PatternFill
+        wb = Workbook()
+        ws=wb.active
+
+        ws['A1'] = 'INVENTARIO CONTEO GLOBAL COMPARADO'
+        st=ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:H1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = 'Codigo Producto'
+        ws['B2'] = 'Descripción'
+        ws['C2'] = 'Resguardo'
+        ws['D2'] = 'Piking'
+        ws['E2'] = 'Otros'
+        ws['F2'] = 'Merma'
+        ws['G2'] = 'Total'
+        ws['H2'] = 'Existencia'
+        ws['I2'] = 'N° Conteo'
+        cont = 3
+        
+        query=Inventario.objects.values('inv_producto', 'inv_producto__producto_descripcion', 'inv_producto__prducto_existencia', 'inv_conteo').filter(inv_producto__producto_visible=False,inv_validacion=True).annotate(
+            total_resguardo=Sum('inv_cant_resguardo'), 
+            total_piking=Sum('inv_cant_piking'), 
+            total_otros=Sum('inv_cant_otros'), 
+            total_merma=Sum('inv_cant_merma'), 
+            suma_total=Sum(F('inv_cant_resguardo'))+Sum(F('inv_cant_piking'))+Sum(F('inv_cant_otros')),
+            ).order_by('inv_producto', 'inv_conteo')
+        
+
+
+        for cto in query:
+            # INCRUSTAR CONTENIDO DE CELDA
+            ws.cell(row=cont, column=1).value = cto['inv_producto']
+            ws.cell(row=cont, column=2).value = cto['inv_producto__producto_descripcion']
+            ws.cell(row=cont, column=3).value = cto['total_resguardo']
+            ws.cell(row=cont, column=4).value = cto['total_piking']
+            ws.cell(row=cont, column=5).value = cto['total_otros']
+            ws.cell(row=cont, column=6).value = cto['total_merma']
+            ws.cell(row=cont, column=7).value = cto['suma_total']
+            ws.cell(row=cont, column=8).value = cto['inv_producto__prducto_existencia']
+            ws.cell(row=cont, column=9).value = cto['inv_conteo']
+
+            ws.cell(row=cont, column=3).number_format = '#,##0'
+            ws.cell(row=cont, column=4).number_format = '#,##0'
+            ws.cell(row=cont, column=5).number_format = '#,##0'
+            ws.cell(row=cont, column=6).number_format = '#,##0'
+            ws.cell(row=cont, column=7).number_format = '#,##0'
+            ws.cell(row=cont, column=8).number_format = '#,##0'
+            ws.cell(row=cont, column=9).number_format = '#,##0'
+            cont += 1
+
+
+        # CODIGO PARA AJUSTAR LAS CELDAS EN EL EXCEL
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+
+
+        nombre_archivo='conteo_global_inventario_comparativo.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
+
+class ResetInventarioDelete(TemplateView):
+    template_name="pedidos/delete_forever.html"
+    def post(self, request, *args, **kwargs):
+        Inventario.objects.all().delete()
+        return redirect('pedidos:inventarion_avance_conteo_global')
+
+    def get_context_data(self, **kwargs):
+        context = super(ResetInventarioDelete, self).get_context_data(**kwargs)
+        query=Inventario.objects.all()
+        deletable_objects, model_count, protected = get_deleted_objects(query)
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context 
