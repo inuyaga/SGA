@@ -210,8 +210,8 @@ class FudCreate(CreateView):
 
 class FudList(ListView):
     model = Fud
-    paginate_by = 20
-    template_name= 'fuds/fud/list.html'  
+    paginate_by = 50
+    template_name= 'fuds/fud/list.html' 
 
     @method_decorator(permission_required('fuds.view_fud',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
@@ -229,6 +229,13 @@ class FudList(ListView):
     def get_queryset(self):
         queryset = super(FudList, self).get_queryset()
         cajaform= self.request.GET.get("Busqueda")
+        cajaformbarra= self.request.GET.get("Buscar")
+
+        if cajaformbarra != None:
+            queryset= queryset.filter(Q(Folio= cajaformbarra) | Q(NumeroVenta=cajaformbarra) ).order_by("-fecha_creacion")
+        else:
+            queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
+
         if cajaform != None:
             if cajaform == '0':
                 queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
@@ -236,6 +243,22 @@ class FudList(ListView):
                 queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
             
         return queryset 
+
+    # def post(self, request, *args, **kwargs):
+    #     resultado = request.POST.get("txt_search")
+    #     clientes= Clientes.objects.filter(Q(Client_numero__icontains = resultado) | Q(Client_Nombre= resultado) )
+    #     clientes= Clientes.objects.filter(Q(Client_numero__exact = resultado) | Q(Client_Nombre= resultado) )
+    #     String = ""
+    #     String2 = ""
+    #     for pd in clientes:
+    #         String = pd.Client_numero,
+    #         String2 = pd.Client_Nombre,
+
+    #     data = {
+    #             'numerodecliente': String,
+    #             'nombredecliente': String2,
+    #         }
+    #     return JsonResponse(data)
         
 
 
@@ -260,14 +283,25 @@ class FudUpdate(UpdateView):
         context['usuario'] = self.request.user
         context['resultados'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk'))
         context['fecha_factura']=Fud.objects.get(Folio = self.kwargs.get('pk'))
+        descuento= context['fecha_factura'].Descuento
         context['total_partidas'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() ))['total']
-        context['total_iva'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_iva=Sum( F('Partida_Cantidad') * F('Partida_Precio')*0.16, output_field=FloatField() ))['total_iva']
+        context['total_descuento'] = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total=Sum( F('Partida_Cantidad') * F('Partida_Precio'), output_field=FloatField() )*(descuento/100))['total']
         context['fecha_hoy']=datetime.now();
-        total_total = PartidasFud.objects.filter(Partida_fud = self.kwargs.get('pk')).aggregate(total_total=Sum( F('Partida_Cantidad') * F('Partida_Precio')*1.16, output_field=FloatField() ))['total_total']
-        if total_total == None :
+
+        if context['total_descuento'] == None :
+            context['total_descuento'] = 0
+            context['total_iva'] = 0
             context['total_total'] = 0
         else:
+            context['total_descuento'] = round(context['total_descuento'],2)
+            context['total_iva'] =(context['total_partidas']-context['total_descuento'])*0.16
+            total_total = context['total_partidas']-context['total_descuento']+context['total_iva']
+            context['total_iva'] = round(context['total_iva'],2)
             context['total_total'] = round(total_total,2)
+        if context['total_partidas'] == None :
+            context['total_partidas']=0
+        else:
+            context['total_partidas']=round(context['total_partidas'],2)
         return context
 
 # class FudEnviar(TemplateView): 

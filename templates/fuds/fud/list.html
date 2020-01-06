@@ -29,6 +29,53 @@
     </div>
 </div>
 {% endif %}
+<table class="table table-bordered">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col" class="text-center"> <small><b>#</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Fecha Factura</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Cliente</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Zona</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Vendedor</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Conformidad</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Motivo</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Trámite</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Devolución</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Responsable</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Observaciones</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Creación</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Creado</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Estatus</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Agregar partidas</b></small></th>
+            <th scope="col" class="text-center"> <small><b>Acciones</b></small></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fud in object_list %}
+        <tr>
+            <th scope="row"><b>{{fud.Folio}}</b></th>
+            <td><small>{{fud.FechaFactura}}</small></td>
+            <td><small>{{fud.NumeroCliente}}</small></td>
+            <td><small>{{fud.VendedorCliente.Vend_Zona.Zona_nombre}}</small></td>
+            <td><small>{{fud.VendedorCliente}}</small></td>
+            <td><small>{{fud.Motivo.motivo_idconformidad.conformidad_descripcion}}</small></td>
+            <td><small>{{fud.Motivo}}</small></td>
+            <td><small>{{fud.tramite}}</small></td>
+            <td><small>{{fud.get_devolucion_display}}</small></td>
+            <td><small>{{fud.responsable}}</small></td>
+            <td><small>{{fud.observaciones|truncatewords:5}}</small></td>
+            <td><small>{{fud.fecha_creacion}}</small></td>
+            <td><small>{{fud.creado_por}}</small></td>
+            <td><small>{{fud.get_EstadoFud_display}}</small></td>
+            <td><small><a href="{% url 'fuds:Partida' fud.Folio %}"><i class="material-icons">add</i></a></small></td>
+            <td><small>
+                    <a href="{% url 'fuds:fud_update' fud.Folio %}"><i class="material-icons">border_color</i></a>
+                    <a href="{% url 'fuds:fud_delete' fud.Folio %}"><i class="material-icons">delete_forever</i></a>
+                </small></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 
 

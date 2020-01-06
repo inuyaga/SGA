@@ -29,7 +29,6 @@
                 <th scope="col">Descripción</th>
                 <th scope="col">Precio</th>
                 <th scope="col">Cantidad</th>
-                {% comment %} <th scope="col">Acciones</th> {% endcomment %}
                 </tr>
             </thead>
             <tbody id="mediocuerpoResultado">
@@ -39,7 +38,6 @@
                   <th scope="row">{{fud.Partida_nombre.producto_descripcion}}</th>
                   <th scope="row">{{fud.Partida_Precio}}</th>
                   <th scope="row">{{fud.Partida_Cantidad}}</th>
-                  {% comment %} <th><input type="submit" class="btn btn-danger" placeholder="Busqueda de producto"> </th> {% endcomment %}
                 </tr>
                 {% endfor %}
             </tbody>
