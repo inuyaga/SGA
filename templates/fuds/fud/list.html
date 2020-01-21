@@ -28,8 +28,82 @@
         </span>
     </div>
 </div>
+
+<div class="container">
+    <div class="row">
+        <form action="" method="get">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="fecha_captura">Fecha Captura Inicial</label>
+                    <input type="date" class="form-control" id="fecha_captura_ini" name="fecha_captura_ini">
+                    <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                </div>
+            </div>
+            
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="fecha_captura">Fecha Captura Final</label>
+                    <input type="date" class="form-control" id="fecha_captura_end" name="fecha_captura_end">
+                    <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                </div>
+            </div>
+            
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="vendedors">Vendedor</label>
+                    <select class="form-control" id="vendedors" name="vendedors">
+                        <option value="">----------------</option>
+                        {% for item in vendedor %}
+                        <option value="{{item.id}}">{{item.Vend_nombre}}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="tip_aacion">Tipo de accion</label>
+                    <select class="form-control" id="tip_aacion" name="tip_aacion">
+                        <option value="">----------------</option>
+                        {% for item in tip_accion %}
+                        <option value="{{item.0}}">{{item.1}}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="conformidad">Conformidad</label>
+                    <select class="form-control" id="conformidad" name="conformidad">
+                        <option value="">----------------</option>
+                        {% for item in conformidad %}
+                        <option value="{{item.conformidad_id}}">{{item.conformidad_descripcion}}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="motivo">Motivo</label>
+                    <select class="form-control" id="motivo" name="motivo">
+                        <option value="">----------------</option>
+                        {% for item in motivo %}
+                        <option value="{{item.motivo_id}}">{{item.motivo_descripcion}}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+            </div>
+            <div class="col-sm-2">
+                <br>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                  </div>
+            </div>
+           
+        </form>
+    </div>
+</div>
 {% endif %}
-<table class="table table-bordered">
+<!-- <table class="table table-bordered">
     <thead class="thead-light">
         <tr>
             <th scope="col" class="text-center"> <small><b>#</b></small></th>
@@ -75,7 +149,7 @@
         </tr>
         {% endfor %}
     </tbody>
-</table>
+</table> -->
 
 
 
@@ -104,7 +178,7 @@
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li class="dropdown-header">Accion</li>
                         <li>
-                            <a tabindex="-1" href="#">xls</a>
+                            <a tabindex="-1" href="{% url 'fuds:dowload_fud_xls' %}?{{view.request.GET.urlencode}}">xls</a>
                         </li>
                     </ul>
                 </li>
@@ -113,56 +187,59 @@
 
         </div>
         <div class="card-block">
-                <div class="table-responsive">
-                        <table class="table-condensed table-bordered">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th scope="col" class="text-center"> <small><b>#</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Fecha Factura</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Cliente</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Zona</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Vendedor</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Conformidad</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Motivo</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Tramite</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Devolucion</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Responsable</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Observaciones</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Creacion</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Creado</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Estatus</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Agregar partidas</b></small></th>
-                                    <th scope="col" class="text-center"> <small><b>Acciones</b></small></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for fud in object_list %}
-                                <tr>
-                                    <th scope="row"><b>{{fud.Folio}}</b></th>
-                                    <td><small>{{fud.FechaFactura}}</small></td>
-                                    <td><small>{{fud.NumeroCliente}}</small></td>
-                                    <td><small>{{fud.VendedorCliente.Vend_Zona.Zona_nombre}}</small></td>
-                                    <td><small>{{fud.VendedorCliente}}</small></td>
-                                    <td><small>{{fud.Motivo.motivo_idconformidad.conformidad_descripcion}}</small></td>
-                                    <td><small>{{fud.Motivo}}</small></td>
-                                    <td><small>{{fud.tramite}}</small></td>
-                                    <td><small>{{fud.get_devolucion_display}}</small></td>
-                                    <td><small>{{fud.responsable}}</small></td>
-                                    <td><small>{{fud.observaciones|truncatewords:5}}</small></td>
-                                    <td><small>{{fud.fecha_creacion}}</small></td>
-                                    <td><small>{{fud.creado_por}}</small></td>
-                                    <td><small>{{fud.get_EstadoFud_display}}</small></td>
-                                    <td><small><a href="{% url 'fuds:Partida' fud.Folio %}"><i class="material-icons">add</i></a></small>
-                                    </td>
-                                    <td><small>
-                                            <a href="{% url 'fuds:fud_update' fud.Folio %}"><i class="material-icons">border_color</i></a>
-                                            <a href="{% url 'fuds:fud_delete' fud.Folio %}"><i class="material-icons">delete_forever</i></a>
-                                        </small></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="table-responsive">
+                <table class="table-condensed table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="text-center"> <small><b>#</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Fecha Factura</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Cliente</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Zona</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Vendedor</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Conformidad</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Motivo</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Tramite</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Devolucion</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Responsable</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Observaciones</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Creacion</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Creado</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Estatus</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Agregar partidas</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Acciones</b></small></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fud in object_list %}
+                        <tr>
+                            <th scope="row"><b>{{fud.Folio}}</b></th>
+                            <td><small>{{fud.FechaFactura}}</small></td>
+                            <td><small>{{fud.NumeroCliente}}</small></td>
+                            <td><small>{{fud.VendedorCliente.Vend_Zona.Zona_nombre}}</small></td>
+                            <td><small>{{fud.VendedorCliente}}</small></td>
+                            <td><small>{{fud.Motivo.motivo_idconformidad.conformidad_descripcion}}</small></td>
+                            <td><small>{{fud.Motivo}}</small></td>
+                            <td><small>{{fud.tramite}}</small></td>
+                            <td><small>{{fud.get_devolucion_display}}</small></td>
+                            <td><small>{{fud.responsable}}</small></td>
+                            <td><small>{{fud.observaciones|truncatewords:5}}</small></td>
+                            <td><small>{{fud.fecha_creacion}}</small></td>
+                            <td><small>{{fud.creado_por}}</small></td>
+                            <td><small>{{fud.get_EstadoFud_display}}</small></td>
+                            <td><small><a href="{% url 'fuds:Partida' fud.Folio %}"><i
+                                            class="material-icons">add</i></a></small>
+                            </td>
+                            <td><small>
+                                    <a href="{% url 'fuds:fud_update' fud.Folio %}"><i
+                                            class="material-icons">border_color</i></a>
+                                    <a href="{% url 'fuds:fud_delete' fud.Folio %}"><i
+                                            class="material-icons">delete_forever</i></a>
+                                </small></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

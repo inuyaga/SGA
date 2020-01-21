@@ -8,7 +8,7 @@ VendedorCreate,VendedorList, VendedorUpdate,VendedorDelete,\
 FudCreate, FudList, FudUpdate, FudDelete,\
 PartidaCreate, PartidaView, \
 TramiteCreate,TramiteUpdate,TramiteDelete,TramiteList, \
-ClientCreate,ClientUpdate,ClientList,ClientDelete,ClienteVerCaptura
+ClientCreate,ClientUpdate,ClientList,ClientDelete,ClienteVerCaptura, dowload_xls_fuds
 
 app_name = "fuds"
 urlpatterns = [
@@ -54,4 +54,5 @@ urlpatterns = [
     path('ClienteSearch/', ClienteVerCaptura.as_view(), name='ClienteSearch'),
 
     path('permisos/', err_permisos, name='need_permisos'),
+    path('descargar/excel/fuds/', dowload_xls_fuds.as_view(), name='dowload_fud_xls'),
 ]

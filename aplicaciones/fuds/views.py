@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedores,Zona,PartidasFud
+from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedores,Zona,PartidasFud, DEVOLUCION
 from django.contrib import messages
 from datetime import datetime, timedelta
 from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit,FudFormEdit2,ZonaForm,VendedorForm,PartidaFudForm,Clientes,ClientForm,ClientEditForm
@@ -208,7 +208,7 @@ class FudCreate(CreateView):
         form.instance.creado_por=self.request.user
         return super().form_valid(form)
 
-class FudList(ListView):
+class FudList(ListView): 
     model = Fud
     paginate_by = 50
     template_name= 'fuds/fud/list.html' 
@@ -220,6 +220,10 @@ class FudList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user 
+        context['vendedor'] = Vendedores.objects.all().order_by('Vend_nombre')
+        context['tip_accion'] = DEVOLUCION
+        context['conformidad'] = Conformidad.objects.all().order_by('conformidad_descripcion')
+        context['motivo'] = Motivo.objects.all().order_by('motivo_descripcion')
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
             del urls_formateada['page']
@@ -231,6 +235,13 @@ class FudList(ListView):
         cajaform= self.request.GET.get("Busqueda")
         cajaformbarra= self.request.GET.get("Buscar")
 
+        fecha_captura_ini= self.request.GET.get("fecha_captura_ini")
+        fecha_captura_end= self.request.GET.get("fecha_captura_end")
+        vendedors= self.request.GET.get("vendedors")
+        tip_aacion= self.request.GET.get("tip_aacion")
+        conformidad= self.request.GET.get("conformidad")
+        motivo= self.request.GET.get("motivo")
+
         if cajaformbarra != None:
             queryset= queryset.filter(Q(Folio= cajaformbarra) | Q(NumeroVenta=cajaformbarra) ).order_by("-fecha_creacion")
         else:
@@ -241,8 +252,147 @@ class FudList(ListView):
                 queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
             else:
                 queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
+
+
+        
+        if fecha_captura_ini != None and fecha_captura_ini != "":
+            if fecha_captura_end != None and fecha_captura_end != "":
+                queryset = queryset.filter(fecha_creacion__range=[fecha_captura_ini, fecha_captura_end])
+
+        if vendedors != None and vendedors != "":
+            queryset = queryset.filter(VendedorCliente=vendedors)
+
+        if tip_aacion != None and tip_aacion != "":
+            queryset = queryset.filter(devolucion=tip_aacion)
+
+        if conformidad != None and conformidad != "":
+            queryset = queryset.filter(Motivo__motivo_idconformidad=conformidad)
+
+        if conformidad != None and conformidad != "":
+            queryset = queryset.filter(Motivo=motivo)
+    
+
             
         return queryset 
+
+
+
+class dowload_xls_fuds(TemplateView): 
+    def get(self, request , *args, **kwargs):
+        from openpyxl.styles import Font, Fill, Alignment
+        from django.http import HttpResponse
+        from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        from decimal import Decimal
+        wb = Workbook()
+        ws=wb.active
+
+        cajaform= self.request.GET.get("Busqueda")
+        cajaformbarra= self.request.GET.get("Buscar")
+
+
+        fecha_captura_ini= self.request.GET.get("fecha_captura_ini")
+        fecha_captura_end= self.request.GET.get("fecha_captura_end")
+        vendedors= self.request.GET.get("vendedors")
+        tip_aacion= self.request.GET.get("tip_aacion")
+        conformidad= self.request.GET.get("conformidad")
+        motivo= self.request.GET.get("motivo")
+
+        queryset = Fud.objects.all()
+
+
+        if cajaformbarra != None:
+            queryset= queryset.filter(Q(Folio= cajaformbarra) | Q(NumeroVenta=cajaformbarra) ).order_by("-fecha_creacion")
+        else:
+            queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
+
+        if cajaform != None:
+            if cajaform == '0':
+                queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
+            else:
+                queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
+
+
+       
+
+
+        if fecha_captura_ini != None and fecha_captura_ini != "":
+            if fecha_captura_end != None and fecha_captura_end != "":
+                queryset = queryset.filter(fecha_creacion__range=[fecha_captura_ini, fecha_captura_end])
+
+        if vendedors != None and vendedors != "":
+            queryset = queryset.filter(VendedorCliente=vendedors)
+
+        if tip_aacion != None and tip_aacion != "":
+            queryset = queryset.filter(devolucion=tip_aacion)
+
+        if conformidad != None and conformidad != "":
+            queryset = queryset.filter(Motivo__motivo_idconformidad=conformidad)
+
+        if conformidad != None and conformidad != "":
+            queryset = queryset.filter(Motivo=motivo)
+
+        ws['A1'] = "Reporte Fud"
+        st=ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:N1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = '###'
+        ws['B2'] = 'Fecha Factura'
+        ws['C2'] = 'Cliente'
+        ws['D2'] = 'Zona'
+        ws['E2'] = 'Vendedor'
+        ws['F2'] = 'Conformidad'
+        ws['G2'] = 'Motivo'
+        ws['H2'] = 'Tramite'
+        ws['I2'] = 'Devolucion'
+        ws['J2'] = 'Responsable'
+        ws['K2'] = 'Observaciones'
+        ws['L2'] = 'Creacion'
+        ws['M2'] = 'Creado'
+        ws['N2'] = 'Estatus'
+        cont = 3
+        
+
+        for cto in queryset:
+            ws.cell(row=cont, column=1).value = cto.Folio
+            ws.cell(row=cont, column=2).value = cto.FechaFactura
+            ws.cell(row=cont, column=3).value = str(cto.NumeroCliente)
+            ws.cell(row=cont, column=4).value = cto.VendedorCliente.Vend_Zona.Zona_nombre
+            ws.cell(row=cont, column=5).value = str(cto.VendedorCliente)
+            ws.cell(row=cont, column=6).value = cto.Motivo.motivo_idconformidad.conformidad_descripcion
+            ws.cell(row=cont, column=7).value = str(cto.Motivo)
+            ws.cell(row=cont, column=8).value = str(cto.tramite)
+            ws.cell(row=cont, column=9).value = cto.get_devolucion_display()
+            ws.cell(row=cont, column=10).value = cto.responsable
+            ws.cell(row=cont, column=11).value = cto.observaciones
+            ws.cell(row=cont, column=12).value = cto.fecha_creacion
+            ws.cell(row=cont, column=13).value = str(cto.creado_por)
+            ws.cell(row=cont, column=14).value = cto.get_EstadoFud_display()
+            
+            cont += 1
+
+     
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+
+        nombre_archivo='report_fud_filters.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
 
     # def post(self, request, *args, **kwargs):
     #     resultado = request.POST.get("txt_search")

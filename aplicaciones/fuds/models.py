@@ -7,7 +7,7 @@ from aplicaciones.pedidos.models import Producto
 
 from django.contrib.auth import get_user_model
 Usuario = get_user_model()
-
+DEVOLUCION = ((1,'Total'),(2,'Parcial'),(3,'N/A'))
 class Conformidad(models.Model):
     conformidad_id=models.AutoField(primary_key=True)
     conformidad_descripcion=models.CharField(max_length=150, verbose_name="Descripción de conformidad")
@@ -68,7 +68,7 @@ class Fud(models.Model):
     factura_total=models.FloatField(verbose_name="Valor de la factura", default="0.00")
     Motivo= models.ForeignKey(Motivo, null= True, blank=True, on_delete = models.PROTECT)
     tramite= models.ForeignKey(Tramite, null= True, blank=True, on_delete = models.PROTECT)
-    DEVOLUCION = ((1,'Total'),(2,'Parcial'),(3,'N/A'))
+    
     devolucion = models.IntegerField(null=True, blank=True, choices= DEVOLUCION, default=1, verbose_name="Estado")
     responsable = models.CharField(max_length =80)
     observaciones = models.CharField(max_length =1500)
