@@ -39,7 +39,7 @@
                     <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
                 </div>
             </div>
-            
+
             <div class="col-sm-3">
                 <div class="form-group">
                     <label for="fecha_captura">Fecha Captura Final</label>
@@ -47,17 +47,19 @@
                     <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
                 </div>
             </div>
-            
+
             <div class="col-sm-2">
                 <div class="form-group">
                     <label for="vendedors">Vendedor</label>
                     <select class="form-control" id="vendedors" name="vendedors">
                         <option value="">----------------</option>
                         {% for item in vendedor %}
-                        <option value="{{item.id}}">{{item.Vend_nombre}}</option>
+                        <option value="{{item.Vend_id}}"
+                            {% if view.request.GET.vendedors == item.Vend_id|striptags %}selected{% endif %}>{{item.Vend_nombre}}
+                        </option>
                         {% endfor %}
                     </select>
-                  </div>
+                </div>
             </div>
             <div class="col-sm-2">
                 <div class="form-group">
@@ -65,40 +67,43 @@
                     <select class="form-control" id="tip_aacion" name="tip_aacion">
                         <option value="">----------------</option>
                         {% for item in tip_accion %}
-                        <option value="{{item.0}}">{{item.1}}</option>
+                        <option value="{{item.0}}" 
+                        {% if view.request.GET.tip_aacion == item.0|striptags %}selected{% endif %}>{{item.1}}</option>
                         {% endfor %}
                     </select>
-                  </div>
+                </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <div class="form-group">
                     <label for="conformidad">Conformidad</label>
                     <select class="form-control" id="conformidad" name="conformidad">
                         <option value="">----------------</option>
                         {% for item in conformidad %}
-                        <option value="{{item.conformidad_id}}">{{item.conformidad_descripcion}}</option>
+                        <option value="{{item.conformidad_id}}" 
+                        {% if view.request.GET.conformidad == item.conformidad_id|striptags %}selected{% endif %}>{{item.conformidad_descripcion}}</option>
                         {% endfor %}
                     </select>
-                  </div>
+                </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <div class="form-group">
                     <label for="motivo">Motivo</label>
                     <select class="form-control" id="motivo" name="motivo">
                         <option value="">----------------</option>
                         {% for item in motivo %}
-                        <option value="{{item.motivo_id}}">{{item.motivo_descripcion}}</option>
+                        <option value="{{item.motivo_id}}" 
+                        {% if view.request.GET.motivo == item.motivo_id|striptags %}selected{% endif %}>{{item.motivo_descripcion}}</option>
                         {% endfor %}
                     </select>
-                  </div>
+                </div>
             </div>
             <div class="col-sm-2">
                 <br>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Filtrar</button>
-                  </div>
+                </div>
             </div>
-           
+
         </form>
     </div>
 </div>
@@ -178,7 +183,8 @@
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li class="dropdown-header">Accion</li>
                         <li>
-                            <a tabindex="-1" href="{% url 'fuds:dowload_fud_xls' %}?{{view.request.GET.urlencode}}">xls</a>
+                            <a tabindex="-1"
+                                href="{% url 'fuds:dowload_fud_xls' %}?{{view.request.GET.urlencode}}">xls</a>
                         </li>
                     </ul>
                 </li>

@@ -268,7 +268,7 @@ class FudList(ListView):
         if conformidad != None and conformidad != "":
             queryset = queryset.filter(Motivo__motivo_idconformidad=conformidad)
 
-        if conformidad != None and conformidad != "":
+        if motivo != None and motivo != "":
             queryset = queryset.filter(Motivo=motivo)
     
 
@@ -290,16 +290,12 @@ class dowload_xls_fuds(TemplateView):
         cajaform= self.request.GET.get("Busqueda")
         cajaformbarra= self.request.GET.get("Buscar")
 
-
         fecha_captura_ini= self.request.GET.get("fecha_captura_ini")
         fecha_captura_end= self.request.GET.get("fecha_captura_end")
         vendedors= self.request.GET.get("vendedors")
         tip_aacion= self.request.GET.get("tip_aacion")
         conformidad= self.request.GET.get("conformidad")
         motivo= self.request.GET.get("motivo")
-
-        queryset = Fud.objects.all()
-
 
         if cajaformbarra != None:
             queryset= queryset.filter(Q(Folio= cajaformbarra) | Q(NumeroVenta=cajaformbarra) ).order_by("-fecha_creacion")
@@ -313,9 +309,7 @@ class dowload_xls_fuds(TemplateView):
                 queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
 
 
-       
-
-
+        
         if fecha_captura_ini != None and fecha_captura_ini != "":
             if fecha_captura_end != None and fecha_captura_end != "":
                 queryset = queryset.filter(fecha_creacion__range=[fecha_captura_ini, fecha_captura_end])
@@ -329,7 +323,7 @@ class dowload_xls_fuds(TemplateView):
         if conformidad != None and conformidad != "":
             queryset = queryset.filter(Motivo__motivo_idconformidad=conformidad)
 
-        if conformidad != None and conformidad != "":
+        if motivo != None and motivo != "":
             queryset = queryset.filter(Motivo=motivo)
 
         ws['A1'] = "Reporte Fud"
