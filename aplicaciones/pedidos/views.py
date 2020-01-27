@@ -1305,10 +1305,20 @@ class PDFCatalogoProd(View):
 
 
 class InventarioBusqueda(TemplateView):
-    template_name='pedidos/inventario/busqueda.html'
+    template_name='pedidos/inventario/busqueda.html' 
     def get_context_data(self, **kwargs):
         context = super(InventarioBusqueda, self).get_context_data(**kwargs)
         buscar=self.request.GET.get('Buscar')
+        # context['inv']=Inventario.objects.filter(inv_producto__producto_visible=False,inv_validacion=True, inv_conteo=1).order_by('inv_fecha_add')    
+        # context['inventa']=Inventario.objects.raw('''
+        # SELECT inv, HOUR(inv_fecha_add) as Hora, WEEKDAY(inv_fecha_add) as Dia, COUNT(*) as conteo
+        # FROM pedidos_inventario
+        # GROUP BY Hora, Dia
+        # ORDER BY Hora, Dia
+        # ''')
+
+        
+
         if buscar != '':
             if buscar != None:
                 context['produsctos'] = Producto.objects.filter(Q(producto_descripcion__icontains=buscar) | Q(producto_codigo__icontains=buscar) | Q(prducto_codigo_barras__icontains=buscar), producto_visible=False)
@@ -1449,7 +1459,7 @@ class InventarioAvanceConteoGlobal(ListView):
     def get_queryset(self):
         queryset = super(InventarioAvanceConteoGlobal, self).get_queryset()
         tipo_conteo=self.request.GET.get('conteo')
-        queryset=Inventario.objects.values('inv_producto', 'inv_producto__producto_descripcion', 'inv_producto__prducto_existencia').filter(inv_producto__producto_visible=False,inv_validacion=True, inv_conteo=tipo_conteo).annotate(
+        queryset=Inventario.objects.values('inv_producto', 'inv_producto__producto_descripcion', 'inv_producto__prducto_existencia').filter(inv_validacion=True, inv_conteo=tipo_conteo).annotate(
             total_resguardo=Sum('inv_cant_resguardo'), 
             total_piking=Sum('inv_cant_piking'), 
             total_otros=Sum('inv_cant_otros'), 
@@ -1461,7 +1471,7 @@ class InventarioAvanceConteoGlobal(ListView):
     def get_context_data(self, **kwargs):
         context = super(InventarioAvanceConteoGlobal, self).get_context_data(**kwargs)
         tipo_conteo=self.request.GET.get('conteo')
-        context['total_conteo_prod'] = Inventario.objects.values('inv_producto').filter(inv_producto__producto_visible=False,inv_validacion=True, inv_conteo=tipo_conteo).annotate(
+        context['total_conteo_prod'] = Inventario.objects.values('inv_producto').filter(inv_validacion=True, inv_conteo=tipo_conteo).annotate(
             total_resguardo=Sum('inv_cant_resguardo'),
             ).order_by('inv_producto').count()
         context['total_productos']=Producto.objects.filter(producto_visible=False).count()
@@ -1545,7 +1555,7 @@ class DowloadInventarioGlobal(View):
         ws['H2'] = 'Existencia'
         cont = 3
         tipo_conteo=self.request.GET.get('conteo')
-        query=Inventario.objects.values('inv_producto', 'inv_producto__producto_descripcion', 'inv_producto__prducto_existencia').filter(inv_producto__producto_visible=False,inv_validacion=True, inv_conteo=tipo_conteo).annotate(
+        query=Inventario.objects.values('inv_producto', 'inv_producto__producto_descripcion', 'inv_producto__prducto_existencia').filter(inv_validacion=True, inv_conteo=tipo_conteo).annotate(
             total_resguardo=Sum('inv_cant_resguardo'), 
             total_piking=Sum('inv_cant_piking'), 
             total_otros=Sum('inv_cant_otros'), 
@@ -1625,7 +1635,7 @@ class DowloadInventarioGlobalComparativo(View):
         ws['I2'] = 'N° Conteo'
         cont = 3
         
-        query=Inventario.objects.values('inv_producto', 'inv_producto__producto_descripcion', 'inv_producto__prducto_existencia', 'inv_conteo').filter(inv_producto__producto_visible=False,inv_validacion=True).annotate(
+        query=Inventario.objects.values('inv_producto', 'inv_producto__producto_descripcion', 'inv_producto__prducto_existencia', 'inv_conteo').filter(inv_validacion=True).annotate(
             total_resguardo=Sum('inv_cant_resguardo'), 
             total_piking=Sum('inv_cant_piking'), 
             total_otros=Sum('inv_cant_otros'), 
@@ -1671,6 +1681,72 @@ class DowloadInventarioGlobalComparativo(View):
 
 
         nombre_archivo='conteo_global_inventario_comparativo.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
+
+
+
+class DowloadReporteCapturaXhora(View): 
+    def get(self, request , *args, **kwargs):
+        import random
+        from openpyxl.styles import Font, Fill, Alignment
+        from django.http import HttpResponse
+        from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        from decimal import Decimal
+        from openpyxl.styles import PatternFill
+        from django.db.models import Count
+        from django.utils.formats import localize
+        wb = Workbook()
+        ws=wb.active
+
+        ws['A1'] = 'CANTIDAD DE PRODUCTO CAPTURADA POR HORA'
+        st=ws['A1']
+        st.font = Font(size=11, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:C1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = 'Fecha'
+        ws['B2'] = 'Hora'
+        ws['C2'] = 'Total Captura'
+
+        cont_inv=Inventario.objects.filter().order_by('inv_fecha_add').extra(
+            select={
+                'hora':'HOUR(inv_fecha_add) - 6',
+                'dia':'DATE(inv_fecha_add)',
+            }
+        )
+
+        report_hora_captura=cont_inv.values('hora', 'dia').annotate(conteo=Count('*')).order_by('dia', 'hora')
+        cont = 3
+        for cto in report_hora_captura:
+            # INCRUSTAR CONTENIDO DE CELDA
+            ws.cell(row=cont, column=1).value = localize(cto['dia'])
+            ws.cell(row=cont, column=2).value = cto['hora'] if cto['hora'] > 0 else  cto['hora'] * -1
+            ws.cell(row=cont, column=3).value = cto['conteo']
+            
+            ws.cell(row=cont, column=3).number_format = '#,##0'
+            cont += 1
+
+
+        # CODIGO PARA AJUSTAR LAS CELDAS EN EL EXCEL
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+
+
+        nombre_archivo='reporte_conteo_por_horas.xls'
         response = HttpResponse(content_type="application/ms-excel")
         content = "attachment; filename = {0}".format(nombre_archivo)
         response['Content-Disposition']=content

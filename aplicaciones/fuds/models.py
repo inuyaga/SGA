@@ -8,6 +8,7 @@ from aplicaciones.pedidos.models import Producto
 from django.contrib.auth import get_user_model
 Usuario = get_user_model()
 DEVOLUCION = ((1,'Total'),(2,'Parcial'),(3,'N/A'))
+ESTADOS = ((1,'Creado'),(2,'Autorizado'),(3,'En transito'),(4,"Entregado"),(5,"Finalizado"))
 class Conformidad(models.Model):
     conformidad_id=models.AutoField(primary_key=True)
     conformidad_descripcion=models.CharField(max_length=150, verbose_name="Descripción de conformidad")
@@ -74,7 +75,7 @@ class Fud(models.Model):
     observaciones = models.CharField(max_length =1500)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     creado_por = models.ForeignKey(Usuario, null= True, blank=True, on_delete = models.CASCADE)
-    ESTADOS = ((1,'Creado'),(2,'Autorizado'),(3,'En transito'),(4,"Entregado"),(5,"Finalizado"))
+    
     EstadoFud=models.IntegerField(null=True, blank=True, choices= ESTADOS, default=1, verbose_name="Estado")
     Descuento = models.IntegerField(default=0, null=False, blank=False, verbose_name="Descuento %")
 

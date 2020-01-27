@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedores,Zona,PartidasFud, DEVOLUCION
+from aplicaciones.fuds.models import Fud,Motivo,Tramite,Conformidad,Vendedores,Zona,PartidasFud, DEVOLUCION, ESTADOS
 from django.contrib import messages
 from datetime import datetime, timedelta
 from aplicaciones.fuds.forms import FudForm,MotivoForm,ConformidadForm,TramiteForm, FudFormEdit,FudFormEdit2,ZonaForm,VendedorForm,PartidaFudForm,Clientes,ClientForm,ClientEditForm
@@ -222,6 +222,7 @@ class FudList(ListView):
         context['usuario'] = self.request.user 
         context['vendedor'] = Vendedores.objects.all().order_by('Vend_nombre')
         context['tip_accion'] = DEVOLUCION
+        context['estados'] = ESTADOS
         context['conformidad'] = Conformidad.objects.all().order_by('conformidad_descripcion')
         context['motivo'] = Motivo.objects.all().order_by('motivo_descripcion')
         urls_formateada = self.request.GET.copy()
@@ -232,8 +233,7 @@ class FudList(ListView):
     
     def get_queryset(self):
         queryset = super(FudList, self).get_queryset()
-        cajaform= self.request.GET.get("Busqueda")
-        cajaformbarra= self.request.GET.get("Buscar")
+        
 
         fecha_captura_ini= self.request.GET.get("fecha_captura_ini")
         fecha_captura_end= self.request.GET.get("fecha_captura_end")
@@ -241,17 +241,10 @@ class FudList(ListView):
         tip_aacion= self.request.GET.get("tip_aacion")
         conformidad= self.request.GET.get("conformidad")
         motivo= self.request.GET.get("motivo")
+        status= self.request.GET.get("status") 
+        Buscar= self.request.GET.get("Buscar") 
 
-        if cajaformbarra != None:
-            queryset= queryset.filter(Q(Folio= cajaformbarra) | Q(NumeroVenta=cajaformbarra) ).order_by("-fecha_creacion")
-        else:
-            queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
-
-        if cajaform != None:
-            if cajaform == '0':
-                queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
-            else:
-                queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
+       
 
 
         
@@ -270,6 +263,12 @@ class FudList(ListView):
 
         if motivo != None and motivo != "":
             queryset = queryset.filter(Motivo=motivo)
+
+        if status != None and status != "":
+            queryset = queryset.filter(EstadoFud=status)
+
+        if Buscar != None and Buscar != "":
+            queryset = queryset.filter(Folio=Buscar)
     
 
             
@@ -284,11 +283,10 @@ class dowload_xls_fuds(TemplateView):
         from openpyxl import Workbook
         from openpyxl.utils import get_column_letter
         from decimal import Decimal
+        from django.utils.formats import localize
         wb = Workbook()
         ws=wb.active
 
-        cajaform= self.request.GET.get("Busqueda")
-        cajaformbarra= self.request.GET.get("Buscar")
 
         fecha_captura_ini= self.request.GET.get("fecha_captura_ini")
         fecha_captura_end= self.request.GET.get("fecha_captura_end")
@@ -296,22 +294,14 @@ class dowload_xls_fuds(TemplateView):
         tip_aacion= self.request.GET.get("tip_aacion")
         conformidad= self.request.GET.get("conformidad")
         motivo= self.request.GET.get("motivo")
+        status= self.request.GET.get("status")
+        Buscar= self.request.GET.get("Buscar") 
 
-        if cajaformbarra != None:
-            queryset= queryset.filter(Q(Folio= cajaformbarra) | Q(NumeroVenta=cajaformbarra) ).order_by("-fecha_creacion")
-        else:
-            queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
-
-        if cajaform != None:
-            if cajaform == '0':
-                queryset= queryset.filter( EstadoFud= 1 ).order_by("-fecha_creacion")
-            else:
-                queryset= queryset.filter( EstadoFud= cajaform ).order_by("-fecha_creacion")
-
+        queryset = Fud.objects.all()
 
         
         if fecha_captura_ini != None and fecha_captura_ini != "":
-            if fecha_captura_end != None and fecha_captura_end != "":
+            if fecha_captura_end != None and fecha_captura_end != "": 
                 queryset = queryset.filter(fecha_creacion__range=[fecha_captura_ini, fecha_captura_end])
 
         if vendedors != None and vendedors != "":
@@ -325,6 +315,12 @@ class dowload_xls_fuds(TemplateView):
 
         if motivo != None and motivo != "":
             queryset = queryset.filter(Motivo=motivo)
+
+        if status != None and status != "":
+            queryset = queryset.filter(EstadoFud=status)
+
+        if Buscar != None and Buscar != "":
+            queryset = queryset.filter(Folio=Buscar)
 
         ws['A1'] = "Reporte Fud"
         st=ws['A1']
@@ -354,7 +350,7 @@ class dowload_xls_fuds(TemplateView):
             ws.cell(row=cont, column=1).value = cto.Folio
             ws.cell(row=cont, column=2).value = cto.FechaFactura
             ws.cell(row=cont, column=3).value = str(cto.NumeroCliente)
-            ws.cell(row=cont, column=4).value = cto.VendedorCliente.Vend_Zona.Zona_nombre
+            ws.cell(row=cont, column=4).value = cto.VendedorCliente.Vend_Zona.Zona_nombre if cto.VendedorCliente != None else "N/a"
             ws.cell(row=cont, column=5).value = str(cto.VendedorCliente)
             ws.cell(row=cont, column=6).value = cto.Motivo.motivo_idconformidad.conformidad_descripcion
             ws.cell(row=cont, column=7).value = str(cto.Motivo)
@@ -362,7 +358,7 @@ class dowload_xls_fuds(TemplateView):
             ws.cell(row=cont, column=9).value = cto.get_devolucion_display()
             ws.cell(row=cont, column=10).value = cto.responsable
             ws.cell(row=cont, column=11).value = cto.observaciones
-            ws.cell(row=cont, column=12).value = cto.fecha_creacion
+            ws.cell(row=cont, column=12).value = localize(cto.fecha_creacion)
             ws.cell(row=cont, column=13).value = str(cto.creado_por)
             ws.cell(row=cont, column=14).value = cto.get_EstadoFud_display()
             

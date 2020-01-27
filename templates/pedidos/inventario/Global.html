@@ -13,6 +13,7 @@
         <div class="btn-group" role="group" aria-label="Basic example">
             <a href="{% url 'pedidos:down_xls_conteo_global' %}?{{view.request.GET.urlencode}}" class="btn btn-success">Descargar Ecxel</a>
             <a href="{% url 'pedidos:down_xls_conteo_global_comparado' %}" class="btn btn-primary">Comparativo xls</a>
+            <a href="{% url 'pedidos:report_conteo_hora' %}" class="btn btn-primary">Reporte x hora</a>
             <a href="{% url 'pedidos:reset_inventario_delete' %}" class="btn btn-danger">Reset conteo</a>
         </div>
         {% endif %}

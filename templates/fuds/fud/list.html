@@ -9,19 +9,6 @@
 
 {% if perms.fuds.add_fud %}
 <div class="row">
-    <div class="col-md-6">
-        <form action="" method="get">
-            <select class="custom-select custom-select-lg mb-3" name="Busqueda">
-                <option selected value="0">Filtrar por: </option>
-                <option value="1">Creado</option>
-                <option value="2">Autorizados</option>
-                <option value="3">En transito</option>
-                <option value="4">Entregados</option>
-                <option value="5">Finalizados</option>
-            </select>
-            <button type="submit" class="btn btn-info">Buscar</button>
-        </form>
-    </div>
     <div class="col">
         <span class="float-right">
             <a class="btn btn-secondary btn-sm" href="{% url 'fuds:fud_create' %}" role="button">Añadir</a>
@@ -69,6 +56,18 @@
                         {% for item in tip_accion %}
                         <option value="{{item.0}}" 
                         {% if view.request.GET.tip_aacion == item.0|striptags %}selected{% endif %}>{{item.1}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="">----------------</option>
+                        {% for item in estados %}
+                        <option value="{{item.0}}" 
+                        {% if view.request.GET.status == item.0|striptags %}selected{% endif %}>{{item.1}}</option>
                         {% endfor %}
                     </select>
                 </div>
