@@ -343,16 +343,22 @@ class dowload_xls_fuds(TemplateView):
         ws['L2'] = 'Creacion'
         ws['M2'] = 'Creado'
         ws['N2'] = 'Estatus'
+        ws['O2'] = 'Subtotal'
+        ws['P2'] = 'Total'
         cont = 3
         
 
         for cto in queryset:
+            total_partidas_fud=PartidasFud.objects.filter(Partida_fud=cto.Folio).aggregate(total=Sum(F('Partida_Precio')*F('Partida_Cantidad'), output_field=FloatField()))
+            if total_partidas_fud['total'] == None: 
+                total_partidas_fud['total']=0
+            
             ws.cell(row=cont, column=1).value = cto.Folio
             ws.cell(row=cont, column=2).value = cto.FechaFactura
             ws.cell(row=cont, column=3).value = str(cto.NumeroCliente)
             ws.cell(row=cont, column=4).value = cto.VendedorCliente.Vend_Zona.Zona_nombre if cto.VendedorCliente != None else "N/a"
             ws.cell(row=cont, column=5).value = str(cto.VendedorCliente)
-            ws.cell(row=cont, column=6).value = cto.Motivo.motivo_idconformidad.conformidad_descripcion
+            ws.cell(row=cont, column=6).value = cto.Motivo.motivo_idconformidad.conformidad_descripcion if cto.Motivo != None else "N/A"
             ws.cell(row=cont, column=7).value = str(cto.Motivo)
             ws.cell(row=cont, column=8).value = str(cto.tramite)
             ws.cell(row=cont, column=9).value = cto.get_devolucion_display()
@@ -361,6 +367,10 @@ class dowload_xls_fuds(TemplateView):
             ws.cell(row=cont, column=12).value = localize(cto.fecha_creacion)
             ws.cell(row=cont, column=13).value = str(cto.creado_por)
             ws.cell(row=cont, column=14).value = cto.get_EstadoFud_display()
+            ws.cell(row=cont, column=15).value = total_partidas_fud['total']
+            ws.cell(row=cont, column=16).value = round(total_partidas_fud['total'] * 1.16, 2)
+            ws.cell(row=cont, column=15).number_format = '#,##0'
+            ws.cell(row=cont, column=16).number_format = '#,##0'
             
             cont += 1
 
