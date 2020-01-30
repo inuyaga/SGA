@@ -1,0 +1,60 @@
+{% extends 'index/base.html' %}
+
+
+{% block contenido %}
+    <div class="container">
+        <div class="col-lg-12">
+            <!-- Weekly users Widget -->
+            <div class="card">
+                <div class="card-header">
+                    <h1>Seleccion de Clientes</h1>
+                    <ul class="card-actions">
+    
+                    </ul> 
+                </div>
+                <div class="card-block">
+                    <table class="table-condensed">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">RFC</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Telefono</th>
+                                <th scope="col">Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cliente_list %}
+                            <tr>
+                                <th scope="row">{{item.cli_clave}}</th>
+                                <td>{{item.cli_nombre}}</td>
+                                <td>{{item.cli_rfc}}</td>
+                                <td>{{item.cli_email}}</td>
+                                <td>{{item.cli_telefono}}</td>                                
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">                                        
+                                        {% if item.cli_limt_temporada > 0 %}
+                                        <a class="btn btn-success" href="{% url 'expo:venta' %}?cleint={{item.cli}}&tip=1" role="button">Temporada</a>
+                                        {% endif %}
+
+                                        {% if item.cli_limt_normal > 0 %}
+                                        <a class="btn btn-primary" href="{% url 'expo:venta' %}?cleint={{item.cli}}&tip=2" role="button">Normal</a>
+                                        {% endif %}
+                                    </div>
+                                        
+                                </td>                                
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-block text-center">
+                    <span class="label bg-green m-r-xs">Filtrado<i class="ion-connection-bars"></i></span> <small></small>
+                </div>
+            </div>
+            <!-- .card -->
+            <!-- End Weekly users Widget -->
+        </div>
+    </div>
+{% endblock contenido %}
+    

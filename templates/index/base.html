@@ -312,6 +312,24 @@
                             </li>
                             {% endif %}
 
+                            {% if perms.expo %}
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="fa fa-archive"></i></i>Expos</a> 
+                                <ul class="nav nav-subnav">
+                                    {% if perms.expo.add_ventaexpo %} 
+                                    <li>
+                                        <a href="{% url 'expo:selec_cliente' %}">Vender</a>
+                                    </li>
+                                    {% endif %}                                  
+                                    {% if perms.expo.view_ventaexpo %} 
+                                    <li>
+                                        <a href="{% url 'expo:venta_list' %}">Ventas</a>
+                                    </li>
+                                    {% endif %}                                  
+                                </ul>
+                            </li>
+                            {% endif %}
+
                         </ul>
                     </nav>
                     <!-- End drawer navigation -->

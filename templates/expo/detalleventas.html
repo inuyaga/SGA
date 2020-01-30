@@ -1,0 +1,82 @@
+{% extends 'index/base.html' %}
+{% load humanize %}
+
+{% block contenido %}
+    <div class="container">
+        
+        <div class="col-lg-12">
+            <!-- Weekly users Widget -->
+            <div class="card">
+                <div class="card-header">
+                    <h1>Detalle de Venta</h1>
+
+                   
+                    
+                    <ul class="card-actions">
+    
+                    </ul> 
+                </div>
+                <div class="card-block">
+                    <table class="table-condensed">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Venta</th>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Total</th>                                
+                                <th scope="col">Accion</th>                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in object_list %} 
+                            <tr>
+                                <td>{{item.detalle_venta}}</td>
+                                <td>{{item.detalle_producto_id}}</td>
+                                <td>{{item.detalle_cantidad}}</td>                              
+                                <td>{{item.detalle_precio}}</td>                
+                                <td>{{item.subtotal}}</td>                
+                                <td></td>                
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-block text-center">
+                    <span class="label bg-green m-r-xs">Filtrado<i class="ion-connection-bars"></i></span> <small></small>
+                </div>
+            </div>
+            <!-- .card -->
+            <!-- End Weekly users Widget -->
+        </div>
+    </div>
+
+
+
+    <div class="row justify-content-md-center">
+        {% block pagination %}
+        {% if is_paginated %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i
+                            class="material-icons">
+                            navigate_before
+                        </i></a></li>
+                {% endif %}
+                <span class="page-link">
+                    Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                    <span class="sr-only">(current)</span>
+                </span>
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i
+                            class="material-icons">
+                            navigate_next
+                        </i></a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        {% endblock %}
+    </div>
+{% endblock contenido %}
+    

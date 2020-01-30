@@ -31,4 +31,5 @@ urlpatterns = [
     path('salir/', LogoutView.as_view(template_name='index/salir.html'), name="salir"),
     path('', include('aplicaciones.inicio.urls'), name='principal'),
     re_path(r'^ajax_select/', include(ajax_select_urls)),
+    path('Expos/', include('aplicaciones.expo.urls'), name='expo'),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
