@@ -35,11 +35,11 @@
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">                                        
                                         {% if item.cli_limt_temporada > 0 %}
-                                        <a class="btn btn-success" href="{% url 'expo:venta' %}?cleint={{item.cli}}&tip=1" role="button">Temporada</a>
+                                        <a class="btn btn-success" href="{% url 'expo:venta' %}?cleint={{item.cli}}&tip=3" role="button">Temporada</a>
                                         {% endif %}
 
                                         {% if item.cli_limt_normal > 0 %}
-                                        <a class="btn btn-primary" href="{% url 'expo:venta' %}?cleint={{item.cli}}&tip=2" role="button">Normal</a>
+                                        <a class="btn btn-primary" href="{% url 'expo:venta' %}?cleint={{item.cli}}&tip=4" role="button">Normal</a>
                                         {% endif %}
                                     </div>
                                         

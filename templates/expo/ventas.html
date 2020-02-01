@@ -91,6 +91,7 @@
                             <th scope="col">Creador</th>
                             <th scope="col">Tipo</th>
                             <th scope="col">Total</th>
+                            <th scope="col">Accion</th>
 
                         </tr>
                     </thead>
@@ -113,6 +114,10 @@
                             <td>{{item.venta_e_creado}}</td>
                             <td>{{item.get_venta_e_tipo_display}}</td>
                             <td>{{item.total_venta}}</td>
+                            <td>
+                                <a href="{% url 'expo:delete_venta' item.Venta_ID %}"><i class="fa fa-trash-o"></i></a>
+                                <a href="{% url 'expo:update_venta' item.Venta_ID %}"><i class="fa fa-edit"></i></a>
+                            </td>
                             {% endfor %}
                     </tbody>
                 </table>

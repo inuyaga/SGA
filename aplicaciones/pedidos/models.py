@@ -13,6 +13,7 @@ Usuario = get_user_model()
 # Create your models here.
 STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Cancelado'),(4, 'Venta'),(5, 'Facturado'), (6, 'Finalizado'), (7, 'Descargado'))
 CONTEO=((1, 'CONTEO 1'), (2, 'CONTEO 2'), (3, 'CONTEO 3'))
+TIPO_PRODUCTO = ((1, 'Uso Interno'), (2, 'Activo Fijo'), (3, 'Temporada'), (4, 'Normal'))
 class Marca(models.Model):
     marca_id_marca = models.AutoField(primary_key=True)
     marca_nombre = models.CharField(
@@ -39,7 +40,6 @@ class Producto(models.Model):
     producto_marca = models.ForeignKey(Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
     producto_area = models.ForeignKey(Area, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Area')
     producto_precio = models.DecimalField('Precio', max_digits=7, decimal_places=2, default=0.00)
-    TIPO_PRODUCTO = ((1, 'Uso Interno'), (2, 'Activo Fijo'),)
     tipo_producto = models.IntegerField(choices=TIPO_PRODUCTO, null=True, blank=True)
     producto_es_kit=models.BooleanField(verbose_name='¿Pertenecerá a un Kit?', default=False)
     producto_kit=models.BooleanField(verbose_name='Kit', default=False)

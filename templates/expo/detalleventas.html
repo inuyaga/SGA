@@ -36,7 +36,9 @@
                                 <td>{{item.detalle_cantidad}}</td>                              
                                 <td>{{item.detalle_precio}}</td>                
                                 <td>{{item.subtotal}}</td>                
-                                <td></td>                
+                                <td>
+                                    <a href="{% url 'expo:delete_detalle_venta' item.id %}?vent={{item.detalle_venta}}">Eliminar</a>
+                                </td>                
                             {% endfor %}
                         </tbody>
                     </table>

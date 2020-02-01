@@ -7,7 +7,7 @@ Usuario = get_user_model()
 
 
 
-TIPO_VENTA=((1, "TEMPORADA"), (2, "NORMAL"))
+TIPO_VENTA=((3, "TEMPORADA"), (4, "NORMAL"))
 # Create your models here.
 class AsignacionMarca(models.Model):
     am_user=models.ForeignKey(Usuario, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Usuario promotor o proveedor")

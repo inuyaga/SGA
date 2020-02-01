@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, UpdateView, DeleteView
 from aplicaciones.empresa.models import Cliente
 from aplicaciones.expo.models import AsignacionMarca, VentaExpo, Detalle_venta, TIPO_VENTA
 from aplicaciones.pedidos.models import Producto
@@ -7,6 +7,13 @@ from django.db.models import Q, Sum, F, FloatField, Count
 from django.shortcuts import redirect, reverse
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
+from django.urls import reverse_lazy
+
+from django.contrib.auth.decorators import permission_required
+from django.utils.decorators import method_decorator
+from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
+
+from aplicaciones.expo.forms import VentaExpoForm
 # Create your views here.
 
 class SelectCienteView(TemplateView):
@@ -44,9 +51,10 @@ class VentaView(TemplateView):
             return redirect(url)
         return super(VentaView, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
         venta=self.request.GET.get('venta')
+        tip=self.request.GET.get('tip')
         try:
             asignacion=AsignacionMarca.objects.get(am_user=self.request.user)
             filtro=asignacion.am_marca.values_list('marca_id_marca')
@@ -54,7 +62,7 @@ class VentaView(TemplateView):
             filtro=[]
             messages.warning(self.request, 'Es necesario que se le asigne una marca al usuario "'+ str(self.request.user) + '" posteriormente actualice la pagina')
         
-        context['productos_list']=Producto.objects.filter(producto_marca__in=filtro)
+        context['productos_list']=Producto.objects.filter(producto_marca__in=filtro, tipo_producto=tip)
         sum_detalle=Detalle_venta.objects.filter(detalle_venta=venta).aggregate(total=Sum(F('detalle_cantidad')*F('detalle_precio'), output_field=FloatField()))['total']
         context['total_venta']=round(sum_detalle, 3) if sum_detalle != None else sum_detalle
           
@@ -119,6 +127,35 @@ class VentaList(ListView):
 
         return queryset
 
+
+class VentaDelete(DeleteView):
+    model = VentaExpo
+    template_name = "pedidos/delete_forever.html"
+    success_url = reverse_lazy('expo:venta_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+    @method_decorator(permission_required('expo.delete_ventaexpo',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
+class VentaExpoUpdate(UpdateView):
+    model = VentaExpo 
+    template_name = "expo/formulario.html"
+    form_class = VentaExpoForm
+    success_url = reverse_lazy('expo:venta_list')
+
+    @method_decorator(permission_required('expo.change_ventaexpo',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
 class DetalleVentaList(ListView):
     template_name = "expo/detalleventas.html"
     model=Detalle_venta
@@ -136,4 +173,29 @@ class DetalleVentaList(ListView):
         venta_id=self.request.GET.get('vent')
         queryset = queryset.filter(detalle_venta=venta_id)
         return queryset
+
+
+class DetalleVentaDelete(DeleteView):
+    model = Detalle_venta
+    template_name = "pedidos/delete_forever.html"
+    success_url = reverse_lazy('expo:detalle_vent')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+    def get_success_url(self):
+        vent = self.request.GET.get('vent')
+        url = self.success_url
+        url = url + "?vent="+vent
+        return url
+
+            
+
+    @method_decorator(permission_required('expo.delete_detalle_venta',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
         
