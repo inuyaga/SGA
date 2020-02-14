@@ -20,8 +20,9 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Nombre</th>
-                                <th scope="col">Marca</th>
+                                <th scope="col">Proveedor</th>
                                 <th scope="col">Precio</th>
+                                <th scope="col">Img</th>
                                 <th scope="col">Cantidad</th>
                                 <th scope="col">Accion</th>
                             </tr>
@@ -33,6 +34,9 @@
                                 <td>{{item.producto_nombre}}</td>
                                 <td>{{item.producto_marca}}</td>
                                 <td>{{item.producto_precio}}</td> 
+                                <td>
+                                    <img src="{{item.producto_imagen.url}}" alt="..." class="img-thumbnail" height="80" width="80">
+                                </td> 
                                 <form action="" method="POST">
                                     <td><input class="form-control form-control-sm" type="number" name="cantidad" placeholder="Cantidad" required>
                                         {% csrf_token %}

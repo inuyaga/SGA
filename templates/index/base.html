@@ -326,6 +326,11 @@
                                         <a href="{% url 'expo:venta_list' %}">Ventas</a>
                                     </li>
                                     {% endif %}                                  
+                                    {% if perms.expo.puede_ver_producto_expo %} 
+                                    <li>
+                                        <a href="{% url 'expo:producto_list_proveedor' %}">Producto</a>  
+                                    </li>
+                                    {% endif %}                                  
                                 </ul>
                             </li>
                             {% endif %}

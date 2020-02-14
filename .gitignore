@@ -110,5 +110,5 @@ env_windowns/
 sga_env/
 XDG_CACHE_HOME/
 
-
+migrations/* !migrations/__init__.py
 0*.py

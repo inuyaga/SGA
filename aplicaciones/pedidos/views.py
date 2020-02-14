@@ -218,7 +218,7 @@ class ProductokitCreate(CreateView):
     def dispatch(self, *args, **kwargs):
                 return super(ProductokitCreate, self).dispatch(*args, **kwargs)
 
-class ProductoList(ListView):
+class ProductoList(ListView): 
     paginate_by = 20
     model = Producto
     template_name='pedidos/producto/list_producto.html'
@@ -320,6 +320,72 @@ class ProductoDelete(DeleteView):
     @method_decorator(permission_required('pedidos.delete_producto',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(ProductoDelete, self).dispatch(*args, **kwargs)
+
+
+
+class ProductoUpdateBulk(TemplateView): 
+    template_name = "pedidos/producto/update_bulk.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        import openpyxl
+        file_producto_xls = request.FILES['file_producto_xls']
+        wb = openpyxl.load_workbook(file_producto_xls)
+        # getting a particular sheet by name out of many sheets
+        sheets = wb.sheetnames
+        worksheet = wb[sheets[0]]
+        # print(worksheet)
+
+        excel_data = list()
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+            excel_data.append(row_data)
+
+        excel_data.pop(0)
+        for item in excel_data:
+            Producto.objects.filter(producto_codigo=item[0]).update(producto_precio=item[1])
+        
+        messages.success(request, 'Actualizado Correctamente.')
+        return redirect('pedidos:update_bulk')
+
+
+class TemplateMasiveView(TemplateView):
+    def get(self, request , *args, **kwargs):
+        from openpyxl.styles import Font, Fill, Alignment
+        from django.http import HttpResponse
+        from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        from decimal import Decimal
+        wb = Workbook()
+        ws=wb.active
+
+        ws['A1'] = 'Producto'
+        ws['B1'] = 'Precio'
+        
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+       
+
+        nombre_archivo='Template_masive.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
 
 
 

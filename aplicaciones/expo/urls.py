@@ -11,4 +11,6 @@ urlpatterns = [
     path('ventas/list/delete/<int:pk>/', ExpoView.VentaDelete.as_view(), name='delete_venta'), 
     path('ventas/list/update/<int:pk>/', ExpoView.VentaExpoUpdate.as_view(), name='update_venta'), 
     path('ventas/list/detalle/venta/delete/<int:pk>/', ExpoView.DetalleVentaDelete.as_view(), name='delete_detalle_venta'), 
+    path('producto/list/', ExpoView.ProductoListProveedor.as_view(), name='producto_list_proveedor'), 
+    path('producto/update/producto/<slug:pk>/', ExpoView.ProductoExpoEdit.as_view(), name='update_producto_expo'), 
     ]

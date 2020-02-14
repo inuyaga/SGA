@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 
-from aplicaciones.expo.forms import VentaExpoForm
+from aplicaciones.expo.forms import VentaExpoForm, EditProductoExpoForm
 # Create your views here.
 
 class SelectCienteView(TemplateView):
@@ -198,4 +198,58 @@ class DetalleVentaDelete(DeleteView):
     @method_decorator(permission_required('expo.delete_detalle_venta',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+
+class ProductoListProveedor(ListView):
+    model = Producto
+    template_name = "pedidos/producto/list_producto.html" 
+    paginate_by = 100 
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        urls_formateada = self.request.GET.copy()
+        if 'page' in urls_formateada:
+            del urls_formateada['page']
+        context['urls_formateada'] = urls_formateada
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        producto_categoria=self.request.GET.getlist('producto_categoria')
+        tipo_producto=self.request.GET.getlist('tipo_producto')
+        checkbox_visible=self.request.GET.getlist('checkbox_visible')
+        Buscar=self.request.GET.get('Buscar')
+        try:
+            asignacion=AsignacionMarca.objects.get(am_user=self.request.user)
+            filtro=asignacion.am_marca.values_list('marca_id_marca')
+            queryset = queryset.filter(producto_marca__in=filtro)
+            if len(tipo_producto) != 0:
+                queryset=queryset.filter(tipo_producto__in=tipo_producto)
+            if len(producto_categoria) != 0:
+                queryset=queryset.filter(producto_categoria__in=producto_categoria)
+            if len(checkbox_visible) != 0:
+                queryset=queryset.filter(producto_visible__in=checkbox_visible)
+            if Buscar != None:
+                queryset=queryset.filter(Q(producto_codigo=Buscar) | Q(producto_nombre__icontains=Buscar))
+        except ObjectDoesNotExist:
+            queryset=queryset.none()
+            messages.warning(self.request, 'Es necesario que se le asigne una marca al usuario "'+ str(self.request.user) + '" posteriormente actualice la pagina')
+        return queryset
+
+    @method_decorator(permission_required('expo.puede_ver_producto_expo',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
+class ProductoExpoEdit(UpdateView):
+    model = Producto
+    form_class = EditProductoExpoForm
+    template_name = "expo/form_producto.html" 
+    success_url = reverse_lazy('expo:producto_list_proveedor')
+
+    @method_decorator(permission_required('expo.puede_editar_producto_expo',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
         

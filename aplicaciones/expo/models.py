@@ -8,7 +8,7 @@ Usuario = get_user_model()
 
 
 TIPO_VENTA=((3, "TEMPORADA"), (4, "NORMAL"))
-# Create your models here.
+# Create your models here. 
 class AsignacionMarca(models.Model):
     am_user=models.ForeignKey(Usuario, null=False, blank=False, on_delete=models.PROTECT, verbose_name="Usuario promotor o proveedor")
     am_marca=models.ManyToManyField(Marca, verbose_name="Marca")
@@ -27,6 +27,11 @@ class VentaExpo(models.Model):
     venta_e_creado=models.ForeignKey(Usuario, verbose_name='Capturó venta', blank=False, null=True, on_delete=models.CASCADE)
     venta_e_tipo=models.IntegerField(choices=TIPO_VENTA, default=2)
 
+    class Meta:
+        permissions = [
+            ('puede_editar_producto_expo', 'Puede Editar Productos en la Expo'),
+            ('puede_ver_producto_expo', 'Puede Ver Productos en la Expo'),
+            ]
     def __str__(self):
         return str(self.Venta_ID)
     

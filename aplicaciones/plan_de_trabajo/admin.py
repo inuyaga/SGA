@@ -7,8 +7,6 @@ from django.db.models import Sum, F, Count, Max, Min
 
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
-
-from django.utils.functional import curry
 import datetime
 from django.utils import timezone
 from django.shortcuts import redirect
@@ -93,6 +91,7 @@ class AdminRegistroActividad(admin.ModelAdmin):
     list_filter = [('ra_fecha_creacion', DateRangeFilter), UserStafActividadFilter]
     list_display_links=['ra_cliente', 'ra']
     date_hierarchy = 'ra_fecha_creacion'
+    # raw_id_fields = ('ra_cliente',)
     list_display = [
         'ra',
         'ra_cliente',
