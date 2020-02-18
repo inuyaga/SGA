@@ -326,6 +326,13 @@ class ProductoDelete(DeleteView):
 class ProductoUpdateBulk(TemplateView): 
     template_name = "pedidos/producto/update_bulk.html"
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_superuser == False:
+            redirect('pedidos:listar_producto')
+
+        return super(ProductoUpdateBulk, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         return context

@@ -74,8 +74,9 @@
                       <ul class="dropdown-menu dropdown-menu-right">
                           <li class="dropdown-header">Accion</li>
                           <li>
-                              
-                              <a tabindex="-1" href="{% url 'pedidos:update_bulk' %}">Actualizar en volumen</a>
+                            {% if user.is_superuser %}
+                            <a tabindex="-1" href="{% url 'pedidos:update_bulk' %}">Actualizar en volumen</a>
+                            {% endif %}
                               
                           </li>
   
