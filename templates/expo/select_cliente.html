@@ -19,8 +19,6 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">RFC</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Telefono</th>
                                 <th scope="col">Accion</th>
                             </tr>
                         </thead>
@@ -30,8 +28,6 @@
                                 <th scope="row">{{item.cli_clave}}</th>
                                 <td>{{item.cli_nombre}}</td>
                                 <td>{{item.cli_rfc}}</td>
-                                <td>{{item.cli_email}}</td>
-                                <td>{{item.cli_telefono}}</td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">                                        
                                         {% if item.cli_limt_temporada > 0 %}

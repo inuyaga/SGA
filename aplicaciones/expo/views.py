@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, UpdateView, DeleteView
 from aplicaciones.empresa.models import Cliente
-from aplicaciones.expo.models import AsignacionMarca, VentaExpo, Detalle_venta, TIPO_VENTA
+from aplicaciones.expo.models import AsignacionMarca, VentaExpo, Detalle_venta, TIPO_VENTA, AsignacionVendedor_a_Supervisor
 from aplicaciones.pedidos.models import Producto
 from django.db.models import Q, Sum, F, FloatField, Count
 from django.shortcuts import redirect, reverse
@@ -76,7 +76,7 @@ class VentaView(TemplateView):
         producto=self.request.POST.get('producto')
 
         # PROCESO DE VENTA
-        obj_producto=Producto.objects.get(producto_codigo=producto).order_by('producto_descripcion')
+        obj_producto=Producto.objects.get(producto_codigo=producto)
 
         obj_detalle_venta=Detalle_venta(
             detalle_venta_id = venta,
@@ -108,6 +108,15 @@ class VentaList(ListView):
         return context
     def get_queryset(self):
         queryset = super().get_queryset()
+        if self.request.user.is_superuser == False:
+            try:
+                supervisor=AsignacionVendedor_a_Supervisor.objects.get(avs_Supervisor=self.request.user)
+                vendedores=supervisor.avs_vendedors.values_list('id')
+                queryset=queryset.filter(venta_e_creado__in=vendedores).order_by('venta_e_fecha_pedido') 
+            except ObjectDoesNotExist:
+                queryset = queryset.none()
+                messages.warning(self.request, 'Es necesario que se le asigne vendedores al usuario "'+ str(self.request.user) + '" posteriormente actualice la pagina')
+        
         venta_e_fecha_pedido_init=self.request.GET.get('venta_e_fecha_pedido_init')
         venta_e_fecha_pedido_end=self.request.GET.get('venta_e_fecha_pedido_end')
         venta_e_cliente=self.request.GET.get('venta_e_cliente')
@@ -125,7 +134,7 @@ class VentaList(ListView):
         if venta_e_tipo != None and venta_e_tipo != "":
             queryset = queryset.filter(venta_e_tipo=venta_e_tipo)
 
-        return queryset
+        return queryset 
 
 
 class VentaDelete(DeleteView):

@@ -14,6 +14,24 @@ class AsignacionMarca(models.Model):
     am_marca=models.ManyToManyField(Marca, verbose_name="Marca")
     def __str__(self):
         return str(self.am_user)
+    
+    def marcas(self):
+        return "---".join([m.marca_nombre for m in self.am_marca.all()])
+
+class AsignacionVendedor_a_Supervisor(models.Model):
+    avs_Supervisor=models.ForeignKey(Usuario, related_name="user_rol_supervior", null=False, blank=False, on_delete=models.PROTECT, verbose_name="Supervisor expo")
+    avs_vendedors=models.ManyToManyField(Usuario,related_name="user_rol_vendedor", verbose_name="Vendedores")
+    def __str__(self):
+        return str(self.avs_Supervisor)
+    
+    def vendedores(self):
+        return "--".join([v.get_full_name() if v.get_full_name() != "" else v.username  for v in self.avs_vendedors.all()])
+    
+    class Meta:
+        verbose_name_plural = "Asignaciones de vendedores a supervisores"
+        verbose_name = "Asignacion vendedor a supervisor"
+
+
 
 
 
