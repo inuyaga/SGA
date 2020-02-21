@@ -335,6 +335,21 @@
                             </li>
                             {% endif %}
 
+
+
+                            {% if perms.empresa %}
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="fa fa-archive"></i></i>Empresa</a> 
+                                <ul class="nav nav-subnav">
+                                    {% if perms.empresa.view_cliente %}  
+                                    <li>
+                                        <a href="{% url 'empresa:clientes_list' %}">Clientes</a> 
+                                    </li>
+                                    {% endif %}                                  
+                                </ul>
+                            </li>
+                            {% endif %}
+
                         </ul>
                     </nav>
                     <!-- End drawer navigation -->
@@ -390,6 +405,8 @@
                                     </div>
                                 </div>
                             </form>
+                            
+                            
                             {% endblock buscador_form %}
 
                             <!-- <ul id="main-menu" class="nav navbar-nav navbar-left">
@@ -414,8 +431,8 @@
                                 </ul> -->
                             <!-- .navbar-left -->
 
-                            <ul class="nav navbar-nav navbar-right navbar-toolbar hidden-sm hidden-xs">
-                                <li>
+                            <ul class="nav navbar-nav navbar-right navbar-toolbar">
+                                <li class="hidden-sm hidden-xs">
                                     <!-- Opens the modal found at the bottom of the page -->
                                     <a href="javascript:void(0)" data-toggle="modal" data-target="#apps-modal"><i
                                             class="ion-grid"></i></a>

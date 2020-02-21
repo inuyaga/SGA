@@ -62,7 +62,7 @@ class VentaView(TemplateView):
             filtro=[]
             messages.warning(self.request, 'Es necesario que se le asigne una marca al usuario "'+ str(self.request.user) + '" posteriormente actualice la pagina')
         
-        context['productos_list']=Producto.objects.filter(producto_marca__in=filtro, tipo_producto=tip)
+        context['productos_list']=Producto.objects.filter(producto_marca__in=filtro, tipo_producto=tip).order_by('producto_descripcion')
         sum_detalle=Detalle_venta.objects.filter(detalle_venta=venta).aggregate(total=Sum(F('detalle_cantidad')*F('detalle_precio'), output_field=FloatField()))['total']
         context['total_venta']=round(sum_detalle, 3) if sum_detalle != None else sum_detalle
           
@@ -76,7 +76,7 @@ class VentaView(TemplateView):
         producto=self.request.POST.get('producto')
 
         # PROCESO DE VENTA
-        obj_producto=Producto.objects.get(producto_codigo=producto)
+        obj_producto=Producto.objects.get(producto_codigo=producto).order_by('producto_descripcion')
 
         obj_detalle_venta=Detalle_venta(
             detalle_venta_id = venta,
@@ -203,6 +203,7 @@ class DetalleVentaDelete(DeleteView):
 
 class ProductoListProveedor(ListView):
     model = Producto
+    ordering = ['producto_descripcion']
     template_name = "pedidos/producto/list_producto.html" 
     paginate_by = 100 
 

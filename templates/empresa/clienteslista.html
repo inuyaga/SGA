@@ -1,0 +1,102 @@
+{% extends 'index/base.html'%}
+
+
+{% block contenido %}
+<div class="row">
+
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Clientes</h4>
+                <ul class="card-actions">
+                    <li class="dropdown">
+                        <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span
+                                class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li class="dropdown-header">Accion</li>
+                            <li>
+                                <a tabindex="-1" href="#">N/a</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- .card-actions -->
+            </div>
+            <div class="card-block">
+                <div class="table-responsive">
+                    <table class="table-condensed">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col"><small>Clave</small></th>
+                                <th scope="col"><small>Nombre</small></th>
+                                <th scope="col"><small>CP</small></th>
+                                <th scope="col"><small>Estado</small></th>
+                                <th scope="col"><small>RFC</small></th>
+                                <th scope="col"><small>Email</small></th>
+                                <th scope="col"><small>Status</small></th>
+                                <th scope="col"><small>ACCIÓN</small></th>
+                            </tr>
+                        </thead>
+
+                        {% for item in object_list %}
+                        <tr>
+                            <td>{{item.cli_clave}}</td>
+                            <td>{{item.cli_nombre}}</td>
+                            <td>{{item.cli_cp}}</td>
+                            <td>{{item.cli_estado}}</td>
+                            <td>{{item.cli_rfc}}</td>
+                            <td>{{item.cli_email|truncatechars:7}}</td>
+                            <td>{{item.get_cli_status_display}}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <!-- <a class="btn btn-primary btn-sm" href="#" role="button"><i class="material-icons">delete</i></a> -->
+                                    {% if perms.empresa.change_cliente %}
+                                    <a class="btn btn-primary btn-sm" title="Actualizar"
+                                        href="{% url 'empresa:clientes_update' item.cli %}" role="button"><i
+                                            class="material-icons">system_update_alt</i></a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        <tbody>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-md-center">
+    {% block pagination %}
+    {% if is_paginated %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link"
+                    href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i
+                        class="material-icons">
+                        navigate_before
+                    </i></a></li>
+            {% endif %}
+            <span class="page-link">
+                Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                <span class="sr-only">(current)</span>
+            </span>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link"
+                    href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i
+                        class="material-icons">
+                        navigate_next
+                    </i></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endblock %}
+</div>
+{% endblock contenido %}
