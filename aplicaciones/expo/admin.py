@@ -5,9 +5,9 @@ class AsignacionMarcaConfigAdmin(admin.ModelAdmin):
     list_display = [
         'am_user',
         'marcas',
-    ]
+    ] 
     search_fields = [
-        'am_user'
+        'am_user__username'
     ]
 
 class AsignacionVendedor_a_SupervisorConfigAdmin(admin.ModelAdmin):
@@ -16,7 +16,7 @@ class AsignacionVendedor_a_SupervisorConfigAdmin(admin.ModelAdmin):
         'vendedores',
     ]
     search_fields = [
-        'avs_Supervisor'
+        'avs_Supervisor__username'
     ]
 admin.site.register(AsignacionMarca, AsignacionMarcaConfigAdmin)
 admin.site.register(AsignacionVendedor_a_Supervisor, AsignacionVendedor_a_SupervisorConfigAdmin)

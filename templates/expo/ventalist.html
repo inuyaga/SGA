@@ -2,67 +2,132 @@
 {% load humanize %}
 
 {% block contenido %}
-    <div class="container">
-        
-        <div class="col-lg-12">
-            <!-- Weekly users Widget -->
-            <div class="card">
-                <div class="card-header">
-                    <h1>Productos</h1>
-                    <h4>Venta <a href="#">{{view.request.GET.venta}}</a> Total={{total_venta|intcomma}} <a class="btn btn-outline-success btn-sm" href="?{{view.request.GET.urlencode}}&end=OK" role="button">Finalizar</a></h4>
-                    <ul class="card-actions">
-    
-                    </ul> 
-                </div>
-                <div class="card-block">
-                    <table class="table-condensed">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Proveedor</th>
-                                <th scope="col">Precio</th>
-                                <th scope="col">Img</th>
-                                <th scope="col">Cantidad</th>
-                                <th scope="col">Accion</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in productos_list %} 
-                            <tr>
-                                <th scope="row">{{item.producto_codigo}}</th>
-                                <td>{{item.producto_nombre}}</td>
-                                <td>{{item.producto_marca}}</td>
-                                <td>{{item.producto_precio}}</td> 
-                                <td>
-                                    <img src="{{item.producto_imagen.url}}" alt="..." class="img-thumbnail" height="80" width="80">
-                                </td> 
-                                <form action="" method="POST">
-                                    <td><input class="form-control form-control-sm" type="number" name="cantidad" placeholder="Cantidad" required>
-                                        {% csrf_token %}
-                                        <input type="hidden" name="cleint" value="{{view.request.GET.cleint}}">                       
-                                        <input type="hidden" name="tip" value="{{view.request.GET.tip}}">                       
-                                        <input type="hidden" name="producto" value="{{item.producto_codigo}}">                       
-                                        <input type="hidden" name="no_venta" value="{{view.request.GET.venta}}">           
-                                    </td>  
-                                    <td><button type="submit" class="btn btn-primary">Agregar</button></td>                         
-                                </form>                        
-                                                         
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-block text-center">
-                    <span class="label bg-green m-r-xs">Filtrado<i class="ion-connection-bars"></i></span> <small></small>
-                </div>
+<style>
+    .float {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        bottom: 40px;
+        right: 40px;
+        background-color: #0C9;
+        color: #FFF;
+        border-radius: 50px;
+        text-align: center;
+        box-shadow: 2px 2px 3px #999;
+    }
+
+    .my-float {
+        margin-top: 20px;
+    }
+</style>
+<div class="container">
+
+    <div class="col-lg-12">
+        <!-- Weekly users Widget -->
+        <div class="card">
+            <div class="card-header">
+                <h1>Productos</h1>
+                <h4>Venta <a href="#">{{view.request.GET.venta}}</a> Total=<span id="span_total_id">${{total_venta|intcomma}}</span></h4>
+                <ul class="card-actions">
+
+                </ul>
             </div>
-            <!-- .card -->
-            <!-- End Weekly users Widget -->
+            <div class="card-block">
+                <table class="table-condensed">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Proveedor</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Img</th>
+                            <th scope="col">Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in productos_list %}
+                        <tr id="{{item.producto_codigo}}">
+                            <th scope="row">{{item.producto_codigo}}</th>
+                            <td>{{item.producto_nombre}}</td>
+                            <td>{{item.producto_marca}}</td>
+                            <td>{{item.producto_precio}}</td>
+                            <td>
+                                <img src="{{item.producto_imagen.url}}" alt="..." class="img-thumbnail" height="80"
+                                    width="80">
+                            </td>
+                            <form action="" method="POST">
+                                <td><input class="form-control form-control-sm" type="number" min="1" name="cantidad"
+                                        placeholder="Cantidad" required>
+                                    {% csrf_token %}
+                                    <input type="hidden" name="cleint" value="{{view.request.GET.cleint}}">
+                                    <input type="hidden" name="tip" value="{{view.request.GET.tip}}">
+                                    <input type="hidden" name="producto" value="{{item.producto_codigo}}">
+                                    <input type="hidden" name="no_venta" value="{{view.request.GET.venta}}">
+                                </td>
+                            </form>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-block text-center">
+                <span class="label bg-green m-r-xs">Filtrado<i class="ion-connection-bars"></i></span> <small></small>
+            </div>
         </div>
+        <!-- .card -->
+        <!-- End Weekly users Widget -->
     </div>
+</div>
 
 
+<a href="#" onclick="TerminarVenta()" class="float">
+    <i class="material-icons my-float">check_circle</i>
+</a>
 
-    
 {% endblock contenido %}
-    
+
+
+
+
+{% block script %}
+<script>
+    $("form").submit(function (event) {
+        event.preventDefault();
+        var frm = $(this);
+
+
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                const formatter = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 2
+                })
+                const tr = document.getElementById(data.producto);
+                document.getElementById('span_total_id').innerHTML = formatter.format(data.total_venta);
+                alertify.success(formatter.format(data.total_venta));
+                // Apply style to div
+                tr.setAttribute('style', 'background-color: #4CAF50; color: white;');
+            },
+            error: function (data) {
+                alertify.error('Un error al intentar guardar intente nuevamente');
+            },
+        });
+
+    });
+
+
+    function TerminarVenta() {
+        alertify.confirm('Terminar venta', 'Esta apunto de concluir venta con un total de '+$('#span_total_id').text(), function () { 
+            alertify.success('Ok')
+            window.location.href = '?{{view.request.GET.urlencode}}&end=OK'; 
+            }
+            , function () { 
+                alertify.error('Cancelado') 
+            }).set('labels', {ok:'Si!', cancel:'No!'});
+    }
+</script>
+{% endblock script %}

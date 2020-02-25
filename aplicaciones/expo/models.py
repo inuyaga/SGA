@@ -49,6 +49,7 @@ class VentaExpo(models.Model):
         permissions = [
             ('puede_editar_producto_expo', 'Puede Editar Productos en la Expo'),
             ('puede_ver_producto_expo', 'Puede Ver Productos en la Expo'),
+            ('puede_descargar_xls_venta_expo', 'Puede descargar xls de ventas expo'),
             ]
     def __str__(self):
         return str(self.Venta_ID)
@@ -68,4 +69,8 @@ class Detalle_venta(models.Model):
     def subtotal(self):
         sub_total=self.detalle_precio * self.detalle_cantidad
         return round(sub_total, 3) if sub_total != None else 0.0
+    def __str__(self):
+        return "Producto:{}, Cantidad:{}, Precio:{}".format(self.detalle_producto_id, self.detalle_cantidad, self.detalle_precio)
+    class Meta:
+        verbose_name = "Detalle de venta"
     

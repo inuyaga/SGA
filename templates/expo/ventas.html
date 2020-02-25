@@ -65,6 +65,7 @@
         <div class="card">
             <div class="card-header">
                 <h1>Ventas</h1>
+                <h1>Total {{sum_detalle|intcomma}}</h1>
                 <ul class="card-actions">
                     <li class="dropdown">
                         <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span
@@ -72,7 +73,7 @@
                         <ul class="dropdown-menu dropdown-menu-right">
                             <li class="dropdown-header">Accion</li>
                             <li>
-                                <a tabindex="-1" href="#">Descargar XLS</a>
+                                <a tabindex="-1" href="{% url 'expo:download_expo_vent' %}?{{view.request.GET.urlencode}}">Descargar XLS</a>
                             </li>
                         </ul>
                     </li>
@@ -99,7 +100,7 @@
                         {% for item in object_list %}
                         <tr>
                             <th scope="row">
-                                <a href="{% url 'expo:detalle_vent' %}?vent={{item.Venta_ID}}">{{item.Venta_ID}}</a>
+                                <a href="{% url 'expo:detalle_vent' item.Venta_ID %}">{{item.Venta_ID}}</a>
                             </th>
                             <td>{{item.venta_e_fecha_pedido}}</td>
                             <td>{{item.venta_e_actualizado}}</td>
@@ -113,10 +114,13 @@
                             </td>
                             <td>{{item.venta_e_creado}}</td>
                             <td>{{item.get_venta_e_tipo_display}}</td>
-                            <td>{{item.total_venta}}</td>
+                            <td>{{item.total_venta|intcomma}}</td>
                             <td>
-                                <a href="{% url 'expo:delete_venta' item.Venta_ID %}"><i class="fa fa-trash-o"></i></a>
+                                <a href="{% url 'expo:delete_venta' item.Venta_ID %}"><i class="fa fa-trash-o text-danger"></i></a> 
                                 <a href="{% url 'expo:update_venta' item.Venta_ID %}"><i class="fa fa-edit"></i></a>
+                                {% if perms.expo.puede_descargar_xls_venta_expo %}  
+                                <a href="{% url 'expo:download_expo_ventID' %}?vent={{item.Venta_ID}}"><i class="fa fa-cloud-download text-primary"></i></a>
+                                {% endif %}
                             </td>
                             {% endfor %}
                     </tbody>

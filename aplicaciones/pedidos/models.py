@@ -21,6 +21,9 @@ class Marca(models.Model):
 
     def __str__(self):
         return self.marca_nombre
+    
+    class Meta:
+        ordering = ["marca_nombre"]
 
 
 class Area(models.Model):
