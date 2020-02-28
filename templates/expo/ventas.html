@@ -53,6 +53,17 @@
                     </select>
                 </div>
                 <div class="form-group col-sm-3">
+                    <label for="venta_e_tipo">Creador</label>
+                    <select class="form-control" id="venta_e_creado" name="venta_e_creado">
+                        <option value="">---------------</option>
+                        {% for item in creadors %}
+                        <option value="{{item.venta_e_creado__id}}"
+                            {% if view.request.GET.venta_e_creado ==  item.venta_e_creado__id|striptags %}selected{% endif %}>{{item.venta_e_creado__username}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group col-sm-3">
                     <br>
                     <button type="submit" class="btn btn-primary">Filtrar</button>
                 </div>
@@ -65,7 +76,6 @@
         <div class="card">
             <div class="card-header">
                 <h1>Ventas</h1>
-                <h1>Total {{sum_detalle|intcomma}}</h1>
                 <ul class="card-actions">
                     <li class="dropdown">
                         <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span
@@ -75,6 +85,17 @@
                             <li>
                                 <a tabindex="-1" href="{% url 'expo:download_expo_vent' %}?{{view.request.GET.urlencode}}">Descargar XLS</a>
                             </li>
+                            
+                            {% if view.request.GET.venta_e_cliente|length > 3 %}
+                            {% if view.request.GET.venta_e_status|length > 0 %}
+                            {% if perms.expo.puede_descargar_recibo_cliente %}   
+                            <li>
+                                <a tabindex="-1" href="{% url 'expo:download_recibo_cliente' %}?{{view.request.GET.urlencode}}">Recibo cliente</a>
+                            </li>
+                            {% endif %}
+                            {% endif %}
+                            {% endif %}
+                                                                                        
                         </ul>
                     </li>
                 </ul>
@@ -118,8 +139,12 @@
                             <td>
                                 <a href="{% url 'expo:delete_venta' item.Venta_ID %}"><i class="fa fa-trash-o text-danger"></i></a> 
                                 <a href="{% url 'expo:update_venta' item.Venta_ID %}"><i class="fa fa-edit"></i></a>
-                                {% if perms.expo.puede_descargar_xls_venta_expo %}  
+                                {% if perms.expo.puede_descargar_xls_venta_expo %}
+                                
+                                {% if item.venta_e_status %}
                                 <a href="{% url 'expo:download_expo_ventID' %}?vent={{item.Venta_ID}}"><i class="fa fa-cloud-download text-primary"></i></a>
+                                {% endif %}
+                                      
                                 {% endif %}
                             </td>
                             {% endfor %}

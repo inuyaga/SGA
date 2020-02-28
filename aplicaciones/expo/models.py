@@ -50,6 +50,7 @@ class VentaExpo(models.Model):
             ('puede_editar_producto_expo', 'Puede Editar Productos en la Expo'),
             ('puede_ver_producto_expo', 'Puede Ver Productos en la Expo'),
             ('puede_descargar_xls_venta_expo', 'Puede descargar xls de ventas expo'),
+            ('puede_descargar_recibo_cliente', 'Puede descargar recibo del cliente con sus detalles'),
             ]
     def __str__(self):
         return str(self.Venta_ID)
@@ -58,6 +59,11 @@ class VentaExpo(models.Model):
         sum_detalle=Detalle_venta.objects.filter(detalle_venta=self.Venta_ID).aggregate(total=Sum(F('detalle_cantidad')*F('detalle_precio'), output_field=FloatField()))['total']
         total = round(sum_detalle, 3) if sum_detalle != None else 0.0
         return total
+    def get_status_display(self):
+        if self.venta_e_status:
+            return "Finalizada"
+        else:
+            return "Inconclusa"
 
     
 
