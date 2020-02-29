@@ -85,6 +85,11 @@
                             <li>
                                 <a tabindex="-1" href="{% url 'expo:download_expo_vent' %}?{{view.request.GET.urlencode}}">Descargar XLS</a>
                             </li>
+                            {% if perms.expo.puede_descargar_total_ventas_por_marcas %}                                   
+                            <li>
+                                <a tabindex="-1" href="{% url 'expo:download_total_ventas_date_marcas' %}?{{view.request.GET.urlencode}}">XLS total ventas por marcas</a>
+                            </li>
+                            {% endif %}
                             
                             {% if view.request.GET.venta_e_cliente|length > 3 %}
                             {% if view.request.GET.venta_e_status|length > 0 %}

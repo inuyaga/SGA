@@ -200,7 +200,7 @@ class VentaList(ListView):
             sum_detalle = sum_detalle + item.total_venta()
         count_row_ventas=queryset.count()
         suma= round(sum_detalle, 3) if sum_detalle != None else sum_detalle
-        messages.info(self.request, "Total ventas: ${}, N° de ventas:{}".format(intcomma(suma), count_row_ventas))
+        messages.info(self.request, "Total ventas: ${}. N° de ventas:{}".format(intcomma(suma), count_row_ventas))
 
         
 
@@ -577,6 +577,7 @@ class Pdf_recibo_cliente(View):
         data_tabla = []
 
         stylo_p_center = ParagraphStyle('parrafo_center', alignment=TA_CENTER, fontSize=11, fontName="Times-Roman")
+        stylo_p_center_INFO = ParagraphStyle('parrafo_center', alignment=TA_CENTER, fontSize=8, fontName="Times-Roman")
         stylo_p = ParagraphStyle('parrafo', alignment=TA_LEFT, fontSize=11, fontName="Times-Roman")
         stylo_titulo = ParagraphStyle('titulo', alignment=TA_CENTER, fontSize=11, fontName="Times-Bold")
         stylo_portada_title = ParagraphStyle('titulo', alignment=TA_CENTER, fontSize=20, fontName="Times-Bold")
@@ -584,31 +585,64 @@ class Pdf_recibo_cliente(View):
         
         # items.append(Spacer(0, 30))
         # items.append(PageBreak())
+        marcas = []
         detale_venta_expo_obj = Detalle_venta.objects.filter(
             detalle_venta__venta_e_cliente__cli_clave=self.clave_cliente, 
-            detalle_venta__venta_e_status=self.venta_e_status).order_by('detalle_venta__Venta_ID')
+            detalle_venta__venta_e_status=self.venta_e_status
+            ).order_by('detalle_venta__Venta_ID', 'detalle_producto_id__producto_marca')
         dta = []
         
         titulos_tabla = [(
             Paragraph('N°V', stylo_titulo), 
             Paragraph('Producto', stylo_titulo), 
+            Paragraph('Marca', stylo_titulo), 
             Paragraph('Descripción', stylo_titulo),
             Paragraph('Cantidad', stylo_titulo),
             Paragraph('Precio', stylo_titulo),
-            Paragraph('Subtotal', stylo_titulo),
+            Paragraph('Importe', stylo_titulo),
             )]
+
+
         
-        for item in detale_venta_expo_obj:
+        
+        for item in detale_venta_expo_obj:                   
             dta.append((
                 Paragraph(str(item.detalle_venta.Venta_ID), stylo_p_center), 
                 Paragraph(item.detalle_producto_id.producto_codigo, stylo_p_center), 
+                Paragraph(item.detalle_producto_id.producto_marca.marca_nombre, stylo_p_center), 
                 Paragraph(item.detalle_producto_id.producto_descripcion, stylo_p),
                 Paragraph(str(item.detalle_cantidad), stylo_p_center), 
                 Paragraph(intcomma(item.detalle_precio), stylo_p_center), 
                 Paragraph(intcomma(item.subtotal()), stylo_p_center), 
                 ))
+            
+           
 
         
+        sum_detalle_marca = Detalle_venta.objects.values(
+            'detalle_producto_id__producto_marca',
+            'detalle_producto_id__producto_marca__marca_nombre'
+        ).filter( 
+            detalle_venta__venta_e_cliente__cli_clave=self.clave_cliente, 
+            detalle_venta__venta_e_status=self.venta_e_status
+            ).annotate(total=Sum(F('detalle_cantidad')*F('detalle_precio'), output_field=FloatField())).order_by('detalle_producto_id__producto_marca')
+        
+
+
+        for detalle_marca in sum_detalle_marca:
+            dta.append((
+                "",
+                "",
+                "",
+                "",
+                Paragraph(detalle_marca['detalle_producto_id__producto_marca__marca_nombre'], stylo_p_center_INFO),
+                Paragraph("<-- subtotal", stylo_p_center_INFO),
+                Paragraph(intcomma(detalle_marca['total']), stylo_p_center_INFO),
+            ))
+
+
+
+
         sum_detalle = Detalle_venta.objects.filter( 
             detalle_venta__venta_e_cliente__cli_clave=self.clave_cliente, 
             detalle_venta__venta_e_status=self.venta_e_status
@@ -616,19 +650,25 @@ class Pdf_recibo_cliente(View):
         total_venta = round(sum_detalle, 3) if sum_detalle != None else sum_detalle
 
         dta.append((
-            "",
-            "",
-            "",
-            "",
-            Paragraph("TOTAL", stylo_p_center),
-            Paragraph(intcomma(total_venta), stylo_p_center),
-        ))
+                "",
+                "",
+                "",
+                "",
+                "",
+                Paragraph("TOTAL", stylo_p_center),
+                Paragraph(intcomma(total_venta), stylo_p_center),
+            ))
+
+            
+        
+
             
 
         tabla = Table(titulos_tabla+dta, colWidths=[
             1.5 * cm, 
             2.5 * cm,
-            10 * cm, 
+            2.5 * cm, 
+            7.5 * cm, 
             2 * cm,
             2 * cm,
             2 * cm,
@@ -647,4 +687,95 @@ class Pdf_recibo_cliente(View):
         doc.build(items, onFirstPage=self.myFirstPage,onLaterPages=self.myLaterPages)
         response.write(buff.getvalue())
         buff.close()
+        return response
+
+
+
+
+
+
+
+
+
+class TotalVentasMarcasDate(TemplateView):
+    def get(self, request, *args, **kwargs):
+        wb = Workbook()
+        ws = wb.active
+        queryset = Detalle_venta.objects.all()
+
+        venta_e_fecha_pedido_init = self.request.GET.get('venta_e_fecha_pedido_init')
+        venta_e_fecha_pedido_end = self.request.GET.get('venta_e_fecha_pedido_end')
+        venta_e_cliente = self.request.GET.get('venta_e_cliente')
+        venta_e_status = self.request.GET.get('venta_e_status')
+        venta_e_tipo = self.request.GET.get('venta_e_tipo')
+        venta_e_creado = self.request.GET.get('venta_e_creado')
+        
+        
+
+        if venta_e_fecha_pedido_init != None and venta_e_fecha_pedido_init != "":
+            if venta_e_fecha_pedido_end != None and venta_e_fecha_pedido_end != "":
+                queryset = queryset.filter(detalle_venta__venta_e_fecha_pedido__range=[venta_e_fecha_pedido_init, venta_e_fecha_pedido_end])
+        if venta_e_cliente != None and venta_e_cliente != "":
+            queryset = queryset.filter(detalle_venta__venta_e_cliente__cli_clave=venta_e_cliente)
+        if venta_e_status != None and venta_e_status != "":
+            queryset = queryset.filter(detalle_venta__venta_e_status=venta_e_status)
+        if venta_e_tipo != None and venta_e_tipo != "":
+            queryset = queryset.filter(detalle_venta__venta_e_tipo=venta_e_tipo)
+        if venta_e_creado != None and venta_e_creado != "":
+            queryset = queryset.filter(detalle_venta__venta_e_creado=venta_e_creado)
+        
+        queryset = queryset.values(
+                        'detalle_producto_id__producto_marca',
+                        'detalle_producto_id__producto_marca__marca_nombre',
+                    ).annotate(total=Sum(F('detalle_cantidad')*F('detalle_precio'), output_field=FloatField()),).order_by('detalle_producto_id__producto_marca')
+       
+
+       
+
+        ws['A1'] = 'TOTAL VENTAS EXPO POR MARCAS DE {} AL {}'.format(venta_e_fecha_pedido_init, venta_e_fecha_pedido_end)
+        st = ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:I1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = 'Marca'
+        ws['B2'] = 'Subtotal'
+        # ws['C2'] = 'Actualizado'
+        # ws['D2'] = 'Cliente'
+        # ws['E2'] = 'Creador'
+        # ws['F2'] = 'Tipo'
+        # ws['G2'] = 'Total'
+        # ws['H2'] = 'Status'
+        cont = 3
+  
+
+        for item in queryset:
+            ws.cell(row=cont, column=1).value = item['detalle_producto_id__producto_marca__marca_nombre']
+            ws.cell(row=cont, column=2).value = item['total']
+           
+            # ws.cell(row=cont, column=8).fill = PatternFill(bgColor="00ff7f", fill_type = "solid")
+            ws.cell(row=cont, column=2).number_format = '#,##0'
+            cont += 1
+
+        ws["A"+str(cont)] = "TOTAL"
+        ws["B"+str(cont)] = "=SUM(B3:B"+str(cont-1)+")"
+        ws["B"+str(cont)].number_format = '#,##0'
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max(
+                            (dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+        nombre_archivo = 'VENTAS_EXPO_MARCAS.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition'] = content
+        wb.save(response)
         return response

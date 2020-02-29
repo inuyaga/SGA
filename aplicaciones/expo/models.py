@@ -79,4 +79,9 @@ class Detalle_venta(models.Model):
         return "Producto:{}, Cantidad:{}, Precio:{}".format(self.detalle_producto_id, self.detalle_cantidad, self.detalle_precio)
     class Meta:
         verbose_name = "Detalle de venta"
+
+    class Meta:
+        permissions = [
+            ('puede_descargar_total_ventas_por_marcas', 'Puede descargar total ventas por marcas'),
+            ]
     

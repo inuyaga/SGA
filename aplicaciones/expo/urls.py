@@ -16,4 +16,5 @@ urlpatterns = [
     path('ventas/expo/download/', ExpoView.dowload_ventas_expo.as_view(), name='download_expo_vent'), 
     path('ventas/expo/download/pedido/', ExpoView.dowload_venta_expo_ID.as_view(), name='download_expo_ventID'), 
     path('ventas/expo/download/pdf/recibo/cliente/', ExpoView.Pdf_recibo_cliente.as_view(), name='download_recibo_cliente'), 
+    path('ventas/expo/download/xls/marcas/date/', ExpoView.TotalVentasMarcasDate.as_view(), name='download_total_ventas_date_marcas'), 
     ]
