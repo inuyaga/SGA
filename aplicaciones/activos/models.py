@@ -31,7 +31,7 @@ class Activo(models.Model):
     def asignado_to(self):
         try:
             asig = Asignacion.objects.get(asig_activo=self.activo)
-            return asig.asig_user
+            return "Usuario:{} Nombre:{}".format(asig.asig_user, asig.asig_user.get_full_name())
         except ObjectDoesNotExist as error:
             return "No"
 
