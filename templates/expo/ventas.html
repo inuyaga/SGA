@@ -63,13 +63,57 @@
                         {% endfor %}
                     </select>
                 </div>
+                
                 <div class="form-group col-sm-3">
                     <br>
                     <button type="submit" class="btn btn-primary">Filtrar</button>
+                    {% if perms.expo.descargar_total_producto_por_marcas %}   
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Reporte</button>
+                    {% endif %}
+                        
                 </div>
             </div>
         </form>
     </div>
+
+
+    <!-- Button trigger modal -->
+
+    {% if perms.expo.descargar_total_producto_por_marcas %}   
+    
+    
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Reporte ventas producto por marcas</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form action="{% url 'expo:download_total_ventas_productos_date_marcas' %}" method="get">
+                <select name="marca_id" id="" required>
+                    <option value="">Marcas</option>
+                    {% for item in marca %}
+                    <option value="{{item.marca_id_marca}}">{{item.marca_nombre}}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="fecha_init" id="" required>
+                <input type="date" name="fecha_end" id="" required>
+                <button type="submit">Generar</button>
+            </form>
+
+        </div>
+        <div class="modal-footer">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
 
     <div class="col-lg-12">
         <!-- Weekly users Widget -->

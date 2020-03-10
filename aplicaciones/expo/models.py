@@ -83,5 +83,6 @@ class Detalle_venta(models.Model):
     class Meta:
         permissions = [
             ('puede_descargar_total_ventas_por_marcas', 'Puede descargar total ventas por marcas'),
+            ('descargar_total_producto_por_marcas', 'Puede descargar total de productos por marcas rango de fechas'),
             ]
     

@@ -40,6 +40,9 @@ PAGE_WIDTH = letter[0]
 PAGE_HEIGHT = letter[1]
 
 
+from aplicaciones.pedidos.models import Marca
+
+
 from django.utils.formats import localize
 from django.contrib.humanize.templatetags.humanize import intcomma
 from datetime import datetime
@@ -150,6 +153,7 @@ class VentaList(ListView):
         context['urls_formateada'] = urls_formateada 
         context['Clientes'] = VentaExpo.objects.values('venta_e_cliente__cli_clave').annotate(dcount=Count('venta_e_cliente__cli_clave')).order_by('venta_e_cliente__cli_clave')
         context['creadors'] = VentaExpo.objects.values('venta_e_creado__id', 'venta_e_creado__username').annotate(dcount=Count('venta_e_creado')).order_by('venta_e_creado')
+        context['marca'] = Marca.objects.all()
         context['tipo_venta'] = TIPO_VENTA
 
         
@@ -774,6 +778,81 @@ class TotalVentasMarcasDate(TemplateView):
             ws.column_dimensions[get_column_letter(col)].width = value+1
 
         nombre_archivo = 'VENTAS_EXPO_MARCAS.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition'] = content
+        wb.save(response)
+        return response
+
+
+class TotalVentasItemsMarcasDate(TemplateView):
+    def get(self, request, *args, **kwargs):
+
+        wb = Workbook()
+        ws = wb.active
+        queryset = Detalle_venta.objects.all().order_by('detalle_venta')
+
+        marca_id = self.request.GET.get('marca_id')
+        fecha_init = self.request.GET.get('fecha_init')
+        fecha_end = self.request.GET.get('fecha_end')
+        
+        marca_nom = Marca.objects.get(marca_id_marca=marca_id)
+        
+
+        if fecha_init != None and fecha_init != "":
+            if fecha_end != None and fecha_end != "":
+                queryset = queryset.filter(detalle_venta__venta_e_fecha_pedido__range=[fecha_init, fecha_end])
+        if marca_id != None and marca_id != "":
+            queryset = queryset.filter(detalle_producto_id__producto_marca=marca_id)
+       
+        
+    
+
+        ws['A1'] = 'TOTAL DE PORDUCTOS EXPO POR MARCAS DE {} AL {} "{}" '.format(localize(datetime.strptime(fecha_init, '%Y-%m-%d').date()), localize(datetime.strptime(fecha_end, '%Y-%m-%d').date()), marca_nom.marca_nombre)
+        st = ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:I1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = 'N° Vent'
+        ws['B2'] = 'Producto'
+        ws['C2'] = 'Descripción'
+        ws['D2'] = 'Cantidad'
+        ws['E2'] = 'Precio'
+        ws['F2'] = 'Subtotal'
+     
+        cont = 3
+  
+
+        for item in queryset:
+            ws.cell(row=cont, column=1).value = str(item.detalle_venta)
+            ws.cell(row=cont, column=2).value = str(item.detalle_producto_id)
+            ws.cell(row=cont, column=3).value = item.detalle_producto_id.producto_descripcion
+            ws.cell(row=cont, column=4).value = item.detalle_cantidad
+            ws.cell(row=cont, column=5).value = item.detalle_precio
+            ws.cell(row=cont, column=6).value = item.subtotal()
+           
+            
+            ws.cell(row=cont, column=6).number_format = '#,##0'
+            cont += 1
+
+        ws["E"+str(cont)] = "TOTAL"
+        ws["F"+str(cont)] = "=SUM(F3:F"+str(cont-1)+")"
+        ws["F"+str(cont)].number_format = '#,##0'
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max(
+                            (dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+        nombre_archivo = 'VENTAS_PRODUCTOS_EXPO_MARCAS.xls'
         response = HttpResponse(content_type="application/ms-excel")
         content = "attachment; filename = {0}".format(nombre_archivo)
         response['Content-Disposition'] = content
