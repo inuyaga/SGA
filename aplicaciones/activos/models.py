@@ -1,6 +1,7 @@
 from django.db import models
 from aplicaciones.pedidos.models import Area, Marca
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 Usuario = get_user_model()
 
 ESTADO=((1, 'Vigente'), (2,'Historio'), (3, 'Pendiente'))
@@ -27,6 +28,13 @@ class Activo(models.Model):
     activo_situacion=models.IntegerField('Situación del activo', choices=SITUACION, default=2)
     def __str__(self):
         return "[Activo ID:{}, {}, NS:{} --- CB:{}]".format(self.activo, self.activo_nombre, self.activo_serie, self.activo_codigo_barra)
+    def asignado_to(self):
+        try:
+            asig = Asignacion.objects.get(asig_activo=self.activo)
+            return asig.asig_user
+        except ObjectDoesNotExist as error:
+            return "No"
+
 
 
 class TemplateItem(models.Model):

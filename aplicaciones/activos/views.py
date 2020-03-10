@@ -10,7 +10,7 @@ TramiteBajaForm, TramiteBajaValidarForm, TemplateItemForm, TemplateItemGroupForm
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required 
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 from io import BytesIO
@@ -207,7 +207,7 @@ class Download_report_activo(TemplateView):
         st=ws['A1']
         st.font = Font(size=14, b=True, color="004ee0")
         st.alignment = Alignment(horizontal='center')
-        ws.merge_cells('A1:F1')
+        ws.merge_cells('A1:I1')
         ws.sheet_properties.tabColor = "1072BA"
 
         ws['A2'] = '###'
@@ -218,6 +218,7 @@ class Download_report_activo(TemplateView):
         ws['F2'] = 'Codigo Barra'
         ws['G2'] = 'Observación'
         ws['H2'] = 'Costo'
+        ws['I2'] = 'Asignado'
         cont = 3
         
 
@@ -230,6 +231,7 @@ class Download_report_activo(TemplateView):
             ws.cell(row=cont, column=6).value = item.activo_codigo_barra
             ws.cell(row=cont, column=7).value = item.activo_observacion
             ws.cell(row=cont, column=8).value = item.activo_costo
+            ws.cell(row=cont, column=9).value = str(item.asignado_to())
             
             ws.cell(row=cont, column=8).number_format = '#,##0'
             cont += 1
