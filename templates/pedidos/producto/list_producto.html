@@ -74,9 +74,9 @@
                       <ul class="dropdown-menu dropdown-menu-right">
                           <li class="dropdown-header">Accion</li>
                           <li>
-                            {% if user.is_superuser %}
+                            {% if perms.pedidos.puede_actualizar_precio_volumen %} 
                             <a tabindex="-1" href="{% url 'pedidos:update_bulk' %}">Actualizar en volumen</a>
-                            {% endif %}
+                            {% endif %} 
                               
                           </li>
   

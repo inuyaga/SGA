@@ -88,6 +88,7 @@ class Cliente(models.Model):
     cli_vndedor_asignado=models.ForeignKey(Usuario, verbose_name='Vendedor asignado', on_delete=models.CASCADE, null=True, blank=True)
     cli_limt_temporada=models.FloatField("Limite de credito temporada", default=0.0)
     cli_limt_normal=models.FloatField("Limite de credito normal", default=0.0)
+    cli_actualizado=models.DateTimeField('Ultima actialización',auto_now=True)
     def __str__(self):
         return self.cli_clave
     

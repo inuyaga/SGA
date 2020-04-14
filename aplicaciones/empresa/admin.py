@@ -54,9 +54,10 @@ class ClienteConfigAdmin(admin.ModelAdmin):
         'cli_email',
         'cli_status',
         'cli_vndedor_asignado',
+        'cli_actualizado',
         ]
     search_fields = ['cli_clave', 'cli_nombre']
-    list_filter = ['cli_status']
+    list_filter = ['cli_status', 'cli_actualizado']
 
 # Re-register UserAdmin
 admin.site.unregister(User)

@@ -54,6 +54,13 @@ class Producto(models.Model):
     prducto_unidad=models.CharField(max_length=100, verbose_name='Unidad', null=True, blank=True)
     prducto_resguardo=models.CharField(max_length=50, verbose_name='Localizacion en resguardo', null=True, blank=True)
     prducto_existencia=models.IntegerField(verbose_name='Existencia', null=True, blank=True)
+
+
+    class Meta:
+        permissions = [
+            ('puede_actualizar_precio_volumen', 'Puede actualizar precios de productos en volumen'),
+            ]
+        ordering = ["producto_nombre"]
      
 
     def __str__(self):
