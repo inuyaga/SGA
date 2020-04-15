@@ -126,6 +126,7 @@
                                 <a href="{% url 'activos:activo_asignar_pdf' item.id  %}" class="btn btn-xs btn-default"
                                     type="button" data-toggle="tooltip" title=""
                                     data-original-title="Imprimir resguardo"><i class="fa fa-file-pdf-o"></i></a>
+
                                 <a href="{% url 'activos:activo_validar_asignacion' item.id  %}?{{view.request.GET.urlencode}}"
                                     class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title=""
                                     data-original-title="Validar asignación"><i class="fa fa-check-square-o"></i></a>
@@ -134,6 +135,10 @@
                                 <a href="{% url 'activos:reasignacion_activo' item.id  %}?{{view.request.GET.urlencode}}"
                                     class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title=""
                                     data-original-title="Reasignación"><i class="ion-edit"></i></a>
+
+                                    <a href="{{item.asig_archivo_dig.url}}" class="btn btn-xs btn-default"
+                                    type="button" data-toggle="tooltip" title=""
+                                    data-original-title="PDF Validado"><i class="fa fa-file-pdf-o"></i></a>
                                 {% endif %}
                             </div>
                             {% endif %}

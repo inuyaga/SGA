@@ -41,4 +41,8 @@ urlpatterns = [
     path('activo/template/item/grupo/delete/<int:pk>/', Vactivos.TemplateItemGrupoDelete.as_view(), name='tem_item_grup_delete'),   
 
     path('activo/template/item/grupo/select/automatic/create/<int:id_activo>/', Vactivos.EspTemplateCreate.as_view(), name='templ_at_create'),   
+
+
+    path('activo/baja/pdf/view/', Vactivos.PDFBajaView.as_view(), name='activo_baja_pdf'),    
+
 ]

@@ -42,17 +42,26 @@
                             <td>{{item.tb_user_edit}}</td>
                             <td>{{item.tb_user_valido}}</td>
                             <td>{{item.tb_observacion}}</td>
-                            <td>
-                                {% if item.tb_validado == True %}
-                                <i data-toggle="tooltip" data-original-title="Ok" class="fa fa-check-square fa-2x"></i>
-                                {% else %}
-                                <i data-toggle="tooltip" data-original-title="En espera de validación" class="ion-android-alarm-clock fa-2x"></i>
-                                {% endif %}
-                            </td>
                             <td class="text-center">
+                                {% if item.tb_validado == True %}
+                                <i data-toggle="tooltip" data-original-title="Ok" class="fa fa-check-square"></i>
+                                {% else %}
+                                <i data-toggle="tooltip" data-original-title="En espera de validación" class="ion-android-alarm-clock"></i>
+                                {% endif %}
+                            
+                            
                                 <div class="btn-group">
                                     {% if item.tb_validado == False %}
+                                    {% if perms.activos.puede_validar_Tramite %}
                                     <a href="{% url 'activos:tb_validacion' item.id  %}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Validar"><i class="ion-edit"></i></a>
+                                    {% endif %} 
+
+                                    {% else %}
+
+                                    <a href="{% url 'activos:activo_baja_pdf' %}?item={{item.id}}" class="btn btn-xs btn-default"
+                                    type="button" data-toggle="tooltip" title=""
+                                    data-original-title="PDF"><i class="fa fa-file-pdf-o"></i></a>
+
                                     {% endif %} 
                                     <!-- <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Edit client"><i class="ion-edit"></i></button>
                                     <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Remove client"><i class="ion-close"></i></button> -->

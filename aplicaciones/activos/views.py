@@ -477,7 +477,7 @@ class EspTemplateCreate(TemplateView):
 class AsignacionList(ListView):
     model=Asignacion
     paginate_by=100
-    template_name='activos/asignacion_list.html'  
+    template_name='activos/asignacion_list.html'   
 
     def get_context_data(self, **kwargs):
         # from aplicaciones.pedidos.models import Detalle_pedido, Tipo_Pedido, Pedido
@@ -720,6 +720,124 @@ class TramiteBajaList(ListView):
             del urls_formateada['page']
         context['urls_formateada'] = urls_formateada 
         return context
+
+
+
+
+
+class PDFBajaView(View): 
+
+    def myFirstPage(self, canvas, doc):
+        # CABECERA DE PAGINA 
+        Title = "BAJA DE ACTIVO"
+        canvas.saveState()
+        canvas.setFont('Times-Bold', 16)
+        
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 50, Title)
+        
+        # Footer.
+        canvas.setFont('Times-Roman', 8)
+        # canvas.drawString( PAGE_WIDTH/6, 1.5*cm, '   Sra. Tere Vázquez Arce')
+        canvas.drawString( PAGE_WIDTH/6, 0.9*cm, '_______________________________            __________________________________            ____________________')
+        canvas.drawString( PAGE_WIDTH/6, 0.5*cm, '   Ing. Victor Manuel Galan Robles                      Lic. Jose Adolfo Izquierdo Vázquez                     Encargado de activos')
+
+        canvas.restoreState()
+    
+    def get(self, request, *args, **kwargs):        
+        response = HttpResponse(content_type='application/pdf')
+        buff = BytesIO()
+        doc = SimpleDocTemplate(buff,
+                                pagesize=letter,
+                                rightMargin=40,
+                                leftMargin=40,
+                                topMargin=60,
+                                bottomMargin=18,
+                                title='Baja de activo'
+                                )
+
+        baja_ID = request.GET.get('item')
+        baja_obj = TramiteBaja.objects.get(id=baja_ID)
+
+        folio_format = ParagraphStyle('parrafo', alignment = TA_LEFT, fontSize = 10, fontName="Times-Roman")
+        # title = ParagraphStyle('titulo', alignment = TA_CENTER, fontSize = 12, fontName="Times-Roman")
+        parrafo2 = ParagraphStyle('parrafo', alignment = TA_RIGHT, fontSize = 10, fontName="Times-Roman")
+        parrafo = ParagraphStyle('parrafo', alignment = TA_LEFT, fontSize = 10, fontName="Times-Roman")
+        aviso_empresa_style = ParagraphStyle('parrafo', alignment = TA_JUSTIFY, fontSize = 8, fontName="Times-Roman", spaceBefore=15)
+
+        tabla_body=ParagraphStyle('t_body', alignment = TA_LEFT, fontSize = 8, fontName="Times-Roman")
+        tabla_head=ParagraphStyle('t_head', alignment = TA_CENTER, fontSize = 9, fontName="Times-Roman")
+
+        TITULO=ParagraphStyle('TITULO', alignment = TA_CENTER, fontSize = 14, fontName="Times-Roman")
+        BODY=ParagraphStyle('BODY', alignment = TA_LEFT, fontSize = 11, fontName="Times-Roman")
+        
+        items = []
+        
+
+        folio_txt="<strong>FOLIO N°:</strong><em><u>{}</u></em>".format(baja_obj.id)
+        p=Paragraph(folio_txt, folio_format)
+        items.append(p)
+
+        folio_txt="Villahermosa, Tabasco, a {}".format(localize(baja_obj.tb_fecha_creacion))
+        p=Paragraph(folio_txt, parrafo2)
+        items.append(p)
+
+
+        
+        folio_txt="<strong>Descripcion del equipo</strong>".format(baja_obj.id)
+        p=Paragraph(folio_txt, TITULO)
+        items.append(p)
+
+        items.append(Spacer(1, 0.5*cm))
+
+        folio_txt="<strong>Observación: </strong> {}".format(baja_obj.tb_observacion)
+        p=Paragraph(folio_txt, BODY)
+        items.append(p)
+
+        items.append(Spacer(1, 0.5*cm))
+        folio_txt="<strong>Usuario validó: </strong> {}".format(baja_obj.tb_user_valido)
+        p=Paragraph(folio_txt, BODY)
+        items.append(p)
+
+        
+
+        
+        
+        
+        # t_titulos=(
+        #     Paragraph('EQUIPO', tabla_head), 
+        #     Paragraph('DESCRIPCIÓN', tabla_head), 
+        #     Paragraph('ADICIONAL', tabla_head), 
+        #     Paragraph('SERIE', tabla_head), 
+        #     Paragraph('COD. INVENT', tabla_head), 
+        #     Paragraph('MARCA/MODELO', tabla_head))
+        # t_body=[(
+        #     Paragraph(get_asignacion.asig_activo.activo_categoria.cat_nombre, tabla_body), 
+        #     Paragraph(get_asignacion.asig_activo.activo_nombre, tabla_body), 
+        #     self.get_espfic(Especificacion.objects.filter(esp_activo=get_asignacion.asig_activo), tabla_body), 
+        #     Paragraph(get_asignacion.asig_activo.activo_serie, tabla_body), 
+        #     Paragraph(str(get_asignacion.asig_activo.activo), tabla_body), 
+        #     Paragraph("{}/{}".format(get_asignacion.asig_activo.activo_marca, get_asignacion.asig_activo.activo_modelo), tabla_body)
+        #     )]
+        # t = Table([t_titulos] + t_body, colWidths=[2 * cm, 3 * cm, 4 * cm, 3 * cm, 2 * cm, 4 * cm])
+        # t.setStyle(TableStyle(
+        #     [
+        #         ('GRID', (0, 0), (5, -1), 1, colors.dodgerblue),
+        #         ('LINEBELOW', (0, 0), (-1, 0), 2, colors.darkblue),
+        #         ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        #     ]
+        # ))
+
+        # items.append(t)
+
+
+        
+
+            
+
+        doc.build(items, onFirstPage=self.myFirstPage) 
+        response.write(buff.getvalue())
+        buff.close()
+        return response
 
     
 
