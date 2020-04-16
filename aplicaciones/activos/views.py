@@ -783,51 +783,63 @@ class PDFBajaView(View):
 
 
         
-        folio_txt="<strong>Descripcion del equipo</strong>".format(baja_obj.id)
+        folio_txt="<strong>BAJA</strong>"
         p=Paragraph(folio_txt, TITULO)
         items.append(p)
 
-        items.append(Spacer(1, 0.5*cm))
-
-        folio_txt="<strong>Observación: </strong> {}".format(baja_obj.tb_observacion)
+        items.append(Spacer(1, 0.2*cm))
+        folio_txt="<strong>Usuario validó: </strong> {} <strong>Observación: </strong> {}".format(baja_obj.tb_user_valido, baja_obj.tb_observacion)
         p=Paragraph(folio_txt, BODY)
         items.append(p)
 
-        items.append(Spacer(1, 0.5*cm))
-        folio_txt="<strong>Usuario validó: </strong> {}".format(baja_obj.tb_user_valido)
+        items.append(Spacer(1, 0.2*cm))
+        folio_txt="<strong>ASIGNACION</strong>"
+        p=Paragraph(folio_txt, TITULO)
+        items.append(p)
+
+        items.append(Spacer(1, 0.2*cm))
+        folio_txt="<strong>USUARIO</strong> {} <strong>OBSERVACION:</strong>{}".format(
+            baja_obj.tb_activo.asig_user.get_full_name(), 
+            baja_obj.tb_activo.asig_observacion,
+            )
         p=Paragraph(folio_txt, BODY)
         items.append(p)
 
         
 
+        items.append(Spacer(1, 0.2*cm))
+        folio_txt="<strong>DESCRIPCION DE EQUIPO</strong>"
+        p=Paragraph(folio_txt, TITULO)
+        items.append(p)
         
         
-        
-        # t_titulos=(
-        #     Paragraph('EQUIPO', tabla_head), 
-        #     Paragraph('DESCRIPCIÓN', tabla_head), 
-        #     Paragraph('ADICIONAL', tabla_head), 
-        #     Paragraph('SERIE', tabla_head), 
-        #     Paragraph('COD. INVENT', tabla_head), 
-        #     Paragraph('MARCA/MODELO', tabla_head))
-        # t_body=[(
-        #     Paragraph(get_asignacion.asig_activo.activo_categoria.cat_nombre, tabla_body), 
-        #     Paragraph(get_asignacion.asig_activo.activo_nombre, tabla_body), 
-        #     self.get_espfic(Especificacion.objects.filter(esp_activo=get_asignacion.asig_activo), tabla_body), 
-        #     Paragraph(get_asignacion.asig_activo.activo_serie, tabla_body), 
-        #     Paragraph(str(get_asignacion.asig_activo.activo), tabla_body), 
-        #     Paragraph("{}/{}".format(get_asignacion.asig_activo.activo_marca, get_asignacion.asig_activo.activo_modelo), tabla_body)
-        #     )]
-        # t = Table([t_titulos] + t_body, colWidths=[2 * cm, 3 * cm, 4 * cm, 3 * cm, 2 * cm, 4 * cm])
-        # t.setStyle(TableStyle(
-        #     [
-        #         ('GRID', (0, 0), (5, -1), 1, colors.dodgerblue),
-        #         ('LINEBELOW', (0, 0), (-1, 0), 2, colors.darkblue),
-        #         ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
-        #     ]
-        # ))
+        t_titulos=(
+            Paragraph('INFORMACION', tabla_head), 
+            Paragraph('DESCRIPCION', tabla_head), 
+            )
+        t_body=[
+            (Paragraph("ACTIVO", tabla_body), Paragraph(baja_obj.tb_activo.asig_activo.activo_nombre, tabla_body)),
+            (Paragraph("CATEGORIA", tabla_body), Paragraph(str(baja_obj.tb_activo.asig_activo.activo_categoria), tabla_body)),
+            (Paragraph("MARCA", tabla_body), Paragraph(str(baja_obj.tb_activo.asig_activo.activo_marca), tabla_body)),
+            (Paragraph("MODELO", tabla_body), Paragraph(str(baja_obj.tb_activo.asig_activo.activo_modelo), tabla_body)),
+            (Paragraph("SERIE", tabla_body), Paragraph(baja_obj.tb_activo.asig_activo.activo_serie, tabla_body)),
+            (Paragraph("CODIGO", tabla_body), Paragraph(baja_obj.tb_activo.asig_activo.activo_codigo_barra, tabla_body)),
+            (Paragraph("STATUS", tabla_body), Paragraph(baja_obj.tb_activo.asig_activo.get_activo_status_display(), tabla_body)),
+            (Paragraph("SITUACION", tabla_body), Paragraph(baja_obj.tb_activo.asig_activo.get_activo_situacion_display(), tabla_body)),
+            (Paragraph("OBSERVACION", tabla_body), Paragraph(baja_obj.tb_activo.asig_activo.activo_observacion, tabla_body)),
+            ]
+        t = Table([t_titulos] + t_body, colWidths=[3 * cm, 10 * cm])
 
-        # items.append(t)
+        t.setStyle(TableStyle(
+            [
+                ('GRID', (0, 0), (5, -1), 1, colors.dodgerblue),
+                ('LINEBELOW', (0, 0), (-1, 0), 2, colors.darkblue),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+            ]
+        ))
+
+        items.append(Spacer(1, 0.5*cm))
+        items.append(t)
 
 
         
