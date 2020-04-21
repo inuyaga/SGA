@@ -1,7 +1,7 @@
 from django.db import models
 from aplicaciones.pedidos.models import Area, Marca
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 Usuario = get_user_model()
 
 ESTADO=((1, 'Vigente'), (2,'Historio'), (3, 'Pendiente'))
@@ -34,6 +34,12 @@ class Activo(models.Model):
             return "Usuario:{} Nombre:{}".format(asig.asig_user, asig.asig_user.get_full_name())
         except ObjectDoesNotExist as error:
             return "No"
+        except MultipleObjectsReturned as error:
+            asig = Asignacion.objects.filter(asig_activo=self.activo)
+            text=""
+            for item in asig:
+                text += "Usuario:{} Nombre:{} Estado:{} <--->".format(item.asig_user, item.asig_user.get_full_name(), item.get_asig_estado_display())
+            return text
 
 
 
