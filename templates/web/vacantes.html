@@ -1,0 +1,48 @@
+{% extends 'web/base.html' %}
+
+{% block titulo %}
+    CCS | Vacantes
+{% endblock titulo %}
+
+
+{% block contenido %}
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    
+<div class="container">     
+    {% if messages %}
+                    {% for message in messages %}
+                    <div {% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{message}}
+                    </div>
+                    {% endfor %}
+                    {% endif %} 
+
+    {% for item in object_list %}
+    <div class="card mb-3">
+        <img src="{{item.va_imagen.url}}" class="card-img-top" alt="..." height="500px">
+        <div class="card-body">
+          <h5 class="card-title">Solicita Departamento: {{item.va_departamento}}</h5>
+          
+
+          <h5 class="card-title">{{item.va_nombre_vacante}}</h5>
+          <p style="font-weight: bold;">{{item.va_descripcion}}</p>
+
+          <h5 class="card-title">Requerimientos</h5>
+          <p style="font-weight: bold;">{{item.va_requeriemientos}}</p>
+
+          <h5 class="card-title">Observaciones</h5>
+          <p style="font-weight: bold;">{{item.va_observaciones}}</p>
+          <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+          <a href="{% url 'web:va_postular' %}?vacante={{item.id}}" class="btn btn-success">Postularme</a>
+        </div>
+      </div>
+    {% endfor %}
+</div>  
+        
+{% endblock contenido %}
+    
+    

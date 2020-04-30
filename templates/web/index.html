@@ -1,0 +1,316 @@
+{% extends 'web/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block contenido %}
+        
+
+        <!-- start banner Area -->
+        <section class="banner-area relative" id="home">
+            <div class="container">
+                
+                <div class="row fullscreen d-flex align-items-center justify-content-end">
+                    <div class="banner-content col-lg-7 col-md-12">
+                        <h4 class="text-uppercase">¿Quienes sómos?</h4>
+                        <h1>
+                            Comercializadora Computel del Sureste					
+                        </h1>
+                        <p>
+                            Computel es una empresa 100% Tabasqueña, líder en el ramo papelero que se dedica a la venta al mayoreo de Papeleria, Artículos escolares y de oficina.
+                        </p>
+                        <a href="#feature" class="primary-btn header-btn text-uppercase">Saber mas</a>
+                    </div>												
+                </div>
+            </div>
+        </section>
+        <!-- End banner Area -->	
+        
+        <!-- Start feature Area --> 
+        <section class="feature-area section-gap" id="feature">
+            <div class="container">
+                <div class="row">
+                    <div class="single-feature col-lg-4">
+                        <img class="img-fluid" src="img/f1.png" alt="">
+                        <h4>¿Quienes sómos?</h4>
+                        <p>Computel es una empresa 100% Tabasqueña, líder en el ramo papelero que se dedica
+                            a la venta al mayoreo de Papeleria, Artículos escolares y de oficina, equipos de cómputo y
+                            consumibles para cómputo y muebles para escuelas y oficinas.</p>
+                    </div>
+                    <div class="single-feature col-lg-4">
+                        <img class="img-fluid" src="img/f2.png" alt="">
+                        <h4>Nuestra Misíon</h4>
+                        <p>Brindar a nuestros clientes de mayoreo, iniciativa privada e instituciones
+                            gubernamentales la mejor opción en precios, el mejor surtido en artículos escolares, de
+                            oficina y cómputo y el mejor servicio en el sureste mexicano a través de un equipo humano
+                            capaz y comprometido con la mejora continua.</p>
+                    </div>
+                    <div class="single-feature col-lg-4">
+                        <img class="img-fluid" src="img/f3.png" alt="">
+                        <h4>Nuestra Visión</h4>
+                        <p>Ser la empresa líder del ramo papelero en el sureste mexicano, que nuestros servicios,
+                            nuestros precios y el más amplio surtido sean lo que nos caracterice, además de estar
+                            siempre a la vanguardia en tecnología.</p>
+                    </div>												
+                </div>
+            </div>	
+        </section>
+        <!-- End feature Area -->
+
+
+        <section class="section-gap" id="promotions">
+            <div class="container">
+                <div class="title text-center">
+                    <h1 class="mb-10">Nuestras ultimas promociones</h1>
+                    <!-- <p>Who are in extremely love with eco friendly system.</p> -->
+                </div>
+            <div class="row">
+                
+                {% for item in promo_list %}
+                <div class="col-sm-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{item.promo_imagen.url}}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">{{item.promo_nombre}}</h5>
+                          <p class="card-text">{{item.promo_descripcion}}</p>
+                          <a href="#" class="btn btn-primary">{{item.promo_precio|intcomma}}</a>
+                        </div>
+                      </div>
+                </div>
+                {% endfor %}
+                    
+            
+            
+            </div>
+            </div>
+        </section>
+
+        <!-- Start testimonial Area -->
+        <section class="testimonial-area relative section-gap">
+            <div class="overlay overlay-bg"></div>
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="menu-content pb-60 col-lg-8">
+                        <div class="title text-center">
+                            <h1 class="mb-10 text-white">Excelencia en el servicio</h1>
+                            <!-- <p class="text-white">Who are in extremely love with eco friendly system.</p> -->
+                        </div>
+                    </div>
+                </div>						
+                <div class="row">
+                    <div class="active-testimonial">
+                        <div class="single-testimonial item d-flex flex-row">
+                            <div class="thumb">
+                                <img class="img-fluid" src="{% static 'img/user1.png' %}" alt="">
+                            </div>
+                            <div class="desc">
+                                <p>
+                                    Brindar nuestro mejor esfuerzo en cada una de nuestras actividades, garantizando así la satisfacción del cliente.
+                                </p>
+                                <!-- <h4 mt-30>Mark Alviro Wiens</h4> -->
+                                <!-- <p>CEO at Google</p> -->
+                            </div>
+                        </div>
+                        <div class="single-testimonial item d-flex flex-row">
+                            <div class="thumb">
+                                <img class="img-fluid" src="img/user1.png" alt="">
+                            </div>
+                            <div class="desc">
+                                <p>
+                                    Actuar de manera consciente y madura en el cumplimiento de nuestro compromiso.
+                                </p>
+                                <!-- <h4 mt-30>Mark Alviro Wiens</h4> -->
+                                <!-- <p>CEO at Google</p> -->
+                            </div>
+                        </div>
+                        <div class="single-testimonial item d-flex flex-row">
+                            <div class="thumb">
+                                <img class="img-fluid" src="img/user1.png" alt="">
+                            </div>
+                            <div class="desc">
+                                <p>
+                                    Luchar de manera conjunta y participativa con pasión y dedicación, por el logro objetivos comunes.
+                                </p>
+                                <!-- <h4 mt-30>Mark Alviro Wiens</h4> -->
+                                <!-- <p>CEO at Google</p> -->
+                            </div>
+                        </div>
+                        <div class="single-testimonial item d-flex flex-row">
+                            <div class="thumb">
+                                <img class="img-fluid" src="img/user1.png" alt="">
+                            </div>
+                            <div class="desc">
+                                <p>
+                                    Trabajar con rectitud y justicia, convencidos de que es la única manera de trascender y mirar de frente como verdaderos triunfadores.
+                                </p>
+                                <!-- <h4 mt-30>Mark Alviro Wiens</h4> -->
+                                <!-- <p>CEO at Google</p> -->
+                            </div>
+                        </div>
+                        <div class="single-testimonial item d-flex flex-row">
+                            <div class="thumb">
+                                <img class="img-fluid" src="img/user1.png" alt="">
+                            </div>
+                            <div class="desc">
+                                <p>
+                                    Aceptar que podemos ser mejores, nos permite estar atentos para aprovechar las oportunidades de superación y desarrollo constantes que se nos presentan.
+                                </p>
+                                <!-- <h4 mt-30>Mark Alviro Wiens</h4> -->
+                                <!-- <p>CEO at Google</p> -->
+                            </div>
+                        </div>
+                        <div class="single-testimonial item d-flex flex-row">
+                            <div class="thumb">
+                                <img class="img-fluid" src="img/user1.png" alt="">
+                            </div>
+                            <div class="desc">
+                                <p>
+                                    Consientes de que pertenecemos a una sociedad, contribuimos a su crecimiento a través de la generación de empleos, el cuidado del medio ambiente, los precios accesibles y la participación en actividades de beneficio.
+                                </p>
+                                <!-- <h4 mt-30>Mark Alviro Wiens</h4> -->
+                                <!-- <p>CEO at Google</p> -->
+                            </div>
+                        </div>
+                       						
+                    </div>					
+                </div>
+            </div>	
+        </section>
+        <!-- End testimonial Area -->
+
+        <!-- Start offered Area -->
+        <section class="offered-area" id="weoffer">
+            <div class="container">
+                <div class="menu-content pb-60 col-lg-8">
+                    <div class="title text-center">
+                        <h1 class="mb-10 text-white">Our Offered Services</h1>
+                        <p class="text-white">Who are in extremely love with eco friendly system.</p>
+                    </div>
+                </div>					
+                <div class="row align-items-center justify-content-start">
+                    <div class="col-lg-6 offered-left">
+                        <div class="offer-wrap flex-row d-flex row">
+                            
+                            {% for item in catagolo_list %}
+                            
+                        <div class="col-4">
+                            <div class="single-offer mb-30">
+                                <a href="{{item.cat_file.url}}"><img class="img-fluid" src="{{item.cat_img.url}}" alt=""></a>
+                            </div> 
+                        </div>
+                                
+                            {% endfor %}
+                            
+                           							
+                        </div>																	
+                    </div>
+                    <div class="col-lg-5 offered-right">
+                        <h4>Catalogos</h4>
+                        <p class="pt-20 pb-20">
+                            Consulta nuestros ultimos catalogos
+                        </p>
+                        <a href="#" class="primary-btn header-btn text-uppercase">Mas Información</a>
+                    </div>
+                </div>
+            </div>	
+        </section>
+        <!-- End offered Area -->
+        
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+        
+
+
+        <section id="expos">
+            <div class="container">
+
+                <div class="row d-flex justify-content-center">
+                    <h1>Expos computel</h1>
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div {% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                        {{message}}
+                    </div>
+                    {% endfor %}
+                    {% endif %} 
+
+
+
+{% for item in evento_list %}    
+                    <div class="card mb-3">
+                        <img src="{{item.event_imagen.url}}" class="card-img-top" alt="..." height="500px">
+                        <div class="card-body">
+                          <h5 class="card-title">{{item.event_nombre}}</h5>
+                          <li>Nombre: {{item.event_nombre}}</li>
+                        <li>Inicio: {{item.event_fecha_inicial}}</li>
+                        <li>Fin: {{item.event_fecha_final}}</li>
+                        <li>Ubicacion: {{item.event_ubicacion}}</li>
+                        <li>Hora: {{item.event_hora_inicio}}--{{item.event_hora_fin}}</li>
+                        <li>Patrocinado: {{item.event_patrocinado}}</li>
+                        <p style="font-weight: bold;">{{item.event_especificacion}}</p>
+                          <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+                          <a href="{% url 'web:inscripcion' %}?codex={{item.id}}" class="btn btn-success">Inscribir</a>
+                        </div>
+                      </div>
+                      {% endfor %}
+
+
+            </div>
+
+                
+
+        </section>
+
+
+
+        <!-- Start brand Area -->
+        <section class="brand-area">
+            <div class="container">
+                <div class="row logo-wrap">
+                    {% for item in marca_list %}
+                    <a class="col single-img" href="#">
+                        <img class="d-block mx-auto" src="{{item.marca_img.url}}" width="100px" height="50px" alt="">
+                    </a>
+                    {% endfor %}
+                </div>	
+            </div>	
+        </section>
+        <!-- End brand Area -->	
+
+        <!-- start contact Area -->		
+        <section class="contact-area section-gap" id="contact">
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="menu-content pb-30 col-lg-8">
+                        <div class="title text-center">
+                            <h1 class="mb-10">Si lo necesita, solo envíenos un mensaje</h1>
+                            {% if messages %}
+                            {% for message in messages %}
+                            <div {% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+                              {{message}}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>										
+                <form  action="" method="POST" class="contact-form text-right">
+                    <div class="row">	
+                        {% csrf_token %}
+                        {{msn_ccs.as_table }}
+            
+                        <input class="primary-btn mt-20" type="submit" value="Enviar Mensaje">
+                    </div>
+                </form>						
+                
+            </div>	
+        </section>
+        <!-- end contact Area -->	
+{% endblock contenido %}
+    

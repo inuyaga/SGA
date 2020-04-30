@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'aplicaciones.ods',
     'aplicaciones.plan_de_trabajo.apps.PlanDeTrabajoConfig',
     'aplicaciones.expo',
+    'aplicaciones.web',
 ]
 
 MIDDLEWARE = [

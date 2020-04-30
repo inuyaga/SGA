@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-mx" class="no-js">
+<head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="img/fav.png">
+    <!-- Author Meta -->
+    <meta name="author" content="codepixer">
+    <!-- Meta Description -->
+    <meta name="description" content="">
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+    <!-- Site Title -->
+    <title>
+        CCS | 
+        {% block titulo %}
+            Inicio
+        {% endblock titulo %}
+            
+    </title>
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
+        <!--
+        CSS
+        ============================================= -->
+        <link rel="stylesheet" href="{% static 'css/linearicons.css' %}">
+        <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+        <link rel="stylesheet" href="{% static 'css/nice-select.css' %}">
+        <link rel="stylesheet" href="{% static 'css/animate.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    </head>
+    <body>
+
+          <header id="header" id="home">
+            <div class="container">
+                <div class="row align-items-center justify-content-between d-flex">
+                  <div id="logo">
+                    <a href="{% url 'web:inicio' %}"><img src="{% static 'img/computel.png' %}" height="60px" alt="" title="" /></a>
+                  </div>
+                  <nav id="nav-menu-container">
+                    <ul class="nav-menu">
+                      <li class="menu-active"><a href="#feature">Nosotros</a></li>
+                      <li><a href="#promotions">Promociones</a></li>
+                      <li><a href="#weoffer">Catalogo</a></li>
+                      <li><a href="#expos">Expos</a></li>
+                      <li><a href="#contact">Contacto</a></li>
+                      <li class="menu-has-children"><a href="">Servicios</a>
+                        <ul>
+                          <li><a href="http://sue.computel.com.mx/">Foraneos</a></li>
+                          <li><a href="http://201.163.187.53:8080/EmisionDisXII/principal.php">Factura</a></li>
+                          <li><a href="{% url 'web:vacantes' %}">Bolsa de trabajo</a></li>
+                          
+                          {% if user.is_authenticated  %}
+                          <li><a href="{% url 'inicio:index' %}">SGA</a></li>
+                          <li><a href="{% url 'salir' %}">Salir</a></li>
+                          {% else %}
+                          <li><a href="{% url 'inicio' %}">Logearse</a></li>
+                          {% endif %}
+                              
+                        </ul>
+                      </li>
+                    </ul>
+                  </nav><!-- #nav-menu-container -->		    		
+                </div>
+            </div>
+          </header><!-- #header -->
+
+
+          
+          {% block contenido %}
+              
+          
+          
+    
+
+        {% endblock contenido %}
+
+
+        
+        {% block footer %}
+            
+        
+            
+        <!-- start footer Area -->		
+        <footer class="footer-area section-gap">
+            <div class="container">
+                <div class="row">
+                    <!-- <div class="col-lg-3  col-md-6 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h4 class="text-white">¿Quienes sómos?</h4>
+                            <p>
+                                Computel es una empresa 100% Tabasqueña, líder en el ramo papelero que se dedica a la venta al mayoreo de Papeleria, Artículos escolares y de oficina, equipos de cómputo y consumibles para cómputo y muebles para escuelas y oficinas.
+                            </p>
+                        </div>
+                    </div> -->
+                    <!-- <div class="col-lg-4  col-md-6 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h4 class="text-white">Contact Us</h4>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore magna aliqua.
+                            </p>
+                            <p class="number">
+                                012-6532-568-9746 <br>
+                                012-6532-569-9748
+                            </p>
+                        </div>
+                    </div>						 -->
+                  		
+                </div>
+                <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap">
+   
+        <p>
+          Todos los derechos reservados © Comercializadora Computel del Sureste {% now "Y" %}
+Sitio desarrollado por Departamento de desarrollo. Potenciado por Django
+        </p>
+        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    <div class="footer-social d-flex align-items-center">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-dribbble"></i></a>
+                        <a href="#"><i class="fa fa-behance"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>	
+        <!-- End footer Area -->
+
+        {% endblock footer %}
+
+        <script src="{% static 'js/vendor/jquery-2.2.4.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="js/vendor/bootstrap.min.js"></script>			
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
+        <script src="{% static 'js/easing.min.js' %}"></script>
+        <script src="{% static 'js/hoverIntent.js' %}"></script>
+        <script src="{% static 'js/superfish.min.js' %}"></script>
+        <script src="{% static 'js/jquery.ajaxchimp.min.js' %}"></script>
+        <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+        <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+        <script src="{% static 'js/jquery.sticky.js' %}"></script>
+        <script src="{% static 'js/jquery.nice-select.min.js' %}"></script>
+        <script src="{% static 'js/waypoints.min.js' %}"></script>
+        <script src="{% static 'js/jquery.counterup.min.js' %}"></script>
+        <script src="{% static 'js/parallax.min.js' %}"></script>
+        <script src="{% static 'js/mail-script.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
+
+        
+        {% block script %}
+            
+        {% endblock script %}
+            
+    </body>
+</html>
+
+
+

@@ -21,6 +21,7 @@ from ajax_select import urls as ajax_select_urls
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
+    path('', include('aplicaciones.web.urls'), name='web'),
     path('adminsga/', admin.site.urls),
     path('ods/', include('aplicaciones.ods.urls'), name='ods'),
     path('empresa/', include('aplicaciones.empresa.urls'), name='empresa'),
@@ -30,7 +31,7 @@ urlpatterns = [
     path('pedidos/', include('aplicaciones.pedidos.urls'), name='pedidos'),
     path('login/',LoginView.as_view(template_name='index/inicio.html'), name='inicio'),
     path('salir/', LogoutView.as_view(template_name='index/salir.html'), name="salir"),
-    path('', include('aplicaciones.inicio.urls'), name='principal'),
+    path('sga', include('aplicaciones.inicio.urls'), name='principal'),
     re_path(r'^ajax_select/', include(ajax_select_urls)),
     path('Expos/', include('aplicaciones.expo.urls'), name='expo'),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
