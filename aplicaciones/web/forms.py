@@ -1,5 +1,5 @@
 from django import forms
-from aplicaciones.web.models import CorreoCco, RegistroExpo, Postulacion
+from aplicaciones.web.models import CorreoCco, RegistroExpo, Postulacion, Domicilio
 
 class CooreoForm(forms.ModelForm):
     class Meta:
@@ -32,3 +32,21 @@ class PostulacionForm(forms.ModelForm):
         super(PostulacionForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class DomicilioForm(forms.ModelForm):
+    class Meta:
+        model = Domicilio
+        # fields = '__all__'
+        exclude = ['dom_activo', 'dom_creador']
+    def __init__(self, *args, **kwargs):
+        super(DomicilioForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'}) 
+
+
+        self.fields['dom_estado'].widget.attrs.update({':readonly': 'true'})
+        self.fields['dom_delegacion'].widget.attrs.update({':readonly': 'true'})
+        self.fields['dom_estado'].widget.attrs.update({'v-model': 'Estado'})
+        self.fields['dom_delegacion'].widget.attrs.update({'v-model': 'Delegacion'})
+        self.fields['dom_codigo_p'].widget.attrs.update({'v-model': 'code_postal'})
+        self.fields['dom_codigo_p'].widget.attrs.update({'@blur': 'post_item()'})

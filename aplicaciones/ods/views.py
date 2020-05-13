@@ -24,7 +24,7 @@ from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT, TA_LEFT
 PAGE_WIDTH = letter[0]
 PAGE_HEIGHT = letter[1]
 
-from aplicaciones.empresa.models import Departamento, Pertenece_empresa
+from aplicaciones.empresa.models import Departamento
 class OrdenServiciotListView(ListView): 
     model = OrdenServicio
     paginate_by = 200
@@ -273,22 +273,17 @@ class OdsGeneraPDF(View):
 
 
 
-        try:
-            usr_pertenece=Pertenece_empresa.objects.get(pertenece_id_usuario=self.ods_object.ods_asignacion.asig_user)
-            print(usr_pertenece)
-            dta=[
-                ('Clave de equipo(ID activo):', self.ods_object.ods_asignacion.asig_activo.activo),
-                ('Empresa:', usr_pertenece.pertenece_empresa.departamento_id_sucursal.sucursal_empresa_id),
-                ('Sucursal:', usr_pertenece.pertenece_empresa.departamento_id_sucursal),
-                ('Departamento:', usr_pertenece.pertenece_empresa),
-                ('Usuario:', "{}  -->  {}".format(self.ods_object.ods_asignacion.asig_user, self.ods_object.ods_asignacion.asig_user.get_full_name())),
-                ('Tipo de Servicio:', self.ods_object.get_ods_tipo_serv_display()),
-                ('Estado ods:', self.ods_object.get_ods_status_display()),
-                ]
-        except Pertenece_empresa.ObjectDoesNotExist as obj_no:
-            txt="ES NECESARIO QUE EL USUARIO PERTENEZCA A ALGUN DEPARTAMENTO" 
-            p=Paragraph(txt, stylo_titulo)
-            items.append(p)
+        
+        dta=[
+            ('Clave de equipo(ID activo):', self.ods_object.ods_asignacion.asig_activo.activo),
+            ('Empresa:', request.user.departamento.departamento_id_sucursal.sucursal_empresa_id),
+            ('Sucursal:', request.user.departamento.departamento_id_sucursal),
+            ('Departamento:', request.user.departamento),
+            ('Usuario:', "{}  -->  {}".format(self.ods_object.ods_asignacion.asig_user, self.ods_object.ods_asignacion.asig_user.get_full_name())),
+            ('Tipo de Servicio:', self.ods_object.get_ods_tipo_serv_display()),
+            ('Estado ods:', self.ods_object.get_ods_status_display()),
+            ]
+        
         
         
         
@@ -381,14 +376,15 @@ class RefaccionCrear(CreateView):
         form.instance.ref_precio=form.instance.ref_produc.producto_precio
         ods_id=int(self.kwargs.get('ID_ods'))
         form.instance.ref_ods_id=ods_id
-        id_user=form.instance.ref_ods.ods_asignacion.asig_user
-        try:
-            depo=Pertenece_empresa.objects.get(pertenece_id_usuario=id_user) 
-            form.instance.ref_departamento=depo.pertenece_empresa
-        except ObjectDoesNotExist as obj_no_exits:
-            messages.info(self.request, 'Es necesario que el usuario asignado al activo, esté asignado algun departamento')
-            context = super().get_context_data()
-            return render(self.request, self.template_name, context=context)
+        form.instance.ref_departamento=form.instance.ref_ods.ods_asignacion.asig_user.departamento
+        # id_user=form.instance.ref_ods.ods_asignacion.asig_user.departamento
+        # try:
+        #     depo=Pertenece_empresa.objects.get(pertenece_id_usuario=id_user) 
+            
+        # except ObjectDoesNotExist as obj_no_exits:
+        #     messages.info(self.request, 'Es necesario que el usuario asignado al activo, esté asignado algun departamento')
+        #     context = super().get_context_data()
+        #     return render(self.request, self.template_name, context=context)
         return super().form_valid(form)
 
     def get_success_url(self):

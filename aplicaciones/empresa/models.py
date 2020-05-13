@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-Usuario = get_user_model()
+from django.conf import settings
+Usuario = settings.AUTH_USER_MODEL
 STATUS=((1, 'Activo'), (2, 'Inactivo'))
 # Create your models here.
 # pylint: disable = E1101
@@ -51,7 +51,7 @@ class Departamento(models.Model):
     departamento_id_sucursal = models.ForeignKey(Sucursal, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Sucursal')
 
     class Meta:
-        ordering = ["departamento_nombre"]
+        ordering = ["departamento_nombre"] 
         verbose_name_plural = "4. Departamento"
 
     def __str__(self):

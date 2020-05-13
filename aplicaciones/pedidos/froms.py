@@ -3,8 +3,8 @@ from aplicaciones.pedidos.models import (Area, Marca, Producto, Pedido, Configur
 Inventario)
 
 
-from django.contrib.auth import get_user_model
-Usuario = get_user_model()
+from aplicaciones.inicio.models import User
+Usuario = User
 from ajax_select.fields import AutoCompleteSelectMultipleField
 class AreaForm(forms.ModelForm):
     class Meta:

@@ -28,12 +28,13 @@ SECRET_KEY = 't7dwliwxz85wzm%7u87-&#*0n(#weq571q((%6iol+l%%kdm+x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'aplicaciones.inicio',
     'rangefilter',  # <-   add the app
     'ajax_select',  # <-   add the app
     'django.contrib.admin',
@@ -48,13 +49,13 @@ INSTALLED_APPS = [
     'aplicaciones.pedidos',
     'aplicaciones.fuds',
     'aplicaciones.activos',
-    'aplicaciones.inicio',
     'aplicaciones.ods',
     'aplicaciones.plan_de_trabajo.apps.PlanDeTrabajoConfig',
     'aplicaciones.expo',
     'aplicaciones.web',
 ]
 
+AUTH_USER_MODEL = 'inicio.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -93,7 +94,7 @@ WSGI_APPLICATION = 'SGA.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'SGA',
+        'NAME': 'sga_v2',
         'USER': 'externo',
         'PASSWORD': '0102261218',
         'HOST': '192.168.1.228',

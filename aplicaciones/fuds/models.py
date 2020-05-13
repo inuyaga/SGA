@@ -5,8 +5,8 @@ from datetime import datetime
 from aplicaciones.pedidos.models import Producto
 
 
-from django.contrib.auth import get_user_model
-Usuario = get_user_model()
+from django.conf import settings
+Usuario = settings.AUTH_USER_MODEL
 DEVOLUCION = ((1,'Total'),(2,'Parcial'),(3,'N/A'))
 ESTADOS = ((1,'Creado'),(2,'Autorizado'),(3,'En transito'),(4,"Entregado"),(5,"Finalizado"))
 class Conformidad(models.Model):

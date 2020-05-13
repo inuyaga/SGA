@@ -1,8 +1,8 @@
 from django.db import models
 from aplicaciones.pedidos.models import Area, Marca
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-Usuario = get_user_model()
+from django.conf import settings
+Usuario = settings.AUTH_USER_MODEL
 
 ESTADO=((1, 'Vigente'), (2,'Historio'), (3, 'Pendiente'))
 VIDA_ACTIVO=((1, 'Nuevo'), (2,'Buen estado'), (3,'Deteriorado'), (4,'-------'), (5,'Tramite de baja'), (6,'Baja'))

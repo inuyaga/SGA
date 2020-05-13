@@ -10,8 +10,8 @@ from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 import datetime
 from django.utils import timezone
 from django.shortcuts import redirect
-from django.contrib.auth import get_user_model
-Usuario = get_user_model()
+from aplicaciones.inicio.models import User
+Usuario = User
 # Register your models here.
 
 class UserStafFilter(admin.SimpleListFilter):

@@ -6,9 +6,8 @@ from django.db import models
 from aplicaciones.empresa.models import Departamento, Sucursal, Empresa
 from django.db.models import Avg, Sum, F
 
-from django.contrib.auth import get_user_model
-# pylint: disable = E1101
-Usuario = get_user_model()
+from django.conf import settings
+Usuario = settings.AUTH_USER_MODEL
 
 # Create your models here.
 STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Cancelado'),(4, 'Venta'),(5, 'Facturado'), (6, 'Finalizado'), (7, 'Descargado'))
@@ -38,7 +37,7 @@ class Area(models.Model):
 class Producto(models.Model):
     producto_codigo = models.CharField(max_length=15, primary_key=True)  
     producto_nombre = models.CharField(max_length=50, verbose_name='Nombre')
-    producto_descripcion = models.CharField(max_length=150, verbose_name='Descripcion')
+    producto_descripcion = models.CharField(max_length=150, verbose_name='Descripcion') 
     producto_imagen = models.ImageField(blank=False, null=False, upload_to="img_productos/", verbose_name='Imagen')
     producto_marca = models.ForeignKey(Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
     producto_area = models.ForeignKey(Area, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Area')
@@ -54,6 +53,8 @@ class Producto(models.Model):
     prducto_unidad=models.CharField(max_length=100, verbose_name='Unidad', null=True, blank=True)
     prducto_resguardo=models.CharField(max_length=50, verbose_name='Localizacion en resguardo', null=True, blank=True)
     prducto_existencia=models.IntegerField(verbose_name='Existencia', null=True, blank=True)
+
+    producto_descripcion_web=models.TextField('Descripcion enriquecido para sitio web', blank=True, null=True)
 
 
     class Meta:

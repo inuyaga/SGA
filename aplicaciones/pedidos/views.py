@@ -10,7 +10,7 @@ from aplicaciones.pedidos.models import (Area, Marca, Producto, Detalle_pedido, 
 from aplicaciones.pedidos.froms import (AreaForm, MarcaForm, ProductoForm, PedidoForm, ProductoKitForm, ConfigForm, Tipo_PedidoForm, AsigGastoForm,
                                         PedidoVentaForm, PedidoFacturaForm, PedidoSalidaForm, Catalogo_ProductosForm, InventarioResguardoForm, InventarioPikinForm,
                                         InventarioOtrosForm, InventarioMermaForm, InventarioEdit)
-from aplicaciones.empresa.models import Pertenece_empresa
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, Q
 from django.db import IntegrityError
@@ -438,14 +438,11 @@ class ProductoCompraList(DetailView):
         # INICIALIZAMOS LA FECHA FINAL
         end_date = datetime(today.year, today.month, last_day)
 
-        try:
-            empresa_pertenece = Pertenece_empresa.objects.get(
-                pertenece_id_usuario=self.request.user)
-            conteo_pedido = Pedido.objects.filter(pedido_tipoPedido=tipo_pedido, pedido_id_depo=empresa_pertenece.pertenece_empresa,
+        conteo_pedido = Pedido.objects.filter(pedido_tipoPedido=tipo_pedido, pedido_id_depo=self.request.user.departamento,
                                                   pedido_fecha_pedido__range=(start_date, end_date)).exclude(pedido_status=3).count()
-            context['pedidos_del_mes'] = conteo_pedido
-        except ObjectDoesNotExist as error:
-            context['msn_empresa'] = 'Para poder hacer pedidos es nesesario que pertenesca a una empresa, ¡comuniquese con el administrador del sistema!'
+        context['pedidos_del_mes'] = conteo_pedido
+
+
 
         return context
 
@@ -469,15 +466,12 @@ class ProductoCompraList(DetailView):
             # OBTENER ID DE TIPO PEDIDO
 
             get_tipo_pedido = Tipo_Pedido.objects.get(tp=tipo_pedido)
-            # OBTENER QUE DEPARTAMENTO PERTENECE
-            get_depo = Pertenece_empresa.objects.get(
-                pertenece_id_usuario=request.user)
+            
             # OBTENER CODIGO DE PRODUCTO EN ESPECIFICO
             producto = Producto.objects.get(producto_codigo=codigo)
             # LIMITE DE GASTO DEL DEPARTAMENTO
             try:
-                get_gasto = Asignar_gasto_sucursal.objects.get(
-                    ags_tipo_ped=tipo_pedido, ags_sucursal=get_depo.pertenece_empresa)
+                get_gasto = Asignar_gasto_sucursal.objects.get(ags_tipo_ped=tipo_pedido, ags_sucursal=request.user.departamento)
                 limite_gasto = get_gasto.ags_maximo_gasto
                 # OBTENEMOS LA SUMA TOTAL DE PEDIDO EN EL MOMENTO PREVIO AL PEDIDO EN ESPECIFICO DETALLE DE PEDIDO
                 suma_pedido = Detalle_pedido.objects.filter(detallepedido_creado_por=request.user, detallepedido_status=False, detallepedido_tipo_pedido=tipo_pedido).aggregate(
@@ -594,9 +588,7 @@ class DetalleDelete(DeleteView):
 
 class Crear_pedido_tiendaView(View):
     def get(self, request, *args, **kwargs):
-        empresa_pertenece = Pertenece_empresa.objects.get(
-            pertenece_id_usuario=request.user)
-        departamento = empresa_pertenece.pertenece_empresa.departamento_id_depo
+        departamento = request.user.departamento.departamento_id_depo
         tipo_pedido = self.kwargs.get('tipo')
 
         conteo_tip_ped = Detalle_pedido.objects.filter(
@@ -904,10 +896,6 @@ class PedidoListSucursal(ListView):
     def get_queryset(self):
         queryset = super(PedidoListSucursal, self).get_queryset()
         try:
-            # OBTENER A QUE SUCURSAL PERTENECE EL USUARIO
-            pertenece = Pertenece_empresa.objects.get(
-                pertenece_id_usuario=self.request.user)
-
             status = self.request.GET.get('status')
             inicio = self.request.GET.get('inicio')
             fin = self.request.GET.get('fin')
@@ -915,17 +903,17 @@ class PedidoListSucursal(ListView):
             if inicio != None and fin != None:
                 if inicio != '' and fin != '':
                     queryset = queryset.filter(
-                        pedido_id_depo=pertenece.pertenece_empresa, pedido_fecha_pedido__range=(inicio, fin))
+                        pedido_id_depo=self.request.user.departamento, pedido_fecha_pedido__range=(inicio, fin))
 
             if status != None:
                 if status == '0':
                     pass
                 else:
                     queryset = queryset.filter(
-                        pedido_status=status, pedido_id_depo=pertenece.pertenece_empresa)
+                        pedido_status=status, pedido_id_depo=self.request.user.departamento)
             else:
                 queryset = queryset.filter(
-                    pedido_id_depo=pertenece.pertenece_empresa, pedido_status=1)
+                    pedido_id_depo=self.request.user.departamento, pedido_status=1)
 
         except ObjectDoesNotExist as NoExiste:
             messages.warning(
@@ -945,16 +933,11 @@ class SelectTipoCompraView(ListView):
 
     def get_queryset(self):
         queryset = super(SelectTipoCompraView, self).get_queryset()
-        try:
-            object_empresa_user = Pertenece_empresa.objects.get(
-                pertenece_id_usuario=self.request.user)
-            queryset = queryset.filter(
-                tp_empresa=object_empresa_user.pertenece_empresa.departamento_id_sucursal.sucursal_empresa_id)
-        except ObjectDoesNotExist as error:
-            messages.info(
-                self.request, 'No ha sido asignado a una empresa, contacte con el administrador del sitio.')
-            queryset = queryset.none()
-
+        if self.request.user.departamento != None:
+            queryset = queryset.filter(tp_empresa=self.request.user.departamento.departamento_id_sucursal.sucursal_empresa_id)
+        else:
+            messages.info(self.request, 'No ha sido asignado a una empresa, contacte con el administrador del sitio.')
+            queryset = queryset.none()          
         return queryset
 
     def get_context_data(self, **kwargs):

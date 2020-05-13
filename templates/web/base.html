@@ -2,26 +2,23 @@
 <!DOCTYPE html>
 <html lang="es-mx" class="no-js">
 <head>
+    <title>Computel | {% block titulo %}Inicio{% endblock titulo %}</title>
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="{% static 'LOGOTIPOOMERCIALIZADORA.ico' %}">
     <!-- Mobile Specific Meta -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Favicon-->
-    <link rel="shortcut icon" href="img/fav.png">
+    {% block SEO %}
     <!-- Author Meta -->
-    <meta name="author" content="codepixer">
+    <meta name="author" content="https://www.facebook.com/marioestebanh">
     <!-- Meta Description -->
-    <meta name="description" content="">
+    <meta name="description" content="Computel es una empresa 100% Tabasqueña, líder en el ramo papelero que se dedica a la venta al mayoreo de Papeleria, Artículos escolares y de oficina.">
     <!-- Meta Keyword -->
-    <meta name="keywords" content="">
+    <meta name="keywords" content="papeleria, computo, copias, impresion, digital, impresoras, limpieza">
     <!-- meta character set -->
     <meta charset="UTF-8">
     <!-- Site Title -->
-    <title>
-        CCS | 
-        {% block titulo %}
-            Inicio
-        {% endblock titulo %}
-            
-    </title>
+    {% endblock SEO %}
+        
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
         <!--
@@ -35,6 +32,12 @@
         <link rel="stylesheet" href="{% static 'css/animate.min.css' %}">
         <link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}">
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+        
+        {% block head %}
+            
+        {% endblock head %}
+            
     </head>
     <body>
 
@@ -46,20 +49,46 @@
                   </div>
                   <nav id="nav-menu-container">
                     <ul class="nav-menu">
-                      <li class="menu-active"><a href="#feature">Nosotros</a></li>
-                      <li><a href="#promotions">Promociones</a></li>
-                      <li><a href="#weoffer">Catalogo</a></li>
-                      <li><a href="#expos">Expos</a></li>
-                      <li><a href="#contact">Contacto</a></li>
+                    {% url 'web:inicio' as url_site %}
+                      <li {% if request.path == url_site %}class="menu-active"{% endif %}><a href="{% url 'web:inicio' %}">Inicio</a></li>
+                      <li><a href="{% url 'web:inicio' %}#feature">Nosotros</a></li>
+                      <li><a href="{% url 'web:inicio' %}#promotions">Promociones</a></li>
+                      <li><a href="{% url 'web:inicio' %}#weoffer">Catalogo</a></li>
+                      <li><a href="{% url 'web:inicio' %}#expos">Expos</a></li>
+                      <li><a href="{% url 'web:inicio' %}#contact">Contacto</a></li>
+                                              
+                      
+                      {% url 'web:list_prod' as url_site %} 
+                      <li {% if request.path == url_site %}class="menu-active"{% endif %}><a href="{% url 'web:list_prod' %}">Comprar</a></li>
+                      {% if user.is_authenticated  %}  
+                      <li class="menu-has-children"><a href="">{{user}}</a>
+                        <ul>
+                          <li><a href="{% url 'web:profile' %}">Mi cuenta</a></li>
+                          <li><a href="{% url 'web:compras_web' %}">Mis Compras</a></li>
+                          <li><a href="{% url 'web:dom_list' %}">Mis Direcciones</a></li>
+                          <li><a href="{% url 'salir' %}">Salir</a></li>
+                        </ul>
+                      </li>                 
+                      {% endif %}
+                      {% if user.is_authenticated == False  %}                                              
+                      {% url 'web:registro' as url_site %} 
+                      <li {% if request.path == url_site %}class="menu-active"{% endif %}><a href="{% url 'web:registro' %}">Registrase</a></li>
+                      {% else %}
+                      <li><a href="{% url 'web:carrito' %}"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span style="padding: 3px; margin-left: 3px;" class="badge badge-pill badge-success" id="conteo_shop"></span></a></li>
+                      {% endif %}
+                        
+
                       <li class="menu-has-children"><a href="">Servicios</a>
                         <ul>
                           <li><a href="http://sue.computel.com.mx/">Foraneos</a></li>
                           <li><a href="http://201.163.187.53:8080/EmisionDisXII/principal.php">Factura</a></li>
                           <li><a href="{% url 'web:vacantes' %}">Bolsa de trabajo</a></li>
-                          
                           {% if user.is_authenticated  %}
+                          
+                          {% if user.is_user_web == False%}
                           <li><a href="{% url 'inicio:index' %}">SGA</a></li>
-                          <li><a href="{% url 'salir' %}">Salir</a></li>
+                          {% endif %}
+                          
                           {% else %}
                           <li><a href="{% url 'inicio' %}">Logearse</a></li>
                           {% endif %}
@@ -122,10 +151,10 @@ Sitio desarrollado por Departamento de desarrollo. Potenciado por Django
         </p>
         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     <div class="footer-social d-flex align-items-center">
-                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="https://www.facebook.com/Computelsureste/"><i class="fa fa-facebook"></i></a>
                         <a href="#"><i class="fa fa-twitter"></i></a>
-                        <a href="#"><i class="fa fa-dribbble"></i></a>
-                        <a href="#"><i class="fa fa-behance"></i></a>
+                        <!-- <a href="#"><i class="fa fa-dribbble"></i></a>
+                        <a href="#"><i class="fa fa-behance"></i></a> -->
                     </div>
                 </div>
             </div>
@@ -136,7 +165,7 @@ Sitio desarrollado por Departamento de desarrollo. Potenciado por Django
 
         <script src="{% static 'js/vendor/jquery-2.2.4.min.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="js/vendor/bootstrap.min.js"></script>			
+        <script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>			
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
         <script src="{% static 'js/easing.min.js' %}"></script>
         <script src="{% static 'js/hoverIntent.js' %}"></script>
@@ -151,6 +180,19 @@ Sitio desarrollado por Departamento de desarrollo. Potenciado por Django
         <script src="{% static 'js/parallax.min.js' %}"></script>
         <script src="{% static 'js/mail-script.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+        <script>
+          axios.get('{% url "web:get_count_prod" %}')
+                    .then(function (response) {
+                        shop = document.getElementById("conteo_shop");
+                        shop.innerHTML=response.data.shoping
+                        
+                    })
+                    .catch(function (error) {
+                        swal("Mal!", error.response.data.IntegrityError, "error");
+                    });
+        </script>
 
         
         {% block script %}

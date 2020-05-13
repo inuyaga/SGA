@@ -1,5 +1,5 @@
 from django.contrib import admin
-from aplicaciones.empresa.models import Empresa, Sucursal, Zona, Departamento, Pertenece_empresa, Cliente
+from aplicaciones.empresa.models import Empresa, Sucursal, Zona, Departamento, Cliente
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 # Register your models here.
@@ -28,17 +28,15 @@ class DepoConfig(admin.ModelAdmin):
     list_filter = ('departamento_id_sucursal__sucursal_empresa_id', 'departamento_id_sucursal')
 
 
-class ConfigEmpresa(admin.StackedInline):
-    model = Pertenece_empresa
-    can_delete = False
-    verbose_name_plural = 'Pertenece a'
-    raw_id_fields = ['pertenece_empresa', ]
-
-# Define a new User admin
+# class ConfigEmpresa(admin.StackedInline):
+#     model = Pertenece_empresa
+#     can_delete = False
+#     verbose_name_plural = 'Pertenece a'
+#     raw_id_fields = ['pertenece_empresa', ]
 
 
-class UserAdminConfig(BaseUserAdmin):
-    inlines = (ConfigEmpresa,)
+# class UserAdminConfig(BaseUserAdmin):
+#     inlines = (ConfigEmpresa,)
 
 class ClienteConfigAdmin(admin.ModelAdmin):
     list_display = [
@@ -60,10 +58,10 @@ class ClienteConfigAdmin(admin.ModelAdmin):
     list_filter = ['cli_status', 'cli_actualizado']
 
 # Re-register UserAdmin
-admin.site.unregister(User)
+# admin.site.unregister(User)
 admin.site.register(Empresa, AdminSuc)
 admin.site.register(Sucursal, Suc)
 admin.site.register(Zona)
 admin.site.register(Departamento, DepoConfig)
-admin.site.register(User, UserAdminConfig)
+# admin.site.register(User, UserAdminConfig)
 admin.site.register(Cliente, ClienteConfigAdmin)

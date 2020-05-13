@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from aplicaciones.inicio.models import User
 from django.shortcuts import render
 from django.contrib import messages
 from django.views.generic import TemplateView, CreateView, ListView, DeleteView, UpdateView, View
@@ -19,7 +19,7 @@ from django.contrib.sites.shortcuts import get_current_site
 
 from django.utils.formats import localize
 
-from aplicaciones.empresa.models import Pertenece_empresa
+
 #Librerias reportlab a usar:
 from reportlab.platypus import (SimpleDocTemplate, PageBreak, Image, Spacer,
 Paragraph, Table, TableStyle)
@@ -635,7 +635,7 @@ class GeneraPdfAsignacion(View):
         items = []
 
         
-        depo=Pertenece_empresa.objects.get(pertenece_id_usuario=get_asignacion.asig_user)
+        
 
         folio_txt="<strong>FOLIO N°:</strong><em><u>{}</u></em>".format(get_asignacion.id)
         p=Paragraph(folio_txt, folio_format)
@@ -645,7 +645,7 @@ class GeneraPdfAsignacion(View):
         p=Paragraph(txt2, parrafo2)
         items.append(p)
 
-        texto="<strong>Usuario:</strong> <em><u>{}</u></em>  <strong>Departamento:</strong><em><u>{}</u></em>".format(get_asignacion.asig_user.get_full_name(), depo.pertenece_empresa)
+        texto="<strong>Usuario:</strong> <em><u>{}</u></em>  <strong>Departamento:</strong><em><u>{}</u></em>".format(get_asignacion.asig_user.get_full_name(), get_asignacion.departamento)
         p=Paragraph(texto, parrafo)
         items.append(p)
 

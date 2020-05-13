@@ -31,6 +31,22 @@ class ConfigPostulate(admin.ModelAdmin):
                     'pos_creacion',
                     )
     list_filter = ['pos_vacante', 'pos_creacion']
+
+
+class ConfigCompraWeb(admin.ModelAdmin):
+    list_display = ('cw_id', 
+                    'cw_fecha',
+                    'cliente_str',
+                    'cw_status',
+                    'domicilio',
+                    'cw_numero_venta',
+                    'cw_numero_factura',
+                    'cw_tipo_pago',
+                    )
+    list_filter = ['cw_fecha', 'cw_status']
+    search_fields = ['cw_id', 'cw_cliente__rfc']
+    readonly_fields = ('domicilio', 'cw_tipo_pago', 'cw_status', 'cliente_str')
+    exclude = ('cw_domicilio','cw_cliente')
 # Register your models here.
 admin.site.register(Departamento)
 admin.site.register(CorreoCco, ConfigCorreos)
@@ -42,3 +58,4 @@ admin.site.register(Promocion)
 
 admin.site.register(Vacante)
 admin.site.register(Postulacion, ConfigPostulate)
+admin.site.register(CompraWeb, ConfigCompraWeb)

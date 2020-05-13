@@ -1,0 +1,75 @@
+{% extends 'web/base.html' %}
+{% block titulo %}
+Registro de Usuario
+{% endblock titulo %}
+
+
+{% block contenido %}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style>
+    .helptext {
+        color: #6c757d;
+        display: block;
+        margin-top: .25rem;
+        font-size: 80%;
+        font-weight: 400;
+    }
+
+    .errorlist {
+        color: red;
+    }
+</style>
+
+<div id="app">
+
+    <section style="margin-top: 90px; margin-bottom: 90px;">
+        <div class="container">
+            <h1>[[rfc_vue]]</h1>
+            <div class="row">
+                <div class="col-6 col-sm-6 mx-auto">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <input class="btn btn btn-success" type="submit" value="Registrar">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+</div>
+{% endblock contenido %}
+
+
+{% block script %}
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            rfc_vue: '',
+            first_name: '',
+            email: ''
+        },
+        delimiters: ["[[", "]]"],
+        methods: {
+            eventText() {
+                console.log(this.rfc_vue)
+                axios.get('{% url "web:rfc_find" %}?rfc='+this.rfc_vue)
+                    .then(function (response) {
+                        app.first_name=response.data.nombre
+                        app.email=response.data.email
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    })
+                    .then(function () {
+                        // always executed
+                    });
+            }
+        }
+    })
+</script>
+{% endblock script %}

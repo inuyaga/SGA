@@ -1,9 +1,9 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 from aplicaciones.empresa.models import Cliente
 from django.utils import timezone
 from django.db import IntegrityError
-Usuario = get_user_model()
+from django.conf import settings
+Usuario = settings.AUTH_USER_MODEL
 # Create your models here.
 class Plan_trabajo(models.Model): 
     pt=models.AutoField(primary_key=True, verbose_name='ID')

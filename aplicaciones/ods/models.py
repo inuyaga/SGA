@@ -3,8 +3,8 @@ from aplicaciones.activos.models import Asignacion
 from aplicaciones.pedidos.models import Producto
 from aplicaciones.empresa.models import Empresa, Departamento
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth import get_user_model
-Usuario = get_user_model()
+from django.conf import settings
+Usuario = settings.AUTH_USER_MODEL
 TIPO_SERVICIO=((1, 'Preventivo'), (2, 'Correctivo'))
 STATUS=((1, 'Abierto'), (2, 'Asignado y en Proceso'), (3, 'Soporte terminado'), (4, 'Cerrado'))
 

@@ -1,9 +1,9 @@
 from django.db import models
 from django.db.models import Sum, FloatField, F
-from django.contrib.auth import get_user_model
 from aplicaciones.pedidos.models import Marca, Producto
 from aplicaciones.empresa.models import Cliente
-Usuario = get_user_model()
+from django.conf import settings
+Usuario = settings.AUTH_USER_MODEL
 
 
 

@@ -1,5 +1,9 @@
 from django.db import models
+from django.db.models import FloatField, Sum, F
 from django.core.validators import FileExtensionValidator
+from aplicaciones.pedidos.models import Producto
+from django.conf import settings
+Usuario = settings.AUTH_USER_MODEL
 # Create your models here.
 class Departamento(models.Model):
     dp_nombre=models.CharField('Nombre Departamento',  max_length=100)
@@ -85,4 +89,92 @@ class Postulacion(models.Model):
 
     def __str__(self):
         return self.pos_nombre
+
+
+STATUS = ((1, 'Creado'), (2, 'Atendiendo'),  (3, 'Surtiendo'), (4, 'En Viaje'),)
+# 1 CUANDO EL CLIENTE A CREADO EL PEDIDO
+# 2 CUANDO UN ASESOR DE VENTA DESCARGUE LA VENTA
+# 3 CUANDO ACTUALIZEN NUMERO DE VENTA EN LA TABLA DE COMPRA WEB
+# 4 CUANDO ACTUALIZEN NUMERO DE FACTURA
+TIPO_DOMICILIO = ((1, 'Trabajo'), (2, 'Casa'),)
+TIPO_PAGO = ((1, 'EFECTIVO'),)
+
+class Domicilio(models.Model):
+    dom_nom_ap=models.CharField(max_length=130, verbose_name="Nombre y apellido")
+    dom_codigo_p=models.IntegerField(max_length=5, verbose_name="Codigo postal")
+    dom_estado=models.CharField(max_length=80, verbose_name="Estado")
+    dom_delegacion=models.CharField(max_length=80, verbose_name="Delegacion")
+    dom_colonia=models.CharField(max_length=200, verbose_name="Colonia / Asentamiento")
+    dom_calle=models.CharField(max_length=200, verbose_name="Calle")
+    dom_num_ex=models.IntegerField(verbose_name="N° exterior", help_text='Si no tiene un numero escriba 0')
+    dom_num_interior=models.IntegerField(verbose_name="N° interior", blank=True, null=True, help_text="Opcional")
+    dom_indicaciones=models.CharField(max_length=700, verbose_name="Indicaciones adicionales para entregar tus compras en esta dirección", help_text="Descripción de la fachada, puntos de referencia para encontrarla, indicaciones de seguridad, etc.")
+    dom_tipo=models.IntegerField(verbose_name="¿Es tu trabajo o tu casa?", choices=TIPO_DOMICILIO)
+    dom_telefono=models.CharField(max_length=10, verbose_name="Telefono de contacto", help_text="Llamarán a este numero si hay algún problema en el envío")
+    dom_activo=models.BooleanField(verbose_name="Default dirección")
+    dom_creador=models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name='Usuario creador', blank=True, null=True)
+    def __str__(self):
+        return str(self.dom_codigo_p)
+    def str_domicilio(self):
+        domicilio='C.P:{} calle:{} colonia:{} N° Exterior:{} N° interior:{},  {}, {}. Recibe: {}, Referencias:{} Tipo:{} Tel:{}'.format(
+            self.dom_codigo_p, 
+            self.dom_calle, 
+            self.dom_colonia, 
+            self.dom_num_ex,
+            self.dom_num_interior,
+            self.dom_delegacion,
+            self.dom_estado,
+            self.dom_nom_ap,
+            self.dom_indicaciones,
+            self.get_dom_tipo_display(),
+            self.dom_telefono,
+            )
+        return domicilio
+
+
+class CompraWeb(models.Model):
+    cw_id=models.BigAutoField(primary_key=True)
+    cw_fecha = models.DateTimeField(auto_now_add=True)
+    cw_cliente=models.ForeignKey(Usuario, on_delete=models.PROTECT, verbose_name='Cliente')
+    cw_status=models.IntegerField(verbose_name="Status compra", choices=STATUS, default=1)
+    cw_domicilio=models.ForeignKey(Domicilio, on_delete=models.PROTECT, verbose_name="Domicilio de entrega")
+    cw_numero_venta=models.IntegerField(verbose_name="Numero venta", blank=True, null=True)
+    cw_numero_factura=models.CharField(max_length=10,verbose_name="Numero factura", blank=True, null=True)
+    cw_tipo_pago=models.IntegerField(verbose_name="Forma de pago", choices=TIPO_PAGO, default=1)
+
+    class Meta:
+        ordering = ["-cw_fecha"]
+
+    def __str__(self):
+        return str(self.cw_id)
+    def domicilio(self):
+        return self.cw_domicilio.str_domicilio()
+    def cliente_str(self):
+        return "Usuario:{} Cliente:{}".format(self.cw_cliente,self.cw_cliente.rfc)
+    def total_compra(self):
+        total=Detalle_Compra_Web.objects.filter(dcw_pedido_id=self.cw_id).aggregate(suma_total=Sum(F('dcw_precio') * F('dcw_cantidad'), output_field=FloatField()))['suma_total']
+        total=0 if total == None else total
+        total = (total * 0.16) + total
+        return round(total, 2)
+
+
+
+class Detalle_Compra_Web(models.Model):
+    dcw_pedido_id = models.ForeignKey(CompraWeb, on_delete=models.CASCADE, verbose_name='Numero de compra', blank=True, null=True)
+    dcw_producto_id = models.ForeignKey(Producto, on_delete=models.PROTECT, verbose_name='Producto')
+    dcw_cantidad = models.IntegerField(null=True, blank=True, verbose_name='Cantidad')
+    dcw_creado_por = models.ForeignKey(Usuario, on_delete=models.PROTECT,)
+    dcw_precio = models.FloatField(default=0)
+    dcw_status = models.BooleanField(default=False)
+    def __str__(self):
+        return str(self.dcw_pedido_id)
+    def sub_total(self):
+        subtotal=self.dcw_cantidad*self.dcw_precio
+        return subtotal
+
+
+
+
+
+
 
