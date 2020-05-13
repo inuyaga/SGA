@@ -36,8 +36,8 @@ class Area(models.Model):
 
 class Producto(models.Model):
     producto_codigo = models.CharField(max_length=15, primary_key=True)  
-    producto_nombre = models.CharField(max_length=50, verbose_name='Nombre')
-    producto_descripcion = models.CharField(max_length=150, verbose_name='Descripcion') 
+    producto_nombre = models.CharField(max_length=500, verbose_name='Nombre')
+    producto_descripcion = models.CharField(max_length=900, verbose_name='Descripcion') 
     producto_imagen = models.ImageField(blank=False, null=False, upload_to="img_productos/", verbose_name='Imagen')
     producto_marca = models.ForeignKey(Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
     producto_area = models.ForeignKey(Area, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Area')
