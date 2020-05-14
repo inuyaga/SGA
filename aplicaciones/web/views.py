@@ -177,12 +177,16 @@ def AddProductoCarrito(request):
         return JsonResponse(status=400, data=contenido)
 
 def get_carro_compras(request):
-    conteo_shop=Detalle_Compra_Web.objects.filter(dcw_creado_por=request.user, dcw_status=False).count()
-    conteo_shop = '' if conteo_shop == 0 else conteo_shop
-    contenid={
-        'shoping':conteo_shop,
-    }
-    return JsonResponse(status=200, data=contenid)
+    if request.user.is_authenticated:
+        conteo_shop=Detalle_Compra_Web.objects.filter(dcw_creado_por=request.user, dcw_status=False).count()
+        conteo_shop = '' if conteo_shop == 0 else conteo_shop
+        contenid={
+            'shoping':conteo_shop,
+        }
+        return JsonResponse(status=200, data=contenid)
+    else:
+        return JsonResponse(status=200, data={})
+
     
     
 

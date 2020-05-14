@@ -15,12 +15,16 @@
 <meta property="og:image" content="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{object.producto_imagen.url}}">
 
 <!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="{{ request.build_absolute_uri }}">
-<meta property="twitter:title" content="Computel | {{object.producto_nombre}}">
-<meta property="twitter:description" content="{{object.producto_descripcion}}">
-<meta property="twitter:image"
-    content="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{object.producto_imagen.url}}">
+
+
+<meta name="twitter:card" content="summary_large_image">
+<!-- <meta name="twitter:site" content="@nytimes">
+<meta name="twitter:creator" content="@SarahMaslinNir"> -->
+<meta name="twitter:title" content="{{object.producto_nombre}}">
+<meta name="twitter:description" content="{{object.producto_descripcion}}.">
+<meta name="twitter:image" content="{{object.producto_imagen.url}}">
+
+
 <!-- Marcado JSON-LD generado por el Asistente para el marcado de datos estructurados de Google. -->
 <script type="application/ld+json">
     {
