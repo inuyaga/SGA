@@ -91,7 +91,7 @@ class Postulacion(models.Model):
         return self.pos_nombre
 
 
-STATUS = ((1, 'Creado'), (2, 'Atendiendo'),  (3, 'Surtiendo'), (4, 'En Viaje'),)
+STATUS = ((1, 'Creado'), (2, 'Atendiendo'),  (3, 'Surtiendo'), (4, 'En Viaje'), (5, 'Entregado'),)
 # 1 CUANDO EL CLIENTE A CREADO EL PEDIDO
 # 2 CUANDO UN ASESOR DE VENTA DESCARGUE LA VENTA
 # 3 CUANDO ACTUALIZEN NUMERO DE VENTA EN LA TABLA DE COMPRA WEB
