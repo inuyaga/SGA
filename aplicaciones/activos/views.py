@@ -219,6 +219,7 @@ class Download_report_activo(TemplateView):
         ws['G2'] = 'Observación'
         ws['H2'] = 'Costo'
         ws['I2'] = 'Asignado'
+        ws['J2'] = 'Serie'
         cont = 3
         
 
@@ -232,7 +233,7 @@ class Download_report_activo(TemplateView):
             ws.cell(row=cont, column=7).value = item.activo_observacion
             ws.cell(row=cont, column=8).value = item.activo_costo
             ws.cell(row=cont, column=9).value = str(item.asignado_to())
-            
+            ws.cell(row=cont, column=10).value = item.activo_serie
             ws.cell(row=cont, column=8).number_format = '#,##0'
             cont += 1
 
@@ -645,7 +646,7 @@ class GeneraPdfAsignacion(View):
         p=Paragraph(txt2, parrafo2)
         items.append(p)
 
-        texto="<strong>Usuario:</strong> <em><u>{}</u></em>  <strong>Departamento:</strong><em><u>{}</u></em>".format(get_asignacion.asig_user.get_full_name(), get_asignacion.departamento)
+        texto="<strong>Usuario:</strong> <em><u>{}</u></em>  <strong>Departamento:</strong><em><u>{}</u></em>".format(get_asignacion.asig_user.get_full_name(),  get_asignacion.asig_user.departamento)
         p=Paragraph(texto, parrafo)
         items.append(p)
 
@@ -726,7 +727,7 @@ class TramiteBajaList(ListView):
 
 
 class PDFBajaView(View): 
-
+ 
     def myFirstPage(self, canvas, doc):
         # CABECERA DE PAGINA 
         Title = "BAJA DE ACTIVO"
