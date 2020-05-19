@@ -15,8 +15,9 @@ from django.http import JsonResponse
 from aplicaciones.empresa.models import Cliente
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 import json
-from django.db.models import Avg, Sum, F, FloatField
+from django.db.models import Avg, Sum, F, FloatField, Count
 from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 class Home(TemplateView):
@@ -86,21 +87,24 @@ class ProductosListWebView(ListView):
         queryset = queryset.filter(producto_visible=True)
         
         if len(self.request.GET) > 0:
-            area=self.request.GET.get('area')
-            marca=self.request.GET.get('marca')
+            area=self.request.GET.getlist('area')
+            marca=self.request.GET.getlist('marca')
+            print(len(marca))
             prod_name=self.request.GET.get('prod_name')
-            if area != '' and area != None:
-                queryset = queryset.filter(producto_area=area)
-            if marca != '' and marca != None:
-                queryset = queryset.filter(producto_marca=marca)
+            if len(area) > 0:
+                queryset = queryset.filter(producto_area__in=area)
+            if len(marca) > 0:
+                queryset = queryset.filter(producto_marca__in=marca)
             if prod_name != '' and prod_name != None:
                 queryset = queryset.filter(producto_descripcion__icontains=prod_name)
         return queryset
 
     def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
-        context['marca'] = MarcaProducto.objects.all()
-        context['area'] = Area.objects.all()
+        context['marca'] = Producto.objects.values('producto_marca__marca_id_marca', 'producto_marca__marca_nombre').filter(producto_visible=True).annotate(cuenta=Count('producto_marca__marca_id_marca')).order_by('producto_marca__marca_nombre')
+        context['area'] = Producto.objects.values('producto_area__area_id_area', 'producto_area__area_nombre').filter(producto_visible=True).annotate(cuenta=Count('producto_area__area_id_area')).order_by('producto_area__area_nombre')
+        context['marca_lista'] = self.request.GET.getlist('marca')
+        context['area_lista'] = self.request.GET.getlist('area')
 
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
@@ -190,7 +194,7 @@ def get_carro_compras(request):
     
     
 
-class CarritoComprasView(LoginRequiredMixin, TemplateView):
+class CarritoComprasView(LoginRequiredMixin, TemplateView): 
     login_url = reverse_lazy('inicio')
     redirect_field_name = 'redirect_to'
     template_name = "web/carrito_compra.html"
@@ -225,13 +229,19 @@ class CompraStep1View(LoginRequiredMixin,TemplateView):
             cw_cliente=request.user,
             cw_domicilio_id=request.POST.get('direccion')
         )
-        obj_c.save()
-        detalle_compra=Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)
-        for item in detalle_compra:
-            Producto.objects.filter(producto_codigo=item.dcw_producto_id).update(prducto_existencia=F('prducto_existencia')-item.dcw_cantidad)
-        detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True)
-        messages.success(request, 'Su compra ha sido realizada el pago es efectuado en la entrega del paquete en el domicilio.')
-        url=reverse_lazy('web:compras_web')
+        url=''
+        try: 
+            obj_c.save()
+            detalle_compra=Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)
+            for item in detalle_compra:
+                Producto.objects.filter(producto_codigo=item.dcw_producto_id).update(prducto_existencia=F('prducto_existencia')-item.dcw_cantidad)
+            detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True)
+            messages.success(request, 'Su compra ha sido realizada el pago es efectuado en la entrega del paquete en el domicilio.')
+            url=reverse_lazy('web:compras_web')
+        except IntegrityError as e:
+            messages.success(request, 'Para finalizar su compra es necesario que proporcione un domicilio.')
+            url=reverse_lazy('web:step1') 
+        
         return redirect(url)
     def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
