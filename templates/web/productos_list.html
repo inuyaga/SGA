@@ -9,120 +9,239 @@ Compras
 
 
 
-<div class="container" style="margin-top: 100px;">
-    <form>
-        <div class="form-row align-items-center">
-          <div class="col-sm-3 my-1">
-            <div class="form-group">
-                <select class="form-control" id="marca_id" name="marca">
-                    <option value="">Seleccione una marca</option>
-                    {% for item in marca %}
-                    <option value="{{item.marca_id_marca}}" {% if item.marca_id_marca|striptags == view.request.GET.marca %}selected{% endif %}>{{item}}</option>         
-                    {% endfor %}         
-                </select>
-              </div>
-          </div>
-          <div class="col-sm-1 my-1">
-            <h3 class="text-center">O</h3>
-          </div>
-          <div class="col-sm-3 my-1">
-            <div class="form-group">
-                <select class="form-control" id="area_id" name="area">
-                    <option value="">Seleccione una linea</option>
-                    {% for item in area %}
-                    <option value="{{item.area_id_area}}" {% if item.area_id_area|striptags == view.request.GET.area %}selected{% endif %}>{{item}}</option>
-                    {% endfor %}  
-                </select>
-              </div>
-          </div>          
-          <div class="col-auto">
-            <button type="submit" class="btn btn-primary mb-2">Buscar</button>
-          </div>
-        </div>
-      </form>
+<!-- <div class="container" style="margin-top: 100px;"> -->
 
-    <form style="margin-bottom: 30px;">
-        <div class="form-row align-items-center">
-          <div class="col-sm-3 my-1">
-            <div class="form-group">
-                <input type="text" class="form-control" id="nombre_id" placeholder="Buscar por nombre de producto" name="prod_name" required>
-              </div>
+<div class="container-fluid">
+  <div class="row" style="margin-top: 100px;">
+    <div class="col-xl-3">
+      <div class="d-none d-sm-none d-md-block">
+        <div style="margin-left: 20px;">
+
+          <div class="row">
+          <div class="col">
+            <h4 class="btn btn-link" type="button" data-toggle="collapse" data-target="#colap_marca">Marca</h4>
           </div>
-                 
-          <div class="col-auto">
-            <button type="submit" class="btn btn-primary mb-2">Buscar</button>
+          <div class="row justify-content-end">
+          <div class="col">
+
+            <button type="button" class="btn btn-secondary btn-sm" onclick="filter_marca()">Filtrar</button>
           </div>
+          </div>
+          </div>
+          
+          <hr>
+          <div class="accordion" id="accordionExample">
+            <div id="colap_marca" class="collapse {% if marca_lista|length > 0 %}show{% endif %}" aria-labelledby="headingOne" data-parent="#accordionExample">
+              <form action="" method="get" id="form_marca">
+                {% for item in marca %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="{{item.producto_marca__marca_id_marca}}" id="id_marca{{item.producto_marca__marca_id_marca}}" name="marca" 
+                  {% if item.producto_marca__marca_id_marca|striptags in marca_lista %}
+                  checked
+                  {% endif %}
+                    >
+                  <label class="form-check-label" for="id_marca{{item.producto_marca__marca_id_marca}}">
+                    {{item.producto_marca__marca_nombre}}
+                  </label>
+                </div>
+                {% endfor %}
+              </form>
+            </div>
+          </div>
+
+
+          
+          <div class="row">
+            <div class="col">
+              <h4 class="btn btn-link" type="button" data-toggle="collapse" data-target="#colap_area">Linea</h4>
+            </div>
+            <div class="row justify-content-end">
+            <div class="col">
+  
+              <button type="button" class="btn btn-secondary btn-sm" onclick="filter_linea()">Filtrar</button>
+            </div>
+            </div>
+            </div>
+          <hr>
+          
+          
+            
+          
+            
+          <div class="accordion" id="accordionExample">
+            <div id="colap_area" class="collapse {% if area_lista|length > 0 %}show{% endif %}" aria-labelledby="headingOne" data-parent="#accordionExample">
+              <form action="" method="get" id="form_linea">
+                {% for item in area %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="{{item.producto_area__area_id_area}}" id="id_area{{item.producto_area__area_id_area}}" name="area"
+                  {% if item.producto_area__area_id_area|striptags in area_lista %}
+                  checked
+                  {% endif %}
+                  >
+                  <label class="form-check-label" for="id_area{{item.producto_area__area_id_area}}">
+                    {{item.producto_area__area_nombre}}
+                  </label>
+                </div>
+                {% endfor %}
+              </form>
+            </div>
+          </div>
+
         </div>
-      </form>
-    <div class="row" style="margin-bottom: 80px;">
+      </div>
+    </div>
+    <div class="col-sm-9">
+      <div class="d-block d-sm-block d-md-none">
+
+
+        <form>
+          <div class="form-row align-items-center">
+            <div class="col-sm-3 my-1">
+              <div class="form-group">
+                <select class="form-control" id="marca_id" name="marca">
+                  <option value="">Seleccione una marca</option>
+                  {% for item in marca %}
+                  <option value="{{item.marca_id_marca}}"
+                    {% if item.marca_id_marca|striptags == view.request.GET.marca %}selected{% endif %}>{{item}}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-1 my-1">
+              <h3 class="text-center">O</h3>
+            </div>
+            <div class="col-sm-3 my-1">
+              <div class="form-group">
+                <select class="form-control" id="area_id" name="area">
+                  <option value="">Seleccione una linea</option>
+                  {% for item in area %}
+                  <option value="{{item.area_id_area}}"
+                    {% if item.area_id_area|striptags == view.request.GET.area %}selected{% endif %}>{{item}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary mb-2">Buscar</button>
+            </div>
+          </div>
+        </form>
+
+        <form style="margin-bottom: 30px;">
+          <div class="form-row align-items-center">
+            <div class="col-sm-3 my-1">
+              <div class="form-group">
+                <input type="text" class="form-control" id="nombre_id" placeholder="Buscar por nombre de producto"
+                  name="prod_name" required>
+              </div>
+            </div>
+
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary mb-2">Buscar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="row" style="margin-bottom: 80px;">
         {% for item in object_list %}
         <div class="col-sm-6 col-md-4 col-xl-3" id="{{item.producto_codigo}}">
-        <div class="card">
-            <img src="{{item.producto_imagen.url}}" style="height: 250px; width: 250px;" class="img-thumbnail" alt="{{item.producto_nombre}}">
+          <div class="card">
+            <img src="{{item.producto_imagen.url}}" style="height: 250px; width: 250px;" class="img-thumbnail"
+              alt="{{item.producto_nombre}}">
             <div class="card-body">
-                <h5 class="card-title">{{item.producto_nombre}}</h5>
-                
-                {% if user.is_authenticated  %}
-                <h6 class="card-subtitle mb-2 text-muted">${{item.producto_precio}}</h6>
-                {% else %}
-                <a href="">$***** Registrarse</a>
-                {% endif %}
-                  
-                <p class="card-text">{{item.producto_descripcion}}</p>
-                <p class="text-muted">Stock {{item.prducto_existencia}}</p>
-                
-                <a href="{% url 'web:producto_detalle' item.producto_codigo %}?{{view.request.GET.urlencode}}" class="card-link">Añadir</a>
+              <h5 class="card-title">{{item.producto_nombre}}</h5>
+
+              {% if user.is_authenticated  %}
+              <h6 class="card-subtitle mb-2 text-muted">${{item.producto_precio}}</h6>
+              {% else %}
+              <a href="">$***** Registrarse</a>
+              {% endif %}
+
+              <p class="card-text">{{item.producto_descripcion}}</p>
+              <p class="text-muted">Stock {{item.prducto_existencia}}</p>
+
+              <a href="{% url 'web:producto_detalle' item.producto_codigo %}?{{view.request.GET.urlencode}}"
+                class="card-link">Añadir</a>
             </div>
-        </div>
+          </div>
         </div>
         {% endfor %}
-    </div>
+      </div>
 
-    
-        
-   <div class="row center">
-    <h4 class="mx-auto">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</h4>
-    </div>
 
-    <div class="row center">
-        
+
+      <div class="row center">
+        <h4 class="mx-auto">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</h4>
+      </div>
+
+      <div class="row center">
+
         <nav class="mx-auto">
-            <ul class="pagination">
+          <ul class="pagination">
             {% if page_obj.has_previous %}
-              <li class="page-item">
-                <a class="page-link" href="?page=1&{{urls_formateada.urlencode}}" tabindex="-1" aria-disabled="true">&laquo;</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}" tabindex="-1" aria-disabled="true"><</a>
-              </li>
-              {% else %}
-              <li class="page-item disabled">
-                <a class="page-link" href="" tabindex="-1" aria-disabled="true">&laquo;</a>
-              </li>
-              <li class="page-item disabled">
-                <a class="page-link" href="" tabindex="-1" aria-disabled="true"><</a>
-              </li>
-              {% endif %}
-              <li class="page-item active" aria-current="page">
-                <a class="page-link" href="#">{{ page_obj.number }}</a>
-              </li>
-              {% if page_obj.has_next %}
-              <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">></a></li>
-              <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">&raquo;</a>
-              </li>
-              {% else %}
-              <li class="page-item disabled"><a class="page-link" href="">></a></li>
-              <li class="page-item disabled">
-                <a class="page-link" href="">&raquo;</a>
-              </li>
-              {% endif %}
-            </ul> 
-          </nav>
+            <li class="page-item">
+              <a class="page-link" href="?page=1&{{urls_formateada.urlencode}}" tabindex="-1"
+                aria-disabled="true">&laquo;</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"
+                tabindex="-1" aria-disabled="true">&larr;
+                 </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="" tabindex="-1" aria-disabled="true">&laquo;</a>
+            </li>
+            <li class="page-item disabled">
+              <a class="page-link" href="" tabindex="-1" aria-disabled="true">
+                &larr; </a>
+            </li>
+            {% endif %}
+            <li class="page-item active" aria-current="page">
+              <a class="page-link" href="#">{{ page_obj.number }}</a>
+            </li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link"
+                href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">&rarr;</a></li>
+            <li class="page-item">
+              <a class="page-link"
+                href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">&raquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="">&rarr;</a></li>
+            <li class="page-item disabled">
+              <a class="page-link" href="">&raquo;</a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
 
 
-         
-   </div>
-   
+
+
+  </div>
 </div>
+
+<!-- </div> -->
 {% endblock contenido %}
+
+
+{% block script %} 
+  <script>
+//     $('#form_marca').on('keyup change paste', 'input, select, textarea', function(){
+//     console.log('Form changed!');
+//     // $('#form_marca').submit();
+// });
+
+function filter_linea() {
+  $('#form_linea').submit();
+}
+function filter_marca() {
+  $('#form_marca').submit();
+}
+  </script>
+{% endblock script %}
+  

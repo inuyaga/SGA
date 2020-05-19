@@ -7,6 +7,13 @@ Embalaje
 {% block contenido %}
     <section style="margin-bottom: 90px; margin-top: 90px;">
         <div class="container">
+          {% if messages %}
+          {% for message in messages %}
+          <div {% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+              {{message}}
+          </div>
+          {% endfor %}
+          {% endif %} 
         <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Envio y Embalaje</div>

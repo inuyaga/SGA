@@ -10,8 +10,9 @@ Carro de compras
 
 
 
-        <div class="container">
-            <div class="row">
+        <div class="container-fluid">
+            <div class="row justify-content-center" >
+            <div class="col-sm-12 col-lg-9">
                 <!-- Shopping cart table -->
                 <div class="table-responsive">
                     <table class="table">
@@ -34,15 +35,16 @@ Carro de compras
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody> 
                             {% for item in carrito %}
                             <tr>
                                 <td class="border-0 align-middle"><strong>{{ forloop.counter }}</strong></td>
                                 <th scope="row" class="border-0">
-                                    <div class="p-2">
-                                        <img src="{{item.dcw_producto_id.producto_imagen.url}}" alt="" width="70"
-                                            class="img-fluid rounded shadow-sm">
-                                        <div class="ml-3 d-inline-block align-middle">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            <img src="{{item.dcw_producto_id.producto_imagen.url}}" alt="" style="height: 100px;" class="img-fluid rounded shadow-sm">
+                                        </div>
+                                        <div class="col-sm-9">
                                             <h5 class="mb-0"> <a href="{% url 'web:producto_detalle' item.dcw_producto_id %}?{{view.request.GET.urlencode}}"
                                                     class="text-dark d-inline-block align-middle">{{item.dcw_producto_id.producto_nombre}}</a>
                                             </h5><span class="text-muted font-weight-normal font-italic d-block">Linea:
@@ -68,6 +70,34 @@ Carro de compras
 
             </div>
 
+
+            <div class="col-sm-12 col-lg-3">
+                <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">RESUMEN DE PEDIDO</div>
+                <div class="p-4">
+                    <p class="font-italic mb-4">Los costos de envío y adicionales se calculan en función de los
+                        valores que haya ingresado.</p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Subtotal de Orden
+                            </strong><strong>${{subtotal|floatformat:2}}</strong></li>
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Envío y manipulación</strong><strong>$00.00</strong></li>
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Impuesto</strong><strong>${{iva|floatformat:2}}</strong></li>
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Total</strong>
+                            <h5 class="font-weight-bold">${{total|floatformat:2}}</h5>
+                        </li>
+                    </ul>
+                    
+                    {% if total > 0 %}
+                    <a href="{% url 'web:step1' %}" class="btn btn-dark rounded-pill py-2 btn-block">Proceder con la compra</a>
+                    {% endif %}
+                        
+                </div>
+            </div>
+            </div>
+
             <div class="row justify-content-center">
                 <!-- <div class="col-lg-6">
                 <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Coupon code</div>
@@ -86,31 +116,7 @@ Carro de compras
                   <textarea name="" cols="30" rows="2" class="form-control"></textarea>
                 </div>
               </div> -->
-                <div class="col-lg-6">
-                    <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">RESUMEN DE PEDIDO</div>
-                    <div class="p-4">
-                        <p class="font-italic mb-4">Los costos de envío y adicionales se calculan en función de los
-                            valores que haya ingresado.</p>
-                        <ul class="list-unstyled mb-4">
-                            <li class="d-flex justify-content-between py-3 border-bottom"><strong
-                                    class="text-muted">Subtotal de Orden
-                                </strong><strong>${{subtotal|floatformat:2}}</strong></li>
-                            <li class="d-flex justify-content-between py-3 border-bottom"><strong
-                                    class="text-muted">Envío y manipulación</strong><strong>$00.00</strong></li>
-                            <li class="d-flex justify-content-between py-3 border-bottom"><strong
-                                    class="text-muted">Impuesto</strong><strong>${{iva|floatformat:2}}</strong></li>
-                            <li class="d-flex justify-content-between py-3 border-bottom"><strong
-                                    class="text-muted">Total</strong>
-                                <h5 class="font-weight-bold">${{total|floatformat:2}}</h5>
-                            </li>
-                        </ul>
-                        
-                        {% if total > 0 %}
-                        <a href="{% url 'web:step1' %}" class="btn btn-dark rounded-pill py-2 btn-block">Proceder con la compra</a>
-                        {% endif %}
-                            
-                    </div>
-                </div>
+                
             </div>
 
 
