@@ -138,7 +138,7 @@
                     </div>
 
                     <!-- Drawer navigation -->
-                    <nav class="drawer-main">
+                    <nav class="drawer-main"> 
                         <ul class="nav nav-drawer">
 
                             <li class="nav-item nav-drawer-header">Dashboard</li>
@@ -150,6 +150,9 @@
 
                             <li class="nav-item">
                                 <a href="{% url 'inicio:index' %}"><i class="ion-ios-monitor-outline"></i> SGA</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'web:inicio' %}"><i class="ion-earth fa-2x"></i> Web</a>
                             </li>
 
                             <li class="nav-item nav-drawer-header">Administración</li>
@@ -570,7 +573,7 @@
     <script src="{% static 'assets/js/app-custom.js' %}"></script>
 
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.rtl.min.css"/>
     {% block script %}
 
