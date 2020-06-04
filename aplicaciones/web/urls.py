@@ -4,8 +4,8 @@ from aplicaciones.web import views as web_dash
 app_name="web"
 urlpatterns = [
     path('', web_dash.Home.as_view(), name='inicio'),
-    path('list/producto/prospecto/', web_dash.ProductosListWebView.as_view(), name='list_prod'), 
-    path('producto/detalle/<slug:pk>/', web_dash.ProductoDetalleView.as_view(), name='producto_detalle'),
+    path('list/producto/', web_dash.ProductosListWebView.as_view(), name='list_prod'), 
+    path('producto/detalle/<slug:pk>/<slug:nombre>', web_dash.ProductoDetalleView.as_view(), name='producto_detalle'),
     path('events/inscribir/', web_dash.IncribirCreate.as_view(), name='inscripcion'),
     path('vancante/list/', web_dash.VacanteView.as_view(), name='vacantes'),
     path('vancante/postulacion/', web_dash.PostularCreate.as_view(), name='va_postular'),

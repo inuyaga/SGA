@@ -19,20 +19,24 @@ from django.db import IntegrityError
 import json
 from django.db.models import Avg, Sum, F, FloatField, Count
 from django.contrib.auth.mixins import LoginRequiredMixin
+from aplicaciones.web.models import Blog
+from django.contrib.auth.admin import UserAdmin
+from django.contrib import messages
 # Create your views here.
-class Home(TemplateView):
-    template_name="web/index.html"
+class Home(TemplateView): 
+    template_name="web/inicio.html"
 
     def get_context_data(self, **kwargs): 
         context = super(Home, self).get_context_data(**kwargs)
         # context['galeria_list'] = Galeria.objects.all()
         # context['form_correo'] = CorreoForm()
         # context['even_nombre'] = Evento.objects.all()
-        context['marca_list'] = Marca.objects.all()
-        context['catagolo_list'] = Catalagos.objects.all()[:8]
-        context['promo_list'] = Promocion.objects.all()
-        context['evento_list'] = Evento.objects.all()
-        context['msn_ccs'] = CooreoForm()
+        # context['marca_list'] = Marca.objects.all()
+        # context['catagolo_list'] = Catalagos.objects.all()[:8]
+        # context['promo_list'] = Promocion.objects.all()
+        # context['evento_list'] = Evento.objects.all()
+        # context['msn_ccs'] = CooreoForm()
+        context['portadas'] = Blog.objects.filter(blog_portada=True)
         return context
     def post(self, request, *args, **kwargs):
         form = CooreoForm(data=request.POST)
@@ -78,33 +82,58 @@ class PostularCreate(CreateView):
         return url
 
 
-class ProductosListWebView(ListView):
+class ProductosListWebView(ListView): 
     model = Producto
-    template_name = "web/productos_list.html"  
-    paginate_by = 20
+    template_name = "web/comprar.html"  
+    paginate_by = 11
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(producto_visible=True)
+        queryset = queryset.filter(producto_visible=True)   
+
+        area = self.request.GET.get('area')        
+        marca = self.request.GET.getlist('marca')
+        order = self.request.GET.get('order')
+        linea = self.request.GET.get('linea')
+        sub_cat = self.request.GET.get('sub_cat')
+        if area != None and area != 'None':
+            queryset = queryset.filter(producto_linea__l_subcat__sc_area=area)
+        if len(marca) > 0:
+            queryset = queryset.filter(producto_marca__in=marca)
+
+        if order == 'desc':
+            queryset = queryset.order_by('producto_precio')            
+        elif order == 'asc':
+            queryset = queryset.order_by('-producto_precio')
+        elif order == 'date_new':
+            queryset = queryset.order_by('producto_fecha_creado')
         
-        if len(self.request.GET) > 0:
-            area=self.request.GET.getlist('area')
-            marca=self.request.GET.getlist('marca')
-            print(len(marca))
-            prod_name=self.request.GET.get('prod_name')
-            if len(area) > 0:
-                queryset = queryset.filter(producto_area__in=area)
-            if len(marca) > 0:
-                queryset = queryset.filter(producto_marca__in=marca)
-            if prod_name != '' and prod_name != None:
-                queryset = queryset.filter(producto_descripcion__icontains=prod_name)
+        if linea != None:
+            queryset = queryset.filter(producto_linea=linea)
+        if sub_cat != None:
+            queryset = queryset.filter(producto_linea__l_subcat=sub_cat)
+           
         return queryset
 
     def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
-        context['marca'] = Producto.objects.values('producto_marca__marca_id_marca', 'producto_marca__marca_nombre').filter(producto_visible=True).annotate(cuenta=Count('producto_marca__marca_id_marca')).order_by('producto_marca__marca_nombre')
-        context['area'] = Producto.objects.values('producto_area__area_id_area', 'producto_area__area_nombre').filter(producto_visible=True).annotate(cuenta=Count('producto_area__area_id_area')).order_by('producto_area__area_nombre')
+        area = self.request.GET.get('area')               
+        linea = self.request.GET.get('linea')
+        sub_cat = self.request.GET.get('sub_cat')
+        q_marca = Producto.objects.filter(producto_visible=True)
+
+        context['area_count'] = Producto.objects.filter(producto_visible=True).values('producto_linea__l_subcat__sc_area__area_nombre', 'producto_linea__l_subcat__sc_area').annotate(total_produc=Count('producto_codigo')).order_by('producto_linea__l_subcat__sc_area')
         context['marca_lista'] = self.request.GET.getlist('marca')
-        context['area_lista'] = self.request.GET.getlist('area')
+
+               
+        if area != None and area != 'None':
+            q_marca = q_marca.filter(producto_linea__l_subcat__sc_area=area)               
+        if linea != None:
+            q_marca = q_marca.filter(producto_linea=linea)
+        if sub_cat != None:
+            q_marca = q_marca.filter(producto_linea__l_subcat=sub_cat)
+        
+
+        context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
 
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
@@ -117,10 +146,46 @@ class ProductosListWebView(ListView):
 
 class ProductoDetalleView(DetailView):
     model = Producto
-    template_name="web/producto_detalles.html"
+    template_name="web/detalle_producto.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.object.producto_linea != None:
+            context['prod_relacionado']=Producto.objects.filter(producto_linea=self.object.producto_linea)
+            
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        cantidad_prod = request.POST.get('quantity')
+        pk = kwargs.get('pk')
+        producto_obj = Producto.objects.get(producto_codigo=pk)
+
+        suma_prod_futura = Detalle_Compra_Web.objects.filter(dcw_producto_id=pk, dcw_status=False).aggregate(suma=Sum('dcw_cantidad'))['suma']
+        suma_prod_futura = 0 if suma_prod_futura == None else suma_prod_futura
+        total_suma_pendiente=suma_prod_futura + int(cantidad_prod)
+
+        if int(cantidad_prod) <= 0:
+            messages.warning(request, 'Cantidad de producto debe ser mayor a 0.')
+            return self.render_to_response(context=context) 
+        elif total_suma_pendiente <= producto_obj.prducto_existencia: 
+            try:
+                find_prod_user = Detalle_Compra_Web.objects.get(dcw_creado_por=request.user, dcw_status=False, dcw_producto_id=pk)
+                Detalle_Compra_Web.objects.filter(dcw_creado_por=request.user, dcw_status=False, dcw_producto_id=pk).update(dcw_cantidad=F('dcw_cantidad')+int(cantidad_prod))
+            except ObjectDoesNotExist as erro:
+                dt_cw=Detalle_Compra_Web(dcw_producto_id=producto_obj, dcw_cantidad=cantidad_prod, dcw_creado_por=request.user, dcw_precio=producto_obj.producto_precio)
+                dt_cw.save()
+            # conteo_shop=Detalle_Compra_Web.objects.filter(dcw_creado_por=request.user, dcw_status=False).count()           
+            messages.success(request, '¡Producto agregado correctamente!')
+            return self.render_to_response(context=context) 
+        else:          
+            messages.warning(request, 'Supera el limite de producto en existencia')
+            return self.render_to_response(context=context) 
+    
 
 
-from django.contrib.auth.admin import UserAdmin
+
 class CreateUser(CreateView):
     model = UserAdmin
     form_class = UserForm
