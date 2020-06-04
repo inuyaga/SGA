@@ -3,7 +3,8 @@ from django.db.models import FloatField, Sum, F
 from django.core.validators import FileExtensionValidator
 from aplicaciones.pedidos.models import Producto
 from django.conf import settings
-Usuario = settings.AUTH_USER_MODEL
+from aplicaciones.pedidos.models import Area
+Usuario = settings.AUTH_USER_MODEL 
 # Create your models here.
 class Departamento(models.Model):
     dp_nombre=models.CharField('Nombre Departamento',  max_length=100)
@@ -58,7 +59,7 @@ class Catalagos(models.Model):
     cat_img=models.ImageField('Imagen', upload_to='img/catalogo/')
     cat_file=models.FileField('PDF Catalogo', upload_to='pdf/catalogo/')
     def __str__(self):
-        return self.cat_nombre
+        return self.cat_nombre 
 
 class Promocion(models.Model):
     promo_nombre=models.CharField('Nombre', max_length=150)
@@ -101,7 +102,7 @@ TIPO_PAGO = ((1, 'EFECTIVO'),)
 
 class Domicilio(models.Model):
     dom_nom_ap=models.CharField(max_length=130, verbose_name="Nombre y apellido")
-    dom_codigo_p=models.IntegerField(max_length=5, verbose_name="Codigo postal")
+    dom_codigo_p=models.IntegerField(verbose_name="Codigo postal")
     dom_estado=models.CharField(max_length=80, verbose_name="Estado")
     dom_delegacion=models.CharField(max_length=80, verbose_name="Delegacion")
     dom_colonia=models.CharField(max_length=200, verbose_name="Colonia / Asentamiento")
@@ -173,8 +174,29 @@ class Detalle_Compra_Web(models.Model):
         return subtotal
 
 
+class Tag(models.Model):
+    tag_nombre=models.CharField(verbose_name="Tag", max_length=150, unique=True)
+    def __str__(self):
+        return self.tag_nombre
+    class Meta:
+        verbose_name = "Blog - Tag"
+        verbose_name_plural = "Blog - Tags"
 
-
-
-
-
+class Blog(models.Model):
+    blog_id=models.AutoField(primary_key=True)
+    blog_titulo =models.CharField('Titulo', max_length=600, help_text="Si desea añadir salto de linea escriba &lt;br&gt;")
+    blog_descripcion =models.CharField('Descripcion', max_length=2000)
+    blog_contenido=models.TextField('Contenido', blank=False, null=True,)
+    blog_imagen = models.ImageField('Imagen Blog', upload_to='img_blogs/', help_text="Imagen destacada del blog. Medidas sugeridas para portada; Ancho:1920px - Alto:500px")
+    blog_creado=models.DateTimeField('Creado en', auto_now_add=True)
+    blog_ultima_actualizacion=models.DateTimeField('Ultima Actualizacion', auto_now=True)
+    blog_pertenece=models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    blog_tags=models.ManyToManyField(Tag, verbose_name="Tags relacionados")
+    blog_categoria=models.ForeignKey(Area, on_delete=models.CASCADE, verbose_name="Categoria o area a la que pertenece")
+    blog_portada=models.BooleanField(verbose_name="Activar como portada", default=False)
+    
+    def __str__(self):
+        return self.blog_titulo
+    class Meta:
+        verbose_name = "Blog"
+        verbose_name_plural = "Blogs" 
