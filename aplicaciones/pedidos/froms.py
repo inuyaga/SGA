@@ -9,12 +9,13 @@ from ajax_select.fields import AutoCompleteSelectMultipleField
 class AreaForm(forms.ModelForm):
     class Meta:
         model = Area
-        fields = ('area_nombre',)
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(AreaForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+        self.fields['area_activar_promocional'].widget.attrs.update({'class': 'form-check-input'})
 
 class MarcaForm(forms.ModelForm):
     class Meta:
@@ -27,6 +28,7 @@ class MarcaForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
 class ProductoForm(forms.ModelForm): 
+    producto_galeria = AutoCompleteSelectMultipleField('galeria_tags',required=False, help_text='Escriba el nombre de la imagen posteriormente seleccione.', label="Galeria")
     class Meta:
         model = Producto
         # fields = '__all__'
