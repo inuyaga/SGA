@@ -1,5 +1,6 @@
 from django.contrib import admin
-
+from django import forms
+from aplicaciones.web.forms import BlogForms
 from aplicaciones.web.models import *
 
 class ConfigCorreos(admin.ModelAdmin):
@@ -136,7 +137,39 @@ class ConfigCompraWeb(admin.ModelAdmin):
         return response
     dowload_xls.short_description = "Descargar xls"
     dowload_xls.allowed_permissions = ('change',)
-# Register your models here.
+
+
+
+
+
+
+class BlogConfig(admin.ModelAdmin):
+    form = BlogForms
+    filter_horizontal = ('blog_tags',)
+    actions = ['activar_portada', 'desactivar_portada']
+    list_display = (
+        'blog_titulo',
+        'blog_creado',
+        'blog_pertenece',
+        'blog_categoria',
+        'blog_portada',
+        )
+    list_editable = ('blog_portada',)
+    def save_model(self, request, obj, form, change):
+        obj.blog_pertenece = request.user
+        super().save_model(request, obj, form, change)
+    def activar_portada(self, request, queryset):
+        port=queryset.update(blog_portada=True)
+        messages.success(request, 'Portada activadas {}.'.format(port))
+    activar_portada.short_description = "Activar como portada"
+
+    def desactivar_portada(self, request, queryset):
+        port=queryset.update(blog_portada=False)
+        messages.success(request, 'Portada desactivadas {}.'.format(port))
+    desactivar_portada.short_description = "Desactivar portada"
+
+
+
 admin.site.register(Departamento)
 admin.site.register(CorreoCco, ConfigCorreos)
 admin.site.register(Evento)
@@ -148,3 +181,6 @@ admin.site.register(Promocion)
 admin.site.register(Vacante)
 admin.site.register(Postulacion, ConfigPostulate)
 admin.site.register(CompraWeb, ConfigCompraWeb)
+admin.site.register(Tag)
+admin.site.register(Blog, BlogConfig)
+
