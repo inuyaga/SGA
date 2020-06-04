@@ -20,6 +20,14 @@ from ajax_select import urls as ajax_select_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+
+
+
+admin.site.index_title = 'SGA Administración'
+
+
+
 urlpatterns = [
     path('', include('aplicaciones.web.urls'), name='web'),
     path('adminsga/', admin.site.urls),
