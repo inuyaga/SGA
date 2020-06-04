@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'aplicaciones.plan_de_trabajo.apps.PlanDeTrabajoConfig',
     'aplicaciones.expo',
     'aplicaciones.web',
+    'tinymce',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 AUTH_USER_MODEL = 'inicio.User'
@@ -75,6 +77,8 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'aplicaciones.web.processors.load_menus',
+                'aplicaciones.web.processors.shopin_car',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -105,7 +109,10 @@ DATABASES = {
 
 
 
-
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "print, preview, paste, importcss, searchreplace, autolink, autosave, save, directionality, code, visualblocks, visualchars, fullscreen, image, link, media, template, codesample, table, charmap, hr, pagebreak, nonbreaking, anchor, toc, insertdatetime, advlist, lists, wordcount, imagetools, textpattern, noneditable, help, charmap, quickbars, emoticons,",
+    # 'theme': "advanced",
+}
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -128,7 +135,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'es-mx'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Mexico_City'
 
