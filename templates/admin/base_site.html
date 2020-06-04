@@ -1,11 +1,25 @@
 {% extends "admin/base.html" %}
+{% load i18n %}
 
 {% block title %}
 Admin SGA
 {% endblock %}
+
+
+
+{% block welcome-msg %}
+Bienvenido
+<strong>{% firstof user.get_short_name user.get_username %}</strong>.
+<a href="/sga">Dashboard SGA</a> / 
+{% endblock welcome-msg %}
+    
 
 {% block branding %}
 <h1 id="site-name"><a href="{% url 'admin:index' %}">Admin SGA</a></h1>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
+
+
+
+    

@@ -21,15 +21,17 @@
       {% for input in form %}
       {% if input.name == 'producto_es_kit' %}
       <div class="form-check col-md-12">
-        {{input}}
-        {{input.errors}}
         {{input.label}}
+        {{input.errors}}
+        {{input}}
+        {{input.help_text}}
       </div>
       {% else %}
       <div class="form-group col-md-12">
         {{input.label}}
         {{input.errors}}
         {{input}}
+        {{input.help_text}}
       </div>
       {% endif %}
 
