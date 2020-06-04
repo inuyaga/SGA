@@ -5,9 +5,20 @@ from __future__ import absolute_import
 from django.db import models
 from aplicaciones.empresa.models import Departamento, Sucursal, Empresa
 from django.db.models import Avg, Sum, F
-
+from django.core.validators import FileExtensionValidator
+from django.utils.safestring import mark_safe
 from django.conf import settings
 Usuario = settings.AUTH_USER_MODEL
+
+
+class Galeria(models.Model):
+    ga_foto=models.ImageField(verbose_name="Imagen", upload_to="img/galeria/")
+    ga_alt=models.CharField(verbose_name="Texto alternativo", max_length=150, help_text="Nombre referente a la imagen")
+    ga_descripcion=models.CharField(verbose_name="Descripción (opcional)", max_length=250, help_text="Ayuda al SEO", blank=True, null=True)
+    def __str__(self):
+        return self.ga_alt
+    def show_img(self):
+        return mark_safe('<img src="{}" style="height: 90px; width: 90px;" alt="{}">'.format(self.ga_foto.url, self.ga_alt))
 
 # Create your models here.
 STATUS = ((1, 'Creado'), (2, 'Aprobado'), (3, 'Cancelado'),(4, 'Venta'),(5, 'Facturado'), (6, 'Finalizado'), (7, 'Descargado'))
@@ -27,11 +38,25 @@ class Marca(models.Model):
 
 class Area(models.Model):
     area_id_area = models.AutoField(primary_key=True)
-    area_nombre = models.CharField(
-        max_length=40, verbose_name='Nombre de area')
-
+    area_nombre = models.CharField(max_length=40, verbose_name='Nombre de area')
+    area_activar_promocional = models.BooleanField(verbose_name="Activar promocional en area", default=False)
+    area_promocional1 = models.ImageField(verbose_name="Imagen promocional 1", upload_to="img/area/promocional/", help_text="Tamaño sugerido 370px X 200px", null=True, blank=True)
+    area_promocional2 = models.ImageField(verbose_name="Imagen promocional 2", upload_to="img/area/promocional/", help_text="Tamaño sugerido 370px X 200px", null=True, blank=True)
+    area_icono = models.FileField(verbose_name="Icono svg", upload_to="img/area/icono/", null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['svg'])])
     def __str__(self):
         return self.area_nombre
+
+class Subcategoria(models.Model):
+    sc_area=models.ForeignKey(Area, on_delete=models.CASCADE, verbose_name="Area a la que pertenece")
+    sc_nombre=models.CharField(max_length=150,verbose_name="Subcategoria")
+    def __str__(self):
+        return self.sc_nombre
+class Linea(models.Model):
+    l_subcat=models.ForeignKey(Subcategoria, on_delete=models.CASCADE, verbose_name="Subcategoria a la que pertenece")
+    l_nombre=models.CharField(max_length=150,verbose_name="Linea") 
+    def __str__(self):
+        return self.l_nombre
+
 
 
 class Producto(models.Model):
@@ -39,8 +64,7 @@ class Producto(models.Model):
     producto_nombre = models.CharField(max_length=500, verbose_name='Nombre')
     producto_descripcion = models.CharField(max_length=900, verbose_name='Descripcion') 
     producto_imagen = models.ImageField(blank=False, null=False, upload_to="img_productos/", verbose_name='Imagen')
-    producto_marca = models.ForeignKey(Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')
-    producto_area = models.ForeignKey(Area, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Area')
+    producto_marca = models.ForeignKey(Marca, null=True, blank=True, on_delete=models.PROTECT, verbose_name='Marca')    
     producto_precio = models.DecimalField('Precio', max_digits=7, decimal_places=2, default=0.00)
     tipo_producto = models.IntegerField(choices=TIPO_PRODUCTO, null=True, blank=True)
     producto_es_kit=models.BooleanField(verbose_name='¿Pertenecerá a un Kit?', default=False)
@@ -55,6 +79,9 @@ class Producto(models.Model):
     prducto_existencia=models.IntegerField(verbose_name='Existencia', null=True, blank=True)
 
     producto_descripcion_web=models.TextField('Descripcion enriquecido para sitio web', blank=True, null=True)
+    producto_linea=models.ForeignKey(Linea, on_delete=models.CASCADE, verbose_name="Linea", blank=True, null=True)
+    producto_fecha_creado=models.DateField(auto_now_add=True)
+    producto_galeria=models.ManyToManyField(Galeria, verbose_name="Galeria", help_text="Galeria adicional para sitio web")
 
 
     class Meta:
