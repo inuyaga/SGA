@@ -1,5 +1,6 @@
 from django import forms
-from aplicaciones.web.models import CorreoCco, RegistroExpo, Postulacion, Domicilio
+from aplicaciones.web.models import CorreoCco, RegistroExpo, Postulacion, Domicilio, Blog
+from tinymce.widgets import TinyMCE
 
 class CooreoForm(forms.ModelForm):
     class Meta:
@@ -50,3 +51,15 @@ class DomicilioForm(forms.ModelForm):
         self.fields['dom_delegacion'].widget.attrs.update({'v-model': 'Delegacion'})
         self.fields['dom_codigo_p'].widget.attrs.update({'v-model': 'code_postal'})
         self.fields['dom_codigo_p'].widget.attrs.update({'@blur': 'post_item()'})
+
+
+
+
+class BlogForms(forms.ModelForm):
+    blog_contenido = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+    class Meta:
+        model = Blog
+        exclude = ('blog_portada','blog_pertenece',)
+        widgets = {
+        'blog_descripcion': forms.Textarea(attrs={"rows":3, "cols":80}),
+        }
