@@ -17,7 +17,7 @@ from aplicaciones.empresa.models import Cliente
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 import json
-from django.db.models import Avg, Sum, F, FloatField, Count
+from django.db.models import Avg, Sum, F, FloatField, Count, Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from aplicaciones.web.models import Blog
 from django.contrib.auth.admin import UserAdmin
@@ -95,8 +95,11 @@ class ProductosListWebView(ListView):
         order = self.request.GET.get('order')
         linea = self.request.GET.get('linea')
         sub_cat = self.request.GET.get('sub_cat')
+        busqueda = self.request.GET.get('busqueda')
         if area != None and area != 'None':
             queryset = queryset.filter(producto_linea__l_subcat__sc_area=area)
+        if busqueda != None and busqueda != 'None':
+            queryset = queryset.filter(Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
         if len(marca) > 0:
             queryset = queryset.filter(producto_marca__in=marca)
 
@@ -119,11 +122,12 @@ class ProductosListWebView(ListView):
         area = self.request.GET.get('area')               
         linea = self.request.GET.get('linea')
         sub_cat = self.request.GET.get('sub_cat')
+        busqueda = self.request.GET.get('busqueda')
+
         q_marca = Producto.objects.filter(producto_visible=True)
 
         context['area_count'] = Producto.objects.filter(producto_visible=True).values('producto_linea__l_subcat__sc_area__area_nombre', 'producto_linea__l_subcat__sc_area').annotate(total_produc=Count('producto_codigo')).order_by('producto_linea__l_subcat__sc_area')
         context['marca_lista'] = self.request.GET.getlist('marca')
-
                
         if area != None and area != 'None':
             q_marca = q_marca.filter(producto_linea__l_subcat__sc_area=area)               
@@ -132,7 +136,9 @@ class ProductosListWebView(ListView):
         if sub_cat != None:
             q_marca = q_marca.filter(producto_linea__l_subcat=sub_cat)
         
-
+        if busqueda != None and busqueda != 'None':
+            q_marca = q_marca.filter(Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
+        
         context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
 
         urls_formateada = self.request.GET.copy()
@@ -151,8 +157,7 @@ class ProductoDetalleView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.object.producto_linea != None:
-            context['prod_relacionado']=Producto.objects.filter(producto_linea=self.object.producto_linea)
-            
+            context['prod_relacionado']=Producto.objects.filter(producto_linea=self.object.producto_linea).exclude(producto_codigo=self.object)            
         return context
     
     def post(self, request, *args, **kwargs):
@@ -259,24 +264,47 @@ def get_carro_compras(request):
     
     
 
-class CarritoComprasView(LoginRequiredMixin, TemplateView): 
-    login_url = reverse_lazy('inicio')
+class CarritoComprasView(LoginRequiredMixin, ListView):  
+    model=Detalle_Compra_Web
+    template_name = "web/carrito.html"
+    login_url = reverse_lazy('inicio') 
     redirect_field_name = 'redirect_to'
-    template_name = "web/carrito_compra.html"
+    context_object_name = 'carrito'
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(dcw_creado_por=self.request.user, dcw_status=False) 
+        return queryset
+    def post(self, request, *args, **kwargs):
+        url=reverse_lazy('web:carrito')                
+        post = request.POST       
+        exclude_items=[] 
+        for item in post:
+            if 'csrfmiddlewaretoken' != item:
+                if int(post[item]) <= 0:
+                    pass
+                else:
+                    Detalle_Compra_Web.objects.filter(dcw_producto_id=item, dcw_creado_por=request.user, dcw_status=False).update(dcw_cantidad=post[item])                        
+            exclude_items.append(item)
+        
+        Detalle_Compra_Web.objects.filter(dcw_creado_por=request.user, dcw_status=False).exclude(dcw_producto_id__in=exclude_items).delete()
+
+
+        return redirect(url)
+
     def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
-        context['carrito'] = Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)    
-        context['subtotal'] = Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False).aggregate(suma_total=Sum(F('dcw_precio') * F('dcw_cantidad'), output_field=FloatField()))['suma_total']  
-        context['subtotal'] = 0 if context['subtotal'] == None else context['subtotal']
-        context['iva'] = context['subtotal'] * 0.16  
-        context['total'] = context['subtotal']+context['iva']
+        # context['carrito'] = Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)    
+        
+        
         return context
+    
+    
 
 
 def delete_item_carrito(request):
     body_unicode = request.body.decode('utf-8')
     body_data = json.loads(body_unicode)
-    obj=Detalle_Compra_Web.objects.filter(id=body_data['producto']).delete()
+    obj=Detalle_Compra_Web.objects.filter(dcw_producto_id=body_data['producto'], dcw_creado_por=request.user, dcw_status=False).delete()
     
     contenid={
         'delete':body_data['producto'],
@@ -285,17 +313,42 @@ def delete_item_carrito(request):
 
 
 
-class CompraStep1View(LoginRequiredMixin,TemplateView):
+class CheckoutView(LoginRequiredMixin,TemplateView):
     login_url = reverse_lazy('inicio')
     redirect_field_name = 'redirect_to'
-    template_name = "web/procede_step1.html"
+    template_name = "web/checkout.html"
     def post(self, request, *args, **kwargs):
-        obj_c=CompraWeb(
-            cw_cliente=request.user,
-            cw_domicilio_id=request.POST.get('direccion')
-        )
-        url=''
-        try: 
+        post_dom = request.POST.get('dominicio')        
+        url='/'     
+        if post_dom == '0':
+            form = DomicilioForm(request.POST)
+            if form.is_valid():
+                Domicilio.objects.filter(dom_creador=self.request.user).update(dom_activo=False)
+                form.instance.dom_activo=True
+                form.instance.dom_creador=request.user
+                dom_new = form.save()
+                
+                obj_c=CompraWeb(
+                    cw_cliente=request.user,
+                    cw_domicilio_id=dom_new.pk
+                )
+                obj_c.save()
+                detalle_compra=Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)
+                for item in detalle_compra:
+                    Producto.objects.filter(producto_codigo=item.dcw_producto_id).update(prducto_existencia=F('prducto_existencia')-item.dcw_cantidad)
+                detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True)
+                messages.success(request, 'Su compra ha sido realizada el pago es efectuado en la entrega del paquete en el domicilio.')
+                url=reverse_lazy('web:compras_web')
+                               
+            else:
+                messages.success(request, 'Asegurece de rellenar todos los datos del domicilio')
+                url=reverse_lazy('web:checkout')
+                              
+        else:
+            obj_c=CompraWeb(
+                cw_cliente=request.user,
+                cw_domicilio_id=post_dom
+            )
             obj_c.save()
             detalle_compra=Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)
             for item in detalle_compra:
@@ -303,15 +356,17 @@ class CompraStep1View(LoginRequiredMixin,TemplateView):
             detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True)
             messages.success(request, 'Su compra ha sido realizada el pago es efectuado en la entrega del paquete en el domicilio.')
             url=reverse_lazy('web:compras_web')
-        except IntegrityError as e:
-            messages.success(request, 'Para finalizar su compra es necesario que proporcione un domicilio.')
-            url=reverse_lazy('web:step1') 
+           
         
-        return redirect(url)
+        
+        return redirect(url) 
+                
+
+        
     def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
         context['domicilios'] =Domicilio.objects.filter(dom_creador=self.request.user)
-        context['domicilioForm'] =DomicilioForm()
+        context['domicilioForm'] =DomicilioForm() 
 
         context['carrito'] = Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)    
         context['carrito_count'] = Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False).count()
@@ -319,6 +374,8 @@ class CompraStep1View(LoginRequiredMixin,TemplateView):
         context['subtotal'] = 0 if context['subtotal'] == None else context['subtotal']
         context['iva'] = context['subtotal'] * 0.16  
         context['total'] = context['subtotal']+context['iva']
+
+        
         return context
 
 

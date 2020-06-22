@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load menu_grid %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-mx">
 <head>
 <title>Computel - {% block titulo %}Comercializadora Computel del Sureste{% endblock titulo %}</title>
 <!-- Meta -->
@@ -153,19 +153,20 @@
                     <img class="logo_dark" src="{% static 'ccs.png' %}" style="width: 182px; height: 47px;" alt="logo">
                 </a>
                 <div class="product_search_form radius_input search_form_btn">
-                    <form>
+                    <form action="{% url 'web:list_prod' %}" method="GET">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="custom_select">
-                                    <select class="first_null not_chosen">
-                                        <option value="">Todo</option>                                        
+                                    <select class="first_null not_chosen" name="area">
+                                        <option value="None">Todo</option>                                        
                                         {% for item in area %}                                            
                                         <option value="{{item.area_id_area}}">{{item}}</option>
                                         {% endfor %}                                            
                                     </select>
                                 </div>
-                            </div>
-                            <input class="form-control" placeholder="Buscar producto" required="" type="text">
+                            </div>                                                                                                                
+                                
+                            <input {% if view.request.GET.busqueda != None %}value="{{view.request.GET.busqueda}}"{% endif %} class="form-control" placeholder="Buscar producto" required type="text" name="busqueda">
                             <button type="submit" class="search_btn3">Buscar</button>
                         </div>
                     </form>
@@ -176,15 +177,15 @@
                             <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown"><i class="linearicons-user"></i></a>                        
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">                                
                                 {% if user.is_authenticated %}
-                                <a class="dropdown-item" href="#">Pedidos</a>
-                                <a class="dropdown-item" href="#">Mi cuenta</a>
+                                <a class="dropdown-item" href="{% url 'web:compras_web' %}">PEDIDOS</a>
+                                <a class="dropdown-item" href="#">MI CUENTA</a>
                                 {% if user.is_user_web == False%}                                
                                 <a class="dropdown-item" href="{% url 'inicio:index' %}">SGA</a>
                                 {% endif %}
-                                <a class="dropdown-item" href="{% url 'salir' %}">Salir</a>
+                                <a class="dropdown-item" href="{% url 'salir' %}">SALIR</a>
                                 {% else %}
-                                <a class="dropdown-item" href="{% url 'inicio' %}">Entrar</a>
-                                <a class="dropdown-item" href="#">Registrar</a>
+                                <a class="dropdown-item" href="{% url 'inicio' %}">ENTRAR</a>
+                                <a class="dropdown-item" href="#">REGISTRAR</a>
                               {% endif %}                                                                
                             </div>
                         </div>
@@ -205,7 +206,7 @@
                             </ul>
                             <div class="cart_footer">
                                 <p class="cart_total"><strong>Subtotal:</strong> <span class="cart_price"> <span class="price_symbole">$</span></span>{{suma_pre_compra|intcomma}}</p>
-                                <p class="cart_buttons"><a href="#" class="btn btn-fill-line view-cart">Carrito</a><a href="#" class="btn btn-fill-out checkout">Pagar</a></p>
+                                <p class="cart_buttons"><a href="{% url 'web:carrito' %}" class="btn btn-fill-line view-cart">Carrito</a><a href="{% url 'web:checkout' %}" class="btn btn-fill-out checkout">Pagar</a></p>
                             </div>
                         </div>
                     </li>
@@ -370,13 +371,15 @@
     </div>
 </header>
 <!-- END HEADER -->
+
+<div class="main_content">
 {% block contenido %}
 
 
 
     
 {% endblock contenido %}
-    
+</div> 
 
 <!-- START FOOTER -->
 <footer class="bg_gray">

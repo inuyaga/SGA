@@ -150,6 +150,8 @@ class CompraWeb(models.Model):
         return str(self.cw_id)
     def domicilio(self):
         return self.cw_domicilio.str_domicilio()
+    def detalles(self):
+        return Detalle_Compra_Web.objects.filter(dcw_pedido_id=self.cw_id)
     def cliente_str(self):
         return "Usuario:{} Cliente:{}".format(self.cw_cliente,self.cw_cliente.rfc)
     def total_compra(self):
@@ -160,9 +162,9 @@ class CompraWeb(models.Model):
 
 
 
-class Detalle_Compra_Web(models.Model):
+class Detalle_Compra_Web(models.Model): 
     dcw_pedido_id = models.ForeignKey(CompraWeb, on_delete=models.CASCADE, verbose_name='Numero de compra', blank=True, null=True)
-    dcw_producto_id = models.ForeignKey(Producto, on_delete=models.PROTECT, verbose_name='Producto')
+    dcw_producto_id = models.ForeignKey(Producto, on_delete=models.PROTECT, verbose_name='Producto') 
     dcw_cantidad = models.IntegerField(null=True, blank=True, verbose_name='Cantidad')
     dcw_creado_por = models.ForeignKey(Usuario, on_delete=models.PROTECT,)
     dcw_precio = models.FloatField(default=0)

@@ -13,13 +13,15 @@ urlpatterns = [
     path('registro/busqueda/rfc/', web_dash.FindRfcUserView, name='rfc_find'),
     path('add/producto/carrito/compra', web_dash.AddProductoCarrito, name='add_producto'),
     path('get/productos/carrito/compra', web_dash.get_carro_compras, name='get_count_prod'),
-    path('carrito/compra', web_dash.CarritoComprasView.as_view(), name='carrito'),
+    path('carrito/compra/view/', web_dash.CarritoComprasView.as_view(), name='carrito'),
     path('carrito/compra/delete', web_dash.delete_item_carrito, name='delete_item'),
-    path('carrito/compra/1', web_dash.CompraStep1View.as_view(), name='step1'),
+    path('carrito/compra/checkout', web_dash.CheckoutView.as_view(), name='checkout'),
+
     path('domicilios/listar/', web_dash.DomicilioListView.as_view(), name='dom_list'),
     path('domicilios/create/', web_dash.DomicilioCreateView.as_view(), name='dom_crear'),
     path('domicilios/<int:pk>/update/', web_dash.DomicilioUpdateView.as_view(), name='dom_update'),
-    path('compras/cliente/', web_dash.ComprasWebList.as_view(), name='compras_web'),
-    path('compras/cliente/<int:pk>/detalles/', web_dash.DetalleCmpraWebView.as_view(), name='compras_web_detalle'),
+
+    path('compras/pedidos/', web_dash.ComprasWebList.as_view(), name='compras_web'),
+    path('compras/pedidos/<int:pk>/detalles/', web_dash.DetalleCmpraWebView.as_view(), name='compras_web_detalle'),
     path('cuenta/user/', web_dash.DetalleCuentaView.as_view(), name='profile'),
 ]

@@ -1,0 +1,311 @@
+{% extends 'web/base.html' %}
+{% load humanize %}
+{% block titulo %}Carrito checkout{% endblock titulo %}
+
+{% block contenido %}
+
+<style>
+    .helptext{
+        color: #6c757d;
+        font-size: 80%;    
+        font-weight: 400; 
+        margin-top: .25rem;   
+        display: block;
+    }
+
+   
+</style>
+    <!-- START MAIN CONTENT -->
+<div class="main_content" id="app">
+
+    <!-- START SECTION SHOP -->
+    <div class="section">
+        <div class="container">
+            <!-- <div class="row">
+                <div class="col-lg-6">
+                    <div class="toggle_info">
+                        <span><i class="fas fa-user"></i>Returning customer? <a href="#loginform" data-toggle="collapse" class="collapsed" aria-expanded="false">Click here to login</a></span>
+                    </div>
+                    <div class="panel-collapse collapse login_form" id="loginform">
+                        <div class="panel-body">
+                            <p>If you have shopped with us before, please enter your details below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
+                            <form method="post">
+                                <div class="form-group">
+                                    <input type="text" required="" class="form-control" name="email" placeholder="Username Or Email">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" required="" type="password" name="password" placeholder="Password">
+                                </div>
+                                <div class="login_footer form-group">
+                                    <div class="chek-form">
+                                        <div class="custome-checkbox">
+                                            <input class="form-check-input" type="checkbox" name="checkbox" id="remember" value="">
+                                            <label class="form-check-label" for="remember"><span>Remember me</span></label>
+                                        </div>
+                                    </div>
+                                    <a href="#">Forgot password?</a>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-fill-out btn-block" name="login">Log in</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="toggle_info">
+                        <span><i class="fas fa-tag"></i>Have a coupon? <a href="#coupon" data-toggle="collapse" class="collapsed" aria-expanded="false">Click here to enter your code</a></span>
+                    </div>
+                    <div class="panel-collapse collapse coupon_form" id="coupon">
+                        <div class="panel-body">
+                            <p>If you have a coupon code, please apply it below.</p>
+                            <div class="coupon field_form input-group">
+                                <input type="text" value="" class="form-control" placeholder="Enter Coupon Code..">
+                                <div class="input-group-append">
+                                    <button class="btn btn-fill-out btn-sm" type="submit">Apply Coupon</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="medium_divider"></div>
+                    <div class="divider center_icon"><i class="linearicons-credit-card"></i></div>
+                    <div class="medium_divider"></div>
+                </div>
+            </div>
+            <form action="" method="POST">
+                {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="heading_s1">
+                        <h4>Detalles de envio</h4>
+                    </div>
+                    
+                    
+                    {% for item in domicilios %}
+                    <div class="form-check">
+                        <input @change="onChange($event)" class="form-check-input" type="radio" name="dominicio" id="domicilio{{item.id}}" value="{{item.id}}" required {% if item.dom_activo %}checked{% endif %}>
+                        <label class="form-check-label" for="domicilio{{item.id}}">
+                          {{item.str_domicilio}}
+                        </label>
+                      </div>
+                      <br>
+                    {% endfor %}
+                    <div class="form-check">
+                        <input @change="onChange($event)" class="form-check-input" type="radio" name="dominicio" id="domicilioNone" value="0" required>
+                        <label class="form-check-label" for="domicilioNone">
+                          Agregar domicilio
+                        </label>
+                      </div>
+                        
+                    
+
+                    <!-- <div class="payment_option">
+                        <div class="custome-radio">
+                            <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" value="option3" checked="">
+                            <label class="form-check-label" for="exampleRadios3">Agregar domicilio</label>
+                            <p data-method="option3" class="payment-text">sssdsdd</p>
+                        </div>
+                        <div class="custome-radio">
+                            <input class="form-check-input" type="radio" name="payment_option" id="exampleRadios4" value="option4">
+                            <label class="form-check-label" for="exampleRadios4">Check Payment</label>
+                            <p data-method="option4" class="payment-text">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode.</p>
+                        </div>
+                        <div class="custome-radio">
+                            <input class="form-check-input" type="radio" name="payment_option" id="exampleRadios5" value="option5">
+                            <label class="form-check-label" for="exampleRadios5">Paypal</label>
+                            <p data-method="option5" class="payment-text">Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.</p>
+                        </div>
+                    </div> -->
+
+                    <br>
+                    
+                    
+                        <wigget_form v-if="mostar"></wigget_form>  
+                        
+                    
+                    
+                    
+                    
+                </div>
+                <div class="col-md-6">
+                    <div class="order_review">
+                        <div class="heading_s1">
+                            <h4>orden</h4>
+                        </div>
+                        <div class="table-responsive order_table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    {% for item in carrito %}                                        
+                                    <tr>
+                                        <td>{{item.dcw_producto_id.producto_nombre}} <span class="product-qty">x {{item.dcw_cantidad}}</span></td>
+                                        <td>${{item.sub_total|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                    {% endfor %}                                                                                                                
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>SubTotal</th>
+                                        <td class="product-subtotal">${{subtotal|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Envio</th>
+                                        <td>Envio gratis</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Iva</th>
+                                        <td>{{iva|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total</th>
+                                        <td class="product-subtotal">${{total|floatformat:2|intcomma}}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="payment_method">
+                            <div class="heading_s1">
+                                <h4>Metodo de pago</h4>
+                            </div>
+                            <div class="payment_option">
+                                <div class="custome-radio">
+                                    <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" value="option3" checked="">
+                                    <label class="form-check-label" for="exampleRadios3">Pago en efectivo</label>
+                                    <p data-method="option3" class="payment-text">Al momento de entrega usted debera saldar su pago.</p>
+                                </div>
+                                <!-- <div class="custome-radio">
+                                    <input class="form-check-input" type="radio" name="payment_option" id="exampleRadios4" value="option4">
+                                    <label class="form-check-label" for="exampleRadios4">Check Payment</label>
+                                    <p data-method="option4" class="payment-text">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode.</p>
+                                </div>
+                                <div class="custome-radio">
+                                    <input class="form-check-input" type="radio" name="payment_option" id="exampleRadios5" value="option5">
+                                    <label class="form-check-label" for="exampleRadios5">Paypal</label>
+                                    <p data-method="option5" class="payment-text">Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.</p>
+                                </div> -->
+                            </div>
+                        </div>                                                
+                        <button class="btn btn-fill-out btn-block" type="submit">Realizar pedido</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+    <!-- END SECTION SHOP -->
+    
+    <!-- START SECTION SUBSCRIBE NEWSLETTER -->
+    <div class="section bg_default small_pt small_pb">
+        <div class="container">	
+            <div class="row align-items-center">	
+                <div class="col-md-6">
+                    <div class="heading_s1 mb-md-0 heading_light">
+                        <h3>Subscribe Our Newsletter</h3>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="newsletter_form">
+                        <form>
+                            <input type="text" required="" class="form-control rounded-0" placeholder="Enter Email Address">
+                            <button type="submit" class="btn btn-dark rounded-0" name="submit" value="Submit">Subscribe</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- START SECTION SUBSCRIBE NEWSLETTER -->
+    
+    </div>
+    <!-- END MAIN CONTENT -->
+{% endblock contenido %}
+
+
+{% block script %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+
+vm_component=Vue.component('wigget_form', {
+    data: function () {
+        return {                        
+            code_postal: '',
+            Estado: '',
+            Delegacion: '',
+        }
+    },
+    delimiters: ["[[", "]]"],
+    // props: ['data_item'],
+    
+    template: `<div>{{domicilioForm.as_p}}</div>`,
+    methods:{
+        post_item: function () {
+            const vm = this;
+                axios.get('https://api-sepomex.hckdrk.mx/query/info_cp/'+this.code_postal+'?type=simplified')
+                    .then(function (response) {
+                        vm.Delegacion=response.data.response.municipio
+                        vm.Estado=response.data.response.estado
+                                     
+                    })
+                    .catch(function (error) {
+                        swal("Mal!", 'Favor de escribir un C.P correcto', "error");
+                        vm.Delegacion=''
+                        vm.Estado=''
+                    });
+            }
+    }
+
+})
+     var app = new Vue({
+        el: '#app',
+        data: {            
+            HTMLcontentOriginal: `{{domicilioForm.as_p}}`,
+            HTMLcontent: ``,
+            mostar:false
+        },
+        methods: {
+            post_item: function () {
+                axios.get('https://api-sepomex.hckdrk.mx/query/info_cp/'+this.code_postal+'?type=simplified')
+                    .then(function (response) {
+                        app.Delegacion=response.data.response.municipio
+                        app.Estado=response.data.response.estado
+                                     
+                    })
+                    .catch(function (error) {
+                        swal("Mal!", 'Favor de escribir un C.P correcto', "error");
+                        app.Delegacion=''
+                        app.Estado=''
+                    });
+            },
+
+            onChange(event) {
+              var optionText = event.target.value;
+              switch (optionText) {
+                  case '0':
+                  this.mostar = true
+                      break;              
+                  default:
+                  this.mostar = false
+                      break;
+              }              
+          }
+
+
+        },
+        delimiters: ["[[", "]]"]
+    })
+</script>
+{% endblock script %}
+    
+    

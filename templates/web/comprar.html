@@ -38,28 +38,34 @@
                             <div class="product_header">
                                 <div class="product_header_left">
                                     <form action="" method="get">
-                                        
+
                                         {%for key, values in request.GET.lists%}
-                                            {%for value in values%}                                    
-                                                {% if key == 'order' %}
-                                                {% else %}
-                                                <input type="hidden" name="{{key}}" id="" value="{{value}}">  
-                                                {% endif %}                                                                                                                                                                                                                            
-                                            {%endfor%}
+                                        {%for value in values%}
+                                        {% if key == 'order' %}
+                                        {% else %}
+                                        <input type="hidden" name="{{key}}" id="" value="{{value}}">
+                                        {% endif %}
                                         {%endfor%}
-                                        
-                                            
-                                            
-                                    <div class="custom_select">
-                                        <select class="form-control form-control-sm" name="order">
-                                            <option value="default">Default</option>
-                                            <!-- <option value="popularity">Sort by popularity</option> -->
-                                            <option value="date_new" {% if view.request.GET.order == 'date_new' %}selected{% endif %}>Lo mas nuevo</option>
-                                            <option value="desc" {% if view.request.GET.order == 'desc' %}selected{% endif %}>Precio menor a mayor</option>
-                                            <option value="asc" {% if view.request.GET.order == 'asc' %}selected{% endif %}>Precio mayor a menor</option>
-                                        </select>
-                                    </div>
-                                </form>
+                                        {%endfor%}
+
+
+
+                                        <div class="custom_select">
+                                            <select class="form-control form-control-sm" name="order">
+                                                <option value="default">Default</option>
+                                                <!-- <option value="popularity">Sort by popularity</option> -->
+                                                <option value="date_new"
+                                                    {% if view.request.GET.order == 'date_new' %}selected{% endif %}>Lo
+                                                    mas nuevo</option>
+                                                <option value="desc"
+                                                    {% if view.request.GET.order == 'desc' %}selected{% endif %}>Precio
+                                                    menor a mayor</option>
+                                                <option value="asc"
+                                                    {% if view.request.GET.order == 'asc' %}selected{% endif %}>Precio
+                                                    mayor a menor</option>
+                                            </select>
+                                        </div>
+                                    </form>
                                 </div>
                                 <div class="product_header_right">
                                     <div class="products_view">
@@ -86,12 +92,14 @@
                         <div class="col-md-4 col-6">
                             <div class="product">
                                 <div class="product_img">
-                                    <a href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}">
+                                    <a
+                                        href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}">
                                         <img src="{{item.producto_imagen.url}}" alt="">
                                     </a>
                                     <div class="product_action_box">
                                         <ul class="list_none pr_action_btn">
-                                            <li class="add-to-cart"><a href="#"><i class="icon-basket-loaded"></i>Agregar</a></li>
+                                            <li class="add-to-cart"><a href="#"><i
+                                                        class="icon-basket-loaded"></i>Agregar</a></li>
                                             <li><a href="#" class=""><i class="icon-shuffle"></i></a></li>
                                             <li><a href="#" class=""><i class="icon-magnifier-add"></i></a>
                                             </li>
@@ -100,7 +108,9 @@
                                     </div>
                                 </div>
                                 <div class="product_info">
-                                    <h6 class="product_title"><a href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}">{{item.producto_nombre}}</a></h6>
+                                    <h6 class="product_title"><a
+                                            href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}">{{item.producto_nombre}}</a>
+                                    </h6>
                                     <div class="product_price">
                                         <span class="price">${{item.producto_precio|intcomma}}</span>
                                         <!-- <del>$55.25</del>
@@ -117,14 +127,20 @@
                                     <div class="pr_desc">
                                         <p>{{item.producto_descripcion}}</p>
                                     </div>
-                                    <div class="pr_switch_wrap">
-                                        <div class="product_color_switch">
-                                            <li>Marca: {{item.producto_marca|title}}</li>
-                                        </div>
-                                    </div>
                                     <div class="list_product_action_box">
                                         <ul class="list_none pr_action_btn">
+                                            <li class="add-to-cart">Marca: {{item.producto_marca|title}}</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="list_product_action_box">
+                                        <ul class="list_none pr_action_btn">                                            
+                                            {% if item.prducto_existencia > 0 %}
                                             <li class="add-to-cart"><a href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}"><i class="icon-basket-loaded"></i>Añadir</a></li>
+                                            {% else %}
+                                            <li class="add-to-cart">Sin Stock</li>                                                
+                                            {% endif %}
+                                                
                                             <!-- <li><a href="#" class=""><i class="icon-shuffle"></i></a></li>
                                             <li><a href="#" class=""><i class="icon-magnifier-add"></i></a></li>
                                             <li><a href="#"><i class="icon-heart"></i></a></li> -->
@@ -136,30 +152,44 @@
                         {% endfor %}
 
                     </div>
+                    
                     <div class="row">
                         <div class="col-12">
+                            
+                        </div>
+                        <div class="col-12">
                             <ul class="pagination mt-3 justify-content-center pagination_style1">
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#"><i
-                                            class="linearicons-arrow-right"></i></a></li>
+                                {% if page_obj.has_previous %}
+                                <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">&laquo;</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}">&#60;</a></li>
+                                {% endif %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+                                {% if page_obj.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">&#62;</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">&#187;</a></li>
+                                {% endif %}
                             </ul>
                         </div>
+
+
+                       
+
+                        
                     </div>
                 </div>
-                
-                
-                    
+
+
+
                 <div class="col-lg-3 order-lg-first mt-4 pt-2 mt-lg-0 pt-lg-0">
                     <div class="sidebar">
                         <div class="widget">
                             <h5 class="widget_title">Categorias</h5>
                             <ul class="widget_categories">
-                                <li><a href="{% url 'web:list_prod' %}"><span class="categories_name">Todo</span></a></li>
+                                <li><a href="{% url 'web:list_prod' %}"><span class="categories_name">Todo</span></a>
+                                </li>
                                 {% for item in area_count %}
-                                <li><a {% if view.request.GET.area == item.producto_linea__l_subcat__sc_area|striptags  %}class="text-danger"{% endif %}
-                                     href="?area={{item.producto_linea__l_subcat__sc_area}}"><span
+                                <li><a {% if view.request.GET.area == item.producto_linea__l_subcat__sc_area|striptags  %}class="text-danger"
+                                        {% endif %} href="?area={{item.producto_linea__l_subcat__sc_area}}"><span
                                             class="categories_name">{{item.producto_linea__l_subcat__sc_area__area_nombre|title  }}</span><span
                                             class="categories_num">({{item.total_produc}})</span></a></li>
                                 {% endfor %}
@@ -175,35 +205,33 @@
                         <div class="widget">
                             <h5 class="widget_title">Marca</h5>
                             <form action="" method="get" id="form_marca">
-                                
-                               
+
+
 
                                 {%for key, values in request.GET.lists%}
-                                    {%for value in values%}                                    
-                                        {% if key == 'marca' %}
-                                        {% else %}
-                                        <input type="hidden" name="{{key}}" id="" value="{{value}}">  
-                                        {% endif %}                                                                                                                                                                                                                            
-                                    {%endfor%}
+                                {%for value in values%}
+                                {% if key == 'marca' %}
+                                {% else %}
+                                <input type="hidden" name="{{key}}" id="" value="{{value}}">
+                                {% endif %}
                                 {%endfor%}
-                                    
+                                {%endfor%}
+
                                 <ul class="list_brand">
                                     <li>
                                         {% for item in marca_object_list %}
                                         <div class="custome-checkbox">
                                             <input class="form-check-input" type="checkbox" name="marca"
-                                                id="{{item.producto_marca}}" value="{{item.producto_marca}}" 
-                                                {% if item.producto_marca|striptags in marca_lista %}
-                                                checked
-                                                {% endif %}
-                                                    >
+                                                id="{{item.producto_marca}}" value="{{item.producto_marca}}"
+                                                {% if item.producto_marca|striptags in marca_lista %} checked
+                                                {% endif %}>
                                             <label class="form-check-label"
                                                 for="{{item.producto_marca}}"><span>{{item.producto_marca__marca_nombre|upper}}</span></label>
                                         </div>
                                         {% endfor %}
                                     </li>
                                 </ul>
-                                
+
                             </form>
                         </div>
                         <!-- <div class="widget">
@@ -282,7 +310,7 @@
 
 {% block script %}
 <script>
-    $('form').on('change', function () {        
+    $('form').on('change', function () {
         this.submit()
     });
 </script>

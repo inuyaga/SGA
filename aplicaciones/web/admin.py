@@ -35,7 +35,12 @@ class ConfigPostulate(admin.ModelAdmin):
 
 
 
-
+class DetalleCompraWebInline(admin.TabularInline):
+    model = Detalle_Compra_Web
+    readonly_fields = ('dcw_precio', )
+    raw_id_fields=('dcw_producto_id', )
+    # Mostramos dos inlines acíos por defecto
+    extra = 0
     
 class ConfigCompraWeb(admin.ModelAdmin):
     
@@ -53,6 +58,7 @@ class ConfigCompraWeb(admin.ModelAdmin):
     search_fields = ['cw_id', 'cw_cliente__rfc', 'cw_cliente__username']
     readonly_fields = ('domicilio', 'cw_tipo_pago', 'cw_status', 'cliente_str')
     exclude = ('cw_domicilio','cw_cliente')
+    inlines = [DetalleCompraWebInline]
 
     def save_model(self, request, obj, form, change):        
         if change:
