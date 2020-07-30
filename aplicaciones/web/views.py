@@ -24,7 +24,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib import messages
 # Create your views here.
 class Home(TemplateView): 
-    template_name="web/inicio.html"
+    template_name="web/inicio.html" 
 
     def get_context_data(self, **kwargs): 
         context = super(Home, self).get_context_data(**kwargs)
@@ -36,7 +36,20 @@ class Home(TemplateView):
         # context['promo_list'] = Promocion.objects.all()
         # context['evento_list'] = Evento.objects.all()
         # context['msn_ccs'] = CooreoForm()
-        context['portadas'] = Blog.objects.filter(blog_portada=True)
+        context['portadas'] = Blog.objects.filter(blog_tipo=2)
+        context['ofert_semana'] = Blog.objects.filter(blog_tipo=3)
+        context['oferta_especial'] = Blog.objects.filter(blog_tipo=4)
+        context['blogs'] = Blog.objects.filter(blog_tipo=1).order_by('-blog_creado')[:6]
+        context['marcas_logo'] = MarcaProducto.objects.filter(marca_activar_web=True)
+        productos_cat_top = Detalle_Compra_Web.objects.values('dcw_producto_id__producto_linea__l_subcat__sc_area__area_id_area','dcw_producto_id__producto_linea__l_subcat__sc_area__area_nombre', 'dcw_producto_id__producto_linea__l_subcat__sc_area__area_icono').annotate(cuenta_cat=Count('dcw_producto_id__producto_linea__l_subcat__sc_area__area_id_area')).order_by('-dcw_producto_id__producto_linea__l_subcat__sc_area__area_id_area')
+        context['productos'] = productos_cat_top.order_by('-cuenta_cat')[:7]
+        trending = Detalle_Compra_Web.objects.filter(dcw_status=True).values(
+            'dcw_producto_id', 
+            'dcw_producto_id__producto_imagen', 
+            'dcw_producto_id__producto_precio', 
+            'dcw_producto_id__producto_descripcion', 
+            'dcw_producto_id__producto_nombre').order_by('dcw_producto_id').annotate(veces_pedido=Sum('dcw_cantidad'))
+        context['trendings'] = trending.order_by('-veces_pedido')[:8]
         return context
     def post(self, request, *args, **kwargs):
         form = CooreoForm(data=request.POST)
@@ -140,6 +153,7 @@ class ProductosListWebView(ListView):
             q_marca = q_marca.filter(Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
         
         context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
+        context['banners'] = Blog.objects.filter(blog_tipo=5).order_by('-blog_creado')
 
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
@@ -468,5 +482,19 @@ class DetalleCuentaView(LoginRequiredMixin,TemplateView):
     login_url = reverse_lazy('inicio')
     redirect_field_name = 'redirect_to'
     template_name = 'web/profile.html'
+
+
+
+class BlogViewSingle(DetailView):
+    model = Blog
+    template_name = 'web/blog_view.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['blog_relacionado'] = Blog.objects.filter(blog_categoria=self.object.blog_categoria).exclude(blog_id=self.object.blog_id).order_by('-blog_creado')[:2]
+        context['blog_reciente'] = Blog.objects.exclude(blog_id=self.object.blog_id).order_by('-blog_creado')[:6]
+        context['banners'] = Blog.objects.filter(blog_tipo=5).order_by('-blog_creado')
+        return context
+    
 
 

@@ -100,6 +100,8 @@ STATUS = ((1, 'Creado'), (2, 'Atendiendo'),  (3, 'Surtiendo'), (4, 'En Viaje'), 
 TIPO_DOMICILIO = ((1, 'Trabajo'), (2, 'Casa'),)
 TIPO_PAGO = ((1, 'EFECTIVO'),)
 
+
+
 class Domicilio(models.Model):
     dom_nom_ap=models.CharField(max_length=130, verbose_name="Nombre y apellido")
     dom_codigo_p=models.IntegerField(verbose_name="Codigo postal")
@@ -184,18 +186,19 @@ class Tag(models.Model):
         verbose_name = "Blog - Tag"
         verbose_name_plural = "Blog - Tags"
 
+TIPO_CONTENIDO = ((1, 'Blog'),(2, 'Portada'), (3, 'Oferta de la semana'), (4, 'Oferta especial'), (5, 'Banner en pagina de compra'))
 class Blog(models.Model):
     blog_id=models.AutoField(primary_key=True)
     blog_titulo =models.CharField('Titulo', max_length=600, help_text="Si desea añadir salto de linea escriba &lt;br&gt;")
     blog_descripcion =models.CharField('Descripcion', max_length=2000)
     blog_contenido=models.TextField('Contenido', blank=False, null=True,)
-    blog_imagen = models.ImageField('Imagen Blog', upload_to='img_blogs/', help_text="Imagen destacada del blog. Medidas sugeridas para portada; Ancho:1920px - Alto:500px")
+    blog_imagen = models.ImageField('Imagen Blog', upload_to='img_blogs/', help_text="Imagen destacada del blog. Medidas sugeridas para portada: 1920X500, Oferta de la semana:540X300, Oferta especial:1140X300, Banner pagina compra:255X350")
     blog_creado=models.DateTimeField('Creado en', auto_now_add=True)
     blog_ultima_actualizacion=models.DateTimeField('Ultima Actualizacion', auto_now=True)
     blog_pertenece=models.ForeignKey(Usuario, on_delete=models.CASCADE)
     blog_tags=models.ManyToManyField(Tag, verbose_name="Tags relacionados")
-    blog_categoria=models.ForeignKey(Area, on_delete=models.CASCADE, verbose_name="Categoria o area a la que pertenece")
-    blog_portada=models.BooleanField(verbose_name="Activar como portada", default=False)
+    blog_categoria=models.ForeignKey(Area, on_delete=models.CASCADE, verbose_name="Categoria/area")
+    blog_tipo=models.IntegerField(verbose_name="Tipo de contenido", help_text="Elije el tipo de contenido relacionado", choices=TIPO_CONTENIDO)
     
     def __str__(self):
         return self.blog_titulo

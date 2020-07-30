@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from aplicaciones.web.forms import BlogForms
 from aplicaciones.web.models import *
-
+from django.contrib import messages
 class ConfigCorreos(admin.ModelAdmin):
     list_display = ('corr_nombre', 
                     'corr_email',
@@ -152,27 +152,45 @@ class ConfigCompraWeb(admin.ModelAdmin):
 class BlogConfig(admin.ModelAdmin):
     form = BlogForms
     filter_horizontal = ('blog_tags',)
-    actions = ['activar_portada', 'desactivar_portada']
+    actions = ['activar_portada', 'desactivar_portadas', 'activar_oferta_semanal', 'activar_oferta_especial', 'activar_banner']
     list_display = (
         'blog_titulo',
         'blog_creado',
         'blog_pertenece',
         'blog_categoria',
-        'blog_portada',
+        'blog_tipo',        
         )
-    list_editable = ('blog_portada',)
+    # list_editable = ('blog_tipo',)
     def save_model(self, request, obj, form, change):
         obj.blog_pertenece = request.user
         super().save_model(request, obj, form, change)
+    
+    def desactivar_portadas(self, request, queryset):
+        port=queryset.update(blog_tipo=1)
+        messages.success(request, 'Portada desactivadas {}.'.format(port))
+    desactivar_portadas.short_description = "Desactivar portada y/o ofertas" 
+
     def activar_portada(self, request, queryset):
-        port=queryset.update(blog_portada=True)
+        port=queryset.update(blog_tipo=2)
         messages.success(request, 'Portada activadas {}.'.format(port))
     activar_portada.short_description = "Activar como portada"
 
-    def desactivar_portada(self, request, queryset):
-        port=queryset.update(blog_portada=False)
-        messages.success(request, 'Portada desactivadas {}.'.format(port))
-    desactivar_portada.short_description = "Desactivar portada"
+    def activar_oferta_semanal(self, request, queryset):
+        port=queryset.update(blog_tipo=3)
+        messages.success(request, 'Ofertas semanal {}.'.format(port))
+    activar_oferta_semanal.short_description = "Activar oferta semanal"
+
+    def activar_oferta_especial(self, request, queryset):
+        port=queryset.update(blog_tipo=4)
+        messages.success(request, 'Oferta especial {}.'.format(port))
+    activar_oferta_especial.short_description = "Activar oferta especial"
+
+    def activar_banner(self, request, queryset):
+        port=queryset.update(blog_tipo=5)
+        messages.success(request, 'Banner en pagina de compra {}.'.format(port))
+    activar_banner.short_description = "Banner en pagina de compra"
+
+    
 
 
 

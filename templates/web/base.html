@@ -185,7 +185,7 @@
                                 <a class="dropdown-item" href="{% url 'salir' %}">SALIR</a>
                                 {% else %}
                                 <a class="dropdown-item" href="{% url 'inicio' %}">ENTRAR</a>
-                                <a class="dropdown-item" href="#">REGISTRAR</a>
+                                <a class="dropdown-item" href="{% url 'web:registro' %}">REGISTRAR</a>
                               {% endif %}                                                                
                             </div>
                         </div>
@@ -294,18 +294,18 @@
                         </div> 
                         <div class="collapse navbar-collapse mobile_side_menu" id="navbarSidetoggle">
                             <ul class="navbar-nav">
-                                <li class="dropdown">
+                                <!-- <li class="dropdown">
                                     <a data-toggle="dropdown" class="nav-link dropdown-toggle active" href="{% url 'web:inicio' %}">Inicio</a>
                                     <div class="dropdown-menu">
                                         <ul> 
                                             <li><a class="dropdown-item nav-link nav_item" href="#">Nosotros</a></li>
                                             <li><a class="dropdown-item nav-link nav_item" href="#">Promociones</a></li>
                                             <li><a class="dropdown-item nav-link nav_item" href="#">Catalogos</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item active" href="#">Expos</a></li>
+                                            <li><a class="dropdown-item nav-link nav_item" href="#">Expos</a></li>
                                         </ul>
                                     </div>   
-                                </li>
-                                <li><a class="nav-link nav_item" href="#">Eventos</a></li>                               
+                                </li> -->
+                                <!-- <li><a class="nav-link nav_item" href="#">Eventos</a></li>                                -->
                                 <li class="dropdown dropdown-mega-menu">
                                     <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown">Productos</a>
                                     <div class="dropdown-menu"> 
@@ -321,7 +321,7 @@
                                             </li>
                                             {% endfor %}                                                                                                                                                                                   
                                         </ul>
-                                        <div class="d-lg-flex menu_banners">
+                                        <!-- <div class="d-lg-flex menu_banners">
                                             <div class="col-lg-6">
                                                 <div class="header-banner">
                                                     <div class="sale-banner">
@@ -340,7 +340,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </li>
                                 
@@ -350,19 +350,20 @@
                                     <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown">Servicios</a>
                                     <div class="dropdown-menu">
                                         <ul> 
-                                            <li><a class="dropdown-item nav-link nav_item" href="#">Foraneos</a></li> 
-                                            <li><a class="dropdown-item nav-link nav_item" href="#">Factura</a></li> 
-                                            <li><a class="dropdown-item nav-link nav_item" href="#">Bolsa de trabajo</a></li>                                            
+                                            <li><a class="dropdown-item nav-link nav_item" href="http://sue.computel.com.mx/">Foraneos</a></li> 
+                                            <li><a class="dropdown-item nav-link nav_item" href="http://201.163.187.53:8080/EmisionDisXII/principal.php">Factura</a></li> 
+                                            <!-- <li><a class="dropdown-item nav-link nav_item" href="#">Bolsa de trabajo</a></li>                                             -->
                                         </ul>
                                     </div>
                                 </li>
                                 <li><a class="nav-link nav_item" href="{% url 'web:list_prod' %}">Comprar</a></li> 
-                                <li><a class="nav-link nav_item" href="#">Contacto</a></li> 
+                                <!-- <li><a class="nav-link nav_item" href="#">Contacto</a></li>  -->
+                                <!-- <li><a class="nav-link nav_item" href="#">Blogs</a></li>  -->
                             </ul>
                         </div>
                         <div class="contact_phone contact_support">
                             <i class="linearicons-phone-wave"></i>
-                            <span>123-456-7689</span>
+                            <span>993-313-6180</span>
                         </div>
                     </nav>
                 </div>
@@ -391,11 +392,11 @@
                         <div class="footer_logo">
                             <a href="{% url 'web:inicio' %}"><img src="{% static 'ccs.png' %}" style="width: 182px; height: 47px;" alt="logo"/></a>
                         </div>
-                        <p class="mb-3">If you are going to use of Lorem Ipsum need to be sure there isn't anything hidden of text</p>
+                        <p class="mb-3">Computel es una empresa 100% Tabasqueña, líder en el ramo papelero.</p>
                         <ul class="contact_info">
                             <li>
                                 <i class="ti-location-pin"></i>
-                                <p>123 Street, Old Trafford, NewYork, USA</p>
+                                <p>José María Pino Suárez, Jose Maria Pino Suarez, 86029 Villahermosa, Tab.</p>
                             </li>
                             <li>
                                 <i class="ti-email"></i>
@@ -403,12 +404,12 @@
                             </li>
                             <li>
                                 <i class="ti-mobile"></i>
-                                <p>+ 457 789 789 65</p>
+                                <p>993 313 6180</p>
                             </li>
                         </ul>
                     </div>
         		</div>
-                <div class="col-lg-2 col-md-4 col-sm-6">
+                <!-- <div class="col-lg-2 col-md-4 col-sm-6">
                 	<div class="widget">
                         <h6 class="widget_title">Useful Links</h6>
                         <ul class="widget_links">
@@ -431,15 +432,15 @@
                             <li><a href="#">Order Tracking</a></li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-lg-4 col-md-4 col-sm-12">
-                	<div class="widget">
+                	<!-- <div class="widget">
                     	<h6 class="widget_title">Download App</h6>
                         <ul class="app_list">
                             <li><a href="#"><img src="assets/images/f1.png" alt="f1"/></a></li>
                             <li><a href="#"><img src="assets/images/f2.png" alt="f2"/></a></li>
                         </ul>
-                    </div>
+                    </div> -->
                 	<div class="widget">
                     	<h6 class="widget_title">Social</h6>
                         <ul class="social_icons">
@@ -454,7 +455,7 @@
             </div>
         </div>
     </div>
-    <div class="middle_footer">
+    <!-- <div class="middle_footer">
     	<div class="container">
         	<div class="row">
             	<div class="col-12">
@@ -498,20 +499,20 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="bottom_footer border-top-tran">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <p class="text-center text-md-left mb-md-0">© 2020 All Rights Reserved by Bestwebcreator</p>
+                    <p class="text-center text-md-left mb-md-0">© {% now 'Y' %} Todos los derechos reservados</p>
                 </div>
                 <div class="col-lg-6">
                     <ul class="footer_payment text-center text-md-right">
-                        <li><a href="#"><img src="assets/images/visa.png" alt="visa"></a></li>
-                        <li><a href="#"><img src="assets/images/discover.png" alt="discover"></a></li>
-                        <li><a href="#"><img src="assets/images/master_card.png" alt="master_card"></a></li>
-                        <li><a href="#"><img src="assets/images/paypal.png" alt="paypal"></a></li>
-                        <li><a href="#"><img src="assets/images/amarican_express.png" alt="amarican_express"></a></li>
+                        <li><a href="#"><img src="{% static 'web/assets/images/visa.png' %}" alt="visa"></a></li>
+                        <!-- <li><a href="#"><img src="{% static 'web/assets/images/discover.png' %}" alt="discover"></a></li> -->
+                        <li><a href="#"><img src="{% static 'web/assets/images/master_card.png' %}" alt="master_card"></a></li>
+                        <!-- <li><a href="#"><img src="{% static 'web/assets/images/paypal.png' %}" alt="paypal"></a></li> -->
+                        <li><a href="#"><img src="{% static 'web/assets/images/amarican_express.png' %}" alt="amarican_express"></a></li>
                     </ul>
                 </div>
             </div>

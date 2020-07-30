@@ -26,8 +26,9 @@ CONTEO=((1, 'CONTEO 1'), (2, 'CONTEO 2'), (3, 'CONTEO 3'))
 TIPO_PRODUCTO = ((1, 'Uso Interno'), (2, 'Activo Fijo'), (3, 'Temporada'), (4, 'Normal'))
 class Marca(models.Model):
     marca_id_marca = models.AutoField(primary_key=True)
-    marca_nombre = models.CharField(
-        max_length=80, verbose_name='Nombre de Marca') 
+    marca_nombre = models.CharField(max_length=80, verbose_name='Nombre de Marca') 
+    marca_logo = models.ImageField(verbose_name="Logo", help_text="Logotipo de la marca", upload_to="img/logos/", blank=True, null=True)
+    marca_activar_web=models.BooleanField(verbose_name="Activar en sitio web", help_text="Seleccione si se requiere que sea visible en el sitio", default=False)
 
     def __str__(self):
         return self.marca_nombre

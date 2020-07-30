@@ -24,4 +24,5 @@ urlpatterns = [
     path('compras/pedidos/', web_dash.ComprasWebList.as_view(), name='compras_web'),
     path('compras/pedidos/<int:pk>/detalles/', web_dash.DetalleCmpraWebView.as_view(), name='compras_web_detalle'),
     path('cuenta/user/', web_dash.DetalleCuentaView.as_view(), name='profile'),
+    path('blog/view/<int:pk>/<slug:nombre>/', web_dash.BlogViewSingle.as_view(), name='blog_view'),
 ]
