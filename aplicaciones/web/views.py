@@ -45,6 +45,7 @@ class Home(TemplateView):
         context['productos'] = productos_cat_top.order_by('-cuenta_cat')[:7]
         trending = Detalle_Compra_Web.objects.filter(dcw_status=True).values(
             'dcw_producto_id', 
+            'dcw_producto_id__producto_codigo', 
             'dcw_producto_id__producto_imagen', 
             'dcw_producto_id__producto_precio', 
             'dcw_producto_id__producto_descripcion', 

@@ -124,7 +124,11 @@
                             <h4 class="product_title"><a href="#">{{object.producto_nombre}}</a></h4>
 
                             <div class="product_price">
-                                <span class="price">${{object.producto_precio|intcomma}}</span>
+                                
+                                {% if user.is_authenticated %}  
+                                <span class="price">${{object.producto_precio|intcomma}}</span>                                    
+                                {% endif %}
+                                    
                                 <!-- <del>$55.25</del>
                                     <div class="on_sale">
                                         <span>35% Off</span>
@@ -172,6 +176,7 @@
                         <hr />
                         <form action="" method="POST">
                             {% csrf_token %}
+                            {% if user.is_authenticated %}  
                             <div class="cart_extra">
                                 <div class="cart-product-quantity">
                                     <div class="quantity">
@@ -182,12 +187,19 @@
                                     </div>
                                 </div>
                                 <div class="cart_btn">
+                                    
+                                                                          
                                     <button class="btn btn-fill-out btn-addtocart" type="submit"><i
                                             class="icon-basket-loaded"></i> Agregar</button>
+                                    
+                                        
                                     <a class="add_compare" href="#"><i class="icon-shuffle"></i></a>
                                     <a class="add_wishlist" href="#"><i class="icon-heart"></i></a>
                                 </div>
                             </div>
+                            {% else %}
+                            <a class="btn btn-primary" href="{% url 'web:registro' %}" role="button">Registrar</a>
+                            {% endif %}
                         </form>
                         <hr />
                         <ul class="product-meta">

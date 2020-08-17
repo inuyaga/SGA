@@ -62,7 +62,7 @@
     	<div class="row justify-content-center">
 			<div class="col-md-6">
                 <div class="heading_s4 text-center">
-                    <h2>Top Categories</h2>
+                    <h2>Top Categorias</h2>
                 </div>
                 <p class="text-center leads">Las mejores categorias en ventas</p>
             </div>
@@ -75,7 +75,7 @@
                         <div class="categories_box">
                             <a href="#">
                                 <img src="/media/{{item.dcw_producto_id__producto_linea__l_subcat__sc_area__area_icono}}" alt="imagen_{{forloop.counter}}"/>
-                                <span>{{item.dcw_producto_id__producto_linea__l_subcat__sc_area__area_nombre}} total: {{item.cuenta_cat}}</span> 
+                                <span>{{item.dcw_producto_id__producto_linea__l_subcat__sc_area__area_nombre}}</span> 
                             </a>
                         </div>
                     </div>                                                                                                                     
@@ -1081,21 +1081,21 @@
                 <div class="item">
                     <div class="product_wrap">
                         <div class="product_img">
-                            <a href="shop-product-detail.html">
+                            <a href="{% url 'web:producto_detalle' item.dcw_producto_id__producto_codigo item.dcw_producto_id__producto_nombre|slugify %}">
                                 <img src="/media/{{item.dcw_producto_id__producto_imagen}}" height="200" alt="el_img2">
                                 <img class="product_hover_img" src="/media/{{item.dcw_producto_id__producto_imagen}}" height="200" alt="el_hover_img2">
                             </a>
                             <div class="product_action_box">
                                 <ul class="list_none pr_action_btn">
-                                    <li class="add-to-cart"><a href="#"><i class="icon-basket-loaded"></i> Add To Cart</a></li>
-                                    <li><a href="//bestwebcreator.com/shopwise/demo/shop-compare.html" class="popup-ajax"><i class="icon-shuffle"></i></a></li>
+                                    <li class="add-to-cart"><a href="{% url 'web:producto_detalle' item.dcw_producto_id__producto_codigo item.dcw_producto_id__producto_nombre|slugify %}"><i class="icon-basket-loaded"></i> Add To Cart</a></li>
+                                    <!-- <li><a href="//bestwebcreator.com/shopwise/demo/shop-compare.html" class="popup-ajax"><i class="icon-shuffle"></i></a></li>
                                     <li><a href="//bestwebcreator.com/shopwise/demo/shop-quick-view.html" class="popup-ajax"><i class="icon-magnifier-add"></i></a></li>
-                                    <li><a href="#"><i class="icon-heart"></i></a></li>
+                                    <li><a href="#"><i class="icon-heart"></i></a></li> -->
                                 </ul>
                             </div>
                         </div>
                         <div class="product_info">
-                            <h6 class="product_title"><a href="shop-product-detail.html">{{item.dcw_producto_id__producto_nombre}}</a></h6>
+                            <h6 class="product_title"><a href="{% url 'web:producto_detalle' item.dcw_producto_id__producto_codigo item.dcw_producto_id__producto_nombre|slugify %}">{{item.dcw_producto_id__producto_nombre}}</a></h6>
                             <div class="product_price">
                                 <span class="price">${{item.dcw_producto_id__producto_precio}}</span>
                                 <!-- <del>$95.00</del> -->

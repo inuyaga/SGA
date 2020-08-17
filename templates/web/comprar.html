@@ -112,7 +112,12 @@
                                             href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}">{{item.producto_nombre}}</a>
                                     </h6>
                                     <div class="product_price">
+                                        
+                                        {% if user.is_authenticated %}  
+                                            
                                         <span class="price">${{item.producto_precio|intcomma}}</span>
+                                        {% endif %}
+                                            
                                         <!-- <del>$55.25</del>
                                         <div class="on_sale">
                                             <span>35% Off</span>
