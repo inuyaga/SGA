@@ -8,7 +8,7 @@ from aplicaciones.pedidos.models import Producto
 from django.conf import settings
 Usuario = settings.AUTH_USER_MODEL
 DEVOLUCION = ((1,'Total'),(2,'Parcial'),(3,'N/A'))
-ESTADOS = ((1,'Creado'),(2,'Autorizado'),(3,'En transito'),(4,"Entregado"),(5,"Finalizado"))
+ESTADOS = ((1,'No Finalizado'),(5,"Finalizado"))
 class Conformidad(models.Model):
     conformidad_id=models.AutoField(primary_key=True)
     conformidad_descripcion=models.CharField(max_length=150, verbose_name="Descripción de conformidad")
