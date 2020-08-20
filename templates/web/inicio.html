@@ -1097,7 +1097,11 @@
                         <div class="product_info">
                             <h6 class="product_title"><a href="{% url 'web:producto_detalle' item.dcw_producto_id__producto_codigo item.dcw_producto_id__producto_nombre|slugify %}">{{item.dcw_producto_id__producto_nombre}}</a></h6>
                             <div class="product_price">
+                                
+                                {% if  user.is_authenticated %}                                    
                                 <span class="price">${{item.dcw_producto_id__producto_precio}}</span>
+                                {% endif %}
+                                    
                                 <!-- <del>$95.00</del> -->
                                 <!-- <div class="on_sale">
                                     <span>25% Off</span>
