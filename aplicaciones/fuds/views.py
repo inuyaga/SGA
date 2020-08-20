@@ -232,7 +232,7 @@ class FudList(ListView):
         return context
     
     def get_queryset(self):
-        queryset = super(FudList, self).get_queryset()
+        queryset = super(FudList, self).get_queryset().order_by('-Folio')
         
 
         fecha_captura_ini= self.request.GET.get("fecha_captura_ini")
