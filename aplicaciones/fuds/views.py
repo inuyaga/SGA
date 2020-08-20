@@ -210,7 +210,7 @@ class FudCreate(CreateView):
 
 class FudList(ListView): 
     model = Fud
-    paginate_by = 50
+    paginate_by = 100
     template_name= 'fuds/fud/list.html' 
 
     @method_decorator(permission_required('fuds.view_fud',reverse_lazy('inicio:need_permisos')))
@@ -425,7 +425,7 @@ class FudUpdate(UpdateView):
     def get(self, request, *args, **kwargs):
         identificador=self.request.GET.get('q')
         if identificador != None :
-            Fud.objects.filter(Folio=identificador).update(EstadoFud=2)
+            Fud.objects.filter(Folio=identificador).update(EstadoFud=1)
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
