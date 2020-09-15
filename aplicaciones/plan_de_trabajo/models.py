@@ -3,6 +3,7 @@ from aplicaciones.empresa.models import Cliente
 from django.utils import timezone
 from django.db import IntegrityError
 from django.conf import settings
+from django.utils.safestring import mark_safe
 Usuario = settings.AUTH_USER_MODEL
 # Create your models here.
 class Plan_trabajo(models.Model): 
@@ -43,5 +44,18 @@ class Registro_actividad(models.Model):
         unique_together = (("ra_cliente", "ra_fecha_creacion"),) 
         permissions = [('reg_activ_supervisor', 'Usuario con permiso de supervisor')]
 
-
-
+TIPOVISITA = ((1, "Venta"), (2, "Cobranza"), (3, "Sin labor de venta"))
+class VisitaVendedor(models.Model):
+    vv_fecha=models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
+    vv_cliente=models.ForeignKey(Cliente, on_delete=models.CASCADE, verbose_name='Cliente')
+    vv_vendedor=models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name='Vendedor')
+    vv_latitude = models.FloatField(verbose_name='Latitude')
+    vv_longitude = models.FloatField(verbose_name='Longitude')
+    vv_numero_venta = models.IntegerField(verbose_name='N° Venta', null=True, blank=True)
+    vv_monto_venta = models.FloatField(verbose_name='Monto Venta', null=True, blank=True)
+    vv_numero_factura = models.CharField(max_length=20,verbose_name='N° Factura', null=True, blank=True)
+    vv_monto_factura= models.FloatField(verbose_name='Monto Factura', null=True, blank=True) 
+    vv_tipo = models.IntegerField("Tipo de visita", choices=TIPOVISITA, default=1)
+    def mapa(self):
+        return mark_safe('<a href="https://www.google.com/maps/search/?api=1&query={},{}" target="_blank">Sitio captura</a>'.format(self.vv_latitude, self.vv_longitude))
+    mapa.allow_tags = True

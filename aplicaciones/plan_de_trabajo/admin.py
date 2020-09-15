@@ -1,5 +1,5 @@
 from django.contrib import admin
-from aplicaciones.plan_de_trabajo.models import Plan_trabajo, Registro_actividad
+from aplicaciones.plan_de_trabajo.models import Plan_trabajo, Registro_actividad, VisitaVendedor
 from aplicaciones.empresa.models import Cliente
 from aplicaciones.plan_de_trabajo.forms import Registro_actividadForm
 from django.db.models import Sum, F, Count, Max, Min
@@ -229,5 +229,23 @@ class AdminRegistroActividad(admin.ModelAdmin):
 
 
 
+class VisitaVendedorConig(admin.ModelAdmin):
+    list_filter = [('vv_fecha', DateRangeFilter), 'vv_tipo']       
+    search_fields = ['vv_cliente__cli_clave', 'vv_vendedor__username']    
+    list_display = [
+        'vv_fecha',
+        'vv_cliente',
+        'vv_vendedor',
+        'vv_latitude',
+        'vv_longitude',
+        'vv_numero_venta',
+        'vv_monto_venta', 
+        'vv_numero_factura',
+        'vv_monto_factura',
+        'mapa',
+        'vv_tipo',
+        ]
+
 admin.site.register(Plan_trabajo, Plan_trabajoAdmin)
 admin.site.register(Registro_actividad, AdminRegistroActividad) 
+admin.site.register(VisitaVendedor, VisitaVendedorConig) 

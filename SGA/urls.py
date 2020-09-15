@@ -31,6 +31,7 @@ admin.site.index_title = 'SGA Administración'
 urlpatterns = [
     path('', include('aplicaciones.web.urls'), name='web'),
     path('adminsga/', admin.site.urls),
+    path('api_mobile/', include('aplicaciones.api_mobile.urls'), name='api'),
     path('ods/', include('aplicaciones.ods.urls'), name='ods'),
     path('empresa/', include('aplicaciones.empresa.urls'), name='empresa'),
     path('proveedor/', include('aplicaciones.pago_proveedor.urls'), name='proveedor'),
