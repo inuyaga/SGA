@@ -2,7 +2,22 @@ from django.contrib import admin
 from aplicaciones.empresa.models import Empresa, Sucursal, Zona, Departamento, Cliente
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-# Register your models here.
+
+import qrcode.image.svg
+from svglib.svglib import svg2rlg
+import qrcode
+import tempfile
+
+from django.http import HttpResponse
+from io import BytesIO
+#Librerias reportlab a usar:
+from reportlab.platypus import (SimpleDocTemplate, PageBreak, Image, Spacer,
+Paragraph, Table, TableStyle)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import A4, letter, landscape
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT, TA_LEFT
 class EmpresaInstanceInline(admin.TabularInline):
     model = Sucursal
 
@@ -55,7 +70,49 @@ class ClienteConfigAdmin(admin.ModelAdmin):
         'cli_actualizado',
         ]
     search_fields = ['cli_clave', 'cli_nombre']
-    list_filter = ['cli_status', 'cli_actualizado']
+    list_filter = ['cli_status', 'cli_actualizado'] 
+    actions = ['DowloadQRActions']
+
+    def make_qr_code_drawing(self, data, size):
+        qr = qrcode.QRCode(version=2, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=size, border=4)
+        qr.add_data(data)
+        qrcode_svg = qr.make_image(image_factory=qrcode.image.svg.SvgPathFillImage)
+        svg_file = tempfile.NamedTemporaryFile()
+        qrcode_svg.save(svg_file)  # store as an SVG file
+        svg_file.flush()
+        qrcode_rl = svg2rlg(svg_file.name)  # load SVG file as reportlab graphics
+        svg_file.close()
+        return qrcode_rl
+    def DowloadQRActions(self, request, queryset):
+        response = HttpResponse(content_type='application/pdf')
+        buff = BytesIO()
+        aviso_empresa_style = ParagraphStyle('parrafo', alignment = TA_JUSTIFY, fontSize = 8, fontName="Times-Roman", spaceBefore=15)
+        doc = SimpleDocTemplate(buff,
+                                pagesize=letter,
+                                rightMargin=40,
+                                leftMargin=40,
+                                topMargin=60,
+                                bottomMargin=18,
+                                title='QR Clientes'
+                                )
+        items = [] 
+        
+        for client in queryset:
+            data_QR = self.make_qr_code_drawing(client.cli_clave, 15)
+            texto="Cliente:{}".format(client.cli_nombre)
+            p=Paragraph(texto, aviso_empresa_style)
+            items.append(p) 
+            items.append(data_QR)
+        
+        doc.build(items) 
+        response.write(buff.getvalue())
+        buff.close()
+        return response
+            
+          
+    DowloadQRActions.short_description = "Generar QR"
+
+
 
 # Re-register UserAdmin
 # admin.site.unregister(User)
@@ -63,5 +120,5 @@ admin.site.register(Empresa, AdminSuc)
 admin.site.register(Sucursal, Suc)
 admin.site.register(Zona)
 admin.site.register(Departamento, DepoConfig)
-# admin.site.register(User, UserAdminConfig)
+
 admin.site.register(Cliente, ClienteConfigAdmin)
