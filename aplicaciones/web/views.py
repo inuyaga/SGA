@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, UpdateView
-from aplicaciones.web.models import Marca, Catalagos, Promocion, Evento, RegistroExpo, Vacante, Postulacion, Detalle_Compra_Web, Domicilio, CompraWeb
-from aplicaciones.web.forms import CooreoForm, IncribirForm, PostulacionForm, DomicilioForm
+from aplicaciones.web.models import Marca, Catalagos, Promocion, Evento, RegistroExpo, Vacante, Postulacion, Detalle_Compra_Web, Domicilio, CompraWeb, CorreoCco
+from aplicaciones.web.forms import CorreoForm, IncribirForm, PostulacionForm, DomicilioForm
 from django.contrib import messages
 from django.urls import reverse
 from django.shortcuts import redirect
@@ -24,7 +24,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib import messages
 # Create your views here.
 class Home(TemplateView): 
-    template_name="web/inicio.html" 
+    template_name="web/V2/inicio.html" 
 
     def get_context_data(self, **kwargs): 
         context = super(Home, self).get_context_data(**kwargs)
@@ -35,7 +35,7 @@ class Home(TemplateView):
         # context['catagolo_list'] = Catalagos.objects.all()[:8]
         # context['promo_list'] = Promocion.objects.all()
         # context['evento_list'] = Evento.objects.all()
-        # context['msn_ccs'] = CooreoForm()
+        # context['msn_ccs'] = CorreoForm()
         context['portadas'] = Blog.objects.filter(blog_tipo=2)
         context['ofert_semana'] = Blog.objects.filter(blog_tipo=3)
         context['oferta_especial'] = Blog.objects.filter(blog_tipo=4)
@@ -50,10 +50,10 @@ class Home(TemplateView):
             'dcw_producto_id__producto_precio', 
             'dcw_producto_id__producto_descripcion', 
             'dcw_producto_id__producto_nombre').order_by('dcw_producto_id').annotate(veces_pedido=Sum('dcw_cantidad'))
-        context['trendings'] = trending.order_by('-veces_pedido')[:8]
+        context['trendings'] = trending.order_by('-veces_pedido')[:5]
         return context
     def post(self, request, *args, **kwargs):
-        form = CooreoForm(data=request.POST)
+        form = CorreoForm(data=request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Mensaje guardado correctamente')
@@ -499,3 +499,63 @@ class BlogViewSingle(DetailView):
     
 
 
+# Pagina computel v2 parte fea lic leo
+class NuestraEmpresa(TemplateView):
+    template_name = "web/V2/nuestraempresa.html"
+
+class PoliticasDevoluciones(TemplateView):
+    template_name = "web/V2/politicas.html"
+
+class ServicioCliente(TemplateView):
+    template_name = "web/V2/serviciocliente.html"
+
+class Contacto(CreateView):
+    model = CorreoCco
+    form_class = CorreoForm
+    template_name = 'web/V2/contacto.html'
+    success_url=reverse_lazy("web:inicio")
+    
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['blog_relacionado'] = Blog.objects.filter(blog_categoria=self.object.blog_categoria).exclude(blog_id=self.object.blog_id).order_by('-blog_creado')[:2]
+    #     context['blog_reciente'] = Blog.objects.exclude(blog_id=self.object.blog_id).order_by('-blog_creado')[:6]
+    #     context['banners'] = Blog.objects.filter(blog_tipo=5).order_by('-blog_creado')
+    #     return context
+
+class ProductoDetalleViewV2(DetailView):
+    model = Producto
+    template_name="web/V2/detalle_producto.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.object.producto_linea != None:
+            context['prod_relacionado']=Producto.objects.filter(producto_linea=self.object.producto_linea).exclude(producto_codigo=self.object)            
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        cantidad_prod = request.POST.get('quantity')
+        pk = kwargs.get('pk')
+        producto_obj = Producto.objects.get(producto_codigo=pk)
+
+        suma_prod_futura = Detalle_Compra_Web.objects.filter(dcw_producto_id=pk, dcw_status=False).aggregate(suma=Sum('dcw_cantidad'))['suma']
+        suma_prod_futura = 0 if suma_prod_futura == None else suma_prod_futura
+        total_suma_pendiente=suma_prod_futura + int(cantidad_prod)
+
+        if int(cantidad_prod) <= 0:
+            messages.warning(request, 'Cantidad de producto debe ser mayor a 0.')
+            return self.render_to_response(context=context) 
+        elif total_suma_pendiente <= producto_obj.prducto_existencia: 
+            try:
+                find_prod_user = Detalle_Compra_Web.objects.get(dcw_creado_por=request.user, dcw_status=False, dcw_producto_id=pk)
+                Detalle_Compra_Web.objects.filter(dcw_creado_por=request.user, dcw_status=False, dcw_producto_id=pk).update(dcw_cantidad=F('dcw_cantidad')+int(cantidad_prod))
+            except ObjectDoesNotExist as erro:
+                dt_cw=Detalle_Compra_Web(dcw_producto_id=producto_obj, dcw_cantidad=cantidad_prod, dcw_creado_por=request.user, dcw_precio=producto_obj.producto_precio)
+                dt_cw.save()
+            # conteo_shop=Detalle_Compra_Web.objects.filter(dcw_creado_por=request.user, dcw_status=False).count()           
+            messages.success(request, '¡Producto agregado correctamente!')
+            return self.render_to_response(context=context) 
+        else:          
+            messages.warning(request, 'Supera el limite de producto en existencia')
+            return self.render_to_response(context=context) 

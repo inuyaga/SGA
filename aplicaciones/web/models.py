@@ -11,7 +11,7 @@ class Departamento(models.Model):
     def __str__(self):
         return self.dp_nombre
 class CorreoCco(models.Model):
-    corr_nombre=models.CharField('Nombre',  max_length=200)
+    corr_nombre=models.CharField('Nombre completo',  max_length=200)
     corr_email=models.EmailField('Email',max_length=300)
     corr_telefono=models.CharField('Número teléfonico',max_length=10)
     corr_asunto=models.CharField('Asunto',max_length=150)

@@ -1,0 +1,190 @@
+{% extends 'web/base.html' %}
+{% load humanize %}
+
+{% block titulo %}
+{{object.producto_nombre}}
+{% endblock titulo %}
+
+{% block SEO %}
+<style>
+    .circular {
+            padding: 6px 0px; 
+            border-radius: 15px; 
+            /* font-size: 8px; */
+            /* text-align: center;  */
+        }
+</style>
+<!-- Open Graph / Facebook -->
+
+<meta property="og:type" content="product">
+<meta property="og:title" content="{{object.producto_nombre}}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{object.producto_imagen.url}}">
+<meta property="product:price:amount" content="{{object.producto_precio|intcomma}}">
+<meta property="product:price:currency" content="MXN">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="product">
+<!-- <meta name="twitter:site" content="@"> -->
+<meta name="twitter:title" content="{{object.producto_nombre}}">
+<meta name="twitter:description" content="{{object.producto_descripcion}}.">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{object.producto_imagen.url}}">
+<meta name="twitter:label1" content="Stock:{{object.prducto_existencia}}">
+<meta name="twitter:data1" content="${{object.producto_precio|intcomma}}">
+<meta name="twitter:label2" content="Marca:{{object.producto_marca}}">
+<meta name="twitter:data2" content="Linea:{{object.producto_linea}}">
+
+
+<!-- Marcado JSON-LD generado por el Asistente para el marcado de datos estructurados de Google. -->
+
+<script type="application/ld+json">
+        {
+          "@context": "http://schema.org/",
+          "@type": "Product",
+          "brand": {
+            "@type": "Thing",
+            "name": "{{object.producto_marca}}"
+            <!-- "logo" : "http://www.googleusercontent.com/imaginaryTeachingToolUrl" -->
+          },
+          "name": "{{object.producto_nombre}}",
+          "image": "{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{object.producto_imagen.url}}",
+          "description": "{{object.producto_descripcion}}",
+          "productId": "sku:{{object.producto_codigo}}",
+          "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency" : "MXN",
+            "lowPrice": "{{object.producto_precio|intcomma}}",
+            "itemCondition": "new"
+          }
+        }
+        </script>
+{% endblock SEO %}
+
+{% block contenido %}
+
+{% if messages %}
+<div class="container">
+    {% for message in messages %}
+    
+    <div class="row">
+        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+<!-- START MAIN CONTENT -->
+<div class="main_content">
+
+    <!-- START SECTION SHOP -->
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Library</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Data</li>
+                    </ol>
+                </nav>
+               
+            </div>
+            <div class="row">
+                <div class="card mb-2">
+                    <div class="row no-gutters">
+                      <div class="col-md-4">
+                        <img src="{{object.producto_imagen.url}}" class="card-img" alt="...">
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title">{{object.producto_nombre}}</h5>
+                          <p class="card-text">
+                            {{object.producto_descripcion|lower|striptags}}
+                          </p>
+                          <p class="card-text"><small class="text-muted">
+                            {% if user.is_authenticated %}  
+                            <span class="price">${{object.producto_precio|intcomma}}</span>                                    
+                            {% endif %}</small>
+                          </p>
+                          <hr>
+                        <form action="" method="POST" class="col-md-12">
+                            {% csrf_token %}
+                            {% if user.is_authenticated %}
+                            <div class="form-row">
+
+                                <div class="form-group col-md-3">
+                                    <input type="number" name="quantity" min="0" value="1" title="Qty" class="form-control" max="{{object.prducto_existencia}}">
+                                </div>
+                                <div class="form-group col-md-9">                                   
+                                    <button class="botoncarrito" type="submit"><i class="fas fa-cart-plus"></i> Añadir al carrito</button>
+                                </div>
+                                
+                                {% else %}
+                                <a class="btn btn-primary" href="{% url 'web:registro' %}" role="button">Registrar</a>
+                                {% endif %}
+                            </div>
+                        </form>
+                        <ul class="product-meta">
+                            <li>SKU: <a href="#">{{object.producto_codigo}}</a></li>
+                            <li>Marca: <a href="#">{{object.producto_marca}}</a></li>
+                            <li>Linea: <a href="#" rel="tag">{{object.producto_linea}}</a></li>
+                        </ul>
+
+                        <div class="product_share">
+                            <span>Compartir:</span>
+                            <ul class="social_icons">
+                                <li><a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                                        target="_blank"><i class="fab fa-facebook-square fa-lg"></i></a></li>
+                                <li><a href="https://twitter.com/share?url={{ request.build_absolute_uri }}&amp;text=Mira este producto {{object.producto_nombre}}"
+                                        target="_blank"><i class="fab fa-twitter-square fa-lg"></i></a></li>
+                                <li><a href="https://api.whatsapp.com/send?text={{ request.build_absolute_uri }}"
+                                        target="_blank"><i class="fab fa-whatsapp-square fa-lg"></i></a></li>
+                            </ul>
+                        </div>
+                        </div> <!-- card body-->
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Más información</a>
+                        </li>
+                        <!-- <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+                        </li> -->
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <br>
+                            <!-- <h1>Valoraciones</h1> -->
+                            <p>
+                                {{object.producto_descripcion_web|safe}}
+                            </p>
+                        </div>
+                        <!-- <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END SECTION SHOP -->
+
+
+
+</div>
+<!-- END MAIN CONTENT -->
+{% endblock contenido %}

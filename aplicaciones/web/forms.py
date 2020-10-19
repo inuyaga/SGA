@@ -2,7 +2,7 @@ from django import forms
 from aplicaciones.web.models import CorreoCco, RegistroExpo, Postulacion, Domicilio, Blog
 from tinymce.widgets import TinyMCE
 
-class CooreoForm(forms.ModelForm):
+class CorreoForm(forms.ModelForm):
     class Meta:
         model = CorreoCco
         fields = '__all__'
@@ -11,7 +11,7 @@ class CooreoForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(CooreoForm, self).__init__(*args, **kwargs)
+        super(CorreoForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 

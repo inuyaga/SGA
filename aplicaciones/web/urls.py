@@ -5,7 +5,7 @@ app_name="web"
 urlpatterns = [
     path('', web_dash.Home.as_view(), name='inicio'),
     path('list/producto/', web_dash.ProductosListWebView.as_view(), name='list_prod'), 
-    path('producto/detalle/<slug:pk>/<slug:nombre>', web_dash.ProductoDetalleView.as_view(), name='producto_detalle'),
+    # path('producto/detalle/<slug:pk>/<slug:nombre>', web_dash.ProductoDetalleView.as_view(), name='producto_detalle'),
     path('events/inscribir/', web_dash.IncribirCreate.as_view(), name='inscripcion'),
     path('vancante/list/', web_dash.VacanteView.as_view(), name='vacantes'),
     path('vancante/postulacion/', web_dash.PostularCreate.as_view(), name='va_postular'),
@@ -25,4 +25,12 @@ urlpatterns = [
     path('compras/pedidos/<int:pk>/detalles/', web_dash.DetalleCmpraWebView.as_view(), name='compras_web_detalle'),
     path('cuenta/user/', web_dash.DetalleCuentaView.as_view(), name='profile'),
     path('blog/view/<int:pk>/<slug:nombre>/', web_dash.BlogViewSingle.as_view(), name='blog_view'),
+    
+    
+    # Direcciones de la versión fea lic leo
+    path('nuestraempresa', web_dash.NuestraEmpresa.as_view(), name='nuestraempresav2'),
+    path('politicas', web_dash.PoliticasDevoluciones.as_view(), name='politicasdevov2'),
+    path('serviciocliente', web_dash.ServicioCliente.as_view(), name='servicioclientev2'),
+    path('contacto', web_dash.Contacto.as_view(), name='contactov2'),
+    path('producto/detalle/<slug:pk>/<slug:nombre>', web_dash.ProductoDetalleViewV2.as_view(), name='producto_detalle_v'),
 ]
