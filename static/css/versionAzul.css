@@ -234,3 +234,7 @@ strong {
 .botoncarrito:hover {
 	color: #003a91 !important;
 }
+
+.contactoW div p{
+    text-align: center;
+}
