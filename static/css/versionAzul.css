@@ -71,7 +71,7 @@ strong {
     font-weight: bold;
 }
 
-.botoncarrito{
+/* .botoncarrito{
     padding: 12px 20px;
     border-top: solid 1px #d2d2d2;
     border-left: solid 1px #c3c3c3;
@@ -94,9 +94,7 @@ strong {
     box-shadow: 0 1px 1px rgba(0,0,0,0.125), inset 0 1px 0 rgba(255, 255, 255, 0.5);
     width: auto;
     text-decoration: none;
-    /* Improves usability and consistency of cursor style between image-type 'input' and others */
     cursor: pointer;
-    /* Corrects inability to style clickable 'input' types in iOS */
     line-height: 1;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
     
@@ -115,7 +113,7 @@ strong {
     background: -moz-linear-gradient(center bottom, #1e73be 0%, #003a91 100%);
     background: -o-linear-gradient(#003a91, #1e73be);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#003a91', endColorstr='#1e73be', GradientType=0);
-}
+} */
 
 .principalTitulo{
     margin: 1em 0;
@@ -168,4 +166,71 @@ strong {
 	text-align: center;
 	padding: 0;
 	margin: 3px;
+}
+
+.order_review {
+	background-color: #f7f8fb;
+	padding: 30px;
+}
+.order_table thead th {
+	border-bottom-width: 1px;
+	font-weight: 600;
+}
+.order_table tfoot th {
+	font-weight: 600;
+}
+.order_table tbody td {
+	border: 0;
+}
+.payment_method {
+	margin-bottom: 30px;
+	display: inline-block;
+	width: 100%;
+}
+.payment_option .custome-radio {
+	margin-bottom: 10px;
+}
+.payment-text {
+	display: none;
+	margin-top: 5px;
+	margin-bottom: 0;
+}
+.payment_option .custome-radio:first-child .payment-text {
+	display: block;
+}
+.payment_option .custome-radio .form-check-label {
+	color: #292b2c;
+	font-weight: 600;
+}
+
+.botoncarrito {
+	background-color: transparent;
+	border: 1px solid #003a91;
+	color: #fff;
+	position: relative;
+	overflow: hidden;
+	z-index: 1;
+}
+.botoncarrito::before,
+.botoncarrito::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	background-color: #003a91;
+	z-index: -1;
+	transition: all 0.3s ease-in-out;
+	width: 51%;
+}
+.botoncarrito::after {
+	right: 0;
+	left: auto;
+}
+.botoncarrito:hover:before,
+.botoncarrito:hover:after {
+	width: 0;
+}
+.botoncarrito:hover {
+	color: #003a91 !important;
 }

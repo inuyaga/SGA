@@ -33,7 +33,7 @@ class Home(TemplateView):
         # context['even_nombre'] = Evento.objects.all()
         # context['marca_list'] = Marca.objects.all()
         # context['catagolo_list'] = Catalagos.objects.all()[:8]
-        # context['promo_list'] = Promocion.objects.all()
+        context['promo_list'] = Promocion.objects.all()
         # context['evento_list'] = Evento.objects.all()
         # context['msn_ccs'] = CorreoForm()
         context['portadas'] = Blog.objects.filter(blog_tipo=2)

@@ -3,10 +3,109 @@
 {% block titulo %}Carrito checkout{% endblock titulo %}
 
 {% block contenido %}
-<div class="container">
+<style>
+    .helptext{
+        color: #6c757d;
+        font-size: 80%;    
+        font-weight: 400; 
+        margin-top: .25rem;   
+        display: block;
+    }
+</style>
+<div class="container" id="app">
     <form action="" class="row" method="POST">
         {% csrf_token %}
-        
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                
+                <h2 class="principalTitulo">Detalles de envio</h2>
+                
+                {% for item in domicilios %}
+                <div class="form-check">
+                    <input @change="onChange($event)" class="form-check-input" type="radio" name="dominicio" id="domicilio{{item.id}}" value="{{item.id}}" required {% if item.dom_activo %}checked{% endif %}>
+                    <label class="form-check-label" for="domicilio{{item.id}}">
+                      {{item.str_domicilio}}
+                    </label>
+                  </div>
+                  <br>
+                {% endfor %}
+                <div class="form-check">
+                    <input @change="onChange($event)" class="form-check-input" type="radio" name="dominicio" id="domicilioNone" value="0" required>
+                    <label class="form-check-label" for="domicilioNone">
+                      Agregar domicilio
+                    </label>
+                </div>
+                <br>
+                <wigget_form v-if="mostar"></wigget_form>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="order_review">
+                    <div class="heading_s1">
+                        <h4>Pedido</h4>
+                    </div>
+                    <div class="table-responsive order_table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                {% for item in carrito %}                                        
+                                <tr>
+                                    <td>{{item.dcw_producto_id.producto_nombre}} <span class="product-qty">x {{item.dcw_cantidad}}</span></td>
+                                    <td>${{item.sub_total|floatformat:2|intcomma}}</td>
+                                </tr>
+                                {% endfor %}                                                                                                                
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>SubTotal</th>
+                                    <td class="product-subtotal">${{subtotal|floatformat:2|intcomma}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Envio</th>
+                                    <td>Envio gratis</td>
+                                </tr>
+                                <tr>
+                                    <th>Iva</th>
+                                    <td>{{iva|floatformat:2|intcomma}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Total</th>
+                                    <td class="product-subtotal">${{total|floatformat:2|intcomma}}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="payment_method">
+                        <div class="heading_s1">
+                            <h4>Metodo de pago</h4>
+                        </div>
+                        <div class="payment_option">
+                            <div class="custome-radio">
+                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" value="option3" checked="">
+                                <label class="form-check-label" for="exampleRadios3">Pago en efectivo</label>
+                                <p data-method="option3" class="payment-text">Al momento de entrega usted debera saldar su pago.</p>
+                            </div>
+                            <!-- <div class="custome-radio">
+                                <input class="form-check-input" type="radio" name="payment_option" id="exampleRadios4" value="option4">
+                                <label class="form-check-label" for="exampleRadios4">Check Payment</label>
+                                <p data-method="option4" class="payment-text">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode.</p>
+                            </div>
+                            <div class="custome-radio">
+                                <input class="form-check-input" type="radio" name="payment_option" id="exampleRadios5" value="option5">
+                                <label class="form-check-label" for="exampleRadios5">Paypal</label>
+                                <p data-method="option5" class="payment-text">Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.</p>
+                            </div> -->
+                        </div>
+                    </div>                                                
+                    <button class="btn botoncarrito" type="submit">Realizar pedido</button>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 {% endblock contenido %}
@@ -72,12 +171,22 @@ vm_component=Vue.component('wigget_form', {
               var optionText = event.target.value;
               switch (optionText) {
                   case '0':
+                  $('#pie').css({
+                    position: 'relative',
+                    width: '100%'
+                });
                   this.mostar = true
                       break;              
                   default:
+                  $('#pie').css({
+                        position: 'fixed',
+                        bottom: '0rem',
+                        width: '100%',
+                        zIndex:'2000'
+                    });
                   this.mostar = false
                       break;
-              }              
+              }
           }
 
 
