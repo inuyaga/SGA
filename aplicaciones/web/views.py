@@ -278,10 +278,10 @@ def get_carro_compras(request):
 
     
     
-
+#se cambio la direccioón del template a la versión 2
 class CarritoComprasView(LoginRequiredMixin, ListView):  
     model=Detalle_Compra_Web
-    template_name = "web/carrito.html"
+    template_name = "web/V2/carrito.html"
     login_url = reverse_lazy('inicio') 
     redirect_field_name = 'redirect_to'
     context_object_name = 'carrito'
@@ -326,12 +326,11 @@ def delete_item_carrito(request):
     }
     return JsonResponse(status=201, data=contenid)
 
-
-
+#se cambio el template a la versión 2 
 class CheckoutView(LoginRequiredMixin,TemplateView):
     login_url = reverse_lazy('inicio')
     redirect_field_name = 'redirect_to'
-    template_name = "web/checkout.html"
+    template_name = "web/V2/checkout.html"
     def post(self, request, *args, **kwargs):
         post_dom = request.POST.get('dominicio')        
         url='/'     

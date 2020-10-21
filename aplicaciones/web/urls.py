@@ -28,9 +28,9 @@ urlpatterns = [
     
     
     # Direcciones de la versión fea lic leo
-    path('nuestraempresa', web_dash.NuestraEmpresa.as_view(), name='nuestraempresav2'),
-    path('politicas', web_dash.PoliticasDevoluciones.as_view(), name='politicasdevov2'),
-    path('serviciocliente', web_dash.ServicioCliente.as_view(), name='servicioclientev2'),
-    path('contacto', web_dash.Contacto.as_view(), name='contactov2'),
+    path('nuestraempresa/', web_dash.NuestraEmpresa.as_view(), name='nuestraempresa'),
+    path('politicas/', web_dash.PoliticasDevoluciones.as_view(), name='politicasdevo'),
+    path('serviciocliente/', web_dash.ServicioCliente.as_view(), name='serviciocliente'),
+    path('contacto/', web_dash.Contacto.as_view(), name='contacto'),
     path('producto/detalle/<slug:pk>/<slug:nombre>', web_dash.ProductoDetalleViewV2.as_view(), name='producto_detalle_v'),
 ]

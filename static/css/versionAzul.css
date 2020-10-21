@@ -158,3 +158,14 @@ strong {
 	line-height: 26px;
 	font-size: 16px;
 }
+
+.qty {
+	float: left;
+	width: 55px;
+	height: 36px;
+	border: 1px solid #ddd;
+	background-color: transparent;
+	text-align: center;
+	padding: 0;
+	margin: 3px;
+}

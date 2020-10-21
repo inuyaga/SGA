@@ -48,19 +48,19 @@
             <div class="collapse navbar-collapse" id="navbarText">
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'web:nuestraempresav2' %}">Nuestra empresa <span class="sr-only">(current)</span></a>
+                  <a class="nav-link" href="{% url 'web:nuestraempresa' %}">Nuestra empresa <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPoliticas" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Servicio al cliente
                     </a>
                     <div class="dropdown-menu menudesplegable" aria-labelledby="navbarDropdownPoliticas">
-                        <a class="dropdown-item" href="{% url 'web:servicioclientev2' %}">Servicio al cliente </a>
-                        <a class="dropdown-item" href="{% url 'web:politicasdevov2' %}">Políticas de devolución y garantía</a>
+                        <a class="dropdown-item" href="{% url 'web:serviciocliente' %}">Servicio al cliente </a>
+                        <a class="dropdown-item" href="{% url 'web:politicasdevo' %}">Políticas de devolución y garantía</a>
                     </div>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'web:contactov2' %}">Contacto</a>
+                  <a class="nav-link" href="{% url 'web:contacto' %}">Contacto</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownServicios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -102,10 +102,13 @@
                         {% endif %}
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'web:carrito' %}"><i class="fas fa-shopping-cart"></i></a>
+                </li>
               </ul>
-              <!-- <span class="navbar-text">
-                Navbar text with an inline element
-              </span> -->
+              <span class="navbar-text" style="color:white">
+                Subtotal: ${{suma_pre_compra|intcomma}}
+              </span>
             </div>
             </div>
         </nav>
@@ -124,11 +127,28 @@
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 
+<script>
+    $(document).ready(function($){
+        if($("body").height() > 800){
+            $('#pie').css({
+                position: 'relative',
+                width: '100%'
+            });
+        }else{
+            $('#pie').css({
+                position: 'fixed',
+                bottom: '0rem',
+                width: '100%',
+                zIndex:'2000'
+            });
+        }
+    }); 
+</script>
         {% block script %}
     
         {% endblock script %}
     </body>
-    <div class="card text-center bg-dark text-white">
+    <div class="card text-center bg-dark text-white" id="pie">
         <div class="card-body">
             <p class="font-weight-light">Carretera Villahermosa-Nacajuca k.m. 2.9 S/N, Saloya 3era. Sección, Nacajuca, Tabasco. Tel. 9933 13 61 80</p>
             <div class="hfe-copyright-wrapper">

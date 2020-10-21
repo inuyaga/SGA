@@ -1,0 +1,88 @@
+{% extends 'web/base.html' %}
+{% load humanize %}
+{% block titulo %}Carrito checkout{% endblock titulo %}
+
+{% block contenido %}
+<div class="container">
+    <form action="" class="row" method="POST">
+        {% csrf_token %}
+        
+    </form>
+</div>
+{% endblock contenido %}
+{% block script %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+
+vm_component=Vue.component('wigget_form', {
+    data: function () {
+        return {                        
+            code_postal: '',
+            Estado: '',
+            Delegacion: '',
+        }
+    },
+    delimiters: ["[[", "]]"],
+    // props: ['data_item'],
+    
+    template: `<div>{{domicilioForm.as_p}}</div>`,
+    methods:{
+        post_item: function () {
+            const vm = this;
+                axios.get('https://api-sepomex.hckdrk.mx/query/info_cp/'+this.code_postal+'?type=simplified')
+                    .then(function (response) {
+                        vm.Delegacion=response.data.response.municipio
+                        vm.Estado=response.data.response.estado
+                                     
+                    })
+                    .catch(function (error) {
+                        swal("Mal!", 'Favor de escribir un C.P correcto', "error");
+                        vm.Delegacion=''
+                        vm.Estado=''
+                    });
+            }
+    }
+
+})
+     var app = new Vue({
+        el: '#app',
+        data: {            
+            HTMLcontentOriginal: `{{domicilioForm.as_p}}`,
+            HTMLcontent: ``,
+            mostar:false
+        },
+        methods: {
+            post_item: function () {
+                axios.get('https://api-sepomex.hckdrk.mx/query/info_cp/'+this.code_postal+'?type=simplified')
+                    .then(function (response) {
+                        app.Delegacion=response.data.response.municipio
+                        app.Estado=response.data.response.estado
+                                     
+                    })
+                    .catch(function (error) {
+                        swal("Mal!", 'Favor de escribir un C.P correcto', "error");
+                        app.Delegacion=''
+                        app.Estado=''
+                    });
+            },
+
+            onChange(event) {
+              var optionText = event.target.value;
+              switch (optionText) {
+                  case '0':
+                  this.mostar = true
+                      break;              
+                  default:
+                  this.mostar = false
+                      break;
+              }              
+          }
+
+
+        },
+        delimiters: ["[[", "]]"]
+    })
+</script>
+{% endblock script %}

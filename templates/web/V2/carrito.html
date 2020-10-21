@@ -1,0 +1,88 @@
+{% extends 'web/base.html' %}
+{% load humanize %}
+{% block titulo %}Carrito{% endblock titulo %}
+
+{% block contenido %}
+<div class="container">
+    <div class="row">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="row table-responsive">
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Imagen</th>
+                <th scope="col">Producto</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Total</th>
+                <th scope="col">Eliminar</th>
+              </tr>
+            </thead>
+            <tbody>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                {% for item in carrito %}
+                <tr id="{{item.dcw_producto_id.producto_codigo}}">
+                    <td>
+                        <img src="{{item.dcw_producto_id.producto_imagen.url}}" style="width: 100px; height: 111px;" alt="product1">
+                    </td>
+                        
+                    <td>{{item.dcw_producto_id.producto_nombre}}</td>
+                    <td>${{item.dcw_precio|intcomma}}</td>
+                    <td>
+                        <input autocomplete="off" type="number" class="qty" name="{{item.dcw_producto_id}}" value="{{item.dcw_cantidad}}" title="Qty" size="4">
+                    </td>
+                    <td>
+                        ${{item.sub_total|floatformat:2}}
+                    </td>
+                    <td class="product-remove" data-title="Remove">
+                        <button type="button" class="btn" style="color:red" onclick="delte_item('{{item.dcw_producto_id.producto_codigo}}')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6" class="px-0">
+                        <div class="row no-gutters align-items-center">
+
+                            <div class="col-lg-4 col-md-6 mb-3 mb-md-0">
+                            </div>
+                            <div class="col-lg-8 col-md-6 text-left text-md-right">
+                                <button class="botoncarrito" type="submit">Actualizar
+                                    carrito</button>
+                                <a href="{% url 'web:checkout' %}"
+                                    class="botoncarrito">Proceder compra</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+                </form>
+          </table>
+    </div>
+</div>
+
+
+{% endblock contenido %}
+
+
+{% block script %}
+<script>
+    function delte_item(id) {
+        $('#' + id).remove();
+    }
+</script>
+{% endblock script %}
