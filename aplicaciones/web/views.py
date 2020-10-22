@@ -98,7 +98,7 @@ class PostularCreate(CreateView):
 
 class ProductosListWebView(ListView): 
     model = Producto
-    template_name = "web/comprar.html"  
+    template_name = "web/V2/comprar.html"  
     paginate_by = 11
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -167,7 +167,7 @@ class ProductosListWebView(ListView):
 
 class ProductoDetalleView(DetailView):
     model = Producto
-    template_name="web/detalle_producto.html"
+    template_name="web/V2/detalle_producto.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

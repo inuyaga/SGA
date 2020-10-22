@@ -1,0 +1,126 @@
+{% extends 'web/base.html' %}
+{% load static humanize %}
+{% block contenido %}
+<div class="container">
+    <div class="row justify-content-center">
+        <form action="" method="get" class="col-md-4">
+
+            {%for key, values in request.GET.lists%}
+            {%for value in values%}
+            {% if key == 'order' %}
+            {% else %}
+            <input type="hidden" name="{{key}}" id="" value="{{value}}">
+            {% endif %}
+            {%endfor%}
+            {%endfor%}
+
+            <div class="custom_select" style="padding-bottom: 30px;padding-top: 10px;">
+                <select class="form-control form-control-sm" name="order">
+                    <option value="default">Default</option>
+                    <!-- <option value="popularity">Sort by popularity</option> -->
+                    <option value="date_new"
+                        {% if view.request.GET.order == 'date_new' %}selected{% endif %}>Lo
+                        mas nuevo</option>
+                    <option value="desc"
+                        {% if view.request.GET.order == 'desc' %}selected{% endif %}>Precio
+                        menor a mayor</option>
+                    <option value="asc"
+                        {% if view.request.GET.order == 'asc' %}selected{% endif %}>Precio
+                        mayor a menor</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <h2 class="principalTitulo">Categorias</h2>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a class="" href="{% url 'web:list_prod' %}">Mostrar todo</a>
+                </li>
+                {% for item in area_count %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a {% if view.request.GET.area == item.producto_linea__l_subcat__sc_area|striptags  %}class="text-danger"
+                                        {% endif %} href="?area={{item.producto_linea__l_subcat__sc_area}}">
+                    {{item.producto_linea__l_subcat__sc_area__area_nombre|title  }}</a>
+                  <span class="badge badge-primary badge-pill">{{item.total_produc}}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <hr>
+            <h2 class="principalTitulo">Marcas</h2>
+            <form action="" method="get" id="form_marca">
+                {%for key, values in request.GET.lists%}
+                {%for value in values%}
+                {% if key == 'marca' %}
+                {% else %}
+                <input type="hidden" name="{{key}}" id="" value="{{value}}">
+                {% endif %}
+                {%endfor%}
+                {%endfor%}
+                {% for item in marca_object_list %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{item.producto_marca}}" name="marca" id="{{item.producto_marca}}" {% if item.producto_marca|striptags in marca_lista %} checked
+                    {% endif %}>
+                    <label class="form-check-label" for="{{item.producto_marca}}">
+                        {{item.producto_marca__marca_nombre|upper}}
+                    </label>
+                </div>
+                {% endfor %}
+            </form>
+            
+        </div>
+        <div class="col-md-9">
+            {% for item in object_list %}
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img src="{{item.producto_imagen.url}}" class="card-img" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{item.producto_nombre}}</h5>
+                                <p class="card-text">
+                                    {{item.producto_descripcion}}
+                                </p>
+                                <p class="card-text">
+                                    Marca: {{item.producto_marca|title}}
+                                </p>
+                                {% if user.is_authenticated %}  
+                                <p class="card-text text-muted">${{item.producto_precio|intcomma}}</p>
+                                {% endif %}
+
+                                {% if item.prducto_existencia > 0 %}
+                                    <a class="btn botoncarrito" href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}"><i class="fas fa-shopping-cart"></i> Ver</a>
+                                {% else %}
+                                    <li class="add-to-cart">*Sin Stock</li>                                                
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <ul class="pagination mt-3 justify-content-center pagination_style1">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">&laquo;</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}">&#60;</a></li>
+                {% endif %}
+                <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">&#62;</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">&#187;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
+{% block script %}
+<script>
+    $('form').on('change', function () {
+        this.submit()
+    });
+</script>
+{% endblock script %}
