@@ -22,6 +22,22 @@
         <title>Computel - {% block titulo %}Comercializadora Computel del Sureste{% endblock titulo %}</title>
     </head>
     <body>
+        <div class="btn-group dropup ws">
+            <button type="button" class="button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fab fa-whatsapp fa-3x"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item wspanel" href=""><b> Inicia una convesación</b></a>
+                <a class="dropdown-item btonesws" href="https://web.whatsapp.com/send?phone=529831642938"><i class="fab fa-whatsapp fa-2x"></i><label style="color:black">Cancún</label></a>
+                <a class="dropdown-item btonesws" href="https://web.whatsapp.com/send?phone=529931604623"><i class="fab fa-whatsapp fa-2x"></i><label style="color:black">Chiapas</label></a>
+                <a class="dropdown-item btonesws" href="https://web.whatsapp.com/send?phone=529931206221"><i class="fab fa-whatsapp fa-2x"></i><label style="color:black">Olmeca</label></a>
+                <a class="dropdown-item btonesws" href="https://web.whatsapp.com/send?phone=529931775466"><i class="fab fa-whatsapp fa-2x"></i><label style="color:black">Mérida</label></a>
+                <a class="dropdown-item btonesws" href="https://web.whatsapp.com/send?phone=529931489328"><i class="fab fa-whatsapp fa-2x"></i><label style="color:black">Chiapas</label></a>
+                <a class="dropdown-item btonesws" href="https://web.whatsapp.com/send?phone=529932075181"><i class="fab fa-whatsapp fa-2x"></i><label style="color:black">Oaxaca</label></a>
+                <a class="dropdown-item btonesws" href="https://web.whatsapp.com/send?phone=529931880299"><i class="fab fa-whatsapp fa-2x"></i><label style="color:black">Veracruz</label></a>
+            </div>
+        </div>
+
         <div class="container">
             <nav class="navbar navbar-light">
                 <a class="navbar-brand" href="{% url 'web:inicio' %}">
@@ -55,7 +71,7 @@
                     Servicio al cliente
                     </a>
                     <div class="dropdown-menu menudesplegable" aria-labelledby="navbarDropdownPoliticas">
-                        <a class="dropdown-item" href="{% url 'web:serviciocliente' %}">Servicio al cliente </a>
+                        <!-- <a class="dropdown-item" href="{% url 'web:serviciocliente' %}">Servicio al cliente </a> -->
                         <a class="dropdown-item" href="{% url 'web:politicasdevo' %}">Políticas de devolución y garantía</a>
                     </div>
                 </li>

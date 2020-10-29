@@ -238,3 +238,48 @@ strong {
 .contactoW div p{
     text-align: center;
 }
+
+
+
+
+
+
+
+
+#toggle{
+    display: none;
+}
+
+.button{
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 9999;
+    width: 4em;
+    height:4em;
+    background: #25d366;
+    color:white;
+    border-radius: 100%;
+    transition: all 0.5s ease-in-out;
+    /* box-shadow: 1px 3px 10px 0 rgba(0,0,0,0.3); */
+    cursor: pointer;
+}
+
+.wspanel{
+    background: #25d366;
+    color: white;
+}
+
+.btonesws
+{
+    color: #25d366;
+}
+.ws .dropdown-menu{
+    padding: 0%;
+}
+
+.navbar-brand{
+    font-weight: bold;
+    font-size: .9rem;
+    color: #e2e2e2;
+}
