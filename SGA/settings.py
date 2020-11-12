@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'aplicaciones.plan_de_trabajo.apps.PlanDeTrabajoConfig',
     'aplicaciones.expo',
     'aplicaciones.web',
+    'aplicaciones.gasto',
     'tinymce',
     'django_cleanup.apps.CleanupConfig',
 ]
@@ -99,10 +100,10 @@ WSGI_APPLICATION = 'SGA.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sga_v2',
-        'USER': 'externo',
-        'PASSWORD': '0102261218',
-        'HOST': '192.168.1.228',
+        'NAME': 'sga',
+        'USER': 'soporte',
+        'PASSWORD': 'S1st3m45',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }

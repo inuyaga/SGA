@@ -6,5 +6,6 @@
         "--disable-msg",
         "I0011"
     ],
-    "python.pythonPath": "env_sga\\Scripts\\python.exe",
+    "python.pythonPath": "env/bin/python",
+    "editor.fontFamily": "'Menlo', 'Consolas', 'DejaVu Sans Mono', 'monospace'",
 }
