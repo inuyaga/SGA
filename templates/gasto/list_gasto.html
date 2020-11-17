@@ -1,0 +1,278 @@
+{% extends 'index/base.html'%}
+{% load verbose_name_tags %}
+{% block contenido %}
+<div class="container-fluid p-y-md">
+
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Filtros</h4>
+                <ul class="card-actions">
+                    <!-- <li>
+                            <span>Text 1</span>
+                        </li> -->
+                </ul>
+                <!-- .card-actions -->
+            </div>
+
+
+
+
+            <div class="card-block">
+                <div class="row">
+                    <form class="form-inline col-sm-12" action="" method="GET">
+                        <div class="form-group">
+                            <select class="custom-select" name="empresa">
+                                <option selected value="">Empresa</option>
+                                {% for item in Empresa %}
+                                <option value="{{item.id}}"
+                                    {% if view.request.GET.empresa == item.id|striptags %}selected{% endif %}>{{item}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="custom-select" name="tip_gasto">
+                                <option selected value="">Tipo de gasto</option>
+                                {% for item in TipoGasto %}
+                                <option value="{{item.id}}"
+                                    {% if view.request.GET.tip_gasto == item.id|striptags %}selected{% endif %}>{{item}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="custom-select" name="status">
+                                <option selected value="">Estatus</option>
+                                {% for item in STATUS %}
+                                <option value="{{item.0}}"
+                                    {% if view.request.GET.status == item.0|striptags %}selected{% endif %}>{{item.1}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="my-1 mr-2" for="birthday">Semana:</label>
+                            <input type="week" id="week" name="week" value="{{view.request.GET.week}}">
+                        </div>
+                        <div class="form-group m-b-0">
+                            <button class="btn btn-default" type="submit"><i class="ion-search fa-2x"></i></button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Gastos</h4>
+                <ul class="card-actions">
+
+                    <li class="dropdown">
+                        <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span
+                                class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li class="dropdown-header">Gasto</li>
+                            {% if perms.gasto.add_gasto %}                                                                                          
+                            <li>
+                                <a tabindex="-1" href="{% url 'gastos:gasto_create' %}">Añadir</a>
+                            </li>
+                            {% endif %}
+                                
+
+                        </ul>
+                    </li>
+                </ul>
+                <!-- .card-actions -->
+            </div>
+
+
+{{badge.1}}
+            <div class="card-block">
+                <div class="table-responsive">
+                    <table class="table-condensed">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_id" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_tipoGasto" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_monto" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_descripcion" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_fechaCreacion" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_estado" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_empresa" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_userCreador" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_factura" }}</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for item in object_list %}
+                            <tr>
+                                <td>{{item.g_id}}</td>
+                                <td>{{item.g_tipoGasto}}</td>
+                                <td>{{item.g_monto}}</td>
+                                <td>{{item.g_descripcion}}</td>
+                                <td>{{item.g_fechaCreacion}}</td>
+                                <td><span class="{{badge|get_item:item.g_estado}}">{{item.get_g_estado_display}}</span></td>
+                                <td>{{item.g_empresa}}</td>
+                                <td>{{item.g_userCreador}}</td>
+                                <td><a href="{{item.g_factura.url}}">Ver</a></td>
+                                <td>
+
+                                    {% if perms.gasto %}                                                                                                                                                   
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        {% if item.g_estado == 1 %}
+                                        
+                                        {% if perms.gasto.puede_validar_gasto %}                                            
+                                        <button type="button" onclick="validar({{item.g_id}})"
+                                        class="btn btn-success btn-sm" title="Validar"><i class="fa fa-thumbs-up"
+                                        aria-hidden="true"></i></button>
+                                        {% endif %}
+
+                                        {% if perms.gasto.puede_rechazar_gasto %}                                            
+                                        <button type="button" onclick="rechazar({{item.g_id}})" class="btn btn-danger btn-sm" title="Rechazar"><i
+                                                class="fa fa-thumbs-down" aria-hidden="true"></i></button>
+                                        {% endif %}
+                                            
+                                        {% elif item.g_estado == 2 %}
+                                        {% if perms.gasto.puede_autorizar_gasto %}   
+                                        <button type="button" onclick="autorizar({{item.g_id}})" class="btn btn-dark btn-sm" title="Autorizar">
+                                            <i class="fa fa-check-circle-o" aria-hidden="true"></i></button>
+                                        {% endif %}
+                                        {% elif item.g_estado == 3 %}
+
+                                        {% if perms.gasto.puede_pagar_gasto %}  
+                                        <button type="button" onclick="pagar({{item.g_id}})" class="btn btn-dark btn-sm" title="Pagar">
+                                            <i class="fa fa-credit-card" aria-hidden="true"></i></button>
+                                        {% endif %}
+
+                                        {% endif %}
+
+                                        {% if perms.gasto.change_gasto %} 
+                                        <a class="btn btn-primary btn-sm"
+                                            href="{% url 'gastos:gasto_update' item.g_id %}" title="Editar"
+                                            role="button"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                        {% endif %}    
+
+                                        {% if perms.gasto.delete_gasto %}                                         
+                                        <a class="btn btn-danger btn-sm" href="{% url 'gastos:gasto_delete' item.g_id %}" title="Eliminar" role="button"><i
+                                            class="fa fa-trash" aria-hidden="true"></i></a>
+                                        {% endif %}    
+                                    </div>
+
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="row">
+            <div class="col-lg-12 col-centered">
+
+
+
+            </div>
+        </div>
+
+
+
+
+    </div>
+</div>
+{% endblock contenido %}
+
+
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function validar(folio) {
+        alertify.confirm('Validar', `Esta seguro de validar el Folio:${folio}`, function () {
+            
+            axios.post(`{% url 'gastos:gasto_update_status' %}`, {
+                g_id: folio,                
+                g_estado: 2,                
+            })
+                .then(function (response) {
+                    console.log(response.data);
+                    updatePage();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+            , function () { });
+    }
+    function autorizar(folio) {
+        alertify.confirm('Autorizar', `Esta seguro de autorizar el Folio:${folio}`, function () {
+            
+            axios.post(`{% url 'gastos:gasto_update_status' %}`, {
+                g_id: folio,  
+                g_estado: 3,                 
+            })
+                .then(function (response) {
+                    console.log(response.data);
+                    updatePage();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+            , function () { });
+    }
+    function pagar(folio) {
+        alertify.confirm('Pagar', `Esta seguro de pagar el Folio:${folio}`, function () {
+            
+            axios.post(`{% url 'gastos:gasto_update_status' %}`, {
+                g_id: folio,      
+                g_estado: 4,             
+            })
+                .then(function (response) {
+                    console.log(response.data);
+                    updatePage();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+            , function () { });
+    }
+    function rechazar(folio) {
+        alertify.confirm('Rechazar', `Esta seguro de rechazar Folio:${folio}`, function () {
+            
+            axios.post(`{% url 'gastos:gasto_update_status' %}`, {
+                g_id: folio,     
+                g_estado: 5,              
+            })
+                .then(function (response) {
+                    console.log(response.data);
+                    updatePage();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+            , function () { });
+    }
+
+
+    function updatePage() {
+        window.location.reload();
+    }
+</script>
+{% endblock script %}

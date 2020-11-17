@@ -6,4 +6,12 @@ app_name = "gastos"
 urlpatterns = [
     path('inicio', GastoView.InicioView.as_view(), name='init'),
     path('tipo_gasto/crear/', GastoView.CrearTipoGasto.as_view(), name='tipo_crear'),
+    path('tipo_gasto/list/', GastoView.TipoGastoList.as_view(), name='tipoGastoList'),
+    path('tipo_gasto/<int:pk>/update/', GastoView.UpdateTipoGasto.as_view(), name='updateTipoG'),
+    path('tipo_gasto/<int:pk>/delete/', GastoView.TipoGastoDelete.as_view(), name='deleteTipoG'),
+    path('gasto/list/', GastoView.GastoViewList.as_view(), name='gasto_list'),
+    path('gasto/crear/', GastoView.GastoCreate.as_view(), name='gasto_create'),
+    path('gasto/<int:pk>/update/', GastoView.GastoUpdateView.as_view(), name='gasto_update'),
+    path('update/status/', GastoView.UpdateStatusView.as_view(), name='gasto_update_status'),
+    path('<int:pk>/delete/', GastoView.GastoDelete.as_view(), name='gasto_delete'),
     ]

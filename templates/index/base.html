@@ -354,6 +354,25 @@
                             </li>
                             {% endif %}
 
+
+                            {% if perms.gasto %}
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="fa fa-money"></i>Gastos</a> 
+                                <ul class="nav nav-subnav">
+                                    {% if perms.gasto.view_tipogasto %} 
+                                    <li>
+                                        <a href="{% url 'gastos:tipoGastoList' %}">Tipo de Gastos</a>
+                                    </li>
+                                    {% endif %}
+                                    {% if perms.gasto.view_gasto %} 
+                                    <li>
+                                        <a href="{% url 'gastos:gasto_list' %}">Gastos</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% endif %}
+
                         </ul>
                     </nav>
                     <!-- End drawer navigation -->

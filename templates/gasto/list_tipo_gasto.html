@@ -1,0 +1,72 @@
+{% extends 'index/base.html'%} 
+{% load verbose_name_tags %}
+{% block contenido %}
+    <div class="container-fluid p-y-md">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Tipo de Gasto</h4>
+                    <ul class="card-actions">
+                            
+                        <li class="dropdown">
+                            <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li class="dropdown-header">Tipo de gasto</li>
+                                <li>
+                                    <a tabindex="-1" href="{% url 'gastos:tipo_crear' %}">Añadir</a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+                    </ul>
+                    <!-- .card-actions -->
+                </div>
+        
+        
+        
+                <div class="card-block">
+                    <div class="table-responsive">
+                        <table class="table-condensed">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>{{ object_list|get_queryset_field_verbose_name:"nombre" }}</th>                                    
+                                    <th>Accion</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                {% for item in object_list %}
+                                <tr>
+                                <td>{{item.nombre}}</td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <a class="btn btn-primary" href="{% url 'gastos:updateTipoG' item.id %}" role="button">Editar</a>
+                                        <a class="btn btn-danger" href="{% url 'gastos:deleteTipoG' item.id %}" role="button">Eliminar</a>
+                                    </div>
+                                </td>
+                            </tr>
+                                {% endfor %}
+                                    
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        
+        
+            
+        
+            <div class="row">
+                <div class="col-lg-12 col-centered">
+                    
+                    
+                
+                </div>
+            </div>
+        
+        
+        
+        
+        </div>
+    </div>
+{% endblock contenido %}
