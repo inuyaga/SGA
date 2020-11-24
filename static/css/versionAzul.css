@@ -6,6 +6,11 @@ body, button, input, select, textarea {
     font-size: 13px;
 }
 
+.row{
+    padding: 0%;
+    margin: 0%;
+}
+
 .barraPrincipal{
     background-color: #003a91!important;
     padding-top: 0px; padding-bottom: 0px;
