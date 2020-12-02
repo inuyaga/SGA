@@ -1,0 +1,57 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Lista compras</li>
+    </ol>
+</nav>
+{% if perms.compra.add_compra %}
+    <a href="{% url 'compra:crearcompra' %}"><i class="material-icons">
+            add_circle
+            </i>Agregar nueva compra</a>
+    {% endif %}
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-block">
+            <div class="table-responsive">
+                <table class="table-condensed table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="text-center"> <small><b>#</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Entrada</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Factura</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Nota</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Fecha Alta</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Código</b></small></th>
+                            {% if perms.compra.change_compra or perms.compra.delete_compra %}
+                                <th scope="col" class="text-center"> <small><b>Acciones</b></small></th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for Compra in object_list %}
+                        <tr>
+                            <th scope="row"><b>{{Compra.compra_id}}</b></th>
+                            <td><small>{{Compra.compra_numEntrada}}</small></td>
+                            <td><small>{{Compra.compra_factura}}</small></td>
+                            <td><small>{{Compra.compra_nota}}</small></td>
+                            <td><small>{{Compra.compra_fechaCompra}}</small></td>
+                            <td><small>{{Compra.compra_codigo}}</small></td>
+                            {% if perms.compra.change_compra or perms.compra.delete_compra %}
+                            <td><small>
+                                    <a href="{% url 'compra:actualizarcompra' Compra.compra_id %}"><i
+                                            class="material-icons">border_color</i></a>
+                                    {% comment %} <a href="{% url 'fuds:fud_delete' Compra.compra_id %}"><i
+                                            class="material-icons">delete_forever</i></a> {% endcomment %}
+                                </small></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
