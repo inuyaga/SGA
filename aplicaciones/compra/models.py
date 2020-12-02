@@ -10,6 +10,7 @@ class Compra(models.Model):
     compra_factura = models.CharField(max_length=10, verbose_name="Folio de factura")
     compra_nota = models.CharField(max_length=1500, verbose_name="Nota")
     compra_fechaCompra = models.DateTimeField(auto_now_add=True)
+    compra_fechaLastChange = models.DateTimeField(auto_now=True)
     compra_codigo = models.CharField(max_length=11, verbose_name="Código de crescendo")
   
     def __str__(self):

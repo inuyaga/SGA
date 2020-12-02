@@ -22,7 +22,8 @@
                             <th scope="col" class="text-center"> <small><b>Entrada</b></small></th>
                             <th scope="col" class="text-center"> <small><b>Factura</b></small></th>
                             <th scope="col" class="text-center"> <small><b>Nota</b></small></th>
-                            <th scope="col" class="text-center"> <small><b>Fecha Alta</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Fecha alta</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Último cambio</b></small></th>
                             <th scope="col" class="text-center"> <small><b>Código</b></small></th>
                             {% if perms.compra.change_compra or perms.compra.delete_compra %}
                                 <th scope="col" class="text-center"> <small><b>Acciones</b></small></th>
@@ -37,6 +38,7 @@
                             <td><small>{{Compra.compra_factura}}</small></td>
                             <td><small>{{Compra.compra_nota}}</small></td>
                             <td><small>{{Compra.compra_fechaCompra}}</small></td>
+                            <td><small>{{Compra.compra_fechaLastChange}}</small></td>
                             <td><small>{{Compra.compra_codigo}}</small></td>
                             {% if perms.compra.change_compra or perms.compra.delete_compra %}
                             <td><small>

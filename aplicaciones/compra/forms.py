@@ -20,7 +20,7 @@ class CompraForm(forms.ModelForm):
 class CompraEditForm(forms.ModelForm):
     class Meta:
         model = Compra
-        exclude = ['compra_fechaCompra']
+        exclude = ['compra_fechaCompra','compra_fechaLastChange']
 
     def __init__(self, *args, **kwargs):
         super(CompraEditForm, self).__init__(*args, **kwargs)
