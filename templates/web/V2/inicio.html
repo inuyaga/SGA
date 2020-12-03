@@ -13,6 +13,9 @@
         <div class="carousel-item">
         <img src="{% static 'webV2/Slider3.png' %}" class="d-block w-100" alt="Slider 3">
         </div>
+        <div class="carousel-item">
+        <img src="{% static 'webV2/Slider4.jpg' %}" class="d-block w-100" alt="Slider 3">
+        </div>
     </div>
     <a class="carousel-control-prev" href="#carouselExampleFade" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -63,21 +66,20 @@
 <div class="row">
     <div class="col-md-12">
         <h2 class="text-center principalTitulo">Promociones</h2>
-        
-            <div class="row">
+    </div>
+            <!-- <div class="row"> -->
 
                 {% for item in promo_list %}
-                
-                <div class="card col-md-3">
-                    <img src="/media/{{item.promo_imagen}}" class="card-img-top" alt="{{item.promo_nombre}}">
+                <div class="col-md-3">
+
+                    <div class="card ">
+                        <img src="/media/{{item.promo_imagen}}" class="card-img-top" alt="{{item.promo_nombre}}">
+                    </div>
                 </div>
-                
                 
                 {% endfor %}          
                 
-            </div>
-          
-    </div>
+            <!-- </div> -->
 </div>
 <div class="row">
     <div class="col-md-12">

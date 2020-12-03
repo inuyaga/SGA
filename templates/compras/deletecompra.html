@@ -1,0 +1,40 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Eliminación</title>
+{% endblock titulo %}
+{% block contenido %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Eliminar</li>
+  </ol>
+</nav>
+<div class="container">
+  <form method="post">
+    {% csrf_token %}
+    <div class="alert alert-danger" role="alert">
+      Esta seguro de eliminar {{ object }}?.
+    </div>
+    <input class="btn btn-danger" type="submit" value="Si estoy seguro!">
+    <a class="btn btn-primary" href="#" onClick="javascript:history.go(-1);" role="button">Cancelar</a>
+  </form>
+</div>
+
+<table>
+  <tr>
+    <th>Nombre</th>
+    <th>Cantidad</th>
+  </tr>
+  {% for model_name, object_count in model_count %}
+    <tr>
+      <td>{{ model_name|capfirst }}</td>
+      <td>{{ object_count }}</td>
+    </tr>
+  {% endfor %}
+</table>
+<p>
+  <ul>
+    {{ deletable_objects|unordered_list }}
+  </ul>
+</p>
+{% endblock %}

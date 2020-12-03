@@ -44,4 +44,5 @@ urlpatterns = [
     path('sga', include('aplicaciones.inicio.urls'), name='principal'),
     re_path(r'^ajax_select/', include(ajax_select_urls)),
     path('Expos/', include('aplicaciones.expo.urls'), name='expo'),
+    path('compras/', include('aplicaciones.compra.urls'), name='compras'),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -373,6 +373,20 @@
                             </li>
                             {% endif %}
 
+
+                            {% if perms.compra %}
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="fa fa-credit-card-alt"></i>Compras</a> 
+                                <ul class="nav nav-subnav">
+                                    {% if perms.compra.view_compra %} 
+                                    <li>
+                                        <a href="{% url 'compra:listacompras' %}">Ver compras</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% endif %}
+
                         </ul>
                     </nav>
                     <!-- End drawer navigation -->
