@@ -65,8 +65,8 @@ class TipoGastoDelete(PermissionRequiredMixin, DeleteView):
 
  
 
-class GastoViewList(PermissionRequiredMixin, ListView): 
-    permission_required = 'gasto.view_gasto'
+class GastoViewList(ListView): 
+    
     model = Gasto
     template_name = "gasto/list_gasto.html"
 
@@ -79,6 +79,14 @@ class GastoViewList(PermissionRequiredMixin, ListView):
         status = self.request.GET.get('status')
 
         
+        if not self.request.user.is_superuser:                
+            permiso = self.request.user.has_perm('gasto.view_gasto')        
+            if permiso == False:
+                try:                
+                    queryset = queryset.filter(g_depo=self.request.user.departamento)
+                except AttributeError as error:
+                    messages.warning(self.request, 'Usuario:{} debe tener asignado un departamento para ver gastos de su departamento'.format(self.request.user.username))       
+
         if week != None and week != '':
             week = week.replace('W','') 
             week = week.split('-')             
@@ -87,7 +95,7 @@ class GastoViewList(PermissionRequiredMixin, ListView):
             
         
         if empresa != None and empresa != '':            
-            queryset = queryset.filter(g_empresa=empresa)
+            queryset = queryset.filter(g_depo__departamento_id_sucursal__sucursal_empresa_id__id=empresa)
         if tip_gasto != None and tip_gasto != '':
             queryset = queryset.filter(g_tipoGasto=tip_gasto)
         if status != None and status != '':
@@ -124,7 +132,8 @@ class GastoCreate(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form, **kwargs):        
         try:
-            form.instance.g_empresa = self.request.user.departamento.departamento_id_sucursal.sucursal_empresa_id
+            self.request.user.departamento.departamento_id_sucursal.sucursal_empresa_id
+            form.instance.g_depo = self.request.user.departamento
             form.instance.g_userCreador = self.request.user    
             form.save()        
         except AttributeError as identifier:

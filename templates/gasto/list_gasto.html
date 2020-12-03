@@ -105,7 +105,7 @@
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_descripcion" }}</th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_fechaCreacion" }}</th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_estado" }}</th>
-                                <th>{{ object_list|get_queryset_field_verbose_name:"g_empresa" }}</th>
+                                <th>Empresa</th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_userCreador" }}</th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_factura" }}</th>
                                 <th>Accion</th>
@@ -121,7 +121,7 @@
                                 <td>{{item.g_descripcion}}</td>
                                 <td>{{item.g_fechaCreacion}}</td>
                                 <td><span class="{{badge|get_item:item.g_estado}}">{{item.get_g_estado_display}}</span></td>
-                                <td>{{item.g_empresa}}</td>
+                                <td>{{item.g_depo.departamento_id_sucursal.sucursal_empresa_id}}</td>
                                 <td>{{item.g_userCreador}}</td>
                                 <td><a href="{{item.g_factura.url}}">Ver</a></td>
                                 <td>

@@ -14,7 +14,7 @@ class GastoForm(forms.ModelForm):
     class Meta:
         model = Gasto 
         exclude = [
-            'g_empresa',
+            'g_depo',
             'g_userCreador',
             'g_estado',
         ]

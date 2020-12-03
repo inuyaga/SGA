@@ -18,7 +18,7 @@ class Gasto(models.Model):
     g_descripcion = models.CharField("Descripcion", max_length=800, help_text="Descripcion del tipo de gasto")
     g_fechaCreacion = models.DateField(auto_now_add=True, verbose_name="Creado")
     g_estado=models.IntegerField(choices=STATUS, default=1, verbose_name="Estado")
-    g_empresa = models.ForeignKey(Empresa, on_delete=models.PROTECT, verbose_name="Empresa")
+    g_depo = models.ForeignKey(Departamento, on_delete=models.PROTECT, verbose_name="Departamento")
     g_userCreador = models.ForeignKey(Usuario, models.CASCADE, verbose_name="Creó")
     g_factura = models.FileField(upload_to='gasto/factura/', verbose_name="Factura", help_text="PDF de la factura escaneada")
     def __str__(self):
