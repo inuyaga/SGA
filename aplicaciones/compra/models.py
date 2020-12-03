@@ -14,4 +14,4 @@ class Compra(models.Model):
     compra_codigo = models.CharField(max_length=11, verbose_name="Código de crescendo")
   
     def __str__(self):
-        return self.compra_numEntrada
+        return '%s' % (self.compra_numEntrada)

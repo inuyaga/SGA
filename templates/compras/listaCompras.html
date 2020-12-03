@@ -42,10 +42,10 @@
                             <td><small>{{Compra.compra_codigo}}</small></td>
                             {% if perms.compra.change_compra or perms.compra.delete_compra %}
                             <td><small>
-                                    <a href="{% url 'compra:actualizarcompra' Compra.compra_id %}"><i
+                                <a href="{% url 'compra:actualizarcompra' Compra.compra_id %}"><i
                                             class="material-icons">border_color</i></a>
-                                    {% comment %} <a href="{% url 'fuds:fud_delete' Compra.compra_id %}"><i
-                                            class="material-icons">delete_forever</i></a> {% endcomment %}
+                                <a href="{% url 'compra:eliminarcompra' Compra.compra_id %}"><i
+                                            class="material-icons" style="color:red;">delete_forever</i></a>
                                 </small></td>
                             {% endif %}
                         </tr>
