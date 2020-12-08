@@ -103,23 +103,17 @@
 
     {% if estado_rango_fechas %}
     <div class="row">
-        {% for item in object_list %}
-        <div class="col-sm-3">
-            <!-- normal -->
-            <div class="ih-item square effect4"><a href="{% url 'pedidos:pedido_tienda' item.tp %}">
-                    <div class="img"><img src="{{item.tp_imagen.url}}" alt="img"></div>
-                    <div class="mask1"></div>
-                    <div class="mask2"></div>
-                    <div class="info">
-                        <h3>{{item.tp_nombre}}</h3>
-                        <p>{{item.tp_descripcion}}</p>
-                    </div>
-                </a></div>
-            <!-- end normal -->
+        <div class="col-sm-9">
+            {% for item in object_list %}
+            <div class="list-group">
+                <a href="{% url 'pedidos:pedido_tienda' item.tp %}"
+                    class="list-group-item list-group-item-action" aria-current="true">
+                    <img src="{{item.tp_imagen.url}}" style="height: 100px; width: 100px;" class="img-thumbnail"
+                        >   {{item.tp_nombre}} -->  {{item.tp_descripcion}}
+                </a>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-
-
     </div>
     {% else %}
     <div class="alert alert-warning" role="alert">
