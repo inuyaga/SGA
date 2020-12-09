@@ -5,13 +5,14 @@ from aplicaciones.inicio.models import User
 class UserForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('rfc','first_name','last_name','email','username', 'fecha_nacimiento', 'telefono')
-        widgets = {
-        'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
-        }
+        fields = ('rfc','email','first_name','username', 'telefono')
+        # widgets = {
+        # 'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
+        # }
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].label = 'Razón social o Persona Física'
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
