@@ -50,8 +50,20 @@
                             <i class="fab fa-facebook-square fa-3x" style="color:#3b5998;"></i>
                         </a>
                     </div>
-                    <input {% if view.request.GET.busqueda != None %}value="{{view.request.GET.busqueda}}"{% endif %} class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                    <div class="input-group">
+                        <select class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon" name="area">
+                            <option value="None" selected>Todo</option>
+
+                            {% for item in area %}                                            
+                                <option value="{{item.area_id_area}}">{{item}}</option>
+                            {% endfor %}
+
+                        </select>
+                        <div class="input-group-append">
+                            <input {% if view.request.GET.busqueda != None %}value="{{view.request.GET.busqueda}}"{% endif %} class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search" name="busqueda">
+                            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                        </div>
+                    </div>
                 </form>
             </nav>
         </div>
