@@ -68,12 +68,17 @@
         <h2 class="text-center principalTitulo">Promociones</h2>
     </div>
             <!-- <div class="row"> -->
+                <div class="col-md-3">
 
+                    <div class="card ">
+                        <a href="{% static 'webV2/folleto_proteccionComputel.pdf' %}">    <img src="{% static 'webV2/imgfolletoproteccion.jpg' %}"" class="card-img-top pulse" alt="imgfolletoproteccion"> </a>
+                    </div>
+                </div>
                 {% for item in promo_list %}
                 <div class="col-md-3">
 
                     <div class="card ">
-                    <a href="{% static 'webV2/folleto_proteccionComputel.pdf' %}">    <img src="/media/{{item.promo_imagen}}" class="card-img-top" alt="{{item.promo_nombre}}"> </a>
+                        <img src="/media/{{item.promo_imagen}}" class="card-img-top" alt="{{item.promo_nombre}}">
                     </div>
                 </div>
                 
