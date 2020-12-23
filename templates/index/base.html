@@ -380,13 +380,25 @@
                                 <ul class="nav nav-subnav">
                                     {% if perms.compra.view_compra %} 
                                     <li>
-                                        <a href="{% url 'compra:listacompras' %}">Ver compras</a>
+                                        <a href="{% url 'compra:listacompras' %}">Compras</a>
                                     </li>
                                     {% endif %}
                                 </ul>
                             </li>
                             {% endif %}
 
+                            {% if perms.descargas %}
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i>Descargas</a> 
+                                <ul class="nav nav-subnav">
+                                    {% if perms.compra.view_compra %} 
+                                    <li>
+                                        <a href="{% url 'descargas:listadescargas' %}">Descargas</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% endif %}
                         </ul>
                     </nav>
                     <!-- End drawer navigation -->

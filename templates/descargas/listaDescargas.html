@@ -1,0 +1,72 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Lista descargas</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <a type="button" href="{% url 'descargas:listadescargas' %}?estatus=1" class="btn btn-primary">Creado</a>
+            <a type="button" href="{% url 'descargas:listadescargas' %}?estatus=2" class="btn btn-info">Autorizado</a>
+            <a type="button" href="{% url 'descargas:listadescargas' %}?estatus=3" class="btn btn-success">Validado</a>
+            <a type="button" href="{% url 'descargas:listadescargas' %}?estatus=4" class="btn btn-warning">Descargado</a>
+        </div>
+    </div>
+</div>
+{% if perms.compra.add_compra %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'descargas:creardescarga' %}"><i class="material-icons">
+            add_circle
+        </i>Agregar nueva descarga</a>
+    </div>
+</div>
+{% endif %}
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-block">
+            <div class="table-responsive">
+                <table class="table-condensed table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="text-center"> <small><b>#</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Listado</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Ficha cobranza</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Fecha registro</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Estatus</b></small></th>
+                            <th scope="col" class="text-center"> <small><b>Nota</b></small></th>
+                            {% if perms.descargas.change_descargas or perms.descargas.delete_descargas %}
+                                <th scope="col" class="text-center"> <small><b>Acciones</b></small></th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for Descarga in object_list %}
+                        <tr>
+                            <th scope="row"><b>{{Descarga.d_id}}</b></th>
+                            <td><small><a href="{{Descarga.listado.url}}"><i class="fa fa-file-o" aria-hidden="true"></i></a></small></td>
+                            <td><small><a href="{{Descarga.ficha.url}}"><i class="fa fa-file-o" aria-hidden="true"></i></a></small></td>
+                            <td><small>{{Descarga.compra_fechaCompra}}</small></td>
+                            <td><small>{{Descarga.get_estatus_display}}</small></td>
+                            <td><small>{{Descarga.observacion}}</small></td>
+                            {% if perms.descargas.change_compra or perms.descargas.delete_compra %}
+                            <td><small>
+                                <a href="{% url 'descargas:actualizardescarga' Descarga.d_id %}"><i
+                                            class="material-icons">border_color</i></a>
+                                <a href="{% url 'descargas:eliminardescarga' Descarga.d_id %}"><i
+                                            class="material-icons" style="color:red;">delete_forever</i></a>
+                            </small></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

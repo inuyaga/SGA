@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'aplicaciones.web',
     'aplicaciones.gasto',
     'aplicaciones.compra',
+    'aplicaciones.descargas',
     'tinymce',
     'django_cleanup.apps.CleanupConfig',
 ]
@@ -107,6 +108,15 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '3306',
     }
+
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'sga',
+    #     'USER': 'root',
+    #     'PASSWORD': '',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '3306',
+    # }
 }
 
 

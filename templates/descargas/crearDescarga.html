@@ -1,0 +1,17 @@
+{% extends 'index/base.html'%}
+{% block contenido %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a href="{% url 'descargas:listadescargas' %}">Listar descargas</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Captura de descarga</li>
+    </ol>
+</nav>
+<div class="col-md-6 offset-md-3">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button class="form-control btn-success" type="submit">Guardar descarga</button>
+    </form>
+</div>
+{% endblock contenido %}
