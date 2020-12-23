@@ -52,11 +52,15 @@ class Subcategoria(models.Model):
     sc_nombre=models.CharField(max_length=150,verbose_name="Subcategoria")
     def __str__(self):
         return self.sc_nombre
+    class Meta:       
+        ordering = ["sc_area__area_nombre"]
 class Linea(models.Model):
     l_subcat=models.ForeignKey(Subcategoria, on_delete=models.CASCADE, verbose_name="Subcategoria a la que pertenece")
     l_nombre=models.CharField(max_length=150,verbose_name="Linea") 
     def __str__(self):
-        return self.l_nombre
+        return "{} -> {} -> {}".format(self.l_subcat.sc_area.area_nombre, self.l_subcat.sc_nombre, self.l_nombre)
+    class Meta:       
+        ordering = ["l_subcat__sc_area__area_nombre"]
 
 
 

@@ -5,6 +5,7 @@ class LineaInstanceInline(admin.TabularInline):
     model = Linea
 class SubcategoriaConfig(admin.ModelAdmin):
     inlines = [LineaInstanceInline]
+    list_display = ['sc_area', 'sc_nombre']
 
 class SubcategoriaInstanceInline(admin.TabularInline):
     model = Subcategoria

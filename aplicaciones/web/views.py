@@ -98,7 +98,7 @@ class PostularCreate(CreateView):
 
 class ProductosListWebView(ListView): 
     model = Producto
-    template_name = "web/V2/comprar.html"  
+    template_name = "web/V2/comprar.html"   
     paginate_by = 11
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -160,6 +160,7 @@ class ProductosListWebView(ListView):
         if 'page' in urls_formateada:
             del urls_formateada['page']
         context['urls_formateada'] = urls_formateada 
+        context['subcategoria'] = Producto.objects.filter(producto_visible=True,producto_linea__l_subcat__sc_area=area).values('producto_linea__l_subcat__sc_nombre', 'producto_linea__l_subcat').annotate(total_produc=Count('producto_codigo')).order_by('producto_linea__l_subcat') 
        
         return context
 

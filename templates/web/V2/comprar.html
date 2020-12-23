@@ -1,8 +1,9 @@
 {% extends 'web/base.html' %}
 {% load static humanize %}
-{% block contenido %}
+{% block contenido %} 
 <div class="container">
     <div class="row justify-content-center">
+        
         <form action="" method="get" class="col-md-4">
 
             {%for key, values in request.GET.lists%}
@@ -31,18 +32,36 @@
             </div>
         </form>
     </div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-sm-6">
+            <ul class="pagination mt-3 justify-content-center pagination_style1">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">&laquo;</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}">&#60;</a></li>
+                {% endif %}
+                <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">&#62;</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">&#187;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        </div>
+
     <div class="row">
         <div class="col-md-3">
-            <h2 class="principalTitulo">Categorias</h2>
+            <h2 class="principalTitulo">Subcategorias</h2>
             <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
                     <a class="" href="{% url 'web:list_prod' %}">Mostrar todo</a>
-                </li>
-                {% for item in area_count %}
+                </li> -->
+                {% for item in subcategoria %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a {% if view.request.GET.area == item.producto_linea__l_subcat__sc_area|striptags  %}class="text-danger"
-                                        {% endif %} href="?area={{item.producto_linea__l_subcat__sc_area}}">
-                    {{item.producto_linea__l_subcat__sc_area__area_nombre|title  }}</a>
+                    <a {% if view.request.GET.sub_cat == item.producto_linea__l_subcat|striptags  %}class="text-danger"
+                                        {% endif %} href="?sub_cat={{item.producto_linea__l_subcat}}">
+                    {{item.producto_linea__l_subcat__sc_nombre|title  }}</a>
                   <span class="badge badge-primary badge-pill">{{item.total_produc}}</span>
                 </li>
                 {% endfor %}
