@@ -6,6 +6,6 @@ class User(AbstractUser):
     fecha_nacimiento=models.DateField('Fecha de nacimiento',default=None, null=True, blank=True)
     telefono=models.CharField('Telefono', null=True, blank=False, max_length=10)
     is_user_web = models.BooleanField(verbose_name="Es usuario web", default=False)
-    # rfc=models.CharField('RFC', null=True, blank=False, max_length=15)
+    rfc=models.CharField('RFC', null=True, blank=False, max_length=15)
     class Meta:
         db_table = 'auth_user' 

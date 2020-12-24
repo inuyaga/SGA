@@ -38,13 +38,13 @@
         <div class="col-sm-6">
             <ul class="pagination mt-3 justify-content-center pagination_style1">
                 {% if page_obj.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">&laquo;</a></li>
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}">&#60;</a></li>
+                <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">Inicio</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}">{{ page_obj.previous_page_number }}</a></li>
                 {% endif %}
                 <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
                 {% if page_obj.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">&#62;</a></li>
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">&#187;</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">{{ page_obj.next_page_number }}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">Última</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -123,13 +123,13 @@
             {% endfor %}
             <ul class="pagination mt-3 justify-content-center pagination_style1">
                 {% if page_obj.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">&laquo;</a></li>
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}">&#60;</a></li>
+                <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">Inicio</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}">{{ page_obj.previous_page_number }}</a></li>
                 {% endif %}
                 <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
                 {% if page_obj.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">&#62;</a></li>
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">&#187;</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">{{ page_obj.next_page_number }}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">Última</a></li>
                 {% endif %}
             </ul>
         </div>
