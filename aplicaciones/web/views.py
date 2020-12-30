@@ -110,7 +110,7 @@ class ProductosListWebView(ListView):
         linea = self.request.GET.get('linea')
         sub_cat = self.request.GET.get('sub_cat')
         busqueda = self.request.GET.get('busqueda')
-        if area != None and area != 'None':
+        if area != None and area != '':
             queryset = queryset.filter(producto_linea__l_subcat__sc_area=area)
         if busqueda != None and busqueda != 'None':
             queryset = queryset.filter(Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
@@ -143,7 +143,7 @@ class ProductosListWebView(ListView):
         context['area_count'] = Producto.objects.filter(producto_visible=True).values('producto_linea__l_subcat__sc_area__area_nombre', 'producto_linea__l_subcat__sc_area').annotate(total_produc=Count('producto_codigo')).order_by('producto_linea__l_subcat__sc_area')
         context['marca_lista'] = self.request.GET.getlist('marca')
                
-        if area != None and area != 'None':
+        if area != None and area != '':
             q_marca = q_marca.filter(producto_linea__l_subcat__sc_area=area)               
         if linea != None:
             q_marca = q_marca.filter(producto_linea=linea)
@@ -159,8 +159,9 @@ class ProductosListWebView(ListView):
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
             del urls_formateada['page']
-        context['urls_formateada'] = urls_formateada 
-        context['subcategoria'] = Producto.objects.filter(producto_visible=True,producto_linea__l_subcat__sc_area=area).values('producto_linea__l_subcat__sc_nombre', 'producto_linea__l_subcat').annotate(total_produc=Count('producto_codigo')).order_by('producto_linea__l_subcat') 
+        context['urls_formateada'] = urls_formateada
+        if area != None and area != '':
+            context['subcategoria'] = Producto.objects.filter(producto_visible=True,producto_linea__l_subcat__sc_area=area).values('producto_linea__l_subcat__sc_nombre', 'producto_linea__l_subcat').annotate(total_produc=Count('producto_codigo')).order_by('producto_linea__l_subcat') 
        
         return context
 
