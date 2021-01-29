@@ -1,0 +1,181 @@
+{% extends 'index/base.html'%}
+{% load verbose_name_tags humanize %}
+{% block contenido %}
+<div class="container-fluid p-y-md">
+
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Filtros</h4>
+                <ul class="card-actions">
+                    <!-- <li>
+                            <span>Text 1</span>
+                        </li> -->
+                </ul>
+                <!-- .card-actions -->
+            </div>
+
+
+
+
+            <div class="card-block">
+                <div class="row">
+                    <form class="form-inline col-sm-12" action="" method="GET">
+                        <!-- <div class="form-group">
+                            <select class="custom-select" name="empresa">
+                                <option selected value="">Empresa</option>
+                                {% for item in Empresa %}
+                                <option value="{{item.id}}"
+                                    {% if view.request.GET.empresa == item.id|striptags %}selected{% endif %}>{{item}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="custom-select" name="tip_gasto">
+                                <option selected value="">Tipo de gasto</option>
+                                {% for item in TipoGasto %}
+                                <option value="{{item.id}}"
+                                    {% if view.request.GET.tip_gasto == item.id|striptags %}selected{% endif %}>{{item}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="custom-select" name="status">
+                                <option selected value="">Estatus</option>
+                                {% for item in STATUS %}
+                                <option value="{{item.0}}"
+                                    {% if view.request.GET.status == item.0|striptags %}selected{% endif %}>{{item.1}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="my-1 mr-2" for="birthday">Semana:</label>
+                            <input type="week" id="week" name="week" value="{{view.request.GET.week}}">
+                        </div>
+                        <div class="form-group m-b-0">
+                            <button class="btn btn-default" type="submit"><i class="ion-search fa-2x"></i></button>
+                        </div> -->
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Reembolso</h4>
+                <ul class="card-actions">
+
+                    <li class="dropdown">
+                        <button type="button" data-toggle="dropdown" aria-expanded="false">Mas <span
+                                class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right">                            
+                            <li>
+                                <a tabindex="-1" href="{% url 'gastos:reembolso_list' %}">Reembosos</a>
+                            </li>
+                                
+
+                        </ul>
+                    </li>
+                </ul>
+                <!-- .card-actions -->
+            </div>
+
+
+
+            <div class="card-block">
+                <div class="table-responsive">
+                    <table class="table-condensed">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Creó</th>
+                                <th>ID Gastos</th>
+                                <th>Total</th>
+                                
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for item in object_list %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'gastos:gasto_list' %}?reembolsoID={{item.r_id}}">{{item.r_id}}</a>                                    
+                                </td>
+                                <td>{{item.r_date_add}}</td>
+                                <td>{{item.r_by_user}}</td>
+                                <td>
+                                    
+                                    {% for item in item.r_gastos.all %}                                                                                
+                                        <code>{{item.g_id}}</code>
+                                    {% endfor %}
+                                        
+                                </td>
+                                <td>{{item.total.total_reembolso|intcomma}}</td>
+                                <td><a class="btn btn-xs btn-app-teal" href="{% url 'gastos:reembolso_dowload' %}?IDReembolso={{item.r_id}}"><i class="fa fa-download fa-2x"></i></a></td>
+                                
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    
+
+
+        <div class="row">
+            <div class="col-lg-12 col-centered">
+
+
+
+                
+                    {% block pagination %}
+                    {% if is_paginated %}
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i
+                                        class="material-icons">
+                                        navigate_before
+                                    </i></a></li>
+                            {% endif %}
+                            <span class="page-link">
+                                Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                                <span class="sr-only">(current)</span>
+                            </span>
+                            {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i
+                                        class="material-icons">
+                                        navigate_next
+                                    </i></a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                    {% endblock %}
+                
+
+
+            </div>
+        </div>
+
+
+
+
+    </div>
+</div>
+{% endblock contenido %}
+
+

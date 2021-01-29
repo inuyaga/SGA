@@ -1,6 +1,8 @@
 {% extends 'index/base.html'%}
 {% load verbose_name_tags %}
 {% block contenido %}
+
+
 <div class="container-fluid p-y-md">
 
     <div class="col-sm-12">
@@ -20,7 +22,12 @@
 
             <div class="card-block">
                 <div class="row">
+
+
+                    
                     <form class="form-inline col-sm-12" action="" method="GET">
+                        <div class="row">
+                        <div class="col-xs-4">
                         <div class="form-group">
                             <select class="custom-select" name="empresa">
                                 <option selected value="">Empresa</option>
@@ -31,6 +38,8 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        </div>
+                        <div class="col-xs-4">
                         <div class="form-group">
                             <select class="custom-select" name="tip_gasto">
                                 <option selected value="">Tipo de gasto</option>
@@ -41,6 +50,8 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        </div>
+                        <div class="col-xs-2">
                         <div class="form-group">
                             <select class="custom-select" name="status">
                                 <option selected value="">Estatus</option>
@@ -51,12 +62,18 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        </div>
+                        <div class="col-xs-2">
                         <div class="form-group">
-                            <label class="my-1 mr-2" for="birthday">Semana:</label>
+                            <!-- <label class="my-1 mr-2" for="birthday">Semana:</label> -->
                             <input type="week" id="week" name="week" value="{{view.request.GET.week}}">
                         </div>
-                        <div class="form-group m-b-0">
-                            <button class="btn btn-default" type="submit"><i class="ion-search fa-2x"></i></button>
+                        </div>
+                        <div class="col-xs-12">
+                        <div class="form-group">                            
+                            <button class="btn btn-link btn-block" type="submit"><i class="ion-search fa-2x"></i></button>
+                        </div>
+                        </div>
                         </div>
                     </form>
 
@@ -66,8 +83,18 @@
     </div>
 
 
-
-
+<form action="" method="POST">
+    <div class="col-sm-12">
+        {% if perms.gasto.add_reembolso %}              
+        <button class="btn btn-xs btn-pill btn-app-teal" type="submit">Crear Reembolso!</button>     
+        {% endif %}
+        
+        {% if perms.gasto.view_reembolso %}  
+        
+        <a class="btn btn-xs btn-pill btn-app-cyan" href="{% url 'gastos:reembolso_list' %}" role="button">Reembosos</a>                           
+        {% endif %}
+    </div>
+{% csrf_token %}
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
@@ -84,7 +111,6 @@
                                 <a tabindex="-1" href="{% url 'gastos:gasto_create' %}">Añadir</a>
                             </li>
                             {% endif %}
-                                
 
                         </ul>
                     </li>
@@ -93,12 +119,17 @@
             </div>
 
 
-{{badge.1}}
+
+
+            
+
+
             <div class="card-block">
                 <div class="table-responsive">
                     <table class="table-condensed">
                         <thead class="thead-dark">
                             <tr>
+                                <th></th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_id" }}</th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_tipoGasto" }}</th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_monto" }}</th>
@@ -115,11 +146,19 @@
 
                             {% for item in object_list %}
                             <tr>
+                                <td>                                    
+                                    {% if item.g_estado == 4 %}                                        
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="{{item.g_id}}" id="flexCheckDefault" name="checkId">                                        
+                                    </div>
+                                    {% endif %}                                        
+                                </td>
                                 <td>{{item.g_id}}</td>
                                 <td>{{item.g_tipoGasto}}</td>
                                 <td>{{item.g_monto}}</td>
-                                <td>{{item.g_descripcion}}</td>
-                                <td>{{item.g_fechaCreacion}}</td>
+                                <td>
+                                   <p class="text-muted m-b-0">{{item.g_descripcion}}</p></td>
+                                <td><em class="text-muted">{{item.g_fechaCreacion}}</em></td>
                                 <td><span class="{{badge|get_item:item.g_estado}}">{{item.get_g_estado_display}}</span></td>
                                 <td>{{item.g_depo.departamento_id_sucursal.sucursal_empresa_id}}</td>
                                 <td>{{item.g_userCreador}}</td>
@@ -178,12 +217,40 @@
             </div>
         </div>
 
-
+    </form>
 
 
         <div class="row">
             <div class="col-lg-12 col-centered">
 
+
+
+                
+                    {% block pagination %}
+                    {% if is_paginated %}
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i
+                                        class="material-icons">
+                                        navigate_before
+                                    </i></a></li>
+                            {% endif %}
+                            <span class="page-link">
+                                Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                                <span class="sr-only">(current)</span>
+                            </span>
+                            {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i
+                                        class="material-icons">
+                                        navigate_next
+                                    </i></a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                    {% endblock %}
+                
 
 
             </div>
