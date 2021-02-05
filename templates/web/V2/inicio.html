@@ -28,6 +28,35 @@
 </div>
 <div class="row">
     <div class="col-md-12">
+        <h2 class="text-center principalTitulo">Lo más vendido</h2>
+        <div class="card-deck">
+
+            {% for item in trendings %}
+            
+            <div class="card text-center">
+
+                <a href="{% url 'web:producto_detalle' item.dcw_producto_id__producto_codigo item.dcw_producto_id__producto_nombre|slugify %}">
+                    <img src="/media/{{item.dcw_producto_id__producto_imagen}}" width="268" height="278" class="card-img-top" alt="Prod destacado">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{item.dcw_producto_id__producto_nombre}}</h5>
+                    <p class="card-text">{{item.dcw_producto_id__producto_descripcion}}</p>
+                </div>
+                {% if  user.is_authenticated %}
+                <div class="card-footer">
+                    <a href="{% url 'web:producto_detalle' item.dcw_producto_id__producto_codigo item.dcw_producto_id__producto_nombre|slugify %}" class="btn botoncarrito"><i class="fas fa-shopping-cart"></i> ${{item.dcw_producto_id__producto_precio}}</a>
+                </div>
+                {% endif %}
+              
+            </div>
+            
+            {% endfor %}          
+            
+          </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
         <h2 class="text-center principalTitulo">Productos destacados</h2>
         <div class="card-deck">
 

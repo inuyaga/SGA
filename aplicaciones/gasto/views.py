@@ -109,7 +109,7 @@ class GastoViewList(ListView):
             queryset = Reembolso.objects.get(r_id=reembolsoID).r_gastos.all()
 
                    
-        
+        queryset.order_by('-g_id')
         return queryset
     
     def get_context_data(self, **kwargs):
@@ -128,6 +128,11 @@ class GastoViewList(ListView):
         context['Empresa']=Empresa.objects.all()
         context['badge']=badge
 
+        urls_formateada = self.request.GET.copy()
+        if 'page' in urls_formateada:
+            del urls_formateada['page']
+        context['urls_formateada'] = urls_formateada 
+
         return context
 
     def post(self, request, *args, **kwargs):
@@ -139,10 +144,7 @@ class GastoViewList(ListView):
             reembolso_crear=Reembolso(r_by_user=request.user)
             reembolso_crear.save()
             reembolso_crear.r_gastos.add(*gastos)
-            gastos.update(g_estado=6)
-
-            
-            
+            gastos.update(g_estado=6)                        
             messages.warning(request, 'Reembolso creado <a href="{}?reembolsoID={}">{}</a> '.format(url, reembolso_crear.pk, reembolso_crear.pk))
         else:
             messages.warning(request, 'No ha seleccionado ningun gasto..')
@@ -233,6 +235,8 @@ class ReembolsoList(PermissionRequiredMixin, ListView):
     permission_required = 'gasto.view_reembolso'
     model = Reembolso
     template_name = "gasto/reembolso.html"
+
+    
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
