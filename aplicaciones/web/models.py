@@ -62,7 +62,7 @@ class Catalagos(models.Model):
         return self.cat_nombre 
 
 class Promocion(models.Model):
-    promo_codigo=models.CharField(max_length=15, primary_key=True)  
+    promo_codigo=models.CharField('Código del producto',max_length=15, primary_key=True)  
     promo_nombre=models.CharField('Nombre', max_length=150)
     promo_descripcion=models.CharField('Descripcion', max_length=300)
     promo_precio=models.FloatField('Precio')
