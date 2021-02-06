@@ -107,7 +107,7 @@
                 <div class="col-md-3">
 
                     <div class="card ">
-                        <img src="/media/{{item.promo_imagen}}" class="card-img-top" alt="{{item.promo_nombre}}">
+                        <a href="{% url 'web:producto_detalle' item.promo_codigo item.promo_nombre|slugify %}"><img src="/media/{{item.promo_imagen}}" class="card-img-top" alt="{{item.promo_nombre}}"></a>
                     </div>
                 </div>
                 
