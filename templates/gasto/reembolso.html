@@ -97,9 +97,8 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Fecha</th>
-                                <th>Creó</th>
-                                <th>ID Gastos</th>
-                                <th>Total</th>
+                                <th>Creó</th>                                
+                                <th>Total de gastos</th>
                                 
                                 <th>Accion</th>
                             </tr>
@@ -113,14 +112,8 @@
                                 </td>
                                 <td>{{item.r_date_add}}</td>
                                 <td>{{item.r_by_user}}</td>
-                                <td>
-                                    
-                                    {% for item in item.r_gastos.all %}                                                                                
-                                        <code>{{item.g_id}}</code>
-                                    {% endfor %}
-                                        
-                                </td>
-                                <td>{{item.total.total_reembolso|intcomma}}</td>
+                                
+                                <td>{{item.total.total_reembolso|floatformat:2|intcomma}}</td>
                                 <td><a class="btn btn-xs btn-app-teal" href="{% url 'gastos:reembolso_dowload' %}?IDReembolso={{item.r_id}}"><i class="fa fa-download fa-2x"></i></a></td>
                                 
                             </tr>
