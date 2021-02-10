@@ -55,9 +55,7 @@
                             <option value="" selected>Todo</option>
 
                             {% for item in area %}
-                                {% if item.area_id_area != 7 %}
-                                    <option value="{{item.area_id_area}}">{{item}}</option>
-                                {% endif %}
+                                <option value="{{item.area_id_area}}">{{item}}</option>
                             {% endfor %}
 
                         </select>
@@ -107,9 +105,7 @@
                     </a>
                     <div class="dropdown-menu menudesplegable" aria-labelledby="navbarDropdownTienda">
                         {% for item in area %}
-                            {% if item.area_id_area != 7 %}
-                                <a class="dropdown-item" href="{% url 'web:list_prod' %}?area={{item.area_id_area}}">{{item.area_nombre}}</a>
-                            {% endif %}
+                            <a class="dropdown-item" href="{% url 'web:list_prod' %}?area={{item.area_id_area}}">{{item.area_nombre}}</a>
                         {% endfor %}
                     </div>
                 </li>

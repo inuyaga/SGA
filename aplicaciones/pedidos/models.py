@@ -87,7 +87,7 @@ class Producto(models.Model):
     producto_linea=models.ForeignKey(Linea, on_delete=models.CASCADE, verbose_name="Linea", blank=True, null=True)
     producto_fecha_creado=models.DateField(auto_now_add=True)
     producto_galeria=models.ManyToManyField(Galeria, verbose_name="Galeria", help_text="Galeria adicional para sitio web")
-
+    producto_importancia = models.IntegerField(verbose_name='Nivel de prioridad (1 es mas alto)', default=0)
 
     class Meta:
         permissions = [

@@ -102,7 +102,7 @@ class ProductosListWebView(ListView):
     paginate_by = 11
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(producto_visible=True)   
+        queryset = queryset.filter(producto_visible=True)
 
         area = self.request.GET.get('area')        
         marca = self.request.GET.getlist('marca')

@@ -13,7 +13,7 @@
         <div class="carousel-item">
         <img src="{% static 'webV2/Slider3.png' %}" class="d-block w-100" alt="Slider 3">
         </div>
-        <div class="carousel-item"><
+        <div class="carousel-item">
         <img src="{% static 'webV2/Slider4.jpg' %}" class="d-block w-100" alt="Slider 3">
         </div>
     </div>
@@ -25,6 +25,35 @@
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
     </a>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="text-center principalTitulo">Lo más vendido</h2>
+        <div class="card-deck">
+
+            {% for item in trendings %}
+            
+            <div class="card text-center">
+
+                <a href="{% url 'web:producto_detalle' item.dcw_producto_id__producto_codigo item.dcw_producto_id__producto_nombre|slugify %}">
+                    <img src="/media/{{item.dcw_producto_id__producto_imagen}}" width="268" height="278" class="card-img-top" alt="Prod destacado">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{item.dcw_producto_id__producto_nombre}}</h5>
+                    <p class="card-text">{{item.dcw_producto_id__producto_descripcion}}</p>
+                </div>
+                {% if  user.is_authenticated %}
+                <div class="card-footer">
+                    <a href="{% url 'web:producto_detalle' item.dcw_producto_id__producto_codigo item.dcw_producto_id__producto_nombre|slugify %}" class="btn botoncarrito"><i class="fas fa-shopping-cart"></i> ${{item.dcw_producto_id__producto_precio}}</a>
+                </div>
+                {% endif %}
+              
+            </div>
+            
+            {% endfor %}          
+            
+          </div>
+    </div>
 </div>
 <div class="row">
     <div class="col-md-12">
@@ -78,7 +107,7 @@
                 <div class="col-md-3">
 
                     <div class="card ">
-                        <img src="/media/{{item.promo_imagen}}" class="card-img-top" alt="{{item.promo_nombre}}">
+                        <a href="{% url 'web:producto_detalle' item.promo_codigo item.promo_nombre|slugify %}"><img src="/media/{{item.promo_imagen}}" class="card-img-top" alt="{{item.promo_nombre}}"></a>
                     </div>
                 </div>
                 
