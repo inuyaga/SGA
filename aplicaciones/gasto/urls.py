@@ -10,6 +10,7 @@ urlpatterns = [
     path('tipo_gasto/<int:pk>/update/', GastoView.UpdateTipoGasto.as_view(), name='updateTipoG'),
     path('tipo_gasto/<int:pk>/delete/', GastoView.TipoGastoDelete.as_view(), name='deleteTipoG'),
     path('gasto/list/', GastoView.GastoViewList.as_view(), name='gasto_list'),
+    path('gasto/<int:pk>-detalle/', GastoView.GastoDetalleView.as_view(), name='gasto_detalle'),
     path('gasto/crear/', GastoView.GastoCreate.as_view(), name='gasto_create'),
     path('gasto/<int:pk>/update/', GastoView.GastoUpdateView.as_view(), name='gasto_update'),
     path('update/status/', GastoView.UpdateStatusView.as_view(), name='gasto_update_status'),

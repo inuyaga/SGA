@@ -17,12 +17,13 @@ class Gasto(models.Model):
     g_fechaCreacion = models.DateField(auto_now_add=True, verbose_name="Creado")            
     g_estado=models.IntegerField(choices=STATUS, default=1, verbose_name="Estado")
     g_depo = models.ForeignKey(Departamento, on_delete=models.PROTECT, verbose_name="Departamento")
-    g_userCreador = models.ForeignKey(Usuario, models.CASCADE, verbose_name="Creó")
+    g_userCreador = models.ForeignKey(Usuario, models.CASCADE, verbose_name="Creó") 
+    g_factura = models.FileField(upload_to='gasto/factura/', verbose_name="Factura", help_text="PDF de las facturas escaneada")
     
     def __str__(self):
         return "{}".format(self.g_id)
     def total_gasto(self):        
-        return self.itemgasto_set.all().aggregate(total_gasto=Sum('itm_monto'))
+        return self.itemgasto_set.all().aggregate(total_gasto=Sum('itm_monto'))['total_gasto']
     class Meta:
         ordering = ['g_estado']
         permissions = (
@@ -33,12 +34,13 @@ class Gasto(models.Model):
         )
 
 class ItemGasto(models.Model):
+    itm_id = models.BigAutoField(primary_key=True)
     itm_gastID=models.ForeignKey(Gasto, on_delete=models.CASCADE, verbose_name="Gasto ID")
     itm_tipoGasto = models.ForeignKey(TipoGasto, verbose_name="Tipo de Gasto", on_delete=models.PROTECT)
     itm_monto = models.FloatField(verbose_name="Monto")
     item_descripcion = models.CharField("Descripcion", max_length=800, help_text="Descripcion del tipo de gasto")
-    itm_factura = models.FileField(upload_to='gasto/factura/', verbose_name="Factura", help_text="PDF de la factura escaneada")
-    itm_ok = models.BooleanField(verbose_name="Validar", default=False)
+    itm_fecha = models.DateField(verbose_name="Fecha")
+    
     def __str__(self):
         return self.itm_tipoGasto.nombre
 
@@ -50,8 +52,12 @@ class Reembolso(models.Model):
     r_date_add=models.DateTimeField(auto_now_add=True, verbose_name="Fecha")
     r_by_user=models.ForeignKey(Usuario, models.CASCADE, verbose_name="Creó")
     r_gastos=models.ManyToManyField(Gasto, verbose_name="Gastos")
-    def total(self):        
-        return self.r_gastos.all().aggregate(total_reembolso=Sum('total_gasto'))
+    def total(self):
+        suma = 0;
+        for gasto in self.r_gastos.all():      
+            suma += gasto.itemgasto_set.all().aggregate(total_gasto=Sum('itm_monto'))['total_gasto'] or 0
+
+        return suma
         
     class Meta:
         ordering = ['-r_id']

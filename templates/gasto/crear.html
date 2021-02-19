@@ -1,12 +1,48 @@
 {% extends 'index/base.html'%} 
 
 {% block contenido %}
-<div class="col-md-5">
-    <form action="" method="post" enctype="multipart/form-data">
+<style>
+  textarea {
+  resize: none;
+}
+</style>
+<div class="col-md-12">
+    <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{form.as_p}}
+        
+
+        {{ ItemGastoInlineFormSet.management_form }}
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Tipo de Gasto</th>
+                <th scope="col">Monto</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Fecha y Hora</th>
+                <th scope="col">Elminar</th>
+              </tr>
+            </thead>
+            <tbody>                
+                {% for form in ItemGastoInlineFormSet %}                    
+                <tr>                      
+                    {% for input in form %}                    
+                    <td>{{input}} {{input.errors}}</td>                                                                                                      
+                    {% endfor %}                                        
+                </tr>
+                {% endfor %}
+                    
+              
+            </tbody>
+          </table>
+        
+          {{form.as_p}}
+
+        
+          
         <input class="btn btn-success" type="submit" value="Guardar">
     </form>
 </div>
+
+
 {% endblock contenido %}
     

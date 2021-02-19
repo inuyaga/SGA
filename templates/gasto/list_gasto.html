@@ -131,14 +131,12 @@
                             <tr>
                                 <th></th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_id" }}</th>
-                                <th>{{ object_list|get_queryset_field_verbose_name:"g_tipoGasto" }}</th>
-                                <th>{{ object_list|get_queryset_field_verbose_name:"g_monto" }}</th>
-                                <th>{{ object_list|get_queryset_field_verbose_name:"g_descripcion" }}</th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_fechaCreacion" }}</th>
                                 <th>{{ object_list|get_queryset_field_verbose_name:"g_estado" }}</th>
-                                <th>Empresa</th>
-                                <th>{{ object_list|get_queryset_field_verbose_name:"g_userCreador" }}</th>
-                                <th>{{ object_list|get_queryset_field_verbose_name:"g_factura" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_depo" }}</th>
+                                <th>{{ object_list|get_queryset_field_verbose_name:"g_userCreador" }}</th>                                
+                                <th>Empresa</th>                                
+                                <th>Total</th>                                
                                 <th>Accion</th>
                             </tr>
                         </thead>
@@ -153,16 +151,14 @@
                                     </div>
                                     {% endif %}                                        
                                 </td>
-                                <td>{{item.g_id}}</td>
-                                <td>{{item.g_tipoGasto}}</td>
-                                <td>{{item.g_monto}}</td>
-                                <td>
-                                   <p class="text-muted m-b-0">{{item.g_descripcion}}</p></td>
+                                <td> <a href="{% url 'gastos:gasto_detalle' item.g_id %}">{{item.g_id}}</a></td>                            
                                 <td><em class="text-muted">{{item.g_fechaCreacion}}</em></td>
                                 <td><span class="{{badge|get_item:item.g_estado}}">{{item.get_g_estado_display}}</span></td>
-                                <td>{{item.g_depo.departamento_id_sucursal.sucursal_empresa_id}}</td>
+                                <td>{{item.g_depo}}</td>
                                 <td>{{item.g_userCreador}}</td>
-                                <td><a href="{{item.g_factura.url}}">Ver</a></td>
+                                <td>{{item.g_depo.departamento_id_sucursal.sucursal_empresa_id}}</td>
+                                <td>{{item.total_gasto}}</td>
+                                
                                 <td>
 
                                     {% if perms.gasto %}                                                                                                                                                   

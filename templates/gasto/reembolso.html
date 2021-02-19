@@ -113,7 +113,7 @@
                                 <td>{{item.r_date_add}}</td>
                                 <td>{{item.r_by_user}}</td>
                                 
-                                <td>{{item.total.total_reembolso|floatformat:2|intcomma}}</td>
+                                <td>{{item.total|floatformat:2|intcomma}}</td>
                                 <td><a class="btn btn-xs btn-app-teal" href="{% url 'gastos:reembolso_dowload' %}?IDReembolso={{item.r_id}}"><i class="fa fa-download fa-2x"></i></a></td>
                                 
                             </tr>
