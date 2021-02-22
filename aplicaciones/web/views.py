@@ -113,7 +113,8 @@ class ProductosListWebView(ListView):
         if area != None and area != '':
             queryset = queryset.filter(producto_linea__l_subcat__sc_area=area)
         if busqueda != None and busqueda != 'None':
-            queryset = queryset.filter(Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
+            # queryset = queryset.filter(Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
+            queryset = queryset.filter(Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__iexact=busqueda))
         if len(marca) > 0:
             queryset = queryset.filter(producto_marca__in=marca)
 
@@ -151,7 +152,8 @@ class ProductosListWebView(ListView):
             q_marca = q_marca.filter(producto_linea__l_subcat=sub_cat)
         
         if busqueda != None and busqueda != 'None':
-            q_marca = q_marca.filter(Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
+            # q_marca = q_marca.filter(Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
+            q_marca = q_marca.filter(Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__iexact=busqueda))
         
         context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
         context['banners'] = Blog.objects.filter(blog_tipo=5).order_by('-blog_creado')
