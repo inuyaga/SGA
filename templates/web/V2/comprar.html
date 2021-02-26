@@ -104,7 +104,7 @@
                                     {{item.producto_descripcion}}
                                 </p>
                                 <p class="card-text">
-                                    Marca: {{item.producto_marca|title}}
+                                    Marca: {{item.producto_marca|title}} / {{item.producto_importancia}}
                                 </p>
                                 {% if user.is_authenticated %}  
                                 <p class="card-text text-muted">${{item.producto_precio|intcomma}}</p>

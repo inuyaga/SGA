@@ -16,7 +16,7 @@ from aplicaciones.empresa.models import Cliente
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-import json
+import json,random
 from django.db.models import Avg, Sum, F, FloatField, Count, Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from aplicaciones.web.models import Blog
@@ -51,6 +51,8 @@ class Home(TemplateView):
             'dcw_producto_id__producto_descripcion', 
             'dcw_producto_id__producto_nombre').order_by('dcw_producto_id').annotate(veces_pedido=Sum('dcw_cantidad'))
         context['trendings'] = trending.order_by('-veces_pedido')[:5]
+        # context['aleatorio'] = Producto.objects.filter(producto_importancia__in = [random.randint(1,100),random.randint(101, 200),random.randint(201, 300),random.randint(301, 400),random.randint(401, 500)]).order_by('?')[:5]
+        context['aleatorio'] = Producto.objects.filter(producto_importancia__range = (1,500)).order_by('?')[:5]
         return context
     def post(self, request, *args, **kwargs):
         form = CorreoForm(data=request.POST)
@@ -100,6 +102,7 @@ class ProductosListWebView(ListView):
     model = Producto
     template_name = "web/V2/comprar.html"   
     paginate_by = 11
+    
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(producto_visible=True)
@@ -114,7 +117,8 @@ class ProductosListWebView(ListView):
             queryset = queryset.filter(producto_linea__l_subcat__sc_area=area)
         if busqueda != None and busqueda != 'None':
             # queryset = queryset.filter(Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
-            queryset = queryset.filter(Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__iexact=busqueda))
+            queryset = queryset.filter(~Q(producto_importancia=0), Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__iexact=busqueda)).order_by('producto_importancia')
+            
         if len(marca) > 0:
             queryset = queryset.filter(producto_marca__in=marca)
 
@@ -153,8 +157,8 @@ class ProductosListWebView(ListView):
         
         if busqueda != None and busqueda != 'None':
             # q_marca = q_marca.filter(Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
-            q_marca = q_marca.filter(Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__iexact=busqueda))
-        
+            q_marca = q_marca.filter(~Q(producto_importancia=0), Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__iexact=busqueda)).order_by('producto_importancia')
+    
         context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
         context['banners'] = Blog.objects.filter(blog_tipo=5).order_by('-blog_creado')
 

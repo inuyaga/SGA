@@ -143,7 +143,7 @@
                                             {% if item.prducto_existencia > 0 %}
                                             <li class="add-to-cart"><a href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}"><i class="icon-basket-loaded"></i>Añadir</a></li>
                                             {% else %}
-                                            <li class="add-to-cart">Sin Stock</li>                                                
+                                            <li class="add-to-cart">Sin Stock</li>                                             
                                             {% endif %}
                                                 
                                             <!-- <li><a href="#" class=""><i class="icon-shuffle"></i></a></li>
