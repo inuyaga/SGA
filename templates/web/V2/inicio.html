@@ -2,6 +2,12 @@
 {% load static %}
 
 {% block contenido %}
+<style>
+    .maximo {
+        max-width: 300px;
+        max-height: 450px;
+    }
+</style>
 <div id="carouselExampleFade" class="carousel slide carousel-fade" data-ride="carousel">
     <div class="carousel-inner">
         <div class="carousel-item active">
@@ -36,7 +42,7 @@
             <div class="card text-center">
 
                 <a href="{% url 'web:producto_detalle' item.dcw_producto_id__producto_codigo item.dcw_producto_id__producto_nombre|slugify %}">
-                    <img src="/media/{{item.dcw_producto_id__producto_imagen}}" width="268" height="278" class="card-img-top" alt="Prod destacado">
+                    <img src="/media/{{item.dcw_producto_id__producto_imagen}}" class="card-img-top maximo" alt="Prod destacado">
                 </a>
                 <div class="card-body">
                     <h5 class="card-title">{{item.dcw_producto_id__producto_nombre}}</h5>
@@ -65,7 +71,7 @@
             <div class="card text-center">
 
                 <a href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}">
-                    <img src="/media/{{item.producto_imagen}}" width="268" height="278" class="card-img-top" alt="Prod destacado">
+                    <img src="/media/{{item.producto_imagen}}" class="card-img-top maximo" alt="Prod destacado">
                 </a>
                 <div class="card-body">
                     <h5 class="card-title">{{item.producto_nombre}}</h5>

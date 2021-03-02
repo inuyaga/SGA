@@ -1,6 +1,12 @@
 {% extends 'web/base.html' %}
 {% load static humanize %}
-{% block contenido %} 
+{% block contenido %}
+<style>
+    .maximo {
+        max-width: 300px;
+        max-height: 450px;
+    }
+</style>
 <div class="container">
     <div class="row justify-content-center">
         
@@ -48,10 +54,10 @@
                 {% endif %}
             </ul>
         </div>
-        </div>
+    </div>
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <h2 class="principalTitulo">Subcategorias</h2>
             <ul class="list-group">
                 <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -89,25 +95,25 @@
             </form>
             
         </div>
-        <div class="col-md-9">
+        <div class="col-md-10">
             {% for item in object_list %}
             <div class="col-md-12">
                 <div class="card mb-3">
                     <div class="row no-gutters">
-                        <div class="col-md-3">
-                            <img src="{{item.producto_imagen.url}}" class="card-img" alt="{{item.producto_nombre}}" width="217" height="319">
+                        <div class="col-md-4">
+                            <img src="{{item.producto_imagen.url}}" class="card-img maximo" alt="{{item.producto_nombre}}">
                         </div>
-                        <div class="col-md-9">
+                        <div class="col-md-8">
                             <div class="card-body">
                                 <h5 class="card-title">{{item.producto_nombre}}</h5>
                                 <p class="card-text">
                                     {{item.producto_descripcion}}
                                 </p>
                                 <p class="card-text">
-                                    Marca: {{item.producto_marca|title}} / {{item.producto_importancia}}
+                                    Marca: {{item.producto_marca|title}}
                                 </p>
                                 {% if user.is_authenticated %}  
-                                <p class="card-text text-muted">${{item.producto_precio|intcomma}}</p>
+                                <p class="card-text text-muted">${{item.producto_precio|intcomma}} + IVA</p>
                                 {% endif %}
 
                                 {% if item.prducto_existencia > 0 %}

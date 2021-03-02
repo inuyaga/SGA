@@ -8,11 +8,16 @@
 {% block SEO %}
 <style>
     .circular {
-            padding: 6px 0px; 
-            border-radius: 15px; 
-            /* font-size: 8px; */
-            /* text-align: center;  */
-        }
+        padding: 6px 0px; 
+        border-radius: 15px; 
+        /* font-size: 8px; */
+        /* text-align: center;  */
+    }
+
+    .maximo {
+        max-width: 300px;
+        max-height: 450px;
+    }
 </style>
 <!-- Open Graph / Facebook -->
 
@@ -96,10 +101,10 @@
             <div class="row">
                 <div class="card col-md-12">
                     <div class="row no-gutters">
-                      <div class="col-md-3">
-                        <img src="{{object.producto_imagen.url}}" class="card-img" alt="{{object.producto_nombre}}" height="495">
+                      <div class="col-md-4">
+                        <img src="{{object.producto_imagen.url}}" class="card-img maximo" alt="{{object.producto_nombre}}">
                       </div>
-                      <div class="col-md-9">
+                      <div class="col-md-8">
                         <div class="card-body">
                           <h5 class="card-title">{{object.producto_nombre}}</h5>
                           <p class="card-text">
@@ -107,7 +112,7 @@
                           </p>
                           <p class="card-text"><small class="text-muted">
                             {% if user.is_authenticated %}  
-                            <span class="price">${{object.producto_precio|intcomma}}</span>                                    
+                            <span class="price">${{object.producto_precio|intcomma}} + IVA</span>                                    
                             {% endif %}</small>
                           </p>
                           <hr>

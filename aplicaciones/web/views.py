@@ -222,6 +222,8 @@ class CreateUser(CreateView):
     def form_valid(self, form):
         instancia = form.save(commit=False)
         instancia.is_user_web=True
+        instancia.first_name = instancia.rfc
+        instancia.username = instancia.rfc
         instancia.save()
         return super(CreateUser, self).form_valid(form)
 
