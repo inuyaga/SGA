@@ -40,6 +40,8 @@ class ItemGasto(models.Model):
     itm_monto = models.FloatField(verbose_name="Monto")
     item_descripcion = models.CharField("Descripcion", max_length=800, help_text="Descripcion del tipo de gasto")
     itm_fecha = models.DateField(verbose_name="Fecha")
+
+    
     
     def __str__(self):
         return self.itm_tipoGasto.nombre

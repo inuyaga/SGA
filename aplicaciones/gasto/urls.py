@@ -17,4 +17,5 @@ urlpatterns = [
     path('<int:pk>/delete/', GastoView.GastoDelete.as_view(), name='gasto_delete'),
     path('reembolso/list/', GastoView.ReembolsoList.as_view(), name='reembolso_list'),
     path('reembolso/dowload/', GastoView.Download_report_reembolso.as_view(), name='reembolso_dowload'),
+    path('gasto/dowload/', GastoView.Download_Gasto.as_view(), name='gasto_dowload'),
     ]

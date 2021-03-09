@@ -2,12 +2,14 @@ from django.shortcuts import render
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView, DeleteView, DetailView
 from aplicaciones.gasto.models import *
 from aplicaciones.gasto.forms import *
+from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
+
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, reverse
-from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 from django.db import IntegrityError
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.utils.formats import localize
 
 
 from rest_framework.views import APIView
@@ -82,6 +84,7 @@ class GastoViewList(ListView):
         queryset = super().get_queryset()
         # queryset = queryset
         week = self.request.GET.get('week')
+        departamento = self.request.GET.get('departamento')
         empresa = self.request.GET.get('empresa')
         tip_gasto = self.request.GET.get('tip_gasto')
         status = self.request.GET.get('status')
@@ -92,8 +95,8 @@ class GastoViewList(ListView):
             permiso = self.request.user.has_perm('gasto.view_gasto')
             if permiso == False:
                 try:
-                    queryset = queryset.filter(
-                        g_depo=self.request.user.departamento)
+                    queryset = queryset.filter(g_depo=self.request.user.departamento)
+                    print('try')
                 except AttributeError as error:
                     messages.warning(self.request, 'Usuario:{} debe tener asignado un departamento para ver gastos de su departamento'.format(
                         self.request.user.username))
@@ -102,19 +105,22 @@ class GastoViewList(ListView):
             week = week.replace('W', '')
             week = week.split('-')
             queryset = queryset.filter(g_fechaCreacion__year=week[0])
-            queryset = queryset.filter(g_fechaCreacion__week=week[1])
+            queryset = queryset.filter(g_fechaCreacion__week=week[1])                       
 
         if empresa != None and empresa != '':
-            queryset = queryset.filter(
-                g_depo__departamento_id_sucursal__sucursal_empresa_id__id=empresa)
+            queryset = queryset.filter(g_depo__departamento_id_sucursal__sucursal_empresa_id__id=empresa)            
+            
+        if departamento != None and departamento != '':
+            queryset = queryset.filter(g_depo=departamento)
         if tip_gasto != None and tip_gasto != '':
             queryset = queryset.filter(g_tipoGasto=tip_gasto)
-        if status != None and status != '':
+        if status != '0' and status != None:            
             queryset = queryset.filter(g_estado=status)
         if Buscar != None and Buscar != '':
             queryset = queryset.filter(g_id=Buscar)
         if reembolsoID != None and reembolsoID != '':
             queryset = Reembolso.objects.get(r_id=reembolsoID).r_gastos.all()
+            
 
         queryset=queryset.order_by('g_estado', '-g_id')
         return queryset
@@ -122,17 +128,8 @@ class GastoViewList(ListView):
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
-        badge = {
-            1: 'badge badge-info',
-            2: 'badge badge-success',
-            3: 'badge badge-primary',
-            4: 'badge badge-secondary',
-            5: 'badge badge-danger',
-            6: 'badge badge-warning',
-        }
-        context['TipoGasto'] = TipoGasto.objects.all()
-        context['STATUS'] = STATUS
-        context['Empresa'] = Empresa.objects.all()
+        badge = {1: 'badge badge-info', 2: 'badge badge-success', 3: 'badge badge-primary', 4: 'badge badge-secondary', 5: 'badge badge-danger', 6: 'badge badge-warning',}
+        context['form_filtro'] = FiltrosGastoForm(self.request.GET)        
         context['badge'] = badge
 
         urls_formateada = self.request.GET.copy()
@@ -370,6 +367,112 @@ class Download_report_reembolso(TemplateView):
             ws.column_dimensions[get_column_letter(col)].width = value+1
 
         nombre_archivo = 'reemboso.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition'] = content
+        wb.save(response)
+        return response
+
+
+
+
+class Download_Gasto(TemplateView): 
+    def get(self, request, *args, **kwargs):
+
+        wb = Workbook()
+        ws = wb.active
+        
+        queryset = Gasto.objects.all()
+        
+        week = self.request.GET.get('week')
+        departamento = self.request.GET.get('departamento')
+        empresa = self.request.GET.get('empresa')
+        tip_gasto = self.request.GET.get('tip_gasto')
+        status = self.request.GET.get('status')
+        Buscar = self.request.GET.get('Buscar')
+        reembolsoID = self.request.GET.get('reembolsoID')
+
+        if not self.request.user.is_superuser:
+            permiso = self.request.user.has_perm('gasto.view_gasto')
+            if permiso == False:
+                try:
+                    queryset = queryset.filter(g_depo=self.request.user.departamento)
+                    print('try')
+                except AttributeError as error:
+                    messages.warning(self.request, 'Usuario:{} debe tener asignado un departamento para ver gastos de su departamento'.format(
+                        self.request.user.username))
+
+        if week != None and week != '':
+            week = week.replace('W', '')
+            week = week.split('-')
+            queryset = queryset.filter(g_fechaCreacion__year=week[0])
+            queryset = queryset.filter(g_fechaCreacion__week=week[1])                       
+
+        if empresa != None and empresa != '':
+            queryset = queryset.filter(g_depo__departamento_id_sucursal__sucursal_empresa_id__id=empresa)            
+            
+        if departamento != None and departamento != '':
+            queryset = queryset.filter(g_depo=departamento)
+        if tip_gasto != None and tip_gasto != '':
+            queryset = queryset.filter(g_tipoGasto=tip_gasto)
+        if status != '0' and status != None:            
+            queryset = queryset.filter(g_estado=status)
+        if Buscar != None and Buscar != '':
+            queryset = queryset.filter(g_id=Buscar)
+        if reembolsoID != None and reembolsoID != '':
+            queryset = Reembolso.objects.get(r_id=reembolsoID).r_gastos.all()
+
+        queryset=queryset.order_by('g_estado', '-g_id')
+
+        ws['A1'] = 'REPORTE DE GASTOS'
+        st = ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:H1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = '###'        
+        ws['B2'] = 'Fecha'
+        ws['C2'] = 'Sucursal'
+        ws['D2'] = 'Usuario'
+        ws['E2'] = 'Monto'
+        ws['F2'] = 'Tipo gasto'        
+        ws['G2'] = 'Estatus'        
+
+        cont = 3
+
+        for item in queryset:
+            for detalle in item.itemgasto_set.all():
+                ws.cell(row=cont, column=1).value = item.g_id                                        
+                ws.cell(row=cont, column=2).value = localize(item.g_fechaCreacion)                                        
+                ws.cell(row=cont, column=3).value = item.g_depo.departamento_id_sucursal.sucursal_nombre                                          
+                ws.cell(row=cont, column=4).value = item.g_userCreador.username                                      
+                ws.cell(row=cont, column=5).value = detalle.itm_monto                                          
+                ws.cell(row=cont, column=6).value = detalle.itm_tipoGasto.nombre
+                ws.cell(row=cont, column=7).value = item.get_g_estado_display()
+                ws.cell(row=cont, column=5).number_format = '#,##0.00'
+                cont += 1
+            cont += 1
+
+
+
+        penultima_fila = cont-1
+        ws.cell(row=cont, column=4).value = "Total"
+        ws["E"+str(cont)] = "=SUM(E3:E{})".format(penultima_fila)
+        ws["E"+str(cont)].number_format = '#,##0.00'
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max(
+                            (dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+        nombre_archivo = 'gastos.xls'
         response = HttpResponse(content_type="application/ms-excel")
         content = "attachment; filename = {0}".format(nombre_archivo)
         response['Content-Disposition'] = content
