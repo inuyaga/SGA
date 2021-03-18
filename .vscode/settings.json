@@ -6,6 +6,23 @@
         "--disable-msg",
         "I0011"
     ],
-    "python.pythonPath": "env\\Scripts\\python.exe",
+    "python.pythonPath": "/home/esteban/Escritorio/Django/SGA/env/bin/python3",
     "editor.fontFamily": "'Menlo', 'Consolas', 'DejaVu Sans Mono', 'monospace'",
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#137751",
+        "activityBar.activeBorder": "#ca91ed",
+        "activityBar.background": "#137751",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#ca91ed",
+        "activityBarBadge.foreground": "#15202b",
+        "statusBar.background": "#0c4b33",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#137751",
+        "titleBar.activeBackground": "#0c4b33",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#0c4b3399",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#0C4B33",
 }
