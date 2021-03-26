@@ -155,6 +155,7 @@ class ProductosListWebView(ListView):
         if linea != None:
             q_marca = q_marca.filter(producto_linea=linea)
         if sub_cat != None:
+            context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
             q_marca = q_marca.filter(producto_linea__l_subcat=sub_cat)
         
         if busqueda != None and busqueda != 'None':
@@ -192,6 +193,7 @@ class ProductosListWebView(ListView):
             del urls_formateada['page']
         context['urls_formateada'] = urls_formateada
         if area != None and area != '':
+            context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
             context['subcategoria'] = Producto.objects.filter(producto_visible=True,producto_linea__l_subcat__sc_area=area).values('producto_linea__l_subcat__sc_nombre', 'producto_linea__l_subcat').annotate(total_produc=Count('producto_codigo')).order_by('producto_linea__l_subcat') 
        
         return context
