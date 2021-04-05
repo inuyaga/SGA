@@ -6,7 +6,7 @@
         "--disable-msg",
         "I0011"
     ],
-    "python.pythonPath": "/home/esteban/Escritorio/Django/SGA/env/bin/python3",
+    "python.pythonPath": "env/bin/python",
     "editor.fontFamily": "'Menlo', 'Consolas', 'DejaVu Sans Mono', 'monospace'",
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#137751",

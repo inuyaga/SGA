@@ -1367,8 +1367,7 @@ class PDFCatalogoProd(View):
 
     def myFirstPage(self, canvas, doc):
         from django.utils.formats import localize
-        from datetime import datetime
-        print('soy lo encabezado')
+        from datetime import datetime        
         # CABECERA DE PAGINA
         Title = "CATALOGO DE PRODUCTOS"
         canvas.saveState()
@@ -1426,14 +1425,11 @@ class PDFCatalogoProd(View):
             'titulo', alignment=TA_CENTER, fontSize=20, fontName="Times-Bold")
 
         items.append(Image(self.object_catalogo.tp_imagen.path, 8*cm, 8*cm))
-        items.append(
-            Paragraph(self.object_catalogo.tp_catalogo, stylo_portada_title))
+        items.append(Paragraph(self.object_catalogo.tp_catalogo, stylo_portada_title))
         items.append(Spacer(0, 30))
-        items.append(
-            Paragraph(self.object_catalogo.tp_no_licitacion, stylo_portada_title))
+        items.append(Paragraph(self.object_catalogo.tp_no_licitacion, stylo_portada_title))
         items.append(Spacer(0, 30))
-        items.append(
-            Paragraph(self.object_catalogo.tp_descripcion, stylo_portada_title))
+        items.append(Paragraph(self.object_catalogo.tp_descripcion, stylo_portada_title))
         items.append(PageBreak())
 
         dta = []
@@ -1441,15 +1437,12 @@ class PDFCatalogoProd(View):
             titulos_tabla = [(Paragraph('##', stylo_titulo), Paragraph(
                 'Imagen', stylo_titulo), Paragraph('Descripción', stylo_titulo))]
             for item, iteracion in zip(self.object_catalogo.tp_productos.all(), range(self.object_catalogo.tp_productos.all().count())):
-                dta.append((iteracion+1, Image(item.producto_imagen.path,
-                                               5*cm, 5*cm), item.producto_descripcion))
+                dta.append((iteracion+1, Image(item.producto_imagen.path,5*cm, 5*cm), item.producto_descripcion))
             tabla = Table(titulos_tabla+dta, colWidths=[1*cm, 6 * cm, 13 * cm])
         elif self.object_catalogo.tp_orientacion_t == 2:
-            titulos_tabla = [(Paragraph('##', stylo_titulo), Paragraph(
-                'Descripción', stylo_titulo), Paragraph('Imagen', stylo_titulo))]
+            titulos_tabla = [(Paragraph('##', stylo_titulo), Paragraph('Descripción', stylo_titulo), Paragraph('Imagen', stylo_titulo))]
             for item, iteracion in zip(self.object_catalogo.tp_productos.all(), range(self.object_catalogo.tp_productos.all().count())):
-                dta.append((iteracion+1, item.producto_descripcion,
-                            Image(item.producto_imagen.path, 5*cm, 5*cm)))
+                dta.append((iteracion+1, item.producto_descripcion,Image(item.producto_imagen.path, 5*cm, 5*cm)))
             tabla = Table(titulos_tabla+dta, colWidths=[1*cm, 13 * cm, 6 * cm])
 
         tabla.setStyle(TableStyle(
