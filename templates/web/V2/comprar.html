@@ -1,15 +1,148 @@
 {% extends 'web/base.html' %}
-{% load static humanize %}
+{% load static humanize menu_grid %}
 {% block contenido %}
+{% block encabezado %}
 <style>
     .maximo {
         max-width: 300px;
         max-height: 450px;
     }
+
+.carousel {
+	margin: 50px auto;
+	padding: 0 70px;
+}
+.carousel .carousel-item {
+	min-height: 330px;
+	text-align: center;
+	overflow: hidden;
+}
+.carousel .carousel-item .img-box {
+	height: 160px;
+	width: 100%;
+	position: relative;
+}
+.carousel .carousel-item img {	
+	max-width: 100%;
+	max-height: 100%;
+	display: inline-block;
+	position: absolute;
+	bottom: 0;
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+}
+.carousel .carousel-item h4 {
+	font-size: 18px;
+	margin: 10px 0;
+}
+.carousel .carousel-item .btn {
+	/*color: #333;*/
+	border-radius: 0;
+	font-size: 11px;
+	text-transform: uppercase;
+	font-weight: bold;
+	background: none;
+	border: 1px solid #ccc;
+	padding: 5px 10px;
+	margin-top: 5px;
+	line-height: 16px;
+}
+.carousel .carousel-item .btn:hover, .carousel .carousel-item .btn:focus {
+	color: #fff;
+	background: #000;
+	border-color: #000;
+	box-shadow: none;
+}
+.carousel .carousel-item .btn i {
+	font-size: 14px;
+	font-weight: bold;
+	margin-left: 5px;
+}
+.carousel .thumb-wrapper {
+	text-align: center;
+}
+.carousel .thumb-content {
+	padding: 15px;
+}
+.carousel-control-prev, .carousel-control-next {
+	height: 100px;
+	width: 40px;
+	background: none;
+	margin: auto 0;
+	background: rgba(0, 0, 0, 0.2);
+}
+.carousel-control-prev i, .carousel-control-next i {
+	font-size: 30px;
+	position: absolute;
+	top: 50%;
+	display: inline-block;
+	margin: -16px 0 0 0;
+	z-index: 5;
+	left: 0;
+	right: 0;
+	color: rgba(0, 0, 0, 0.8);
+	text-shadow: none;
+	font-weight: bold;
+}
+.carousel-control-prev i {
+	margin-left: -3px;
+}
+.carousel-control-next i {
+	margin-right: -3px;
+}
+.carousel .item-price {
+	font-size: 13px;
+	padding: 2px 0;
+}
+.carousel .item-price strike {
+	color: #999;
+	margin-right: 5px;
+}
+.carousel .item-price span {
+	color: #86bd57;
+	font-size: 110%;
+}	
+.carousel .carousel-indicators {
+	bottom: -50px;
+}
+.carousel-indicators li, .carousel-indicators li.active {
+	width: 10px;
+	height: 10px;
+	margin: 4px;
+	border-radius: 50%;
+	border-color: transparent;
+	border: none;
+}
+.carousel-indicators li {	
+	background: rgba(0, 0, 0, 0.2);
+}
+.carousel-indicators li.active {	
+	background: rgba(0, 0, 0, 0.6);
+}
+.star-rating li {
+	padding: 0;
+}
+.star-rating i {
+	font-size: 14px;
+	color: #ffc000;
+}
+
+.card-title{
+    font-size: 1rem;
+    font-weight: 600;
+}
 </style>
-<div class="container">
+{% endblock encabezado %}
+<!-- <div class="container"> -->
     <div class="row justify-content-center">
+    <!-- {% for item in destacado %}
         
+        {% for prod in item|get_producto %}
+            
+            <img src="{{prod.producto_imagen.url}}" style="width: 50px; height: 50px;" alt="">
+        {% endfor %}
+    {% endfor %} -->   
         <form action="" method="get" class="col-md-4">
 
             {%for key, values in request.GET.lists%}
@@ -23,8 +156,8 @@
 
             <div class="custom_select" style="padding-bottom: 30px;padding-top: 10px;">
                 <select class="form-control form-control-sm" name="order">
-                    <option value="default">Orden Alfabético (A-Z)</option>
-                    <!-- <option value="popularity">Sort by popularity</option> -->
+                    <option value="default">Destacado</option>
+                    <option value="ordenalfabetico" {% if view.request.GET.order == 'ordenalfabetico' %}selected{% endif %}>Orden Alfabético (A-Z)</option>
                     <option value="date_new"
                         {% if view.request.GET.order == 'date_new' %}selected{% endif %}>Lo
                         mas nuevo</option>
@@ -58,20 +191,30 @@
 
     <div class="row">
         <div class="col-md-2">
-            <h2 class="principalTitulo">Subcategorias</h2>
-            <ul class="list-group">
-                <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a class="" href="{% url 'web:list_prod' %}">Mostrar todo</a>
-                </li> -->
+            
+                
                 {% for item in subcategoria %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a {% if view.request.GET.sub_cat == item.producto_linea__l_subcat|striptags  %}class="text-danger"
-                                        {% endif %} href="?sub_cat={{item.producto_linea__l_subcat}}">
-                    {{item.producto_linea__l_subcat__sc_nombre|title  }}</a>
-                  <span class="badge badge-primary badge-pill">{{item.total_produc}}</span>
-                </li>
+                    {% if forloop.first %}
+                    <h2 class="principalTitulo">Subcategorias</h2>
+                        <ul class="list-group">
+                        <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a class="" href="{% url 'web:list_prod' %}">Mostrar todo</a>
+                        </li> -->
+                    {% else %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a {% if view.request.GET.sub_cat == item.producto_linea__l_subcat|striptags  %}class="text-danger"
+                                                {% endif %} href="?sub_cat={{item.producto_linea__l_subcat}}">
+                            {{item.producto_linea__l_subcat__sc_nombre|title  }}</a>
+                        <span class="badge badge-primary badge-pill">{{item.total_produc}}</span>
+                        </li>
+                    {% endif %}
+
+                    {% if forloop.last %}
+                        </ul>
+                    {% endif %}
+                
                 {% endfor %}
-            </ul>
+            
             <hr>
             <h2 class="principalTitulo">Marcas</h2>
             <form action="" method="get" id="form_marca">
@@ -96,8 +239,9 @@
             
         </div>
         <div class="col-md-10">
+            <div class="row">
             {% for item in object_list %}
-            <div class="col-md-12">
+            <div class="col-md-4">
                 <div class="card mb-3">
                     <div class="row no-gutters">
                         <div class="col-md-4">
@@ -127,6 +271,7 @@
                 </div>
             </div>
             {% endfor %}
+            </div>
             <ul class="pagination mt-3 justify-content-center pagination_style1">
                 {% if page_obj.has_previous %}
                 <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">Inicio</a></li>
@@ -139,8 +284,94 @@
                 {% endif %}
             </ul>
         </div>
+        <hr>
     </div>
-</div>
+    <!-- Carrusel productos relacionados -->
+    {% if totalregistrosdestacados > 0 %}
+    <hr>
+    <div class="row">
+		<div class="col-md-12">
+			<h2 class="text-center">Productos <b>relacionados</b></h2>
+			<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="0">
+			<!-- Carousel indicators -->
+			<ol class="carousel-indicators">
+            {% if totalPaginasCarrusel < 1 %}
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+            {% else %}
+                {% for i in totalPaginasCarrusel %}
+                    <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.counter0 == 0 %}
+                        active
+                    {% endif %}"></li>
+                {% endfor %}
+            {% endif %}
+			</ol>
+			<!-- Wrapper for carousel items -->
+			<div class="carousel-inner">
+                {% for prod in relacionados %}
+                    {% if forloop.first %}
+                        <div class="carousel-item active">
+					        <div class="row">
+                    {% else %}
+                            {% for i in paginascarrusel %}
+                                {% if i == forloop.parentloop.counter %}
+                                    <div class="carousel-item">
+					                    <div class="row">
+                                {% endif %}
+                            {% endfor %}
+                    {% endif %}
+                    <div class="col-sm-3">
+                        <div class="thumb-wrapper">
+                            <div class="img-box">
+                                <a href="{% url 'web:producto_detalle' prod.producto_codigo prod.producto_nombre|slugify %}"><img src="{{prod.producto_imagen.url}}" class="img-fluid" alt="{{item.producto_nombre}}"></a>
+                            </div>
+                            <div class="thumb-content">
+                                <h4>{{prod.producto_nombre}}</h4>
+                                <p class="item-price">
+                                    Marca: {{prod.producto_marca|title}}
+                                </p>
+                                <div class="star-rating">
+                                    <p>
+                                        {% if user.is_authenticated %}  
+                                        <span>${{prod.producto_precio|intcomma}} + IVA</span>
+                                        {% endif %}
+                                        {% comment %} {{prod.producto_descripcion}} {% endcomment %}
+                                    </p>
+                                </div>
+                                {% if prod.prducto_existencia > 0 %}
+                                    <a class="btn botoncarrito" href="{% url 'web:producto_detalle' prod.producto_codigo prod.producto_nombre|slugify %}"><i class="fas fa-shopping-cart"></i> Ver</a>
+                                {% else %}
+                                    <li class="add-to-cart">*Sin Stock</li>                                                
+                                {% endif %}
+                            </div>						
+                        </div>
+                    </div>
+                    {% if forloop.revcounter == 1 %}
+    						</div>
+				        </div>
+                    {% else %}
+                        {% for i in paginascarruselfin %}
+                            {% if i == forloop.parentloop.counter %}
+                                    </div>
+				                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+				
+			</div>
+			<!-- Carousel controls -->
+			<a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
+				<i class="fa fa-angle-left"></i>
+			</a>
+			<a class="carousel-control-next" href="#myCarousel" data-slide="next">
+				<i class="fa fa-angle-right"></i>
+			</a>
+		</div>
+		</div>
+	</div>
+    {% endif %}
+    <!-- Carrusel productos relacionados -->
+<!--</div>--><!--fin del container-->
 {% endblock contenido %}
 {% block script %}
 <script>

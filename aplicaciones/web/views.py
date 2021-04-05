@@ -101,7 +101,7 @@ class PostularCreate(CreateView):
 class ProductosListWebView(ListView): 
     model = Producto
     template_name = "web/V2/comprar.html"   
-    paginate_by = 11
+    paginate_by = 24
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -116,9 +116,7 @@ class ProductosListWebView(ListView):
         if area != None and area != '':
             queryset = queryset.filter(producto_linea__l_subcat__sc_area=area)
         if busqueda != None and busqueda != 'None':
-            # queryset = queryset.filter(Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
             queryset = queryset.filter(~Q(producto_importancia=0), Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__iexact=busqueda)).order_by('producto_importancia')
-            
         if len(marca) > 0:
             queryset = queryset.filter(producto_marca__in=marca)
 
@@ -128,6 +126,8 @@ class ProductosListWebView(ListView):
             queryset = queryset.order_by('-producto_precio')
         elif order == 'date_new':
             queryset = queryset.order_by('producto_fecha_creado')
+        elif order == 'ordenalfabetico':
+            queryset = queryset.order_by('producto_nombre')
         
         if linea != None:
             queryset = queryset.filter(producto_linea=linea)
@@ -142,8 +142,10 @@ class ProductosListWebView(ListView):
         linea = self.request.GET.get('linea')
         sub_cat = self.request.GET.get('sub_cat')
         busqueda = self.request.GET.get('busqueda')
-
+        paginasCarrusel =[]
+        paginasCarruselfin =[]
         q_marca = Producto.objects.filter(producto_visible=True)
+        q_marca2 = Producto.objects.filter(producto_visible=True)
 
         context['area_count'] = Producto.objects.filter(producto_visible=True).values('producto_linea__l_subcat__sc_area__area_nombre', 'producto_linea__l_subcat__sc_area').annotate(total_produc=Count('producto_codigo')).order_by('producto_linea__l_subcat__sc_area')
         context['marca_lista'] = self.request.GET.getlist('marca')
@@ -153,20 +155,45 @@ class ProductosListWebView(ListView):
         if linea != None:
             q_marca = q_marca.filter(producto_linea=linea)
         if sub_cat != None:
+            context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
             q_marca = q_marca.filter(producto_linea__l_subcat=sub_cat)
         
         if busqueda != None and busqueda != 'None':
             # q_marca = q_marca.filter(Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__icontains=busqueda))
-            q_marca = q_marca.filter(~Q(producto_importancia=0), Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__iexact=busqueda)).order_by('producto_importancia')
-    
-        context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
-        context['banners'] = Blog.objects.filter(blog_tipo=5).order_by('-blog_creado')
+            q_marca = q_marca.filter(~Q(producto_importancia=0), Q(producto_codigo = busqueda) | Q(producto_nombre__icontains=busqueda)|Q(producto_descripcion__iexact=busqueda)).order_by('producto_importancia').values('producto_marca', 'producto_marca__marca_nombre').annotate(conteo=Count('producto_marca')).order_by('-conteo', 'producto_marca')
+            
+            context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
+            context['banners'] = Blog.objects.filter(blog_tipo=5).order_by('-blog_creado')
+            itemmarca=q_marca.values_list('producto_marca', flat=True)[:1]
+            itemsubcategoria=q_marca.values_list('producto_linea__l_subcat', flat=True)[:1]
+            itemcodigo=q_marca.values_list('producto_codigo', flat=True)
+            if len(itemsubcategoria) > 0:
+                context['relacionados'] = q_marca2.filter(producto_linea__l_subcat = itemsubcategoria[0], producto_marca=itemmarca[0]).exclude(producto_codigo__in=itemcodigo).order_by('producto_importancia')[:28]
+                context['totalregistrosdestacados'] = context['relacionados'].count()
+
+                if context['relacionados'].count()//4 < context['relacionados'].count()/4:
+                    context['totalPaginasCarrusel']= range((context['relacionados'].count()//4)+1)
+                else:
+                    context['totalPaginasCarrusel']= range(context['relacionados'].count()//4)
+
+                for i in context['totalPaginasCarrusel']:
+                    paginasCarrusel.append((i*4)+1)
+
+                for i in context['totalPaginasCarrusel']:
+                    paginasCarruselfin.append((i*4)+4)
+                
+                if len(paginasCarrusel) > 1:
+                    paginasCarrusel.pop(0)
+                
+                context['paginascarrusel']= paginasCarrusel
+                context['paginascarruselfin']= paginasCarruselfin
 
         urls_formateada = self.request.GET.copy()
         if 'page' in urls_formateada:
             del urls_formateada['page']
         context['urls_formateada'] = urls_formateada
         if area != None and area != '':
+            context['marca_object_list'] = q_marca.values('producto_marca', 'producto_marca__marca_nombre').annotate(c_marca=Count('producto_marca')).order_by('producto_marca')
             context['subcategoria'] = Producto.objects.filter(producto_visible=True,producto_linea__l_subcat__sc_area=area).values('producto_linea__l_subcat__sc_nombre', 'producto_linea__l_subcat').annotate(total_produc=Count('producto_codigo')).order_by('producto_linea__l_subcat') 
        
         return context
