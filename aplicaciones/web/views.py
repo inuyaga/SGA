@@ -255,7 +255,12 @@ class CreateUser(SuccessMessageMixin,CreateView):
         instancia.is_user_web=True
         instancia.first_name = instancia.rfc
         instancia.username = instancia.rfc
-        instancia.save()
+        try:
+            instancia.save()
+        except IntegrityError as error:
+            messages.warning(request, 'El usuario {} ya se encuentra registrado inicie sesion o cree uno nuevo.'.format(instancia.rfc))
+            url = reverse_lazy('web:registro')
+            return redirect(url)
         return super(CreateUser, self).form_valid(form)
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(

@@ -6,7 +6,7 @@
         "--disable-msg",
         "I0011"
     ],
-    "python.pythonPath": "env/bin/python",
+    "python.pythonPath": "env\\Scripts\\python.exe",
     "editor.fontFamily": "'Menlo', 'Consolas', 'DejaVu Sans Mono', 'monospace'",
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#137751",
