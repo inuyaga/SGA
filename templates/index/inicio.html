@@ -10,6 +10,16 @@ Iniciar Sesion
     <div class="card text-center col col-lg-4">
       <h5 class="card-header">Entrar</h5>
       <div class="card-body">
+          {% if messages %}
+            <div class="alert alert-dark" role="alert">
+                <h4 class="alert-heading">Bien hecho!</h4>
+                <p>
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </p>
+            </div>
+          {% endif %}
         <form method="post">
           {% csrf_token %}
           <div class="form-group">

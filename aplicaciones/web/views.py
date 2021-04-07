@@ -22,6 +22,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from aplicaciones.web.models import Blog
 from django.contrib.auth.admin import UserAdmin
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+
 # Create your views here.
 class Home(TemplateView): 
     template_name="web/V2/inicio.html" 
@@ -241,11 +243,13 @@ class ProductoDetalleView(DetailView):
 
 
 
-class CreateUser(CreateView):
+class CreateUser(SuccessMessageMixin,CreateView):
     model = UserAdmin
     form_class = UserForm
     template_name = 'web/registrar.html'
     success_url = reverse_lazy('inicio')
+    # success_url = '/registro/user/computel/'
+    success_message = "El usuario %(username)s ha sido registrado satisfactoriamente, puede iniciar sesión con su usuario y contraseña"
     def form_valid(self, form):
         instancia = form.save(commit=False)
         instancia.is_user_web=True
@@ -253,6 +257,11 @@ class CreateUser(CreateView):
         instancia.username = instancia.rfc
         instancia.save()
         return super(CreateUser, self).form_valid(form)
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(
+            cleaned_data,
+            username=self.object.username,
+        )
 
 
 def FindRfcUserView(request):

@@ -1,6 +1,6 @@
 {% extends 'web/base.html' %}
 {% block titulo %}
-Registro de Usuario
+Registro de nuevo usuario
 {% endblock titulo %}
 
 
@@ -26,6 +26,16 @@ Registro de Usuario
     <section style="margin-top: 90px; margin-bottom: 90px;">
         <div class="container">
             <h1>[[rfc_vue]]</h1>
+            {% if messages %}
+            <div class="alert alert-dark" role="alert">
+                <h4 class="alert-heading">Bien hecho!</h4>
+                <p>
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
             <div class="row">
                 <div class="col-6 col-sm-6 mx-auto">
                     <form action="" method="POST">
