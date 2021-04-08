@@ -11,15 +11,19 @@ Iniciar Sesion
       <h5 class="card-header">Entrar</h5>
       <div class="card-body">
           {% if messages %}
-            <div class="alert alert-dark" role="alert">
-                <h4 class="alert-heading">Bien hecho!</h4>
-                <p>
-                    {% for message in messages %}
-                        {{ message }}
-                    {% endfor %}
-                </p>
-            </div>
-          {% endif %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}" role="alert">
+                        <h4 class="alert-heading">
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error: {% endif %}
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}Advertencia: {% endif %}
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}Registro éxitoso: {% endif %}
+                        </h4>
+                        <p>
+                            {{ message }}
+                        </p>
+                    </div>
+                {% endfor %}
+            {% endif %}
         <form method="post">
           {% csrf_token %}
           <div class="form-group">

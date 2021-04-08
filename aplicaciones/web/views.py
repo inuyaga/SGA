@@ -258,7 +258,7 @@ class CreateUser(SuccessMessageMixin,CreateView):
         try:
             instancia.save()
         except IntegrityError as error:
-            messages.warning(request, 'El usuario {} ya se encuentra registrado inicie sesion o cree uno nuevo.'.format(instancia.rfc))
+            messages.warning(self.request, 'El usuario {} ya se encuentra registrado, por favor vaya a la sección Iniciar sesión.'.format(instancia.rfc))
             url = reverse_lazy('web:registro')
             return redirect(url)
         return super(CreateUser, self).form_valid(form)
