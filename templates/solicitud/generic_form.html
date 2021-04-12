@@ -1,0 +1,36 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Servico creacion</title>
+{% endblock titulo %}
+
+
+{% block contenido %}
+    <div class="row">        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Formulario</h4>
+                    <div class="card-actions">
+                        <code></code>
+                    </div>
+                </div>
+                <div class="card-block">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="form-group has-success">
+                        {{form.as_p}}
+                    </div>                    
+                    <button class="btn btn-app" type="submit">Agregar</button>                        
+                </form>
+                </div>
+                <!-- .card-block -->
+            </div>
+        </div>
+    </div>
+{% endblock contenido %}
+<div class="form-group has-success">
+    <label class="col-xs-12" for="example-text-input-success">Success State</label>
+    <div class="col-sm-9">
+        <input class="form-control" type="text" id="example-text-input-success" name="example-text-input-success" placeholder="Success State..">
+    </div>
+</div>

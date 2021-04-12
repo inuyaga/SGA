@@ -46,4 +46,5 @@ urlpatterns = [
     path('Expos/', include('aplicaciones.expo.urls'), name='expo'),
     path('compras/', include('aplicaciones.compra.urls'), name='compras'),
     path('descargas/', include('aplicaciones.descargas.urls'), name='descargas'),
+    path('solicitud/', include('aplicaciones.solicitud.urls'), name='solicitud'),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

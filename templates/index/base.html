@@ -399,6 +399,23 @@
                                 </ul>
                             </li>
                             {% endif %}
+                            {% if perms.solicitud %}
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="fa fa-share-square" aria-hidden="true"></i>Solicitud</a> 
+                                <ul class="nav nav-subnav">
+                                    {% if perms.solicitud.view_tiposervicio %} 
+                                    <li>
+                                        <a href="{% url 'solicitud:crear_tipo_servicio' %}">Tipo de Servicio</a>
+                                    </li>
+                                    {% endif %}
+                                    {% if perms.solicitud.view_servicio %} 
+                                    <li>
+                                        <a href="{% url 'solicitud:servicios' %}">Servicio</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% endif %}
                         </ul>
                     </nav>
                     <!-- End drawer navigation -->
