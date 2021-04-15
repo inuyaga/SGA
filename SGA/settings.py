@@ -100,23 +100,23 @@ WSGI_APPLICATION = 'SGA.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sga',
-        'USER': 'soporte',
-        'PASSWORD': 'S1st3m45',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
     #     'NAME': 'sga',
-    #     'USER': 'root',
-    #     'PASSWORD': '',
-    #     'HOST': '127.0.0.1',
+    #     'USER': 'soporte',
+    #     'PASSWORD': 'S1st3m45',
+    #     'HOST': 'localhost',
     #     'PORT': '3306',
     # }
+
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sga',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
 }
 
 
