@@ -1,0 +1,252 @@
+{% extends 'index/base.html'%}
+{% load tools %}
+{% block titulo %}
+<title>Tipo de servico creacion</title>
+{% endblock titulo %}
+
+
+{% block contenido %}
+    <div class="row">
+        <div class="col-lg-12">            
+            <div class="card">
+                <div class="card-header">
+                    <h4>Filtros</h4>
+                    <ul class="card-actions">
+                        <!-- <li>
+                                <span>Text 1</span>
+                            </li> -->
+                    </ul>
+                    <!-- .card-actions -->
+                </div>                
+                <div class="card-block">                
+                    <form class="form-horizontal m-t-sm" action="" method="GET">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">                                
+                                {% for input in forms_filtro %}                                    
+                                <div class="col-xs-2">         
+                                    {{input.label}}                                                                     
+                                    {{input}}                                                                     
+                                    {{input.errors}}                                                                     
+                                </div>                                                                                                                                                                                        
+                                {% endfor %}                                                                    
+                                </div>                                
+                            </div>
+                            <div class="col-sm-2">
+                                <button class="btn btn-app" type="submit"><i class="ion-checkmark m-r-xs"></i> Filtrar</button>
+                            </div>
+                        </div>                                                
+                    </form>
+    
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <!-- Default Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>Servicio</h4>
+                    <div class="card-actions">
+                        
+                        {% if perms.solicitud.add_servicio %}   
+                        <a href="{% url 'solicitud:servicio_crear' %}">Crear</a>                            
+                        {% endif %}
+                            
+                    </div>
+                </div>
+                <div class="card-block">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 250px;">#</th>
+                                <th>Fecha</th>                                
+                                <th>Tipo de Servicio</th>                                
+                                <th>Actualizó</th>                                
+                                <th>Creador</th>                                
+                                <th>Estatus</th>                                
+                                <th class="text-center" style="width: 150px;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for item in object_list %}                                
+                            <tr>
+                                <td class="text-center"><a href="#" data-toggle="modal" data-target="#modal-large" onclick="InfoServicio(
+                                    '{{item.id}}',
+                                    '{{item.s_fecha}}',
+                                    '{{item.s_fecha_modificacion}}',
+                                    '{{item.s_empresa}}',
+                                    '{{item.s_depo}}', 
+                                    '{{item.s_tipo}}',
+                                    '{{item.s_user}}',
+                                    '{{item.s_equipo}}',
+                                    '{{item.s_serie}}',
+                                    '{{item.s_reporte}}',
+                                    '{{item.s_provedor_aut}}',
+                                    '{{item.s_serv_autorizado}}',
+                                    '{{item.s_presupuesto}}',
+                                    '{{item.get_s_estatus_display}}',
+                                    '{{item.s_user_cambio}}',
+                                )">{{item.id}}</a> </td>
+                                <td>{{item.s_fecha}}</td>                                
+                                <td>{{item.s_tipo}}</td>                                
+                                <td>{{item.s_user_cambio}}</td>                                
+                                <td>{{item.s_user}}</td>                                
+                                <td class="{{item.s_estatus|get_color_class_status_solicitud}}">{{item.get_s_estatus_display}}</td>                                
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        
+                                        {% if item.s_estatus == 1 %}
+                                        
+                                        {% if perms.solicitud.validar_servicio %}                                            
+                                        <a class="btn btn-xs btn-default" data-toggle="tooltip" title="" data-original-title="Validar" href="{% url 'solicitud:servicio_validar' item.id %}"><i class="fa fa-check-square-o"></i></a>                                         
+                                        {% endif %}
+                                            
+                                         {% elif item.s_estatus == 2 %}
+                                         
+                                         {% if perms.solicitud.autorizar_servicio %}                                                
+                                         <a class="btn btn-xs btn-default" data-toggle="tooltip" title="" data-original-title="Autorizar" href="#" onclick="autorizar('{{item.id}}')"><i class="ion-android-done-all"></i></a>                                       
+                                         {% endif %}
+                                             
+                                        {% endif %}
+                                        
+                                        {% if perms.solicitud.delete_servicio %}                                             
+                                        <a class="btn btn-xs btn-default" data-toggle="tooltip" title="" data-original-title="Eliminar" href="{% url 'solicitud:servicio_delete' item.id %}"><i class="ion-close"></i></a>                                       
+                                        {% endif %}
+                                            
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                                
+                                                                                                                                        
+                        </tbody>
+                    </table>
+                </div>
+                <!-- .card-block -->
+            </div>
+            <!-- .card -->
+            <!-- End Default Table -->
+        </div>
+
+
+        <div class="col-lg-12">
+           
+
+
+
+
+              <nav>
+                {% block pagination %}
+                {% if is_paginated %}
+                <ul class="pagination pagination-lg">
+                    {% if page_obj.has_previous %}
+                    <li>
+                        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{view.request.GET|delete_page_url}}"><i class="ion-chevron-left"></i></a>
+                    </li>
+                    {% endif %}
+                    <li class="active">
+                        <a href="#">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</a>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li>
+                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{view.request.GET|delete_page_url}}"><i class="ion-chevron-right"></i></a>
+                    </li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+                {% endblock %}
+            </nav>
+        </div>
+    
+    </div>
+
+
+     <!-- Large Modal -->
+     <div class="modal fade" id="modal-large" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="card-header bg-blue bg-inverse">
+                    <h4>Servico <span id="id"></span></h4>
+                    <ul class="card-actions">
+                        <li>
+                            <button data-dismiss="modal" type="button"><i class="ion-close"></i></button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <ul class="list-group">
+                        <li class="list-group-item" style="font-weight: bold;">Creado: <span id="s_fecha" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Modificación: <span id="s_fecha_modificacion" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Empresa solicitante: <span id="s_empresa" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Departamento: <span id="s_depo" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Tipo de Servicio: <span id="s_tipo" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Usuario creador: <span id="s_user" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Unidad o Equipo: <span id="s_equipo" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Numero de Serie: <span id="s_serie" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Reporte: <span id="s_reporte" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Provedor Autorizado: <span id="s_provedor_aut" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Servicio Autorizado: <span id="s_serv_autorizado" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Presupuesto: <span id="s_presupuesto" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Estatus: <span id="s_estatus" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Modifico: <span id="s_user_cambio" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                    </ul>
+                </div>
+                <div class="modal-footer">                    
+                    <button class="btn btn-sm btn-app-blue" type="button" data-dismiss="modal"><i class="ion-checkmark"></i> Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Large Modal -->
+
+{% endblock contenido %}
+
+
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function autorizar(folio) {
+        alertify.confirm('Autorizar', `Esta seguro de autorizar el servicio:${folio}`, function () {
+            
+            axios.post(`{% url 'solicitud:servicio_autoriza' %}`, {
+                id: folio,                                           
+                changue: '{{user.id}}',                                           
+            })
+                .then(function (response) {
+                    console.log(response.data);                    
+                    updatePage();
+                })
+                .catch(function (error) {
+                    // console.log(error);
+                });
+        }
+            , function () { });
+    }
+
+    function InfoServicio(id, s_fecha, s_fecha_modificacion, s_empresa, s_depo, s_tipo, s_user, s_equipo, s_serie, s_reporte, s_provedor_aut, s_serv_autorizado, s_presupuesto, s_estatus, s_user_cambio) {
+            $("#id").text(id);
+            $("#s_fecha").text(s_fecha);
+            $("#s_fecha_modificacion").text(s_fecha_modificacion);
+            $("#s_empresa").text(s_empresa);
+            $("#s_depo").text(s_depo);
+            $("#s_tipo").text(s_tipo);
+            $("#s_user").text(s_user);
+            $("#s_equipo").text(s_equipo);
+            $("#s_serie").text(s_serie);
+            $("#s_reporte").text(s_reporte);
+            $("#s_provedor_aut").text(s_provedor_aut);
+            $("#s_serv_autorizado").text(s_serv_autorizado);
+            $("#s_presupuesto").text(s_presupuesto);
+            $("#s_estatus").text(s_estatus);
+            $("#s_user_cambio").text(s_user_cambio);
+        }
+
+        function updatePage() {
+        window.location.reload();
+    }
+</script>
+{% endblock script %}
+    
+    

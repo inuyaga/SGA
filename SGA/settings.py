@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'aplicaciones.gasto',
     'aplicaciones.compra',
     'aplicaciones.descargas',
+    'aplicaciones.solicitud',
     'tinymce',
     'django_cleanup.apps.CleanupConfig',
 ]
@@ -100,6 +101,15 @@ WSGI_APPLICATION = 'SGA.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sga',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
     #     'NAME': 'sga',
@@ -109,14 +119,6 @@ DATABASES = {
     #     'PORT': '3306',
     # }
 
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sga',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
 }
 
 
