@@ -207,4 +207,4 @@ admin.site.register(Postulacion, ConfigPostulate)
 admin.site.register(CompraWeb, ConfigCompraWeb)
 admin.site.register(Tag)
 admin.site.register(Blog, BlogConfig)
-
+admin.site.register(DescuentoTotal)

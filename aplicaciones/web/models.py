@@ -205,4 +205,16 @@ class Blog(models.Model):
         return self.blog_titulo
     class Meta:
         verbose_name = "Blog"
-        verbose_name_plural = "Blogs" 
+        verbose_name_plural = "Blogs"
+
+class DescuentoTotal(models.Model):
+    dst_id=models.AutoField(primary_key=True)
+    dst_precio=models.FloatField('Cantidad inicial de promoción')
+    dst_porcentaje=models.FloatField('Porcentaje de descuento')
+    dst_comentario =models.CharField('Comentario de esta promoción', max_length=500)
+    
+    def __str__(self):
+        return str(self.dst_comentario)
+    class Meta:
+        verbose_name = "DescuentoTotal"
+        verbose_name_plural = "DescuentosTotales"

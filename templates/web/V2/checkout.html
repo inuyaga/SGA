@@ -41,12 +41,13 @@
             <div class="form-group col-md-6">
                 <div class="order_review">
                     <div class="heading_s1">
-                        <h4>Pedido</h4>
+                        <h4 class="text-center">Pedido</h4>
                     </div>
                     <div class="table-responsive order_table">
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th>Código</th>
                                     <th>Producto</th>
                                     <th>Total</th>
                                 </tr>
@@ -55,6 +56,7 @@
                                 
                                 {% for item in carrito %}                                        
                                 <tr>
+                                    <td>{{item.dcw_producto_id.producto_codigo}}</td>
                                     <td>{{item.dcw_producto_id.producto_nombre}} <span class="product-qty">x {{item.dcw_cantidad}}</span></td>
                                     <td>${{item.sub_total|floatformat:2|intcomma}}</td>
                                 </tr>
@@ -62,20 +64,24 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th>SubTotal</th>
+                                    <th class="text-right" colspan="2">SubTotal</th>
                                     <td class="product-subtotal">${{subtotal|floatformat:2|intcomma}}</td>
                                 </tr>
                                 <tr>
-                                    <th>Envio</th>
+                                    <th class="text-right" colspan="2">Descuento</th>
+                                    <td class="product-subtotal">${{descuento|floatformat:2|intcomma}}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-right" colspan="2">Envio</th>
                                     <td>Envio gratis</td>
                                 </tr>
                                 <tr>
-                                    <th>Iva</th>
-                                    <td>{{iva|floatformat:2|intcomma}}</td>
+                                    <th class="text-right" colspan="2">Total</th>
+                                    <td class="product-subtotal">${{total|floatformat:2|intcomma}}</td>
                                 </tr>
                                 <tr>
-                                    <th>Total</th>
-                                    <td class="product-subtotal">${{total|floatformat:2|intcomma}}</td>
+                                    <th class="text-right" colspan="2">Iva</th>
+                                    <td>{{iva|floatformat:2|intcomma}}</td>
                                 </tr>
                             </tfoot>
                         </table>

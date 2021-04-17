@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, UpdateView
-from aplicaciones.web.models import Marca, Catalagos, Promocion, Evento, RegistroExpo, Vacante, Postulacion, Detalle_Compra_Web, Domicilio, CompraWeb, CorreoCco
+from aplicaciones.web.models import Marca, Catalagos, Promocion, Evento, RegistroExpo, Vacante, Postulacion, Detalle_Compra_Web, Domicilio, CompraWeb, CorreoCco, DescuentoTotal
 from aplicaciones.web.forms import CorreoForm, IncribirForm, PostulacionForm, DomicilioForm
 from django.contrib import messages
 from django.urls import reverse
@@ -399,9 +399,18 @@ class CheckoutView(LoginRequiredMixin,TemplateView):
                 )
                 obj_c.save()
                 detalle_compra=Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)
+                descuentostotales=DescuentoTotal.objects.all().order_by('-dst_precio')
                 for item in detalle_compra:
                     Producto.objects.filter(producto_codigo=item.dcw_producto_id).update(prducto_existencia=F('prducto_existencia')-item.dcw_cantidad)
-                detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True)
+                TotalCompra=detalle_compra.aggregate(dcw_precio=Sum(F('dcw_precio')))
+                contador=0
+                for des in descuentostotales:
+                    if TotalCompra['dcw_precio'] > des.dst_precio and contador == 0:
+                        detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True, dcw_precio=F('dcw_precio')-(F('dcw_precio')*des.dst_porcentaje))
+                        contador=contador+1
+                    elif contador == 0:
+                        detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True)
+                        contador=contador+1
                 messages.success(request, 'Su compra ha sido realizada el pago es efectuado en la entrega del paquete en el domicilio.')
                 url=reverse_lazy('web:compras_web')
                                
@@ -416,13 +425,20 @@ class CheckoutView(LoginRequiredMixin,TemplateView):
             )
             obj_c.save()
             detalle_compra=Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)
+            descuentostotales=DescuentoTotal.objects.all().order_by('-dst_precio')
             for item in detalle_compra:
                 Producto.objects.filter(producto_codigo=item.dcw_producto_id).update(prducto_existencia=F('prducto_existencia')-item.dcw_cantidad)
-            detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True)
-            messages.success(request, 'Su compra ha sido realizada el pago es efectuado en la entrega del paquete en el domicilio.')
+            TotalCompra=detalle_compra.aggregate(dcw_precio=Sum(F('dcw_precio')))
+            contador=0
+            for des in descuentostotales:
+                if TotalCompra['dcw_precio'] > des.dst_precio and contador == 0:
+                    detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True, dcw_precio=F('dcw_precio')-(F('dcw_precio')*des.dst_porcentaje))
+                    contador=contador+1
+                elif contador == 0:
+                    detalle_compra.update(dcw_pedido_id=obj_c, dcw_status=True)
+                    contador=contador+1
+            messages.success(request, 'Su compra ha sido realizada el pago es efectuado en la entrega del paquete en el domicilio.'+repr(obj_c.cw_id))
             url=reverse_lazy('web:compras_web')
-           
-        
         
         return redirect(url) 
                 
@@ -430,15 +446,25 @@ class CheckoutView(LoginRequiredMixin,TemplateView):
         
     def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
+        descuentostotales=DescuentoTotal.objects.all().order_by('-dst_precio')
+        context['usuario']=self.request.user
         context['domicilios'] =Domicilio.objects.filter(dom_creador=self.request.user)
         context['domicilioForm'] =DomicilioForm() 
-
         context['carrito'] = Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)    
         context['carrito_count'] = Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False).count()
         context['subtotal'] = Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False).aggregate(suma_total=Sum(F('dcw_precio') * F('dcw_cantidad'), output_field=FloatField()))['suma_total']  
         context['subtotal'] = 0 if context['subtotal'] == None else context['subtotal']
-        context['iva'] = context['subtotal'] * 0.16  
-        context['total'] = context['subtotal']+context['iva']
+        contador=0
+        context['descuento']=0
+        for des in descuentostotales:
+            if context['subtotal'] > des.dst_precio and contador == 0:
+                context['descuento'] = context['subtotal'] * des.dst_porcentaje  
+                contador=contador+1
+            elif contador == 0:
+                context['descuento'] = 0
+                contador=contador+1
+        context['iva'] = (context['subtotal']-context['descuento']) * 0.16
+        context['total'] = context['subtotal']+context['iva']-context['descuento']
 
         
         return context
@@ -519,12 +545,22 @@ class DetalleCmpraWebView(LoginRequiredMixin,ListView):
         queryset = queryset.filter(dcw_pedido_id=self.kwargs.get('pk')) 
         return queryset
     
-    def get_context_data(self, **kwargs): 
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        descuentostotales=DescuentoTotal.objects.all().order_by('-dst_precio')
         context['subtotal'] = Detalle_Compra_Web.objects.filter(dcw_pedido_id=self.kwargs.get('pk')).aggregate(suma_total=Sum(F('dcw_precio') * F('dcw_cantidad'), output_field=FloatField()))['suma_total']  
         context['subtotal'] = 0 if context['subtotal'] == None else context['subtotal']
-        context['iva'] = context['subtotal'] * 0.16  
-        context['total'] = context['subtotal']+context['iva']
+        contador=0
+        context['descuento']=0
+        for des in descuentostotales:
+            if context['subtotal'] > des.dst_precio and contador == 0:
+                context['descuento'] = context['subtotal'] * des.dst_porcentaje  
+                contador=contador+1
+            elif contador == 0:
+                context['descuento'] = 0
+                contador=contador+1
+        context['iva'] = (context['subtotal']-context['descuento']) * 0.16
+        context['total'] = context['subtotal']+context['iva']-context['descuento']
         return context
 
 

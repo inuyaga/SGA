@@ -120,6 +120,7 @@
                     </a>
                     <div class="dropdown-menu menudesplegable" aria-labelledby="navbarDropdown">
                         {% if user.is_authenticated %}
+                            <a class="dropdown-item" >{{user.email}}</a>
                             <a class="dropdown-item" href="{% url 'web:compras_web' %}">PEDIDOS</a>
                             {% if user.is_user_web == False%}
                             <a class="dropdown-item" href="{% url 'inicio:index' %}">SGA</a>
@@ -132,11 +133,11 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'web:carrito' %}"><i class="fas fa-shopping-cart"></i></a>
+                    <a class="nav-link" href="{% url 'web:carrito' %}"><i class="fas fa-shopping-cart">${{suma_pre_compra|intcomma}}</i></a>
                 </li>
               </ul>
               <span class="navbar-text" style="color:white">
-                Subtotal: ${{suma_pre_compra|intcomma}}
+                {{user.username}}
               </span>
             </div>
             </div>
