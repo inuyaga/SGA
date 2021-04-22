@@ -60,7 +60,7 @@
                             {% endfor %}
 
                         </select>
-                        <div class="input-group-append">
+                        <div class="input-group">
                             <input {% if view.request.GET.busqueda != None %}value="{{view.request.GET.busqueda}}"{% endif %} class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search" name="busqueda">
                             <button class="btn btn-outline-secondary" type="submit">Buscar</button>
                         </div>
@@ -113,14 +113,14 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {% if user.is_authenticated %}
-                        Mi cuenta
+                        Usuario({{user.username}})
                     {% else %}
                         Iniciar sesión
                     {% endif %}
                     </a>
                     <div class="dropdown-menu menudesplegable" aria-labelledby="navbarDropdown">
                         {% if user.is_authenticated %}
-                            <a class="dropdown-item" >{{user.email}}</a>
+<!--                            <a class="dropdown-item" >{{user.email}}</a> -->
                             <a class="dropdown-item" href="{% url 'web:compras_web' %}">PEDIDOS</a>
                             {% if user.is_user_web == False%}
                             <a class="dropdown-item" href="{% url 'inicio:index' %}">SGA</a>
@@ -136,9 +136,9 @@
                     <a class="nav-link" href="{% url 'web:carrito' %}"><i class="fas fa-shopping-cart">${{suma_pre_compra|intcomma}}</i></a>
                 </li>
               </ul>
-              <span class="navbar-text" style="color:white">
-                {{user.username}}
-              </span>
+              <!--<span class="navbar-text" style="color:white">
+                
+              </span> -->
             </div>
             </div>
         </nav>
