@@ -46,12 +46,10 @@
                 </a>
                 
                 <form class="form-inline my-2 my-lg-0" action="{% url 'web:list_prod' %}" method="GET">
-                    <div class="col d-none d-sm-block">
-                        <a href="https://www.facebook.com/Computelsureste">
+                    <div class="input-group">
+                        <a href="https://www.facebook.com/Computelsureste" style="padding-right: 3px;">
                             <i class="fab fa-facebook-square fa-3x" style="color:#3b5998;"></i>
                         </a>
-                    </div>
-                    <div class="input-group">
                         <select class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon" name="area">
                             <option value="" selected>Todo</option>
 
@@ -60,10 +58,12 @@
                             {% endfor %}
 
                         </select>
-                        <div class="input-group">
-                            <input {% if view.request.GET.busqueda != None %}value="{{view.request.GET.busqueda}}"{% endif %} class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search" name="busqueda">
-                            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
-                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input {% if view.request.GET.busqueda != None %}value="{{view.request.GET.busqueda}}"{% endif %} class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search" name="busqueda">
+                    </div>
+                    <div class="input-group">
+                        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
                     </div>
                 </form>
             </nav>

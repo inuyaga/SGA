@@ -739,8 +739,9 @@ class PDFBajaView(View):
         # Footer.
         canvas.setFont('Times-Roman', 8)
         # canvas.drawString( PAGE_WIDTH/6, 1.5*cm, '   Sra. Tere Vázquez Arce')
-        canvas.drawString( PAGE_WIDTH/6, 0.9*cm, '_______________________________            __________________________________            ____________________')
-        canvas.drawString( PAGE_WIDTH/6, 0.5*cm, '   Ing. Victor Manuel Galan Robles                      Lic. Jose Adolfo Izquierdo Vázquez                     Encargado de activos')
+        canvas.drawString( PAGE_WIDTH/6, 1*cm, '_______________________________            __________________________________            ____________________')
+        canvas.drawString( PAGE_WIDTH/6, 0.7*cm, '   Ing. Victor Manuel Galan Robles                           C. Teresa de Jesús Vázquez Arce                     Encargado de activos')
+        canvas.drawString( PAGE_WIDTH/6, 0.4*cm, '                  Subgerente de TI                                          Dirección general adjunta')
 
         canvas.restoreState()
     
