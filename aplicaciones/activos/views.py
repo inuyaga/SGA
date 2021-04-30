@@ -711,7 +711,8 @@ class GeneraPdfAsignacion(View):
 class TramiteBajaList(ListView):
     model=TramiteBaja
     paginate_by=100
-    template_name='activos/tramite_baja_list.html'  
+    template_name='activos/tramite_baja_list.html'
+    ordering = ['-tb_activo']
 
     def get_context_data(self, **kwargs):
         # from aplicaciones.pedidos.models import Detalle_pedido, Tipo_Pedido, Pedido
