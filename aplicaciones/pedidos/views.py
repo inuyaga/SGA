@@ -1393,7 +1393,7 @@ class PDFCatalogoProd(View):
         canvas.drawString(420, 30, '{}'.format(localize(datetime.now())))
 
     def myLaterPages(self, canvas, doc):
-        print('pie de pagina')
+        #print('pie de pagina')
         canvas.saveState()
         canvas.setFont('Times-Roman', 10)
 
@@ -1437,7 +1437,7 @@ class PDFCatalogoProd(View):
             titulos_tabla = [(Paragraph('##', stylo_titulo), Paragraph(
                 'Imagen', stylo_titulo), Paragraph('Descripción', stylo_titulo))]
             for item, iteracion in zip(self.object_catalogo.tp_productos.all(), range(self.object_catalogo.tp_productos.all().count())):
-                dta.append((iteracion+1, Image(item.producto_imagen.path,5*cm, 5*cm), item.producto_descripcion))
+                dta.append((iteracion+1, Image(item.producto_imagen.path,5*cm, 5*cm),"Código:" + item.producto_codigo + ".\nDescripción:\n"+ item.producto_descripcion))
             tabla = Table(titulos_tabla+dta, colWidths=[1*cm, 6 * cm, 13 * cm])
         elif self.object_catalogo.tp_orientacion_t == 2:
             titulos_tabla = [(Paragraph('##', stylo_titulo), Paragraph('Descripción', stylo_titulo), Paragraph('Imagen', stylo_titulo))]
