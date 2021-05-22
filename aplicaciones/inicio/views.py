@@ -101,3 +101,8 @@ def err_permisos(request):
     'usuario': request.user,
     }
     return render(request, 'index/error_permisos.html', contex)
+
+
+
+class ChatView(TemplateView): 
+    template_name = 'index/chat_ccs.html'

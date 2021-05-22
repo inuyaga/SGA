@@ -1,0 +1,281 @@
+{% extends 'index/base.html'%}
+{% load static %}
+
+
+{% block head %}
+    <style>
+        
+        .chat-rooms ul{
+            margin: 0px;
+            padding: 0px;
+            list-style: none;
+            list-style-position:outside;
+        }
+        .chat-rooms ul li:hover{
+            cursor: pointer;
+            color: teal;
+        }
+        .chat-rooms ul li{           
+            font-weight: 400;            
+            padding-top: 10px;
+            padding-bottom: 10px;
+                  
+            /* background-color: palegreen; */
+            margin: 5px 0px 0px 0px;  
+            padding-left: 9px;  
+
+            color: #434343;
+            font-style: normal;
+            font-size: 16px;  
+            margin-left: 10px;             
+           
+        }
+        .activo{
+            background-color: palegreen;
+            border-radius: 5px;
+            color: #ffffff !important;
+           
+        }
+       
+    </style>
+{% endblock head %}
+    
+{% block contenido %}
+
+
+<!-- Page Content -->
+<div class="container-fluid p-y-md">
+    <div class="row">
+        
+
+
+        <div class="col-md-5 col-lg-3">
+            <!-- Collapsible Inbox Navigation (using Bootstrap collapse functionality) -->
+            <button class="btn btn-app btn-block visible-xs m-b" data-toggle="collapse" data-target="#inbox-nav"
+                type="button">Navigation</button>
+            <div class="collapse navbar-collapse p-x-0" id="inbox-nav">
+
+
+                <!-- Account -->
+                <div class="card">
+                    <div class="card-block text-center bg-img"
+                        style="background-image: url('https://www.chamanexperience.com/wp-content/uploads/2020/01/fotografi%CC%81a-de-paisaje-1024x683.jpg');">
+                        <img class="img-avatar img-avatar-96 img-avatar-thumb" src="" id="imgAvatar"
+                            alt="">
+                    </div>
+                    <h5 style="text-align: center;" id="displayName">Nombre usuario</h5>
+                    <h6 style="text-align: center; font-style: italic;" id="email">email</h6>
+                    
+                        <table class="card-table text-center">
+                            <tbody>
+                                <tr class="row">
+                                    <td class="col-xs-12 b-r">
+                                        <div class="m-y-md" id="botones"></div>
+                                    </td>
+                                    <!-- <td class="col-xs-6">
+                                        <p class="h3">+ 5GB</p>
+                                        <div class="small text-muted">Upgrade Now</div>
+                                    </td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                  
+                </div>
+                <!-- .card -->
+                <!-- Inbox Menu -->
+                <!-- <div class="card">
+                    <div class="card-header">
+                        <h4>Menu</h4>
+                    </div>
+                    <div class="card-block">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li class="active">
+                                <a href="base_pages_inbox.html">
+                                    Inbox <span class="badge pull-right">4</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    Starred <span class="badge pull-right">8</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    Sent <span class="badge pull-right">38</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    Draft <span class="badge pull-right">1</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    Archive <span class="badge pull-right">27</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    Trash <span class="badge pull-right">4</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                </div> -->
+                <!-- .card -->
+                <!-- End Inbox Menu -->
+
+                <!-- Friends -->
+                <div class="card" id="amigos_lista">
+                    <div class="card-header">
+                        <h4>Friends</h4>
+                        <ul class="card-actions">
+                            <li>
+                                <button type="button"><i class="ion-more"></i></button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-block">
+                        <ul class="list-users" id="amigos_list">
+                                                                                                                                          
+                        </ul>
+                    </div>
+                    <!-- .card-block -->
+                </div>
+                <!-- End Friends // .card -->
+
+                
+                <!-- End Account -->
+            </div>
+            <!-- End Collapsible Inbox Navigation -->
+        </div>
+        <!-- .col-md-5 -->
+
+        <div class="col-md-7 col-lg-9" id="contenido_log">
+            <!-- Message List -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="h4">Inbox</div>
+                    <ul class="card-actions">
+                        <li>
+                            <button class="js-tooltip" title="" type="button" data-toggle="card-action"
+                                data-original-title="Previous 15 Messages"><i class="ion-ios-arrow-left"></i></button>
+                        </li>
+                        <li>
+                            <button class="js-tooltip" title="" type="button" data-toggle="card-action"
+                                data-original-title="Next 15 Messages"><i class="ion-ios-arrow-right"></i></button>
+                        </li>
+                        <li>
+                            <button type="button" data-toggle="card-action" data-action="refresh_toggle"
+                                data-action-mode="demo"><i class="ion-refresh"></i></button>
+                        </li>
+                        <li>
+                            <button type="button" data-toggle="card-action" data-action="fullscreen_toggle"><i
+                                    class="ion-android-expand"></i></button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <!-- Messages Options -->
+                    <div>
+                        <button class="btn btn-default pull-right" type="button"><i class="ion-close"></i> <span
+                                class="m-l-xs hidden-xs">eliminar</span></button>
+                        <p class="btn-group">
+                            <button class="btn btn-default" type="button"><i class="ion-archive"></i> <span
+                                    class="m-l-xs hidden-xs">Archive</span></button>
+                            <button class="btn btn-default" type="button"><i class="ion-star"></i> <span
+                                    class="m-l-xs hidden-xs">Star</span></button>
+                        </p>
+                    </div>
+                    <!-- End Messages Options -->
+
+                    <!-- Messages & Checkable Table (.js-table-checkable class is initialized in App() -> uiHelperTableToolsCheckable()) -->
+                    <div class="pull-r-l">
+
+                        <div class="row">
+                            <div class="col-sm-12" id="chat_log" style="height: 50vh; overflow-y:scroll;">
+
+                            </div>
+                        </div>
+                        <form action="" method="post" id="form_chat">
+                            <div class="input-group"> 
+                                <input class="form-control" placeholder="Escrbir mensaje...." id="input_chat"> 
+                                <span class="input-group-btn"> 
+                                    <button class="btn btn-default" type="submit">Enviar</button> 
+                                </span> 
+                            </div> 
+                        </form>
+                        
+                    </div>
+                    <!-- End Messages -->
+                </div>
+                <!-- .card-block -->
+            </div>
+            <!-- .card -->
+            <!-- End Message List -->
+        </div>
+        <!-- .col-md-7 -->
+    </div>
+    <!-- .row -->
+</div>
+<!-- .container-fluid -->
+<!-- End Page Content -->
+
+<!-- Modal -->
+<div class="modal" id="modal-message" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="card m-b-0">
+                <div class="card-header bg-green bg-inverse">
+                    <h4>This is a modal message</h4>
+                    <ul class="card-actions">
+                        <li>
+                            <button data-dismiss="modal" type="button"><i class="ion-close"></i></button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <p>Dolor posuere proin blandit accumsan senectus netus nullam curae, ornare laoreet adipiscing
+                        luctus mauris adipiscing pretium eget fermentum, tristique lobortis est ut metus lobortis tortor
+                        tincidunt himenaeos habitant
+                        quis dictumst proin odio sagittis purus mi, nec taciti vestibulum quis in sit varius lorem sit
+                        metus mi.</p>
+                    <p>Dolor posuere proin blandit accumsan senectus netus nullam curae, ornare laoreet adipiscing
+                        luctus mauris adipiscing pretium eget fermentum, tristique lobortis est ut metus lobortis tortor
+                        tincidunt himenaeos habitant
+                        quis dictumst proin odio sagittis purus mi, nec taciti vestibulum quis in sit varius lorem sit
+                        metus mi.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-app" type="button" data-dismiss="modal"><i class="ion-checkmark"></i>
+                    Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Message -->
+
+
+{% endblock contenido %}
+
+
+{% block script %}
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+
+
+<script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
+
+<!-- <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-functions.js"></script> -->
+<!-- <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase.js"></script> -->
+
+<script src="{% static 'js/chat_conf.js' %}"></script>
+<script src="{% static 'js/chat_app.js' %}"></script>
+<script src="{% static 'js/chat_romm.js' %}"></script>
+
+{% endblock script %}
+
+

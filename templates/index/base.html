@@ -9,7 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
     <!-- Document title -->
+    
+    {% block titulo %}        
     <title>SGA | Dashboard</title>
+    {% endblock titulo %}
+        
 
     <meta name="description" content="AppUI - Admin Dashboard Template & UI Framework" />
     <meta name="author" content="rustheme" />
@@ -120,6 +124,12 @@
             background-color: rgb(113, 128, 141);
         }
     </style>
+
+    
+    {% block head %}
+        
+    {% endblock head %}
+        
 </head>
 
 <body class="app-ui layout-has-drawer layout-has-fixed-header">
@@ -154,8 +164,11 @@
                             <li class="nav-item">
                                 <a href="{% url 'web:inicio' %}"><i class="ion-earth fa-2x"></i> Web</a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{% url 'inicio:chat' %}"><i class="ion-android-chat fa-2x"></i> Chat</a>
+                            </li>
 
-                            <li class="nav-item nav-drawer-header">Administración</li>
+                            <li class="nav-item nav-drawer-header">Aplicaciones</li>
 
 
                             {% if perms.pedidos %}
