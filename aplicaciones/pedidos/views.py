@@ -1377,15 +1377,13 @@ class PDFCatalogoProd(View):
         # Logo de empresa
         archivo_imagen = self.object_catalogo.tp_empresa.empresa_logo.path
         # Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
-        canvas.drawImage(archivo_imagen, 20, 690, 120,
-                         90, preserveAspectRatio=True)
+        canvas.drawImage(archivo_imagen, 20, 690, 120, 90, preserveAspectRatio=True)
 
         canvas.saveState()
         canvas.setFont('Times-Roman', 10)
 
         page_count = doc.page
-        canvas.drawCentredString(
-            PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
         canvas.restoreState()
 
         canvas.setFont('Times-Roman', 10)
@@ -1393,13 +1391,17 @@ class PDFCatalogoProd(View):
         canvas.drawString(420, 30, '{}'.format(localize(datetime.now())))
 
     def myLaterPages(self, canvas, doc):
-        print('pie de pagina')
+
+        imagen_superior = self.object_catalogo.tp_imagen_top.path        
+        imagen_inferior = self.object_catalogo.tp_imagen_bottom.path        
+        canvas.drawImage(imagen_superior, 0, PAGE_HEIGHT-85, PAGE_WIDTH, 90, preserveAspectRatio=True)
+        canvas.drawImage(imagen_inferior, 0, -22, PAGE_WIDTH, 90, preserveAspectRatio=True)
+        
         canvas.saveState()
         canvas.setFont('Times-Roman', 10)
 
         page_count = doc.page
-        canvas.drawCentredString(
-            PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
         canvas.restoreState()
 
     def dispatch(self, *args, **kwargs):
