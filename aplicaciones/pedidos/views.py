@@ -1377,15 +1377,13 @@ class PDFCatalogoProd(View):
         # Logo de empresa
         archivo_imagen = self.object_catalogo.tp_empresa.empresa_logo.path
         # Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
-        canvas.drawImage(archivo_imagen, 20, 690, 120,
-                         90, preserveAspectRatio=True)
+        canvas.drawImage(archivo_imagen, 20, 690, 120, 90, preserveAspectRatio=True)
 
         canvas.saveState()
         canvas.setFont('Times-Roman', 10)
 
         page_count = doc.page
-        canvas.drawCentredString(
-            PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
         canvas.restoreState()
 
         canvas.setFont('Times-Roman', 10)
@@ -1398,8 +1396,7 @@ class PDFCatalogoProd(View):
         canvas.setFont('Times-Roman', 10)
 
         page_count = doc.page
-        canvas.drawCentredString(
-            PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 770, "Página {}".format(page_count))
         canvas.restoreState()
 
     def dispatch(self, *args, **kwargs):

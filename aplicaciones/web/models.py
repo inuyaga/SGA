@@ -199,7 +199,8 @@ class Blog(models.Model):
     blog_pertenece=models.ForeignKey(Usuario, on_delete=models.CASCADE)
     blog_tags=models.ManyToManyField(Tag, verbose_name="Tags relacionados")
     blog_categoria=models.ForeignKey(Area, on_delete=models.CASCADE, verbose_name="Categoria/area")
-    blog_tipo=models.IntegerField(verbose_name="Tipo de contenido", help_text="Elije el tipo de contenido relacionado", choices=TIPO_CONTENIDO)
+    blog_tipo=models.IntegerField(verbose_name="Tipo de contenido", help_text="Elije el tipo de contenido relacionado", choices=TIPO_CONTENIDO) 
+    blog_Catalago=models.ForeignKey(Catalagos, verbose_name="Catalogo PDF", help_text="Catalago referenciado para portada en pagina principal", on_delete=models.SET_NULL, blank=True, null=True)
     
     def __str__(self):
         return self.blog_titulo

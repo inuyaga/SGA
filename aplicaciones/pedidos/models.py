@@ -198,6 +198,8 @@ class Catalogo_Productos(models.Model):
     tp_productos=models.ManyToManyField(Producto, verbose_name='Productos')
     ORIENTACION=((1, 'Derecha'), (2, 'Izquierda'))
     tp_orientacion_t=models.IntegerField(choices=ORIENTACION, default=1, verbose_name='Orientacion de tabla')
+    tp_imagen_top = models.ImageField(verbose_name='Imagen superior fondo', upload_to='catalogo_prod/imagenes/', blank=False, null=True)
+    tp_imagen_bottom = models.ImageField(verbose_name='Imagen Inferior fondo', upload_to='catalogo_prod/imagenes/', blank=False, null=True)
 
     
 
