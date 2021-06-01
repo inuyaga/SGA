@@ -1436,12 +1436,12 @@ class PDFCatalogoProd(View):
         if self.object_catalogo.tp_orientacion_t == 1:
             titulos_tabla = [(Paragraph('##', stylo_titulo), Paragraph(
                 'Imagen', stylo_titulo), Paragraph('Descripción', stylo_titulo))]
-            for item, iteracion in zip(self.object_catalogo.tp_productos.all(), range(self.object_catalogo.tp_productos.all().count())):
+            for item, iteracion in zip(self.object_catalogo.tp_productos.all().order_by('pedidos_catalogo_productos_tp_productos.id'), range(self.object_catalogo.tp_productos.all().count())):
                 dta.append((iteracion+1, Image(item.producto_imagen.path,5*cm, 5*cm),"Código:" + item.producto_codigo + ".\nDescripción:\n"+ item.producto_descripcion))
             tabla = Table(titulos_tabla+dta, colWidths=[1*cm, 6 * cm, 13 * cm])
         elif self.object_catalogo.tp_orientacion_t == 2:
             titulos_tabla = [(Paragraph('##', stylo_titulo), Paragraph('Descripción', stylo_titulo), Paragraph('Imagen', stylo_titulo))]
-            for item, iteracion in zip(self.object_catalogo.tp_productos.all(), range(self.object_catalogo.tp_productos.all().count())):
+            for item, iteracion in zip(self.object_catalogo.tp_productos.all().order_by('pedidos_catalogo_productos_tp_productos.id'), range(self.object_catalogo.tp_productos.all().count())):
                 dta.append((iteracion+1, item.producto_descripcion,Image(item.producto_imagen.path, 5*cm, 5*cm)))
             tabla = Table(titulos_tabla+dta, colWidths=[1*cm, 13 * cm, 6 * cm])
 
