@@ -116,7 +116,7 @@ class ActivoList(ListView):
 
     @method_decorator(permission_required('activos.view_activo',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
-        return super(ActivoList, self).dispatch(*args, **kwargs)
+        return super(ActivoList, self).dispatch(*args, **kwargs)        
 
 
     def get_context_data(self, **kwargs): 
@@ -164,7 +164,7 @@ class ActivoList(ListView):
         # FASE DE DESCARGA DE XLS
         # dowload = self.request.GET.get('download')
         # if dowload != None:
-            
+        queryset=queryset.order_by('-activo')
         
         return queryset
 
@@ -713,6 +713,11 @@ class TramiteBajaList(ListView):
     paginate_by=100
     template_name='activos/tramite_baja_list.html'
     ordering = ['-tb_activo']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.order_by('-id')
+        return queryset
 
     def get_context_data(self, **kwargs):
         # from aplicaciones.pedidos.models import Detalle_pedido, Tipo_Pedido, Pedido
