@@ -136,17 +136,25 @@ vm_component=Vue.component('wigget_form', {
     methods:{
         post_item: function () {
             const vm = this;
-                axios.get('https://api-sepomex.hckdrk.mx/query/info_cp/'+this.code_postal+'?type=simplified&token=9d8d7bdc-1074-4965-9374-5848d195d3f9')
-                    .then(function (response) {
-                        vm.Delegacion=response.data.response.municipio
-                        vm.Estado=response.data.response.estado
-                                     
-                    })
-                    .catch(function (error) {
-                        swal("Mal!", 'Favor de escribir un C.P correcto', "error");
-                        vm.Delegacion=''
-                        vm.Estado=''
-                    });
+            const options = {
+                method: 'GET',
+                url: 'https://domicilio-computel.p.rapidapi.com/code_postal/consulta/cp.php',
+                params: {cp: this.code_postal},
+                headers: {
+                    cp: this.code_postal,
+                    'x-rapidapi-key': '6301a03694msh312d3c4a99bedbap18a282jsnca18d0ed3626',
+                    'x-rapidapi-host': 'domicilio-computel.p.rapidapi.com'
+                }
+            };
+
+            axios.request(options).then(function (response) {
+                vm.Delegacion=response.data.response.municipio
+                vm.Estado=response.data.response.estado
+            }).catch(function (error) {
+                swal("Mal!", 'Favor de escribir un C.P correcto '+error, "error");
+                vm.Delegacion=''
+                vm.Estado=''
+            });
             }
     }
 
@@ -160,17 +168,25 @@ vm_component=Vue.component('wigget_form', {
         },
         methods: {
             post_item: function () {
-                axios.get('https://api-sepomex.hckdrk.mx/query/info_cp/'+this.code_postal+'?type=simplified&token=9d8d7bdc-1074-4965-9374-5848d195d3f9')
-                    .then(function (response) {
-                        app.Delegacion=response.data.response.municipio
-                        app.Estado=response.data.response.estado
-                                     
-                    })
-                    .catch(function (error) {
-                        swal("Mal!", 'Favor de escribir un C.P correcto', "error");
-                        app.Delegacion=''
-                        app.Estado=''
-                    });
+            const options = {
+                method: 'GET',
+                url: 'https://domicilio-computel.p.rapidapi.com/code_postal/consulta/cp.php',
+                params: {cp: this.code_postal},
+                headers: {
+                    cp: this.code_postal,
+                    'x-rapidapi-key': '6301a03694msh312d3c4a99bedbap18a282jsnca18d0ed3626',
+                    'x-rapidapi-host': 'domicilio-computel.p.rapidapi.com'
+                }
+            };
+
+            axios.request(options).then(function (response) {
+                vm.Delegacion=response.data.response.municipio
+                vm.Estado=response.data.response.estado
+            }).catch(function (error) {
+                swal("Mal!", 'Favor de escribir un C.P correcto '+error, "error");
+                vm.Delegacion=''
+                vm.Estado=''
+            });
             },
 
             onChange(event) {
