@@ -106,6 +106,21 @@
                                 <label class="form-check-label" for="exampleRadios5">Paypal</label>
                                 <p data-method="option5" class="payment-text">Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.</p>
                             </div> -->
+                            {% if total > 4999 %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="True" name="especial_descuento" id="defaultCheck1" checked>
+                                    <label class="form-check-label" for="defaultCheck1">
+                                        Aplicar descuento por mayoreo
+                                    </label>
+                                </div>
+                            {% else %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="False" name="especial_descuento" id="defaultCheck1" disabled>
+                                    <label class="form-check-label" for="defaultCheck1">
+                                        ¿Quieres aplicar descuento por mayoreo? Tu pedido debe superar $5000 MXN
+                                    </label>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>                                                
                     <button class="btn botoncarrito" type="submit">Realizar pedido</button>

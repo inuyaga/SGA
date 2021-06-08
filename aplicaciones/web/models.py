@@ -138,14 +138,15 @@ class Domicilio(models.Model):
 
 class CompraWeb(models.Model):
     cw_id=models.BigAutoField(primary_key=True)
-    cw_fecha = models.DateTimeField(auto_now_add=True)
+    cw_fecha = models.DateTimeField(auto_now_add=True, verbose_name="Fecha creación")
     cw_cliente=models.ForeignKey(Usuario, on_delete=models.PROTECT, verbose_name='Cliente')
     cw_status=models.IntegerField(verbose_name="Status compra", choices=STATUS, default=1)
     cw_domicilio=models.ForeignKey(Domicilio, on_delete=models.PROTECT, verbose_name="Domicilio de entrega")
     cw_numero_venta=models.IntegerField(verbose_name="Numero venta", blank=True, null=True)
     cw_numero_factura=models.CharField(max_length=10,verbose_name="Numero factura", blank=True, null=True)
     cw_tipo_pago=models.IntegerField(verbose_name="Forma de pago", choices=TIPO_PAGO, default=1)
-
+    cw_descuento_especial = models.BooleanField(verbose_name="Descuento especial", default=False)
+    
     class Meta:
         ordering = ["-cw_fecha"]
 
