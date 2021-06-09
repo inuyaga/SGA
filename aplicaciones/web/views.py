@@ -383,7 +383,13 @@ class CheckoutView(LoginRequiredMixin,TemplateView):
     redirect_field_name = 'redirect_to'
     template_name = "web/V2/checkout.html"
     def post(self, request, *args, **kwargs):
-        post_dom = request.POST.get('dominicio')        
+        post_dom = request.POST.get('dominicio')
+        post_des_esp = request.POST.get('especial_descuento')
+        if post_des_esp:
+            print('no es nulo')
+        else:
+            post_des_esp=False
+    
         url='/'     
         if post_dom == '0':
             form = DomicilioForm(request.POST)
@@ -395,7 +401,8 @@ class CheckoutView(LoginRequiredMixin,TemplateView):
                 
                 obj_c=CompraWeb(
                     cw_cliente=request.user,
-                    cw_domicilio_id=dom_new.pk
+                    cw_domicilio_id=dom_new.pk,
+                    cw_descuento_especial = post_des_esp
                 )
                 obj_c.save()
                 detalle_compra=Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)
@@ -421,7 +428,8 @@ class CheckoutView(LoginRequiredMixin,TemplateView):
         else:
             obj_c=CompraWeb(
                 cw_cliente=request.user,
-                cw_domicilio_id=post_dom
+                cw_domicilio_id=post_dom,
+                cw_descuento_especial = post_des_esp
             )
             obj_c.save()
             detalle_compra=Detalle_Compra_Web.objects.filter(dcw_creado_por=self.request.user, dcw_status=False)

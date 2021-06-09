@@ -106,6 +106,21 @@
                                 <label class="form-check-label" for="exampleRadios5">Paypal</label>
                                 <p data-method="option5" class="payment-text">Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.</p>
                             </div> -->
+                            {% if total > 4999 %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="True" name="especial_descuento" id="defaultCheck1" checked>
+                                    <label class="form-check-label" for="defaultCheck1">
+                                        Aplicar descuento por mayoreo
+                                    </label>
+                                </div>
+                            {% else %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="False" name="especial_descuento" id="defaultCheck1" disabled>
+                                    <label class="form-check-label" for="defaultCheck1">
+                                        ¿Quieres aplicar descuento por mayoreo? Tu pedido debe superar $5000 MXN
+                                    </label>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>                                                
                     <button class="btn botoncarrito" type="submit">Realizar pedido</button>
@@ -136,17 +151,25 @@ vm_component=Vue.component('wigget_form', {
     methods:{
         post_item: function () {
             const vm = this;
-                axios.get('https://api-sepomex.hckdrk.mx/query/info_cp/'+this.code_postal+'?type=simplified&token=9d8d7bdc-1074-4965-9374-5848d195d3f9')
-                    .then(function (response) {
-                        vm.Delegacion=response.data.response.municipio
-                        vm.Estado=response.data.response.estado
-                                     
-                    })
-                    .catch(function (error) {
-                        swal("Mal!", 'Favor de escribir un C.P correcto', "error");
-                        vm.Delegacion=''
-                        vm.Estado=''
-                    });
+            const options = {
+                method: 'GET',
+                url: 'https://domicilio-computel.p.rapidapi.com/code_postal/consulta/cp.php',
+                params: {cp: this.code_postal},
+                headers: {
+                    cp: this.code_postal,
+                    'x-rapidapi-key': '6301a03694msh312d3c4a99bedbap18a282jsnca18d0ed3626',
+                    'x-rapidapi-host': 'domicilio-computel.p.rapidapi.com'
+                }
+            };
+
+            axios.request(options).then(function (response) {
+                vm.Delegacion=response.data.response.municipio
+                vm.Estado=response.data.response.estado
+            }).catch(function (error) {
+                swal("Mal!", 'Favor de escribir un C.P correcto '+error, "error");
+                vm.Delegacion=''
+                vm.Estado=''
+            });
             }
     }
 
@@ -160,17 +183,25 @@ vm_component=Vue.component('wigget_form', {
         },
         methods: {
             post_item: function () {
-                axios.get('https://api-sepomex.hckdrk.mx/query/info_cp/'+this.code_postal+'?type=simplified&token=9d8d7bdc-1074-4965-9374-5848d195d3f9')
-                    .then(function (response) {
-                        app.Delegacion=response.data.response.municipio
-                        app.Estado=response.data.response.estado
-                                     
-                    })
-                    .catch(function (error) {
-                        swal("Mal!", 'Favor de escribir un C.P correcto', "error");
-                        app.Delegacion=''
-                        app.Estado=''
-                    });
+            const options = {
+                method: 'GET',
+                url: 'https://domicilio-computel.p.rapidapi.com/code_postal/consulta/cp.php',
+                params: {cp: this.code_postal},
+                headers: {
+                    cp: this.code_postal,
+                    'x-rapidapi-key': '6301a03694msh312d3c4a99bedbap18a282jsnca18d0ed3626',
+                    'x-rapidapi-host': 'domicilio-computel.p.rapidapi.com'
+                }
+            };
+
+            axios.request(options).then(function (response) {
+                vm.Delegacion=response.data.response.municipio
+                vm.Estado=response.data.response.estado
+            }).catch(function (error) {
+                swal("Mal!", 'Favor de escribir un C.P correcto '+error, "error");
+                vm.Delegacion=''
+                vm.Estado=''
+            });
             },
 
             onChange(event) {

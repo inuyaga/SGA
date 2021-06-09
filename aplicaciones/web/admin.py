@@ -53,8 +53,9 @@ class ConfigCompraWeb(admin.ModelAdmin):
                     'cw_numero_venta',
                     'cw_numero_factura',
                     'cw_tipo_pago',
+                    'cw_descuento_especial',
                     )
-    list_filter = ['cw_fecha', 'cw_status']
+    list_filter = ['cw_fecha', 'cw_status','cw_descuento_especial']
     search_fields = ['cw_id', 'cw_cliente__rfc', 'cw_cliente__username']
     readonly_fields = ('domicilio', 'cw_tipo_pago', 'cw_status', 'cliente_str')
     exclude = ('cw_domicilio','cw_cliente')
