@@ -416,6 +416,18 @@
                                 </ul>
                             </li>
                             {% endif %}
+                            {% if perms.ajustes %}
+                            <li class="nav-item nav-item-has-subnav">
+                                <a href="javascript:void(0)"><i class="fa fa-compress" aria-hidden="true"></i>Ajustes</a> 
+                                <ul class="nav nav-subnav">
+                                    {% if perms.ajustes.view_ajuste %} 
+                                    <li>
+                                        <a href="{% url 'ajustes:listar' %}">Listar</a>
+                                    </li>
+                                    {% endif %}                                   
+                                </ul>
+                            </li>
+                            {% endif %}
                         </ul>
                     </nav>
                     <!-- End drawer navigation -->

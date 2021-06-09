@@ -1,0 +1,115 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Ajuste</title>
+{% endblock titulo %}
+
+
+{% block contenido %}
+<form action="" method="get">
+    <div class="row">        
+        {% for input in form_filtro %}        
+        <div class="col-lg-2">
+            {{input.label}}
+            {{input}}
+        </div>
+        {% endfor %}
+        <div class="col-lg-2">       
+            <button style="margin-top: 20px;" class="btn btn-app" type="submit">Filtrar</button>
+        </div>
+    </div>
+</form>
+
+<br>
+ 
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- Yearly summary widget -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>Ajustes</h4>
+                    <ul class="card-actions">
+                        <li class="dropdown">
+                            <button type="button" data-toggle="dropdown" aria-expanded="false"><i class="ion-more"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li class="dropdown-header">Acciones</li>
+                                <li>
+                                    <a tabindex="-1" href="{% url 'ajustes:add' %}">Añadir</a>
+                                </li>                            
+                            </ul>
+                        </li>
+                    </ul>
+                    <!-- .card-actions -->
+                </div>
+                <!-- .card-header -->
+                <div class="card-block">
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-borderless table-vcenter">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center w-10">ID</th>
+                                        <th>Sucursal</th>
+                                        <th class="hidden-xs w-30">Fecha</th>
+                                        <th class="hidden-xs w-30">Tipo</th>
+                                        <th class="hidden-xs w-30">Status</th>
+                                        <th class="hidden-xs hidden-sm" style="width: 20;">Crescendo</th>
+                                        <th class="hidden-xs hidden-sm" style="width: 20;">Total</th>
+                                        <th class="text-center" style="width: 100px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    {% for item in object_list %}                                        
+                                    <tr>
+                                        <td class="text-center">
+                                            {{item.id}}
+                                        </td>
+                                        <td class="font-500">{{item.aj_sucursal}}</td>
+                                        <td class="hidden-xs">{{item.aj_fecha}}</td>
+                                        <td class="hidden-xs">{{item.get_aj_tipo_display}}</td>
+                                        <td class="hidden-xs">{{item.get_aj_status_display}}</td>
+                                        <td class="hidden-xs hidden-sm">{{item.aj_cresendo}}</td>
+                                        <td class="hidden-xs hidden-sm">{{item.total|floatformat:"2g"}}</td>
+                                        <td class="text-center">
+                                            <div class="btn-group">
+                                                
+                                                {% if item.aj_status == 1 %}
+                                                    {% if perms.ajustes.puede_autorizar_ajuste %}                                                    
+                                                    <a href="?autorizar={{item.id}}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Autorizar"><i class="fa fa-thumbs-o-up"></i></a>                                               
+                                                    <a href="{% url 'ajustes:ajuste_actualizar' item.id %}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Editar"><i class="ion-edit"></i></a>    
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if item.aj_status == 2 %}
+                                                    {% if perms.ajustes.puede_ajustar_ajuste %}                                                    
+                                                    <a href="?ajustar={{item.id}}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Ajustar"><i class="fa fa-crop"></i></a>                                               
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if item.aj_status == 3 %}
+                                                <a href="{% url 'ajustes:updater_ajuste' item.id %}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="N° ajuste cresendo"><i class="ion-android-list"></i></a>    
+                                                {% endif %}
+                                                    
+                                                {% if perms.ajustes.delete_ajuste %}                                                                                                                                                    
+                                                <a href="{% url 'ajustes:eliminar_ajuste' item.id %}" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i class="ion-close"></i></a>                                               
+                                                {% endif %}
+                                                                                                                                                                                                          
+                                                    
+                                            </div>
+                                        </td>
+                                    </tr>                                                                      
+                                    {% endfor %}
+                                        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- .card-block -->
+            </div>
+            <!-- .card -->
+            <!-- End Yearly summary widget -->
+        </div>
+        <!-- .col-lg-12 -->
+
+       
+    </div>
+{% endblock contenido %}

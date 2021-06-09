@@ -1,0 +1,180 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Crear Ajuste</title>
+{% endblock titulo %}
+
+
+{% block contenido %}
+<style>
+    .loader {
+        border: 16px solid #f3f3f3;
+        /* Light grey */
+        border-top: 16px solid #3498db;
+        /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Formulario</h4>
+                <div class="card-actions">
+                    <code></code>
+                </div>
+            </div>
+            <div class="card-block">
+                <p>
+                    <label for="id_add_products">Productos:</label>
+                    <input type="text" name="add_products" onkeyup="onKeyUp(event)" class="form-control" required=""
+                        id="id_add_products">
+                <div class="loader hidden" id="preloader"></div>
+                <span class="helptext">Escriba codigo de producto y precione enter para añadir. Agregue todos los productos posteriormente complete el formulario</span>
+                </p>
+                <form action="" method="post" id="form_ajust">
+                    {% csrf_token %}
+                    <div class="form-group has-success">
+                        {{form.as_p}}
+                    </div>
+                    <div id="input_deletes_productos">
+
+                    </div>
+                    <table class="table table-striped table-borderless table-vcenter">
+                        <thead>
+                            <tr>
+                                <th class="text-center w-15">Producto</th>
+                                <th class="w-30">Descripción</th>
+                                <th class="w-10">Exist Sistema</th>
+                                <th class="w-10">Exist Fisica</th>
+                                <th class="w-10">Cantidad</th>
+                                <th class="w-10">Precio Unitario</th>
+                                <th class="w-10">Vale</th>
+                                <th class="w-10">Accion</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="producto_ajuste">
+                            
+                            {% for item in ajuste_obj %}
+                            <tr id="AJ_PROD_{{item.id}}">
+                                <td class="text-center">{{item.producto}}</td>
+                                <td class="font-500">{{item.producto.producto_descripcion}}</td>
+                                <td>{{item.exist_sistema}}</td>
+                                <td>{{item.exist_fisica}}</td>
+                                <td>{{item.cantidad}}</td>
+                                <td>{{item.precio}}</td>
+                                <td>{{item.vale}}</td>
+                                <td>                                    
+                                    <button class="btn btn-xs btn-default" onclick="deleteAjusteProductoItem('{{item.id}}', 'AJ_PROD_{{item.id}}')" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar"><i class="ion-android-delete"></i></button>
+                                </td>                                                         
+                            </tr>
+                            {% endfor %}
+                                
+
+
+                        </tbody>
+                    </table>
+                    <button class="btn btn-app" type="submit">Aplicar</button>
+                    
+                   
+                </form>
+            </div>
+            <!-- .card-block -->
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock contenido %}
+
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+{{ list_product|json_script:"cod_prod" }}
+<script>
+    const valor = JSON.parse(document.getElementById('cod_prod').textContent);
+    var producto_ajuste_div = document.getElementById('producto_ajuste');
+    var id_add_products = document.getElementById('id_add_products');
+    var input_deletes_productos = document.getElementById('input_deletes_productos');
+    var preloader = document.getElementById('preloader');
+    var codigos_productos;
+    if (valor !== "") {
+        codigos_productos = valor
+    }else{
+        codigos_productos=[]
+    }
+    
+    // var form_ajust = document.getElementById('form_ajust');
+    function onKeyUp(event) {
+        var keycode = event.keyCode;
+        if (keycode == '13') {
+            id_add_products.classList.add("hidden");
+            preloader.classList.remove('hidden');
+            if (id_add_products.value === '') {
+                alert('Ingrese un codigo')
+            } else {
+                if (codigos_productos.includes(`${id_add_products.value}`)) {
+                    alert('Producto ya añadido');
+                    preloader.classList.add("hidden");
+                    id_add_products.classList.remove('hidden');
+                    id_add_products.value = '';
+                }
+                else {
+                    axios.post(`{% url 'ajustes:buscar' %}`, {
+                        id_producto: id_add_products.value,
+                    })
+                        .then(function (response) {
+                            preloader.classList.add("hidden");
+                            id_add_products.classList.remove('hidden');
+                            if (response.status == 202) {
+                                producto_ajuste_div.innerHTML += /*html*/ `
+                                        <tr>
+                                            <td class="text-center">${response.data.codigo} <input type="hidden" name="producto" value="${response.data.codigo}"></td>
+                                            <td class="font-500">${response.data.descripcion}</td>
+                                            <td><input style="width: 70px;" type="number" value="1" min="0" name="exist_sistema"></td>
+                                            <td><input style="width: 70px;" type="number" value="1" min="0" name="exist_fisica"></td>
+                                            <td><input style="width: 70px;" type="number" value="1" min="0" name="cantidad"></td>
+                                            <td><input style="width: 70px;" type="number" value="1" min="0" step="any" name="precio"></td>
+                                            <td><input style="width: 70px;" type="number" value="1" min="0" name="vale"></td>
+                                            
+                                        </tr>
+                                        `;
+                                codigos_productos.push(`${id_add_products.value}`)
+                                id_add_products.value = '';
+                            } else if (response.status == 204) {
+                                alert("Codigo no existe")
+                            }
+
+
+
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+
+                }
+            }
+        }
+    }
+
+function deleteAjusteProductoItem(id, id_tr) {
+    input_deletes_productos.innerHTML += `<input type="hidden" name="productos_delete" value="${id}">`;
+    document.getElementById(id_tr).remove();
+    // <input type="hidden" name="producto" value="${response.data.codigo}">
+}
+</script>
+{% endblock script %}

@@ -239,7 +239,7 @@
     function validar(folio) {
         alertify.confirm('Validar', `Esta seguro de validar el Folio:${folio}`, function () {
             
-            axios.post(`{% url 'gastos:gasto_update_status' %}`, {
+            axios.post(`{% url 'gastos:gasto_update_status' %}`, { 
                 g_id: folio,                
                 g_estado: 2,                
             })
