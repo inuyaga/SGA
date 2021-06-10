@@ -50,9 +50,10 @@
                                         <th class="text-center w-10">ID</th>
                                         <th>Sucursal</th>
                                         <th class="hidden-xs w-30">Fecha</th>
-                                        <th class="hidden-xs w-30">Tipo</th>
+                                        
                                         <th class="hidden-xs w-30">Status</th>
-                                        <th class="hidden-xs hidden-sm" style="width: 20;">Crescendo</th>
+                                        <th class="hidden-xs hidden-sm" style="width: 20;">E Crescendo</th>
+                                        <th class="hidden-xs hidden-sm" style="width: 20;">S Crescendo</th>
                                         <th class="hidden-xs hidden-sm" style="width: 20;">Total</th>
                                         <th class="text-center" style="width: 100px;">Acciones</th>
                                     </tr>
@@ -66,9 +67,10 @@
                                         </td>
                                         <td class="font-500">{{item.aj_sucursal}}</td>
                                         <td class="hidden-xs">{{item.aj_fecha}}</td>
-                                        <td class="hidden-xs">{{item.get_aj_tipo_display}}</td>
+                                        
                                         <td class="hidden-xs">{{item.get_aj_status_display}}</td>
                                         <td class="hidden-xs hidden-sm">{{item.aj_cresendo}}</td>
+                                        <td class="hidden-xs hidden-sm">{{item.aj_cresendo_salida}}</td>
                                         <td class="hidden-xs hidden-sm">{{item.total|floatformat:"2g"}}</td>
                                         <td class="text-center">
                                             <div class="btn-group">

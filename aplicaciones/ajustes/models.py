@@ -2,15 +2,16 @@ from django.db import models
 from django.db.models import Sum, F, FloatField
 from aplicaciones.empresa.models import Sucursal
 from aplicaciones.pedidos.models import Producto
-TIPO_AJUSTE = ((1, 'SALIDA'), (2, 'ENTRADA'))
+
+TIPO_AJUSTE_ITEM = ((1, 'Entrada'), (2, 'Salida'))
 STATUS = ((1, 'CREADO'), (2, 'AUTORIZADO'), (3, 'AJUSTADO'))
 class Ajuste(models.Model):
     id=models.BigAutoField(verbose_name="ID", primary_key=True)
     aj_sucursal=models.ForeignKey(Sucursal, verbose_name="Sucursal", on_delete=models.SET_NULL, blank=True, null=True)
     aj_fecha=models.DateField(auto_now_add=True, verbose_name="Fecha solicitud")
-    aj_cresendo=models.BigIntegerField(verbose_name="N° ajuste cresendo", blank=True, null=True)
-    aj_producs = models.ManyToManyField(Producto, through="AjusteProduct")
-    aj_tipo=models.IntegerField(choices=TIPO_AJUSTE, verbose_name="Tipo", help_text="Elija un tipo de ajuste")
+    aj_cresendo=models.IntegerField(verbose_name="N° Entrada Crescendo", blank=True, null=True)
+    aj_cresendo_salida=models.IntegerField(verbose_name="N° Salida Cresendo", blank=True, null=True)
+    aj_producs = models.ManyToManyField(Producto, through="AjusteProduct")    
     aj_status=models.IntegerField(choices=STATUS, verbose_name="Estado")
 
     class Meta:
@@ -36,6 +37,7 @@ class AjusteProduct(models.Model):
     cantidad=models.IntegerField(verbose_name="Cantidad")
     precio=models.FloatField(verbose_name="Precio unitario")
     vale=models.IntegerField(verbose_name="Vale") 
+    tipo=models.IntegerField(verbose_name="Tipo", choices=TIPO_AJUSTE_ITEM, default=1)
     def __str__(self):
         return self.producto.producto_codigo
 

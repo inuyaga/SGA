@@ -62,6 +62,7 @@
                                 <th class="w-10">Cantidad</th>
                                 <th class="w-10">Precio Unitario</th>
                                 <th class="w-10">Vale</th>
+                                <th class="w-10">Tipo</th>
                                 <th class="w-10">Accion</th>
 
                             </tr>
@@ -141,6 +142,7 @@
                             preloader.classList.add("hidden");
                             id_add_products.classList.remove('hidden');
                             if (response.status == 202) {
+                                console.log(response.data.form_item)
                                 producto_ajuste_div.innerHTML += /*html*/ `
                                         <tr>
                                             <td class="text-center">${response.data.codigo} <input type="hidden" name="producto" value="${response.data.codigo}"></td>
@@ -150,7 +152,12 @@
                                             <td><input style="width: 70px;" type="number" value="1" min="0" name="cantidad"></td>
                                             <td><input style="width: 70px;" type="number" value="1" min="0" step="any" name="precio"></td>
                                             <td><input style="width: 70px;" type="number" value="1" min="0" name="vale"></td>
-                                            
+                                            <td>
+                                                <select name="tipo" id="id_tipo">
+                                                <option value="1" selected>Entrada</option>
+                                                <option value="2">Salida</option>
+                                                </select>
+                                            </td>                                            
                                         </tr>
                                         `;
                                 codigos_productos.push(`${id_add_products.value}`)

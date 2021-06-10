@@ -1,7 +1,7 @@
 from aplicaciones import ajustes
-from aplicaciones.pedidos.models import Producto
+from aplicaciones.pedidos.models import Asignar_gasto_sucursal, Producto
 from django.db import models
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from aplicaciones.ajustes.models import Ajuste, AjusteProduct
 from aplicaciones.ajustes.forms import *
@@ -18,6 +18,7 @@ from rest_framework.permissions import AllowAny
 
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 
 class AjusteListView(PermissionRequiredMixin,ListView): 
     model=Ajuste
@@ -52,8 +53,9 @@ class AjusteListView(PermissionRequiredMixin,ListView):
 
         id_aj=self.request.GET.get('id_aj')
         ajuste_crescendo=self.request.GET.get('ajuste_crescendo')
+        ajuste_crescendo_s=self.request.GET.get('ajuste_crescendo_s')
         sucursal=self.request.GET.get('sucursal')
-        tipo=self.request.GET.get('tipo')
+        
         estatus=self.request.GET.get('estatus')
 
         if id_aj:
@@ -62,8 +64,8 @@ class AjusteListView(PermissionRequiredMixin,ListView):
             queryset = queryset.filter(aj_cresendo=ajuste_crescendo)
         if sucursal:
             queryset = queryset.filter(aj_sucursal=sucursal)            
-        if tipo:
-            queryset = queryset.filter(aj_tipo=tipo)            
+        if ajuste_crescendo_s:
+            queryset = queryset.filter(aj_cresendo_salida=ajuste_crescendo_s)            
         if estatus:
             queryset = queryset.filter(aj_status=estatus)            
 
@@ -100,7 +102,7 @@ class AjusteUpdateView(PermissionRequiredMixin, UpdateView):
         context['list_product']=[x['producto_codigo'] for x in lista_prod] 
         return context
     def form_valid(self, form):            
-        self.object = form.save()
+        # self.object = form.save()
 
         productos_delete=self.request.POST.getlist('productos_delete')
         AjusteProduct.objects.filter(id__in=productos_delete).delete()
@@ -129,19 +131,25 @@ class AjusteCrearView(PermissionRequiredMixin, CreateView):
 
     permission_required = ('ajustes.add_ajuste')
     def form_valid(self, form):    
-        form.instance.aj_sucursal=self.request.user.departamento.departamento_id_sucursal
-        form.instance.aj_status=1
-        self.object = form.save()
         producto=self.request.POST.getlist('producto')
         exist_sistema=self.request.POST.getlist('exist_sistema')
         exist_fisica=self.request.POST.getlist('exist_fisica')
         cantidad=self.request.POST.getlist('cantidad')
         precio=self.request.POST.getlist('precio')
         vale=self.request.POST.getlist('vale')
+        tipo=self.request.POST.getlist('tipo')
 
-        for i in range(len(producto)):
-            product=AjusteProduct(producto_id=producto[i], ajuste= self.object, exist_sistema=exist_sistema[i], exist_fisica=exist_fisica[i], cantidad=cantidad[i], precio=precio[i], vale=vale[i])
-            product.save()            
+        if len(producto) > 0:        
+            form.instance.aj_sucursal=self.request.user.departamento.departamento_id_sucursal
+            form.instance.aj_status=1
+            self.object = form.save()
+    
+            for i in range(len(producto)):
+                product=AjusteProduct(producto_id=producto[i], ajuste= self.object, exist_sistema=exist_sistema[i], exist_fisica=exist_fisica[i], cantidad=cantidad[i], precio=precio[i], vale=vale[i], tipo=tipo[i])
+                product.save()     
+        else:
+            messages.warning(self.request, 'No ha ingresado nuevos productos')
+            return redirect(reverse_lazy('ajustes:add'))       
 
         
         return super().form_valid(form)
@@ -171,14 +179,15 @@ class ProductoGetCodigo(APIView):
     authentication_classes = ()
 
     def post(self, request, *args, **kwargs):
-        id_producto = request.data["id_producto"]            
-            
-        
+        id_producto = request.data["id_producto"]      
+                                 
         try:
             producto = Producto.objects.get(producto_codigo=id_producto)
+
             data = {
             'codigo': producto.producto_codigo,
-            'descripcion': producto.producto_descripcion,            
+            'descripcion': producto.producto_descripcion,                                 
+                                        
             }
             return Response(data, status=status.HTTP_202_ACCEPTED)
         except ObjectDoesNotExist as error:            
