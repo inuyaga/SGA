@@ -1,7 +1,7 @@
 {% extends 'index/base.html'%}
 {% load verbose_name_tags %}
 {% block contenido %}
-
+{% load humanize %}
 
 <div class="container-fluid p-y-md">
 
@@ -129,7 +129,7 @@
                                 <td>{{item.g_depo}}</td>
                                 <td>{{item.g_userCreador}}</td>
                                 <td>{{item.g_depo.departamento_id_sucursal.sucursal_empresa_id}}</td>
-                                <td>{{item.total_gasto}}</td>
+                                <td>{{item.total_gasto |floatformat:"2"|intcomma}}</td>
                                 
                                 <td>
 
