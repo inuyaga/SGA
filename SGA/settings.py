@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from decouple import config as config_decouple
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,7 +29,7 @@ SECRET_KEY = 't7dwliwxz85wzm%7u87-&#*0n(#weq571q((%6iol+l%%kdm+x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [config_decouple('DNS_NAME'), config_decouple('DNS_NAME2')]
 
 
 # Application definition
@@ -104,22 +105,12 @@ WSGI_APPLICATION = 'SGA.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sga',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': config_decouple('DB_NAME'),
+        'USER': config_decouple('DB_USER'),
+        'PASSWORD': config_decouple('DB_PASSWORD'),
+        'HOST': config_decouple('DB_HOST'),
+        'PORT': config_decouple('DB_PORT'),
     }
-
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'sga',
-    #     'USER': 'soporte',
-    #     'PASSWORD': 'S1st3m45',
-    #     'HOST': 'localhost',
-    #     'PORT': '3306',
-    # }
-
 }
 
 
