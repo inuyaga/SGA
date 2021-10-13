@@ -1,8 +1,8 @@
 
 from django.urls import path
-# from aplicaciones.ajustes import views as ViewsAjust
+from aplicaciones.almacen import views as almacen_views
 
 app_name = "almacen"
 urlpatterns = [
-    # path('listar/', ViewsAjust.AjusteListView.as_view(), name='listar')
+    path('crear/', almacen_views.CreatePedido.as_view(), name='crear')
 ]
