@@ -110,7 +110,6 @@ env_windowns/
 sga_env/
 XDG_CACHE_HOME/
 windowsTaco-env/
-static/
-
+.idea/
 migrations/* !migrations/__init__.py
 0*.py
