@@ -72,7 +72,7 @@ class ServicioList(ListView, PermissionRequiredMixin):
         if s_estatus:
             queryset = queryset.filter(s_estatus=s_estatus)
 
-        queryset = queryset.order_by('s_fecha')
+        queryset = queryset.order_by('-s_fecha')
 
         return queryset
 
