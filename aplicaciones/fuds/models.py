@@ -78,6 +78,7 @@ class Fud(models.Model):
     
     EstadoFud=models.IntegerField(null=True, blank=True, choices= ESTADOS, default=1, verbose_name="Estado")
     Descuento = models.IntegerField(default=0, null=False, blank=False, verbose_name="Descuento %")
+    NumPartida = models.IntegerField(default=1, null=False, blank=False, verbose_name="Cantidad de partidas")
 
     def __str__(self):
         return str(self.Folio)

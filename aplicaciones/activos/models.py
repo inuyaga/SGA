@@ -6,7 +6,7 @@ Usuario = settings.AUTH_USER_MODEL
 
 ESTADO=((1, 'Vigente'), (2,'Historio'), (3, 'Pendiente'))
 VIDA_ACTIVO=((1, 'Nuevo'), (2,'Buen estado'), (3,'Deteriorado'), (4,'-------'), (5,'Tramite de baja'), (6,'Baja'))
-SITUACION=((1, 'Asignado'), (2,'Stock'))
+SITUACION=((1, 'Asignado'), (2,'Stock'), (3,'Baja'))
 # Create your models here.
 class Categoria(models.Model):
     cat_area=models.ForeignKey(Area, verbose_name='Area a la que pertenece', on_delete=models.CASCADE)

@@ -4,6 +4,24 @@
 <div class="row">
     <form class="form-inline col-sm-6" method="GET" action="">
         <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="situacion">
+                <option selected disabled>Situación</option>
+                {% for item in situacion %}
+                <option value="{{item.0}}" {% if item.0|striptags == view.request.GET.situacion %}
+                    selected{% endif %}>{{item.1}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" name="status">
+                <option selected disabled>Status</option>
+                {% for item in vida %}
+                <option value="{{item.0}}" {% if item.0|striptags == view.request.GET.status %}
+                    selected{% endif %}>{{item.1}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
             <select class="form-control" id="exampleFormControlSelect1" name="categoria">
                 <option selected disabled>Categoria</option>
                 {% for item in obj_list %}
@@ -21,24 +39,8 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="form-group">
-            <select class="form-control" id="exampleFormControlSelect1" name="status">
-                <option selected disabled>Status</option>
-                {% for item in vida %}
-                <option value="{{item.0}}" {% if item.0|striptags == view.request.GET.status %}
-                    selected{% endif %}>{{item.1}}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <select class="form-control" id="exampleFormControlSelect1" name="situacion">
-                <option selected disabled>Situación</option>
-                {% for item in situacion %}
-                <option value="{{item.0}}" {% if item.0|striptags == view.request.GET.situacion %}
-                    selected{% endif %}>{{item.1}}</option>
-                {% endfor %}
-            </select>
-        </div>
+        
+        
 
 
         <button type="submit" class="btn btn-primary mb-2">Filtrar</button>

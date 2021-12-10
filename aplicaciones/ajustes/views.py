@@ -179,7 +179,7 @@ class ProductoGetCodigo(APIView):
     authentication_classes = ()
 
     def post(self, request, *args, **kwargs):
-        id_producto = request.data["id_producto"]      
+        id_producto = request.data["id_producto"].strip()      
                                  
         try:
             producto = Producto.objects.get(producto_codigo=id_producto)
