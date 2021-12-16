@@ -81,6 +81,11 @@
             {{ form.Descuento.errors }}
             {{ form.Descuento }}
           </div>
+          <div class="col-sm-3">
+            {{ form.NumPartida.label }}
+            {{ form.NumPartida.errors }}
+            {{ form.NumPartida }}
+          </div>
           {% endif %}
           <div class="col-sm-12">
             {{ form.observaciones.label }}
@@ -183,7 +188,7 @@ function genera_pdf(){
   doc.text(120, 45,"CLIENTE: {{fecha_factura.NumeroCliente}}");
   doc.setFontType("normal");
   doc.autoTable({html: '#tabla_fud', startY: 47, styles:{fontSize:6}});
-  var splitTitle = doc.splitTextToSize("OBSERVACIONES: "+$("#id_observaciones").val(), 180);
+  var splitTitle = doc.splitTextToSize("CANT PARTIDAS: {{fecha_factura.NumPartida}}; OBSERVACIONES: "+$("#id_observaciones").val(), 180);
   doc.text(10, doc.previousAutoTable.finalY + 2,splitTitle);
   doc.text(30, doc.previousAutoTable.finalY + 52,"Cliente");
   doc.text(60, doc.previousAutoTable.finalY + 52,"Distribución");
