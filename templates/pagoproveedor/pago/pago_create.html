@@ -1,10 +1,11 @@
 {% extends 'index/base.html'%}
+{% block pagosRentas %}open{% endblock pagosRentas %}
 {% block contenido %}
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li> 
-    <li class="breadcrumb-item"><a href="{% url 'proveedor:factura_lista' %}">Facturas</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'proveedor:contrato_listar' %}">Contratos</a></li>
     <li class="breadcrumb-item active" aria-current="page">Pago</li>
   </ol>
 </nav>
@@ -24,13 +25,15 @@
     <tr>
       <th scope="col">PDF</th>
       <th scope="col">MONTO</th>
-      <th scope="col">METODO</th>
+      <th scope="col">MÉTODO</th>
       <th scope="col">CREADO</th>
-      <th scope="col">RESTA</th>
-      <th scope="col">ACCION</th>
+      <th scope="col">FAC PDF</th>
+      <th scope="col">FAC XML</th>
+      <th scope="col">ACCIÓN</th>
     </tr>
   </thead>
   <tbody>
+  {% for pago in pagos %}
     <tr>
       <th scope="row">
         {% if pago.pago_pdf != None %}
@@ -40,16 +43,21 @@
       <td>{{pago.pago_monto}}</td>
       <td>{{pago.pago_metodo}}</td>
       <td>{{pago.pago_creado}}</td>
-      <td>{{pago.Resta}}</td>
+      <td>{% if pago.factura_pdf != "" %}
+        <a href="{{pago.factura_pdf.url}}">PDF</a>
+        {% endif %}</td>
+      <td>{% if pago.factura_xml != "" %}
+        <a target="_blank" href="{{pago.factura_xml.url}}">XML</a>
+        {% endif %}</td>
       <td>
       
       {% if pago.pago_id != None %}
-      <a title="Complemento" class="btn btn-outline-success btn-sm" href="{% url 'proveedor:complemento_crear' pago.pago_id %}"  role="button"><i class="material-icons">payment</i></a>
       <a class="btn btn-outline-warning btn-sm" href="{% url 'proveedor:pago_edicion' pago.pago_id %}" role="button"><i class="material-icons">edit</i></a>
       <a class="btn btn-outline-danger btn-sm" href="{% url 'proveedor:pago_eliminar' pago.pago_id view.kwargs.pk %}" role="button"><i class="material-icons">delete_forever</i></a>
       {% endif %}
       </td>
     </tr>
+    {% endfor %}
   </tbody>
 </table>
 </div>

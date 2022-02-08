@@ -213,7 +213,7 @@
                             </li>
                             {% endif %}
                             {% if perms.pago_proveedor %}
-                            <li class="nav-item nav-item-has-subnav">
+                            <li class="nav-item nav-item-has-subnav {% block pagosRentas %}{% endblock pagosRentas %}">
                                 <a href="javascript:void(0)"><i class="ion-cash"></i> Pagos Rentas</a>
                                 <ul class="nav nav-subnav">
                                     {% if perms.pago_proveedor.view_proveedor %}
@@ -226,9 +226,9 @@
                                         <a href="{% url 'proveedor:contrato_listar' %}">Contratos</a>
                                     </li>
                                     {% endif %}
-                                    {% if perms.pago_proveedor.view_factura %}
+                                    {% if perms.pago_proveedor.view_renta %}
                                     <li>
-                                        <a href="{% url 'proveedor:factura_lista' %}">Facturas</a>
+                                        <a href="{% url 'proveedor:depto_casa_lista' %}">Casa o depto</a>
                                     </li>
                                     {% endif %}
                                 </ul>

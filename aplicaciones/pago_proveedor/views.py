@@ -2,9 +2,9 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, get_object_or_404
-from aplicaciones.pago_proveedor.forms import NuevoProveedorForm, ContratosForms, FacturaForms, PagoForms, ComplementoForm, \
-ContratosFormsEdit
-from aplicaciones.pago_proveedor.models import Proveedor, Contrato, Factura, Pago, Complemento
+from aplicaciones.pago_proveedor.forms import NuevoProveedorForm, ContratosForms, PagoForms, \
+ContratosFormsEdit, NuevoDeptoCasaForm
+from aplicaciones.pago_proveedor.models import Proveedor, Contrato, Pago, Renta
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, View, TemplateView
 # from django.views.generic.list import ListView, CreateView, UpdateView
@@ -301,188 +301,28 @@ class ContratoUpdate(UpdateView):
                 return super(ContratoUpdate, self).dispatch(*args, **kwargs)
 # -------------------------------------------------------------------------------------------------------------
 
-
-# CLASES PARA LA VISTA DE FATURAS
-# -------------------------------------------------------------------------------------------------------------
-class FacturaList(ListView):
-    
-    model = Factura
-    ordering = ['-factura_creado']
-    template_name = 'pagoproveedor/factura/factura_list.html'
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['usuario'] = self.request.user
-        # context['object_list'] = Factura.objects.filter(factura_contrato_id__contrato_autorizado=True).select_related('factura_contrato_id')
-        return context
-
-    def get_queryset(self):
-        queryset = super(FacturaList, self).get_queryset()
-        queryset__init=queryset.filter(factura_contrato_id__contrato_autorizado=True)
-        queryset=queryset.filter(factura_pagado_status=False)
-        
-
-        mes=self.request.GET.get('buscar_mes')
-        status=self.request.GET.get('status')
-        todo=self.request.GET.get('todo')
-
-        if mes != None:
-            if mes != '':
-                x = mes.split("-")
-                queryset=queryset__init.filter(factura_corresponde_mes__year=x[0], factura_corresponde_mes__month=x[1])
-
-        if status != None:
-            queryset=queryset.filter(factura_pagado_status=status)
-
-        if todo == 'SI':
-            queryset=queryset__init          
-                 
-        return queryset
-    @method_decorator(permission_required('pago_proveedor.view_factura',reverse_lazy('inicio:need_permisos')))
-    def dispatch(self, *args, **kwargs):
-                return super(FacturaList, self).dispatch(*args, **kwargs)
-
-class FacturaCreate(CreateView): 
-    model = Factura
-    form_class = FacturaForms
-    template_name = 'pagoproveedor/factura/factura_create.html'
-    success_url = reverse_lazy('proveedor:factura_lista')
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['usuario'] = self.request.user
-        return context
-
-    def form_valid(self, form):
-
-          # OBTENEMOS EL XML DEL POST Y LO PARSEAMOS
-        xmlDoc = parse(form.instance.factura_xml)
-
-        # OBTENEMOS LA RAIZ PRINCIPAL DEL CFDI Y LO ASIGNAMOS A LA VARIABLE
-        raiz = xmlDoc.getElementsByTagName("cfdi:Comprobante")[0]
-
-        # OBTENEMOS LA INFORMACION EN EL NODO PRINCIPAL
-        TOTAL = raiz.attributes["Total"].value
-        form.instance.factura_monto_total = TOTAL
-
-        # OBTENEMOS TODOS LOS ARRAY DEL NODO PRINCIPAL
-
-        if form.instance.factura_tipo == 1:  # ES PERSONA FISICA
-            for nodo_hijo in raiz.getElementsByTagName("cfdi:Impuestos"):
-                for hijo in nodo_hijo.getElementsByTagName("cfdi:Traslados"):
-                    # print(hijo)
-                    for target_list in hijo.childNodes:
-                        if target_list.getAttribute("Impuesto") == "002":
-                            form.instance.factura_iva_trasladado = target_list.getAttribute("Importe")
-
-        else:  # PERSONA MORAL
-            for nodo_hijo in raiz.getElementsByTagName("cfdi:Impuestos"):
-                for hijo in nodo_hijo.getElementsByTagName("cfdi:Retenciones"):
-                    for target_list in hijo.childNodes:
-                        if target_list.getAttribute("Impuesto") == "002":
-                            form.instance.factura_iva_retenido = target_list.getAttribute("Importe")
-                        else:
-                            form.instance.factura_isr_retenido = target_list.getAttribute("Importe")
-                for hijo in nodo_hijo.getElementsByTagName("cfdi:Traslados"):
-                    for target_list in hijo.childNodes:
-                        if target_list.getAttribute("Impuesto") == "002":
-                            print(target_list.getAttribute("Importe"))
-                            form.instance.factura_iva_trasladado = target_list.getAttribute("Importe")
-
-        return super(FacturaCreate, self).form_valid(form)
-
-
-
-
-    @method_decorator(permission_required('pago_proveedor.add_factura',reverse_lazy('inicio:need_permisos')))
-    def dispatch(self, *args, **kwargs):
-                return super(FacturaCreate, self).dispatch(*args, **kwargs)
-
-class FacturatoUpdate(UpdateView):
-    model = Factura
-    form_class = FacturaForms
-    template_name = 'pagoproveedor/factura/factura_create.html'
-    success_url = reverse_lazy('proveedor:factura_lista')
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['usuario'] = self.request.user
-        return context
-    @method_decorator(permission_required('pago_proveedor.change_factura',reverse_lazy('inicio:need_permisos')))
-    def dispatch(self, *args, **kwargs):
-                return super(FacturatoUpdate, self).dispatch(*args, **kwargs)
-
-class FacturaDelete(DeleteView):
-    model = Factura
-    form_class = FacturaForms
-    template_name = 'pagoproveedor/elimina_proveedor.html'
-    success_url = reverse_lazy('proveedor:factura_lista')
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['usuario'] = self.request.user
-
-        deletable_objects, model_count, protected = get_deleted_objects([self.object])
-        context['deletable_objects']=deletable_objects
-        context['model_count']=dict(model_count).items()
-        context['protected']=protected
-        return context
-
-    @method_decorator(permission_required('pago_proveedor.delete_factura',reverse_lazy('inicio:need_permisos')))
-    def dispatch(self, *args, **kwargs):
-                return super(FacturaDelete, self).dispatch(*args, **kwargs)
-
-
-# -------------------------------------------------------------------------------------------------------------
-
 # CLASES PARA LA VISTA DE PAGOS
 # -------------------------------------------------------------------------------------------------------------
 class PagoCreate(CreateView):
     model = Pago
     form_class = PagoForms
     template_name = 'pagoproveedor/pago/pago_create.html'
-    success_url = reverse_lazy('proveedor:factura_lista')
+    success_url = reverse_lazy('proveedor:contrato_listar')
 
     def get_context_data(self, *args, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(PagoCreate, self).get_context_data(**kwargs)
-
-        # Add in a QuerySet of all the PAGO
+        context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
         try:
-            context['pago'] = Pago.objects.get(pago_factura=self.kwargs.get('pk'))
+            context['pagos'] = Pago.objects.filter(contrato_id_id=self.kwargs.get('pk'))
         except Pago.DoesNotExist:
-            context['pago'] = None
-
+            context['pagos'] = None
         return context
 
     def form_valid(self, form):
-        id_factura = self.kwargs['pk']# forma de obtener el id
-        form.instance.pago_factura_id=id_factura
-
-        factura = Factura.objects.get(factura_id=id_factura)
-        total_factura = factura.factura_monto_total
-        monto_pagado=form.instance.pago_monto
-
-        if monto_pagado >= total_factura:
-            Factura.objects.filter(factura_id=id_factura).update(factura_pagado_status=True)
-        else:
-            Factura.objects.filter(factura_id=id_factura).update(factura_pagado_status=False)
-        try:
-            return super(PagoCreate, self).form_valid(form)
-        except IntegrityError:
-            return HttpResponse("Actualmente ya se encuenta un pago realizado")
-        return super(PagoCreate, self).form_valid(form)
-
-    def get_success_url(self):
-        pk=self.kwargs.get('pk')
-        print(pk)
-        url=reverse_lazy('proveedor:pago_crear', kwargs={'pk':pk})
-        return url
+        id_c = self.kwargs['pk']
+        form.instance.contrato_id_id = id_c
+        self.object = form.save()
+        return super().form_valid(form)
 
 
 class PagoList(ListView):
@@ -501,7 +341,7 @@ class PagoDelete(DeleteView):
     model = Pago
     form_class = PagoForms
     template_name = 'pagoproveedor/pago/pago_delete.html'
-    success_url = reverse_lazy('proveedor:factura_lista')
+    success_url = reverse_lazy('proveedor:contrato_listar')
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
@@ -513,11 +353,6 @@ class PagoDelete(DeleteView):
         context['model_count']=dict(model_count).items()
         context['protected']=protected
         return context
-
-    def delete(self,*args,**kwargs):
-        pago = Pago.objects.get(pago_id=self.kwargs['pk'])
-        Factura.objects.filter(factura_id=pago.pago_factura_id).update(factura_pagado_status=False)
-        return super().delete(*args,**kwargs)
 
     def get_success_url(self):
         pk=self.kwargs.get('id_pago')
@@ -533,13 +368,16 @@ class PagoUpdate(UpdateView):
     model = Pago
     form_class = PagoForms
     template_name = 'pagoproveedor/pago/pago_create.html'
-    success_url = reverse_lazy('proveedor:factura_lista')
+    success_url = reverse_lazy('proveedor:contrato_listar')
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
         context['usuario'] = self.request.user
+        try:
+            context['pagos'] = Pago.objects.filter(contrato_id_id=self.kwargs.get('pk'))
+        except Pago.DoesNotExist:
+            context['pagos'] = None
         return context
+
     @method_decorator(permission_required('pago_proveedor.change_pago',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(PagoUpdate, self).dispatch(*args, **kwargs)
@@ -549,77 +387,7 @@ class PagoUpdate(UpdateView):
 # -------------------------------------------------------------------------------------------------------------
 
 
-# CLASES PARA LA VISTA DE PAGOS EN COMPLEMENTOS
-# -------------------------------------------------------------------------------------------------------------
-class ComplementoCreate(CreateView):
-    model = Complemento
-    form_class = ComplementoForm
-    template_name = 'pagoproveedor/pago/complemento_create.html'
-    # success_url = reverse_lazy('proveedor:factura_lista')
-    def get_success_url(self,*args,**kwargs):
-        pago=Pago.objects.get(pago_id=self.kwargs['pk'])
-        return reverse_lazy('proveedor:pago_crear', kwargs={'pk': pago.pago_factura},)
 
-    def get_context_data(self, *args, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(ComplementoCreate, self).get_context_data(**kwargs)
-
-        # Add in a QuerySet of all the PAGO
-        context['usuario'] = self.request.user
-        context['idComplemento'] = self.kwargs.get('pk')
-
-        try:
-            context['complementos'] = Complemento.objects.filter(complemento_pago=self.kwargs.get('pk'))
-        except Pago.DoesNotExist:
-            context['complementos'] = None
-        return context
-
-    def form_valid(self, form):
-        id_factura = self.kwargs['pk']# forma de obtener el id
-        form.instance.complemento_pago_id=id_factura
-
-        # factura = Factura.objects.get(factura_id=id_factura)
-        # total_factura = factura.factura_monto_total
-        # monto_pagado=form.instance.pago_monto
-
-        # if monto_pagado >= total_factura:
-        #     Factura.objects.filter(factura_id=id_factura).update(factura_pagado_status=True)
-        # else:
-        #     Factura.objects.filter(factura_id=id_factura).update(factura_pagado_status=False)
-        # try:
-        #     return super(PagoCreate, self).form_valid(form)
-        # except IntegrityError:
-        #     return HttpResponse("Actualmente ya se encuenta un pago realizado")
-        return super(ComplementoCreate, self).form_valid(form)
-
-
-class ComplementoDelete(DeleteView):
-    model = Complemento
-    form_class = ComplementoForm
-    template_name = 'pagoproveedor/elimina_proveedor.html'
-    # success_url = reverse_lazy('proveedor:factura_lista')
-    def get_success_url(self,*args,**kwargs):
-        return reverse_lazy('proveedor:complemento_crear', kwargs={'pk': self.kwargs['id_comp']},)
-    def get_context_data(self, *args, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(ComplementoDelete, self).get_context_data(**kwargs)
-        context['usuario'] = self.request.user
-
-        deletable_objects, model_count, protected = get_deleted_objects([self.object])
-        context['deletable_objects']=deletable_objects
-        context['model_count']=dict(model_count).items()
-        context['protected']=protected
-        return context
-
-    def delete(self,*args,**kwargs):
-        print(self.kwargs['pk'])
-        pago = Pago.objects.get(pago_id=self.kwargs['id_comp'])
-        Factura.objects.filter(factura_id=pago.pago_factura_id).update(factura_pagado_status=False)
-        return super().delete(*args,**kwargs)
-
-    @method_decorator(permission_required('pago_proveedor.delete_complemento',reverse_lazy('inicio:need_permisos')))
-    def dispatch(self, *args, **kwargs):
-                return super(ComplementoDelete, self).dispatch(*args, **kwargs)
 
 # class ReportePersonasPDF(View):
 
@@ -637,3 +405,33 @@ class ComplementoDelete(DeleteView):
 #         return HttpResponse(pdf, content_type='application/pdf')
 
 
+class CasaDeptoList(ListView):
+    
+    model = Renta
+    ordering = ['depto']
+    paginate_by = 25
+    template_name = 'pagoproveedor/renta/lista_casadepto.html'
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['usuario'] = self.request.user
+        # context['object_list'] = Factura.objects.filter(factura_contrato_id__contrato_autorizado=True).select_related('factura_contrato_id')
+        return context
+
+    @method_decorator(permission_required('pago_proveedor.view_renta',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(CasaDeptoList, self).dispatch(*args, **kwargs)
+
+class CasaDeptoAdd(CreateView):
+    model = Renta
+    form_class = NuevoDeptoCasaForm
+    template_name = 'pagoproveedor/renta/add_casadepto.html'
+    success_url = reverse_lazy('proveedor:depto_casa_lista')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        return context
+    @method_decorator(permission_required('pago_proveedor.add_renta',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(CasaDeptoAdd, self).dispatch(*args, **kwargs)

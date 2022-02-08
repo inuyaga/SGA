@@ -1,10 +1,12 @@
 {% extends 'index/base.html'%}
+{% load humanize %}
+{% block pagosRentas %}open{% endblock pagosRentas %}
 {% block contenido %}
 {% load staticfiles %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Contartos</li>
+    <li class="breadcrumb-item active" aria-current="page">Contratos</li>
   </ol>
 </nav>
 <a href="?autorizado=True">Autorizado</a>
@@ -34,17 +36,20 @@
     <thead class="thead-light">
       <tr>
         <th scope="col">#</th>
-        <th scope="col"> <small>PROVEEDOR</small> </th>
-        <th scope="col"><small>DOCUMENTO</small></th>
-        <th scope="col"><small>SUCURSAL</small></th>
+        <th scope="col"><small>PROVEEDOR</small> </th>
+        <th scope="col"><small>DOC</small></th>
+        <th scope="col"><small>LOCACIÓN</small></th>
+        <th scope="col"><small>DIRECCIÓN</small></th>
         <th scope="col"><small>INICIO</small></th>
         <th scope="col"><small>TERMINO</small></th>
-        <th scope="col"><small>DIAS DE PAGO</small></th>
-        <th scope="col"><small>DIRECCION</small></th>
+        <th scope="col"><small>DÍAS DE PAGO</small></th>
         <th scope="col"><small>MONTO</small></th>
+        <th scope="col"><small>DEPÓSITO</small></th>
+        <th scope="col"><small>COSTO CONTRATO</small></th>
+        <th scope="col"><small>PAGADO CONTRATO</small></th>
         <th scope="col"><small>AUTORIZADO</small></th>
         <th scope="col"><small>STATUS</small></th>
-        <th scope="col"><small>ACCION</small></th>
+        <th scope="col"><small>ACCIÓN</small></th>
       </tr>
     </thead>
     <tbody>
@@ -54,11 +59,20 @@
         <td><small>{{contrato.contrato_proveedor_id}}</small></td>
         <td><small><a href="{{contrato.contrato_documento.url }}">PDF</a></small></td>
         <td><small>{{contrato.contrato_sucursal}}</small></td>
+        <td><small>{{contrato.contrato_sucursal.direccion}}</small></td>
         <td><small>{{contrato.contrato_fecha_inicio}}</small></td>
         <td><small>{{contrato.contrato_fecha_termino}}</small></td>
         <td><small>{{contrato.contrato_dias_pago}}</small></td>
-        <td><small>{{contrato.contrato_direccion}}</small></td>
-        <td><small>{{contrato.contrato_monto}}</small></td>
+        <td><small>{{contrato.contrato_monto|intcomma}}</small></td>
+        <td><small>{{contrato.contrato_deposito|intcomma}}</small></td>
+        <td><small>{{contrato.costo_contrato|intcomma}}</small></td>
+        <td><small>
+        {% if contrato.contrato_pagado.pago_monto__sum > 0 %}
+          {{contrato.contrato_pagado.pago_monto__sum|intcomma}}  
+        {% else %}
+        0
+        {% endif %}
+        </small></td>
         <td><small>
         {% comment %} condicion de contrato autorizado {% endcomment %}
         {% if  contrato.contrato_autorizado %}
@@ -83,7 +97,7 @@
         <a class="btn btn-outline-danger btn-sm" href="{% url 'proveedor:contrato_eliminar' contrato.contrato_id %}" role="button"><i class="material-icons">delete_forever</i></a>
         </small>
         {% if  contrato.contrato_autorizado %}
-        <a class="btn btn-outline-success btn-sm" href="{% url 'proveedor:contrato_edicion' contrato.contrato_id %}" role="button"><i class="material-icons">payment</i></a>
+        <a class="btn btn-outline-success btn-sm" href="{% url 'proveedor:pago_crear' contrato.contrato_id %}" role="button"><i class="material-icons">payment</i></a>
         {% endif %}
         
         </td>

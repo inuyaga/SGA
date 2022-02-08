@@ -12,7 +12,7 @@
   <form method="post">
     {% csrf_token %}
     <div class="alert alert-danger" role="alert">
-      Esta seguro de eliminar {{ object }} con RFC {{object.proveedor_rfc}}?.
+      Está seguro de eliminar el pago {{ object }}?.
     </div>
     <input class="btn btn-danger" type="submit" value="Si estoy seguro!">
     <a class="btn btn-primary" href="#" onClick="javascript:history.go(-1);" role="button">Cancelar</a>

@@ -1,0 +1,76 @@
+{% extends 'index/base.html'%}
+{% block pagosRentas %}open{% endblock pagosRentas %}
+{% block titulo %}
+<title>Lista de sucursal, casa o departamento</title>
+{% endblock titulo %}
+
+{% block contenido %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">SGA</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Sucursal, casa o departamento</li>
+  </ol>
+</nav>
+
+
+
+{% if perms.pago_proveedor.add_proveedor %}
+<div class="row">
+    <div class="col">
+        <span class="float-right">
+        <a class="btn btn-secondary btn-sm" href="{% url 'proveedor:depto_casa_add' %}" role="button">Añadir una nueva locación</a>
+        </span>
+    </div>
+</div>
+{% endif %}
+<div class="container">
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Locación</th>
+				<th scope="col">Dirección</th>
+				<th scope="col">Acción</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for renta in object_list %}
+			<tr>
+				<th scope="row">{{renta.depto}}</th>
+				<td>{{renta.direccion}}</td>
+				<td>
+					<a class="btn btn-outline-success" href="{% url 'proveedor:edicion_p' renta.id %}" role="button">Editar</a>
+					<a class="btn btn-outline-danger" href="{% url 'proveedor:eliminar' renta.id %}" role="button">Eliminar</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+<div class="row justify-content-md-center">
+
+{% block pagination %}
+{% if is_paginated %}
+<nav aria-label="Page navigation example">
+	<ul class="pagination">
+		{% if page_obj.has_previous %}
+		<li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}"><i class="material-icons">
+					navigate_before
+				</i></a></li>
+		{% endif %}
+		<span class="page-link">
+			Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+			<span class="sr-only">(current)</span>
+		</span>
+		{% if page_obj.has_next %}
+		<li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}"><i class="material-icons">
+					navigate_next
+				</i></a></li>
+		{% endif %}
+	</ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+</div>
+{% endblock contenido %}

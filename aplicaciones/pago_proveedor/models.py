@@ -1,23 +1,26 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
-
+import datetime
+from dateutil import rrule
 from django.db import models
 from django.db.models import Sum
-from aplicaciones.empresa.models import Sucursal
-
-
-# Create your models here.
-# pylint: disable = E1101
 
 class Proveedor(models.Model):
     proveedor_nombre = models.CharField(max_length=100, verbose_name='Nombre')
     proveedor_rfc = models.CharField(max_length=15, verbose_name='RFC', default = 'none', unique=True)
     proveedor_email = models.EmailField(verbose_name='Correo')
+    proveedor_cuenta = models.CharField(max_length=100, verbose_name='Número de cuenta')
+    proveedor_banco = models.CharField(max_length=100, verbose_name='Nombre del banco')
     
-
-
     def __str__(self):
         return self.proveedor_nombre
+
+class Renta(models.Model):
+    depto = models.CharField(max_length=100, verbose_name='Casa o depto en renta')
+    direccion = models.CharField(max_length=120, verbose_name='Dirección de la locación', default = 'none', unique=True)
+    
+    def __str__(self):
+        return self.depto
 
 
 class Contrato(models.Model):
@@ -30,99 +33,41 @@ class Contrato(models.Model):
     contrato_fecha_termino = models.DateField(verbose_name='Termino')
     contrato_dias_pago = models.CharField(
         max_length=100, verbose_name='Describa fechas de pago')
-    contrato_direccion = models.CharField(
-        max_length=150, verbose_name='Direccion')
     contrato_monto = models.FloatField(
         null=False, blank=False, verbose_name='Monto')
+    contrato_deposito = models.FloatField(
+        null=False, blank=False, default=0, verbose_name='Deposito')
     contrato_autorizado = models.BooleanField(
         default=False, verbose_name='Autorizado')
-    contrato_status = models.BooleanField(default=True, verbose_name='Status')
-    contrato_sucursal=models.ForeignKey(Sucursal, verbose_name="Sucursal", on_delete=models.PROTECT, null=True, blank=True,)
-    
+    contrato_status = models.BooleanField(default=True, verbose_name='Estado')
+    contrato_sucursal=models.ForeignKey(Renta, verbose_name="Casa o departamento", on_delete=models.PROTECT, null=True, blank=True,)
 
     def __str__(self):
-        return str(self.contrato_id)
+        return str(self.contrato_sucursal)
 
+    def costo_contrato(self):
+        contratoI = rrule.rrule(rrule.MONTHLY, dtstart=self.contrato_fecha_inicio, until=self.contrato_fecha_termino).count()
+        return str(contratoI* self.contrato_monto)
 
-class Factura(models.Model):
-    factura_id = models.AutoField(primary_key=True)
-    factura_contrato_id = models.ForeignKey(
-        Contrato, null=True, blank=True, on_delete=models.CASCADE)
-    TIPO_FACTURA = ((1, 'Persona Fisica'), (2, 'Persona Moral'))
-    factura_tipo = models.IntegerField(choices=TIPO_FACTURA)
-    factura_xml = models.FileField(
-        upload_to='Facturas/xml/', validators=[FileExtensionValidator(allowed_extensions=['xml'])])
-    factura_pdf = models.FileField(
-        upload_to='Facturas/pdf/', validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
-    factura_monto_total = models.FloatField(null=True, blank=True)
-    factura_iva_trasladado = models.FloatField(null=True, blank=True)
-    factura_iva_retenido = models.FloatField(null=True, blank=True)
-    factura_isr_retenido = models.FloatField(null=True, blank=True)
-    factura_corresponde_mes = models.DateField()
-    factura_creado = models.DateTimeField(auto_now_add=True)
-    factura_pagado_status = models.BooleanField(verbose_name='Status pago', default=False)
-    
-
-    def __str__(self):
-        return str(self.factura_id)
+    def contrato_pagado(self):
+        # contratoI = Pago.objects.
+        contratoI = Pago.objects.filter(contrato_id_id=self.contrato_id).aggregate(Sum('pago_monto'))
+        return contratoI
 
 
 class Pago(models.Model):
-    pago_id = models.AutoField(primary_key=True)
-    pago_factura = models.OneToOneField(
-        Factura, null=True, blank=True, on_delete=models.CASCADE)
-    pago_pdf = models.FileField(upload_to='Facturas/pagos/')
-    pago_monto = models.FloatField(null=True, blank=True)
     METODO_PAGO = (('EFECTIVO', 'EFECTIVO'),
-                   ('TRANSFERENCIA', 'TRANSFERENCIA'))
-    pago_metodo = models.CharField(max_length=40, choices=METODO_PAGO)
+                   ('TRANSFERENCIA', 'TRANSFERENCIA'),('TDD','TDD'),('TDC','TDC'))
+    pago_id = models.AutoField(primary_key=True)
+    contrato_id = models.ForeignKey(Contrato, null=False, blank=False, on_delete=models.PROTECT)
+    pago_pdf = models.FileField(upload_to='Facturas/pagos/', verbose_name="Comprobante PDF (obligatorio)")
+    pago_monto = models.FloatField(null=False, blank=False, verbose_name="Monto del pago (obligatorio)")
+    pago_metodo = models.CharField(max_length=40, choices=METODO_PAGO, verbose_name="Método de pago (obligatorio)")
     pago_creado = models.DateTimeField(auto_now_add=True)
-    
+    factura_xml = models.FileField(
+        upload_to='Facturas/xml/', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['xml'])])
+    factura_pdf = models.FileField(
+        upload_to='Facturas/pdf/', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
 
     def __str__(self):
         return str(self.pago_id)
-
-    def Suma_complementos(self):
-        complementos = Complemento.objects.filter(
-            complemento_pago_id=self.pago_id).aggregate(suma_total=Sum('complemento_monto'))
-        return str(complementos['suma_total'])
-
-    def Resta(self):
-        # print(self.pago_factura.factura_id)
-        factura = Factura.objects.get(factura_id=self.pago_factura.factura_id)
-        complementos = Complemento.objects.filter(complemento_pago_id=self.pago_id).aggregate(suma_total=Sum('complemento_monto'))
-        resta = 0
-        if complementos['suma_total'] == None:
-            total_factura = factura.factura_monto_total
-            resta = total_factura - self.pago_monto
-        else:
-            total_factura = factura.factura_monto_total
-            resta = total_factura - \
-                (self.pago_monto + complementos['suma_total'])
-
-        if resta <= 0:
-            Factura.objects.filter(factura_id=self.pago_factura.factura_id).update(
-                factura_pagado_status=True)
-            resta = 0
-        else:
-            Factura.objects.filter(factura_id=self.pago_factura.factura_id).update(
-                factura_pagado_status=False)
-
-        return str(resta)
-
-
-class Complemento(models.Model):
-    complemento_id = models.AutoField(primary_key=True)
-    complemento_pago = models.ForeignKey(
-        Pago, null=True, blank=True, on_delete=models.CASCADE)
-    complemento_pdf = models.FileField(upload_to='Facturas/complementos/')
-    complemento_monto = models.FloatField(null=True, blank=True)
-    METODO_PAGO = (('EFECTIVO', 'EFECTIVO'),
-                   ('TRANSFERENCIA', 'TRANSFERENCIA'))
-    complemento_metodo = models.CharField(max_length=40, choices=METODO_PAGO)
-    complemento_creado = models.DateTimeField(auto_now_add=True)
-    
-
-    def __str__(self):
-        return str(self.complemento_id)
-
