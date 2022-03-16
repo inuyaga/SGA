@@ -23,6 +23,7 @@
   <table class="table">
   <thead class="thead-light">
     <tr>
+      <th scope="col">#</th>
       <th scope="col">PDF</th>
       <th scope="col">MONTO</th>
       <th scope="col">MÉTODO</th>
@@ -35,6 +36,7 @@
   <tbody>
   {% for pago in pagos %}
     <tr>
+      <td>{{pago.pago_id}}</td>
       <th scope="row">
         {% if pago.pago_pdf != None %}
         <a href="{{pago.pago_pdf.url}}">PDF</a>
