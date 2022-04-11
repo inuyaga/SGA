@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, ListView, DeleteView
+from django.views.generic import CreateView, UpdateView, ListView, DeleteView, TemplateView
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -80,6 +80,78 @@ class ServicioList(ListView, PermissionRequiredMixin):
         context = super().get_context_data(**kwargs)
         context['forms_filtro'] = FiltroServicioForm(self.request.GET)
         return context
+
+class Download_report_servicio(TemplateView):
+    def get(self, request, *args, **kwargs):
+        from openpyxl.styles import Font, Alignment
+        from django.http import HttpResponse
+        from openpyxl import Workbook
+        from openpyxl.utils import get_column_letter
+        wb = Workbook()
+        ws = wb.active
+
+        queryset = Servicio.objects.all()
+
+        s_fecha = self.request.GET.get('s_fecha')
+        s_fecha2 = self.request.GET.get('s_fecha2')
+        s_tipo = self.request.GET.get('s_tipo')
+        s_empresa = self.request.GET.get('s_empresa')
+        s_estatus = self.request.GET.get('s_estatus')
+
+        if s_fecha and s_fecha2:
+            queryset = queryset.filter(s_fecha__range=(s_fecha, s_fecha2))
+        if s_tipo:
+            queryset = queryset.filter(s_tipo=s_tipo)
+        if s_empresa:
+            queryset = queryset.filter(s_empresa=s_empresa)
+        if s_estatus:
+            queryset = queryset.filter(s_estatus=s_estatus)
+
+        queryset = queryset.order_by('-s_fecha')
+
+        ws['A1'] = 'REPORTE DE SOLICITUDES DE SERVICIO'
+        st = ws['A1']
+        st.font = Font(size=14, b=True, color="0A15A4")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:H1')
+        ws.sheet_properties.tabColor = "1072BA"
+        
+        ws['A2'] = 'FOLIO SERVICIO'
+        ws['B2'] = 'FECHA'
+        ws['C2'] = 'TIPO DE SERVICIO'
+        ws['D2'] = 'USUARIO ACTUALIZÓ'
+        ws['E2'] = 'POR'
+        ws['F2'] = 'ESTADO'
+        ws['G2'] = '# SERIE'
+        ws['H2'] = 'DESCRIPCIÓN SERVICIO'
+        cont = 3
+
+        for item in queryset:
+            ws.cell(row=cont, column=1).value = str(item.id)
+            ws.cell(row=cont, column=2).value = item.s_fecha
+            ws.cell(row=cont, column=3).value = str(item.s_tipo)
+            ws.cell(row=cont, column=4).value = str(item.s_user_cambio)
+            ws.cell(row=cont, column=5).value = str(item.s_user)
+            ws.cell(row=cont, column=6).value = item.s_estatus
+            ws.cell(row=cont, column=7).value = str(item.s_serie)
+            ws.cell(row=cont, column=8).value = str(item.s_reporte)
+            cont += 1
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value + 1
+    
+        nombre_archivo = 'Reporte de solicitudes.xlsx'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition'] = content
+        wb.save(response)
+        return response
 
 
 class ServicioCreate(CreateView, PermissionRequiredMixin):

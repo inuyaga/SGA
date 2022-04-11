@@ -1,7 +1,8 @@
 {% extends 'index/base.html'%}
 {% load tools %}
+{% block pagosSolicitud %}open{% endblock pagosSolicitud %}
 {% block titulo %}
-<title>Tipo de servico creacion</title>
+<title>Tipo de servico creación</title>
 {% endblock titulo %}
 
 
@@ -51,7 +52,9 @@
                         {% if perms.solicitud.add_servicio %}   
                         <a href="{% url 'solicitud:servicio_crear' %}">Crear</a>                            
                         {% endif %}
-                            
+                        {% if perms.solicitud.view_servicio %} 
+                        <a href="{% url 'solicitud:dwload_report_solicitudes' %}?{{view.request.GET.urlencode}}">Descargar excel</a>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="card-block">

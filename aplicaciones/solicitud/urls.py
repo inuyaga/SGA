@@ -12,4 +12,6 @@ urlpatterns = [
     path('servicio/validar/<slug:pk>/', SolicitudView.ServicioValidarView.as_view(), name='servicio_validar'),
     path('servicio/eliminar/<slug:pk>/', SolicitudView.ServicioDelete.as_view(), name='servicio_delete'),
     path('servicio/autoriza/', SolicitudView.UpdateStatusServicioView.as_view(), name='servicio_autoriza'),
+
+    path('activo/listar/download/report/', SolicitudView.Download_report_servicio.as_view(), name='dwload_report_solicitudes'),
 ]

@@ -400,7 +400,7 @@
                             </li>
                             {% endif %}
                             {% if perms.solicitud %}
-                            <li class="nav-item nav-item-has-subnav">
+                            <li class="nav-item nav-item-has-subnav {% block pagosSolicitud %}{% endblock pagosSolicitud %}">
                                 <a href="javascript:void(0)"><i class="fa fa-share-square" aria-hidden="true"></i>Solicitud</a> 
                                 <ul class="nav nav-subnav">
                                     {% if perms.solicitud.view_tiposervicio %} 
