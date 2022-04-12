@@ -597,6 +597,9 @@ class BlogViewSingle(DetailView):
 class NuestraEmpresa(TemplateView):
     template_name = "web/V2/nuestraempresa.html"
 
+class Aniversario(TemplateView):
+    template_name = "web/V2/compraYgana.html"
+
 class PoliticasDevoluciones(TemplateView):
     template_name = "web/V2/politicas.html"
 
