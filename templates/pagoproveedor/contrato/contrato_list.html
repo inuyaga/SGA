@@ -98,6 +98,7 @@
         </small>
         {% if  contrato.contrato_autorizado %}
         <a class="btn btn-outline-success btn-sm" href="{% url 'proveedor:pago_crear' contrato.contrato_id %}" role="button"><i class="material-icons">payment</i></a>
+        <a class="btn btn-outline-success btn-sm" href="{% url 'proveedor:pago_generar' contrato.contrato_id %}" role="button"><i class="material-icons">picture_as_pdf</i></a>
         {% endif %}
         
         </td>

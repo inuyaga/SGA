@@ -60,14 +60,15 @@ class Pago(models.Model):
                    ('TRANSFERENCIA', 'TRANSFERENCIA'),('TDD','TDD'),('TDC','TDC'))
     pago_id = models.AutoField(primary_key=True)
     contrato_id = models.ForeignKey(Contrato, null=False, blank=False, on_delete=models.PROTECT)
-    pago_pdf = models.FileField(upload_to='Facturas/pagos/', verbose_name="Comprobante PDF (obligatorio)")
-    pago_monto = models.FloatField(null=False, blank=False, verbose_name="Monto del pago (obligatorio)")
-    pago_metodo = models.CharField(max_length=40, choices=METODO_PAGO, verbose_name="Método de pago (obligatorio)")
+    pago_pdf = models.FileField(null=True, blank=True, upload_to='Facturas/pagos/', verbose_name="Comprobante PDF (obligatorio)")
+    pago_monto = models.FloatField(null=True, blank=True, verbose_name="Monto del pago (obligatorio)")
+    pago_metodo = models.CharField(null=True, blank=True, max_length=40, choices=METODO_PAGO, verbose_name="Método de pago (obligatorio)")
     pago_creado = models.DateTimeField(auto_now_add=True)
     factura_xml = models.FileField(
         upload_to='Facturas/xml/', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['xml'])])
     factura_pdf = models.FileField(
         upload_to='Facturas/pdf/', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
+    pago_observacion=models.CharField(max_length=300, verbose_name='Observación', default="")
 
     def __str__(self):
         return str(self.pago_id)

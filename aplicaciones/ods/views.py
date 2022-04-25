@@ -303,7 +303,7 @@ class OdsGeneraPDF(View):
 
         
 
-        txt="FALLA REPORTADA POR EL USUSARIO" 
+        txt="FALLA REPORTADA POR EL USUARIO" 
         p=Paragraph(txt, stylo_titulo)
         data_tabla =[[p]]
         
@@ -312,7 +312,7 @@ class OdsGeneraPDF(View):
         p=Paragraph(txt, stylo_p)
         data_tabla += [[p]]
 
-        txt="DIAGNOSTICO TECNICO"
+        txt="DIAGNOSTICO TÉCNICO"
         p=Paragraph(txt, stylo_titulo)
         data_tabla +=[[p]]
         txt="{}".format(self.ods_object.ods_diagnostico)

@@ -73,12 +73,24 @@ class ContratosFormsEdit(forms.ModelForm):
 class PagoForms(forms.ModelForm):
     class Meta:
         model = Pago
-        exclude = ['pago_creado', 'contrato_id',]
-        # widgets = {
-        # 'factura_corresponde_mes': forms.DateInput(attrs={'type': 'date'}),
-        # }
+        exclude = ['pago_creado', 'contrato_id','pago_observacion']
+        widgets = {
+        'pago_pdf': forms.FileInput(attrs={'required': 'true'}),
+        'pago_monto': forms.NumberInput(attrs={'required': 'true'}),
+        'pago_metodo': forms.Select(attrs={'required': 'true'}),
+        }
     def __init__(self, *args, **kwargs):
         super(PagoForms, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class CrearPagoForms(forms.ModelForm):
+    class Meta:
+        model = Pago
+        fields = ('pago_observacion',)
+
+    def __init__(self, *args, **kwargs):
+        super(CrearPagoForms, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 

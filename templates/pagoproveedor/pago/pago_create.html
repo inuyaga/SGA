@@ -11,13 +11,13 @@
 </nav>
 
 <div class="container">
-  <form method="post" class="col-sm-4" enctype="multipart/form-data">
+  <!-- <form method="post" class="col-sm-4" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="row">
       {{ form.as_p }}
     </div>
     <button type="submit" class="btn btn-outline-success">Guardar</button>
-  </form>
+  </form> -->
 
 
   <table class="table">
@@ -25,6 +25,7 @@
     <tr>
       <th scope="col">#</th>
       <th scope="col">PDF</th>
+      <th scope="col">NOTA</th>
       <th scope="col">MONTO</th>
       <th scope="col">MÉTODO</th>
       <th scope="col">CREADO</th>
@@ -38,10 +39,11 @@
     <tr>
       <td>{{pago.pago_id}}</td>
       <th scope="row">
-        {% if pago.pago_pdf != None %}
+        {% if pago.pago_pdf != "" %}
         <a href="{{pago.pago_pdf.url}}">PDF</a>
         {% endif %}
       </th>
+      <td>{{pago.pago_observacion}}</td>
       <td>{{pago.pago_monto}}</td>
       <td>{{pago.pago_metodo}}</td>
       <td>{{pago.pago_creado}}</td>
@@ -55,6 +57,7 @@
       
       {% if pago.pago_id != None %}
       <a class="btn btn-outline-warning btn-sm" href="{% url 'proveedor:pago_edicion' pago.pago_id %}" role="button"><i class="material-icons">edit</i></a>
+      <a class="btn btn-outline-info btn-sm" href="{% url 'proveedor:pago_observacion' pago.pago_id %}" role="button"><i class="material-icons">assignment</i></a>
       <a class="btn btn-outline-danger btn-sm" href="{% url 'proveedor:pago_eliminar' pago.pago_id view.kwargs.pk %}" role="button"><i class="material-icons">delete_forever</i></a>
       {% endif %}
       </td>

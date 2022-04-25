@@ -1,0 +1,22 @@
+{% extends 'index/base.html'%}
+{% block pagosRentas %}open{% endblock pagosRentas %}
+{% block contenido %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'inicio:index' %}">Inicio</a></li> 
+    <li class="breadcrumb-item"><a href="{% url 'proveedor:contrato_listar' %}">Contratos</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Pago</li>
+  </ol>
+</nav>
+
+<div class="container">
+  <form method="post" class="col-sm-4" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-outline-success">Guardar cambios</button>
+  </form>
+</div>
+{% endblock contenido %}

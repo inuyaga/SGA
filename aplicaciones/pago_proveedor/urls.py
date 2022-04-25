@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, re_path
 from aplicaciones.pago_proveedor.views import ProveedorList, ProveedorCreate, ProveedorUpdate, \
 ProveedorDelete, ContratosList, ContratoCreate, ContratoDelete, ContratoUpdate,  \
-ContratoDetalle, PagoCreate, PagoList, PagoDelete, PagoUpdate,  \
+ContratoDetalle, PagoCreate, PagoCreateP, PagoList, PagoUpdateOb, PagoDelete, PagoUpdate,  \
 report_contratso, CasaDeptoList, CasaDeptoAdd
 # from aplicaciones.inicio.views import inicio
 app_name = "proveedor"
@@ -22,10 +22,12 @@ urlpatterns = [
     re_path(r'^contrato/editar/(?P<pk>\d+)/$', ContratoUpdate.as_view(), name='contrato_edicion'),
    
     # URLS DE PAGOS
-    path('pago/crear/<int:pk>/', PagoCreate.as_view(), name='pago_crear'),
+    path('pago/crear/<int:pk>/', PagoCreateP.as_view(), name='pago_crear'),
+    path('pago/generar/<int:pk>/', PagoCreate.as_view(), name='pago_generar'),
     # path('pago/listar/', PagoList.as_view(), name='pago_listar'),
     path('pago/eliminar/<int:pk>/<int:id_pago>/', PagoDelete.as_view(), name='pago_eliminar'),
     path('pago/editar/<int:pk>/', PagoUpdate.as_view(), name='pago_edicion'),
+    path('pago/nota/<int:pk>/', PagoUpdateOb.as_view(), name='pago_observacion'),
     # path('pago/complemento/<int:pk>/', ComplementoCreate.as_view(), name='complemento_crear'),
     # path('pago/complemento/eliminar/<int:pk>/<int:id_comp>/', ComplementoDelete.as_view(), name='complemento_delete'), 
 

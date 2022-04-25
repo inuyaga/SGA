@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, get_object_or_404
-from aplicaciones.pago_proveedor.forms import NuevoProveedorForm, ContratosForms, PagoForms, \
+from aplicaciones.pago_proveedor.forms import NuevoProveedorForm, ContratosForms, PagoForms, CrearPagoForms, \
 ContratosFormsEdit, NuevoDeptoCasaForm
 from aplicaciones.pago_proveedor.models import Proveedor, Contrato, Pago, Renta
 from django.shortcuts import redirect
@@ -20,9 +20,16 @@ from django.http import HttpResponse
 from openpyxl import Workbook
 from reportlab.pdfgen import canvas
 from django.http import FileResponse
-import io
-
-
+from io import BytesIO
+from reportlab.platypus import (SimpleDocTemplate, PageBreak, Image, Spacer,Paragraph, Table, TableStyle, Spacer)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import A4, letter, landscape
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT, TA_LEFT
+from django.utils.formats import localize
+PAGE_WIDTH = letter[0]
+PAGE_HEIGHT = letter[1]
 # Create your views here.
 # def proveedor_report(render)
 # pylint: disable = E1101
@@ -303,7 +310,7 @@ class ContratoUpdate(UpdateView):
 
 # CLASES PARA LA VISTA DE PAGOS
 # -------------------------------------------------------------------------------------------------------------
-class PagoCreate(CreateView):
+class PagoCreateP(CreateView):
     model = Pago
     form_class = PagoForms
     template_name = 'pagoproveedor/pago/pago_create.html'
@@ -324,6 +331,77 @@ class PagoCreate(CreateView):
         self.object = form.save()
         return super().form_valid(form)
 
+class PagoCreate(View):
+    id_pago=0
+    pago_object=Contrato.objects.none()
+    
+    def myFirstPage(self, canvas, doc):
+        Title = "SOLICITUD DE PAGO"
+        canvas.saveState()
+        canvas.setFont('Times-Bold', 16)
+        
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 50, Title)
+        stylo = ParagraphStyle('firma_style', alignment=TA_CENTER, fontSize=6, fontName="Times-Roman")
+        stylo2 = ParagraphStyle('firma_style', alignment=TA_CENTER, fontSize=8, fontName="Times-Bold")
+        dta=[
+            (Paragraph('', stylo2), Paragraph('RECIBIÓ', stylo2), Paragraph('', stylo2)),
+            (Paragraph('', stylo), Paragraph('           ', stylo), Paragraph('', stylo)),
+            ]
+
+        tabla=Table(dta, colWidths=[6 * cm, 6 * cm, 6 * cm])
+        tabla.wrapOn(canvas, PAGE_WIDTH, PAGE_HEIGHT)
+        tabla.drawOn(canvas, 50, 20*cm)
+        canvas.restoreState() 
+    
+    def dispatch(self, *args, **kwargs):
+        self.id_pago=self.kwargs.get('pk')
+        self.pago_object=Contrato.objects.get(contrato_id = self.id_pago)
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        new_asig = Pago(contrato_id_id=self.id_pago)
+        new_asig.save()
+
+        response = HttpResponse(content_type='application/pdf')
+        buff = BytesIO()
+        doc = SimpleDocTemplate(buff, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=60, bottomMargin=18, title='SOLICITUD DE PAGO')
+        items = []
+        folio_format = ParagraphStyle('folio_serv', alignment = TA_LEFT, fontSize = 9, fontName="Times-Roman")
+        fecha_format = ParagraphStyle('fecha_stylo', alignment = TA_RIGHT, fontSize = 9, fontName="Times-Roman")
+
+        folio_txt="<strong>CONTRATO:</strong><em><u>{}</u></em>".format(self.id_pago)
+        p1=Paragraph(folio_txt, folio_format)
+        dta=[[p1]]
+
+        folio_txt="<strong>SUCURSAL:</strong><em><u>{}</u></em>".format(localize(self.pago_object.contrato_sucursal))
+        p2=Paragraph(folio_txt, fecha_format)
+        dta=[(p1, p2)]
+
+        tabla=Table(dta, colWidths=[9 * cm, 10 * cm])
+        items.append(tabla)
+        items.append(Spacer(0,20))
+    
+        dta=[
+            ('PROVEEDOR:', self.pago_object.contrato_proveedor_id.proveedor_nombre),
+            ('RFC:', self.pago_object.contrato_proveedor_id.proveedor_rfc),
+            ('BANCO:', self.pago_object.contrato_proveedor_id.proveedor_banco),
+            ('CUENTA:', self.pago_object.contrato_proveedor_id.proveedor_cuenta),
+            ]
+
+        tabla=Table(dta, colWidths=[5 * cm, 14 * cm])
+        tabla.setStyle(TableStyle(
+            [
+                ('GRID', (0, 0), (1, -1), 1, colors.dodgerblue),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.transparent)
+            ]
+        ))
+        items.append(tabla)
+        items.append(Spacer(0,20))
+
+        doc.build(items, onFirstPage=self.myFirstPage) 
+        response.write(buff.getvalue())
+        buff.close()
+        return response
 
 class PagoList(ListView):
     paginate_by = 10
@@ -367,7 +445,7 @@ class PagoDelete(DeleteView):
 class PagoUpdate(UpdateView):
     model = Pago
     form_class = PagoForms
-    template_name = 'pagoproveedor/pago/pago_create.html'
+    template_name = 'pagoproveedor/pago/pago_update.html'
     success_url = reverse_lazy('proveedor:contrato_listar')
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -381,6 +459,24 @@ class PagoUpdate(UpdateView):
     @method_decorator(permission_required('pago_proveedor.change_pago',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(PagoUpdate, self).dispatch(*args, **kwargs)
+
+class PagoUpdateOb(UpdateView):
+    model = Pago
+    form_class = CrearPagoForms
+    template_name = 'pagoproveedor/pago/pago_update.html'
+    success_url = reverse_lazy('proveedor:contrato_listar')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        try:
+            context['pagos'] = Pago.objects.filter(contrato_id_id=self.kwargs.get('pk'))
+        except Pago.DoesNotExist:
+            context['pagos'] = None
+        return context
+
+    @method_decorator(permission_required('pago_proveedor.change_pago',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(PagoUpdateOb, self).dispatch(*args, **kwargs)
 
 
 
