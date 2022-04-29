@@ -38,8 +38,8 @@
 				<th scope="row">{{renta.depto}}</th>
 				<td>{{renta.direccion}}</td>
 				<td>
-					<a class="btn btn-outline-success" href="{% url 'proveedor:edicion_p' renta.id %}" role="button">Editar</a>
-					<a class="btn btn-outline-danger" href="{% url 'proveedor:eliminar' renta.id %}" role="button">Eliminar</a>
+					<a class="btn btn-outline-success" href="{% url 'proveedor:edicion_inmueble' renta.id %}" role="button">Editar</a>
+					<a class="btn btn-outline-danger" href="{% url 'proveedor:eliminar_inmueble' renta.id %}" role="button">Eliminar</a>
 				</td>
 			</tr>
 			{% endfor %}

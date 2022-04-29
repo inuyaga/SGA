@@ -531,3 +531,52 @@ class CasaDeptoAdd(CreateView):
     @method_decorator(permission_required('pago_proveedor.add_renta',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(CasaDeptoAdd, self).dispatch(*args, **kwargs)
+
+
+class CasaDeptoUpdate(UpdateView):
+    model = Renta
+    form_class = NuevoDeptoCasaForm
+    template_name = 'pagoproveedor/create_proveedor.html'
+    success_url = reverse_lazy('proveedor:depto_casa_lista')
+
+    def get_context_data(self, **kwargs):
+        context = super(CasaDeptoUpdate, self).get_context_data(**kwargs)
+        context['tituloBrea'] = 'Actualizar'
+        context['usuario'] = self.request.user
+        return context
+    @method_decorator(permission_required('pago_proveedor.change_renta',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(CasaDeptoUpdate, self).dispatch(*args, **kwargs)
+
+class CasaDeptoDelete(DeleteView):
+    model = Renta
+    form_class = NuevoDeptoCasaForm
+    template_name = 'pagoproveedor/elimina_proveedor.html'
+    success_url = reverse_lazy('proveedor:depto_casa_lista')
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['usuario'] = self.request.user
+
+
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        #
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.delete(request, *args, **kwargs)
+        except ProtectedError:
+            contex = {
+        'proveedores': 'proveedor'
+                        }
+        return render(request, 'pagoproveedor/protecteError.html', contex)
+
+    @method_decorator(permission_required('pago_proveedor.delete_renta',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(CasaDeptoDelete, self).dispatch(*args, **kwargs)

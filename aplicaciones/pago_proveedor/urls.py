@@ -3,7 +3,7 @@ from django.urls import path, re_path
 from aplicaciones.pago_proveedor.views import ProveedorList, ProveedorCreate, ProveedorUpdate, \
 ProveedorDelete, ContratosList, ContratoCreate, ContratoDelete, ContratoUpdate,  \
 ContratoDetalle, PagoCreate, PagoCreateP, PagoList, PagoUpdateOb, PagoDelete, PagoUpdate,  \
-report_contratso, CasaDeptoList, CasaDeptoAdd
+report_contratso, CasaDeptoList, CasaDeptoAdd, CasaDeptoUpdate
 # from aplicaciones.inicio.views import inicio
 app_name = "proveedor"
 urlpatterns = [
@@ -33,7 +33,7 @@ urlpatterns = [
 
     path('locacion/lista/', CasaDeptoList.as_view(), name='depto_casa_lista'),
     path('agregar/locacion', CasaDeptoAdd.as_view(), name='depto_casa_add'),
-   
-
+    re_path(r'^editar_inmueble/(?P<pk>\d+)/$', CasaDeptoUpdate.as_view(), name='edicion_inmueble'),
+    re_path(r'^eliminar_inmueble/(?P<pk>\d+)/$', ProveedorDelete.as_view(), name='eliminar_inmueble'),
 ]
  

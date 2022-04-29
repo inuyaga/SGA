@@ -109,11 +109,9 @@ class NuevoDeptoCasaForm(forms.ModelForm):
         model = Renta
         fields = '__all__'
         # fields = ('proveedor_nombre', 'proveedor_rfc', 'proveedor_email',)
-        # widgets= {
-        # 'proveedor_nombre' : forms.TextInput(),
-        # 'proveedor_rfc': forms.TextInput(),
-        # 'proveedor_email': forms.EmailInput(),
-        # }
+        widgets= {
+        'direccion' : forms.Textarea(),
+        }
     def __init__(self, *args, **kwargs):
         super(NuevoDeptoCasaForm, self).__init__(*args, **kwargs)
         for field in self.fields:
