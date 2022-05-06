@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, UpdateView
-from aplicaciones.web.models import Marca, Catalagos, Promocion, Evento, RegistroExpo, Vacante, Postulacion, Detalle_Compra_Web, Domicilio, CompraWeb, CorreoCco, DescuentoTotal
-from aplicaciones.web.forms import CorreoForm, IncribirForm, PostulacionForm, DomicilioForm
+from aplicaciones.web.models import Marca, QuejaAcoso, Promocion, Evento, RegistroExpo, Vacante, Postulacion, Detalle_Compra_Web, Domicilio, CompraWeb, CorreoCco, DescuentoTotal
+from aplicaciones.web.forms import CorreoForm, IncribirForm, PostulacionForm, DomicilioForm, AsuntosInternosForm
 from django.contrib import messages
 from django.urls import reverse
 from django.shortcuts import redirect
@@ -655,4 +655,10 @@ class ProductoDetalleViewV2(DetailView):
             return self.render_to_response(context=context) 
         else:          
             messages.warning(request, 'Supera el limite de producto en existencia')
-            return self.render_to_response(context=context) 
+            return self.render_to_response(context=context)
+
+class AsuntosInternosAdd(CreateView):
+    model = QuejaAcoso
+    form_class = AsuntosInternosForm
+    template_name = 'web/V2/asuntosinternos.html'
+    success_url=reverse_lazy("web:inicio")

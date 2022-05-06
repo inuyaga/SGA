@@ -1,5 +1,5 @@
 from django import forms
-from aplicaciones.web.models import CorreoCco, RegistroExpo, Postulacion, Domicilio, Blog
+from aplicaciones.web.models import CorreoCco, RegistroExpo, Postulacion, Domicilio, Blog, QuejaAcoso
 from tinymce.widgets import TinyMCE
 
 class CorreoForm(forms.ModelForm):
@@ -63,3 +63,16 @@ class BlogForms(forms.ModelForm):
         widgets = {
         'blog_descripcion': forms.Textarea(attrs={"rows":3, "cols":80}),
         }
+
+class AsuntosInternosForm(forms.ModelForm):
+    class Meta:
+        model = QuejaAcoso
+        fields = '__all__'
+        widgets = {
+        'qa_asunto': forms.Textarea(attrs={'rows':4, 'cols':15}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AsuntosInternosForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})

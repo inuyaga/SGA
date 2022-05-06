@@ -60,7 +60,7 @@ class Pago(models.Model):
                    ('TRANSFERENCIA', 'TRANSFERENCIA'),('TDD','TDD'),('TDC','TDC'))
     pago_id = models.AutoField(primary_key=True)
     contrato_id = models.ForeignKey(Contrato, null=False, blank=False, on_delete=models.PROTECT)
-    pago_pdf = models.FileField(null=True, blank=True, upload_to='Facturas/pagos/', verbose_name="Comprobante PDF (obligatorio)")
+    pago_pdf = models.FileField(null=True, blank=True, upload_to='Facturas/pagos/', verbose_name="Comprobante de pago PDF")
     pago_monto = models.FloatField(null=True, blank=True, verbose_name="Monto del pago (obligatorio)")
     pago_metodo = models.CharField(null=True, blank=True, max_length=40, choices=METODO_PAGO, verbose_name="Método de pago (obligatorio)")
     pago_creado = models.DateTimeField(auto_now_add=True)

@@ -1,9 +1,12 @@
+from msilib.schema import Class
 from django.db import models
 from django.db.models import FloatField, Sum, F
 from django.core.validators import FileExtensionValidator
+from django.forms import DateField
 from aplicaciones.pedidos.models import Producto
 from django.conf import settings
 from aplicaciones.pedidos.models import Area
+from aplicaciones.empresa.models import Empresa
 Usuario = settings.AUTH_USER_MODEL 
 # Create your models here.
 class Departamento(models.Model):
@@ -220,3 +223,9 @@ class DescuentoTotal(models.Model):
     class Meta:
         verbose_name = "DescuentoTotal"
         verbose_name_plural = "DescuentosTotales"
+
+class QuejaAcoso(models.Model):
+    qa_empresa = models.ForeignKey(Empresa, verbose_name='Empresa a la que desea delegar el reporte', on_delete=models.CASCADE)
+    qa_correo = models.EmailField('Correo electronico para seguimiento del reporte')
+    qa_asunto = models.CharField('Redacción del reporte', max_length=500, help_text="El reporte debe ser claro y objetivo")
+    qa_fechaReporte = models.DateTimeField(verbose_name='Creado', auto_now_add=True)

@@ -403,6 +403,81 @@ class PagoCreate(View):
         buff.close()
         return response
 
+class PagorRegerarPDF(View):
+    id_contrato=0
+    id_pago=0
+    pago_object=Contrato.objects.none()
+    new_asig=Pago.objects.none()
+    
+    def myFirstPage(self, canvas, doc):
+        Title = "SOLICITUD DE PAGO"
+        canvas.saveState()
+        canvas.setFont('Times-Bold', 16)
+        
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT - 50, Title)
+        stylo = ParagraphStyle('firma_style', alignment=TA_CENTER, fontSize=6, fontName="Times-Roman")
+        stylo2 = ParagraphStyle('firma_style', alignment=TA_CENTER, fontSize=8, fontName="Times-Bold")
+        dta=[
+            (Paragraph('', stylo2), Paragraph('RECIBIÓ', stylo2), Paragraph('', stylo2)),
+            (Paragraph('', stylo), Paragraph('           ', stylo), Paragraph('', stylo)),
+            ]
+
+        tabla=Table(dta, colWidths=[6 * cm, 6 * cm, 6 * cm])
+        tabla.wrapOn(canvas, PAGE_WIDTH, PAGE_HEIGHT)
+        tabla.drawOn(canvas, 50, 19.5*cm)
+        canvas.restoreState() 
+    
+    def dispatch(self, *args, **kwargs):
+        self.id_pago=self.kwargs.get('pago')
+        self.new_asig = Pago.objects.get(pago_id=self.id_pago)
+        self.pago_object=Contrato.objects.get(contrato_id = self.new_asig.contrato_id_id)
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        response = HttpResponse(content_type='application/pdf')
+        buff = BytesIO()
+        doc = SimpleDocTemplate(buff, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=60, bottomMargin=18, title='SOLICITUD DE PAGO')
+        items = []
+        folio_format = ParagraphStyle('folio_serv', alignment = TA_LEFT, fontSize = 9, fontName="Times-Roman")
+        fecha_format = ParagraphStyle('fecha_stylo', alignment = TA_RIGHT, fontSize = 9, fontName="Times-Roman")
+
+        folio_txt="<strong>CONTRATO:</strong><em><u>{}</u></em>".format(self.pago_object.contrato_id)
+        p1=Paragraph(folio_txt, folio_format)
+        dta=[[p1]]
+
+        folio_txt="<strong>SUCURSAL:</strong><em><u>{}</u></em>".format(localize(self.pago_object.contrato_sucursal))
+        p2=Paragraph(folio_txt, fecha_format)
+        dta=[(p1, p2)]
+
+        tabla=Table(dta, colWidths=[9 * cm, 10 * cm])
+        items.append(tabla)
+        items.append(Spacer(0,20))
+    
+        dta=[
+            ('PROVEEDOR:', self.pago_object.contrato_proveedor_id.proveedor_nombre),
+            ('RFC:', self.pago_object.contrato_proveedor_id.proveedor_rfc),
+            ('BANCO:', self.pago_object.contrato_proveedor_id.proveedor_banco),
+            ('CUENTA:', self.pago_object.contrato_proveedor_id.proveedor_cuenta),
+            ('MENSUALIDAD:', self.pago_object.contrato_monto),
+            ('NOTA:', self.new_asig.pago_observacion),
+            ]
+
+        tabla=Table(dta, colWidths=[5 * cm, 14 * cm])
+        tabla.setStyle(TableStyle(
+            [
+                ('GRID', (0, 0), (1, -1), 1, colors.dodgerblue),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.transparent)
+            ]
+        ))
+        items.append(tabla)
+        items.append(Spacer(0,20))
+
+        doc.build(items, onFirstPage=self.myFirstPage) 
+        response.write(buff.getvalue())
+        buff.close()
+        return response
+
 class PagoList(ListView):
     paginate_by = 10
     model = Pago

@@ -33,4 +33,5 @@ urlpatterns = [
     path('politicas/', web_dash.PoliticasDevoluciones.as_view(), name='politicasdevo'),
     path('serviciocliente/', web_dash.ServicioCliente.as_view(), name='serviciocliente'),
     path('contacto/', web_dash.Contacto.as_view(), name='contacto'),
+    path('asuntosinternos/', web_dash.AsuntosInternosAdd.as_view(), name='AsuntosInternos'),
 ]

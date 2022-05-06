@@ -24,7 +24,8 @@
   <thead class="thead-light">
     <tr>
       <th scope="col">#</th>
-      <th scope="col">PDF</th>
+      <th scope="col">GEN PDF</th>
+      <th scope="col">COMPROBANTE</th>
       <th scope="col">NOTA</th>
       <th scope="col">MONTO</th>
       <th scope="col">MÉTODO</th>
@@ -38,9 +39,10 @@
   {% for pago in pagos %}
     <tr>
       <td>{{pago.pago_id}}</td>
+      <td><a class="btn btn-outline-warning btn-sm" href="{% url 'proveedor:pago_regenerar' pago.pago_id %}" role="button"><i class="material-icons">picture_as_pdf</i></a></td>
       <th scope="row">
         {% if pago.pago_pdf != "" %}
-        <a href="{{pago.pago_pdf.url}}">PDF</a>
+        <a href="{{pago.pago_pdf.url}}"><i class="material-icons">attach_money</i>Archivo</a>
         {% endif %}
       </th>
       <td>{{pago.pago_observacion}}</td>

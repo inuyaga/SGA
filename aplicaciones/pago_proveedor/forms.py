@@ -75,7 +75,7 @@ class PagoForms(forms.ModelForm):
         model = Pago
         exclude = ['pago_creado', 'contrato_id','pago_observacion']
         widgets = {
-        'pago_pdf': forms.FileInput(attrs={'required': 'true'}),
+        # 'pago_pdf': forms.FileInput(attrs={'required': 'true'}),
         'pago_monto': forms.NumberInput(attrs={'required': 'true'}),
         'pago_metodo': forms.Select(attrs={'required': 'true'}),
         }
