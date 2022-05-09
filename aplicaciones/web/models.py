@@ -1,8 +1,8 @@
-from msilib.schema import Class
+# from msilib.schema import Class
 from django.db import models
 from django.db.models import FloatField, Sum, F
 from django.core.validators import FileExtensionValidator
-from django.forms import DateField
+# from django.forms import DateField
 from aplicaciones.pedidos.models import Producto
 from django.conf import settings
 from aplicaciones.pedidos.models import Area
