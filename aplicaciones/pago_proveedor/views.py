@@ -187,7 +187,7 @@ class ContratosList(ListView):
         return context
 
     def get_queryset(self):
-        queryset = super(ContratosList, self).get_queryset()
+        queryset = super(ContratosList, self).get_queryset().order_by('-contrato_id')
         filter = self.request.GET.get('autorizado')
         filter2 = self.request.GET.get('descargar')
         if filter == 'True':
