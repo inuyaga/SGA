@@ -11,6 +11,9 @@
 </nav>
 
 <div class="container">
+{% if autorizar %}
+<h2>{{autorizar}}</h2>
+{% endif %}
   <form method="post" class="col-sm-4" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="row">

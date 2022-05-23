@@ -1,0 +1,182 @@
+{% extends 'index/base.html'%}
+{% block gastosRentas %}open{% endblock gastosRentas %}
+{% load verbose_name_tags %}
+{% block contenido %}
+{% load humanize %}
+
+<div class="container-fluid p-y-md">
+
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Filtros aplicables</h4>
+                <ul class="card-actions">
+                    <!-- <li>
+                            <span>Text 1</span>
+                        </li> -->
+                </ul>
+                <!-- .card-actions -->
+            </div>
+
+            <div class="card-block">
+                <form class="form-horizontal m-t-sm" action="" method="GET">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                            {% for input in form_filtro %}
+                                <div class="col-xs-3">
+                                        {{input.label}}                                        
+                                        {{input}}                                        
+                                    </div>
+                            {% endfor %}
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="form-group m-b-0">
+                        <div class="col-xs-12">
+                            <button class="btn btn-app" type="submit"><i class="ion-checkmark m-r-xs"></i> Filtrar</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+    <form action="" method="POST">
+        <div class="col-sm-12">
+            {% if perms.gasto.add_reembolso %}              
+            <button class="btn btn-xs btn-pill btn-app-teal" type="submit">Crear Reembolso de rentas!</button>     
+            {% endif %}
+            
+            {% if perms.gasto.view_reembolso %}  
+            
+            <a class="btn btn-xs btn-pill btn-app-cyan" href="{% url 'gastos:reembolsoRenta_list' %}" role="button">Reembolsos de renta</a>                           
+            {% endif %}
+        </div>
+    {% csrf_token %}
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-block">
+                    <div class="table-responsive">
+                        <table class="table-condensed">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th></th>
+                                    <th>{{ object_list|get_queryset_field_verbose_name:"pago_id" }}</th>
+                                    <th>Proveedor</th>
+                                    <th>{{ object_list|get_queryset_field_verbose_name:"contrato_id" }}</th>
+                                    <th>Método pago</th>
+                                    <th>{{ object_list|get_queryset_field_verbose_name:"pago_creado" }}</th>                                
+                                    <th>{{ object_list|get_queryset_field_verbose_name:"pago_status" }}</th>
+                                    <th>Monto</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in object_list %}
+                                <tr>
+                                    <td>                                    
+                                        {% if item.pago_status == 4 %}                                        
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="{{item.pago_id}}" id="flexCheckDefault" name="checkId">                                        
+                                        </div>
+                                        {% endif %}                                        
+                                    </td>
+                                    <td>{{item.pago_id}}</td>                            
+                                    <td><em class="text-muted">{{item.contrato_id.contrato_proveedor_id}}</em></td>
+                                    <td><em class="text-muted">{{item.contrato_id}}</em></td>
+                                    <td>{{item.pago_metodo}}</td>
+                                    <td>{{item.pago_creado}}</td>
+                                    <td><span class="{{badge|get_item:item.pago_status}}">{{item.get_pago_status_display}}</span></td>
+                                    <td>{{item.pago_monto |floatformat:"2"|intcomma}}</td>
+                                    
+                                    
+                                    <td>
+    
+                                        {% if perms.gasto %}                                                                                                                                                   
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            {% if item.pago_status == 3 %}
+                                                {% if perms.gasto.puede_pagar_gasto %}  
+                                                <button type="button" onclick="pagar({{item.pago_id}},'{{item.contrato_id}}')" class="btn btn-dark btn-sm" title="Pagar">
+                                                    <i class="fa fa-credit-card" aria-hidden="true"></i></button>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+    
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+    
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-lg-12 col-centered">
+                {% block pagination %}
+                {% if is_paginated %}
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}"><i
+                                    class="material-icons">
+                                    navigate_before
+                                </i></a></li>
+                        {% endif %}
+                        <span class="page-link">
+                            Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                            <span class="sr-only">(current)</span>
+                        </span>
+                        {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}"><i
+                                    class="material-icons">
+                                    navigate_next
+                                </i></a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                {% endblock %}
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock contenido %}
+
+
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function updatePage() {
+        window.location.reload();
+    }
+    
+    function pagar(folio,prov) {
+        alertify.confirm('Pagar folio de renta de un inmueble', `Esta seguro de pagar el Folio: ${folio} del inmueble "${prov}"`, function () {
+            
+            axios.post(`{% url 'gastos:gasto_updaterenta_status' %}`, {
+                g_id: folio,      
+                g_estado: 4,             
+            })
+                .then(function (response) {
+                    console.log(response.data);
+                    updatePage();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+            , function () { });
+    }
+</script>
+{% endblock script %}

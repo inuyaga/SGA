@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models import Sum
 from aplicaciones.empresa.models import Departamento, Empresa
 from django.conf import settings
+
+from aplicaciones.pago_proveedor.models import Pago
 Usuario = settings.AUTH_USER_MODEL 
 
 
@@ -63,6 +65,21 @@ class Reembolso(models.Model):
         
     class Meta:
         ordering = ['-r_id']
+
+class ReembolsoRenta(models.Model):
+    rr_id=models.BigAutoField(primary_key=True, verbose_name="ID")
+    rr_date_add=models.DateTimeField(auto_now_add=True, verbose_name="Fecha de reembolso")
+    rr_by_user=models.ForeignKey(Usuario, models.CASCADE, verbose_name="Usuario que creó")
+    rr_gastos=models.ManyToManyField(Pago, verbose_name="Pagos")
+    def total(self):
+        suma = 0;
+        for gasto in self.rr_gastos.all():      
+            suma += gasto.pago_monto or 0
+
+        return suma
+        
+    class Meta:
+        ordering = ['-rr_id']
         # permissions = (
         #     ("puede_crear_reembolso", "Puede crear reembolso"),            
         # )

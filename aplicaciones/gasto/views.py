@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView, DeleteView, DetailView
 from aplicaciones.gasto.models import *
+from aplicaciones.pago_proveedor.models import Pago
 from aplicaciones.gasto.forms import *
 from aplicaciones.pago_proveedor.eliminaciones import get_deleted_objects
 
@@ -23,7 +24,7 @@ from openpyxl.styles import PatternFill
 from django.http import HttpResponse
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
-from decimal import Decimal
+# from decimal import Decimal
 
 class InicioView(TemplateView):
     template_name = "gasto/inicio.html"
@@ -75,7 +76,6 @@ class TipoGastoDelete(PermissionRequiredMixin, DeleteView):
 
 
 class GastoViewList(ListView):
-
     model = Gasto
     template_name = "gasto/list_gasto.html"
     paginate_by = 100
@@ -156,6 +156,68 @@ class GastoViewList(ListView):
 
         return redirect(url)
 
+class GastoRentaViewList(ListView):
+    model = Pago
+    template_name = "gasto/list_gasto_renta.html"
+    paginate_by = 100
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        week = self.request.GET.get('week')
+        status = self.request.GET.get('status')
+
+        if not self.request.user.is_superuser:
+            permiso = self.request.user.has_perm('gasto.view_gasto')
+            if permiso == False:
+                try:
+                    queryset = queryset.filter(g_depo=self.request.user.departamento)
+                    print('try')
+                except AttributeError as error:
+                    messages.warning(self.request, 'Usuario:{} debe tener asignado un departamento para ver gastos de su departamento'.format(
+                        self.request.user.username))
+
+        if week != None and week != '':
+            week = week.replace('W', '')
+            week = week.split('-')
+            # queryset = queryset.filter(pago_creado__year=week[0])
+            queryset = queryset.filter(pago_creado__week=week[1])
+
+        if status != '0' and status != None:            
+            queryset = queryset.filter(pago_status=status)
+
+        queryset=queryset.order_by('pago_status', '-pago_id')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        badge = {1: 'badge badge-info', 2: 'badge badge-success', 3: 'badge badge-primary', 4: 'badge badge-secondary', 5: 'badge badge-danger', 6: 'badge badge-warning',}
+        context['form_filtro'] = FiltroGastoRentaForm(self.request.GET)        
+        context['badge'] = badge
+
+        urls_formateada = self.request.GET.copy()
+        if 'page' in urls_formateada:
+            del urls_formateada['page']
+        context['urls_formateada'] = urls_formateada
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        checkId = request.POST.getlist('checkId')
+        url = reverse('gastos:gastorenta_list')
+        # print(checkId)
+        if checkId:
+            gastos = Pago.objects.filter(pago_id__in=checkId)
+            reembolso_crear = ReembolsoRenta(rr_by_user=request.user)
+            reembolso_crear.save()
+            reembolso_crear.rr_gastos.add(*gastos)
+            gastos.update(pago_status=6)
+            messages.warning(request, 'Reembolso creado con el folio <a href="{}?reembolsoID={}">{}</a> '.format(
+                url, reembolso_crear.pk, reembolso_crear.pk))
+        else:
+            messages.warning(request, 'No ha seleccionado ningun gasto..')
+
+        return redirect(url)
+
 
 class GastoCreate(PermissionRequiredMixin, CreateView):
     permission_required = 'gasto.add_gasto'
@@ -184,7 +246,7 @@ class GastoCreate(PermissionRequiredMixin, CreateView):
                 return self.render_to_response(context)
         except AttributeError as identifier:
             
-            messages.warning(self.request, 'Usuario:{} debe tener asignado un departamento para poder crear gastos errors:{}'.format(
+            messages.warning(self.request, 'Usuario:{} debe tener asignado un departamento para poder crear gastos error:{}'.format(
                 self.request.user.username, identifier))
             return self.render_to_response(context)
 
@@ -262,6 +324,25 @@ class UpdateStatusView(APIView):
         }
         return Response(data, status=status.HTTP_202_ACCEPTED)
 
+class UpdateStatusRentaView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = ()
+
+    def post(self, request, *args, **kwargs):
+        g_id = request.data["g_id"]
+        g_estado = request.data["g_estado"]
+        g_estado_filter = 1 if g_estado == 5 else g_estado - 1
+
+        Pago.objects.filter(pago_id=g_id, pago_status=g_estado_filter).update(
+            pago_status=g_estado)
+
+        data = {
+            'id': g_id,
+            'new_stado': g_estado,
+            'filter_stado': g_estado_filter,
+        }
+        return Response(data, status=status.HTTP_202_ACCEPTED)
+
 
 class GastoDelete(PermissionRequiredMixin, DeleteView):
     permission_required = 'gasto.delete_gasto'
@@ -288,7 +369,15 @@ class ReembolsoList(PermissionRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context['TipoGastoForm']=TipoGastoForm
+        return context
+
+class ReembolsoRentaList(PermissionRequiredMixin, ListView):
+    permission_required = 'gasto.view_reembolso'
+    model = ReembolsoRenta
+    template_name = "gasto/reembolsoRenta.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         return context
 
 
@@ -366,7 +455,79 @@ class Download_report_reembolso(TemplateView):
         for col, value in dims.items():
             ws.column_dimensions[get_column_letter(col)].width = value+1
 
-        nombre_archivo = 'reemboso.xls'
+        nombre_archivo = 'reemboso.xlsx'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition'] = content
+        wb.save(response)
+        return response
+
+class Download_report_reembolsoRenta(TemplateView):
+    def get(self, request, *args, **kwargs):
+        
+        wb = Workbook()
+        ws = wb.active
+
+        IDReembolso = self.request.GET.get('IDReembolso')
+        queryset = ReembolsoRenta.objects.all()
+
+        if IDReembolso != None:
+            queryset = queryset.get(rr_id=IDReembolso)
+
+        ws['A1'] = 'REEMBOLSO DE GASTOS DE RENTAS #{}'.format(IDReembolso)
+        st = ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:F1')
+        ws.sheet_properties.tabColor = "1072BA"
+
+        ws['A2'] = '###'        
+        ws['B2'] = 'Proveedor'
+        ws['C2'] = 'Contrato'
+        ws['D2'] = 'M Pago'
+        ws['E2'] = 'Creado'
+        ws['F2'] = 'Monto'        
+
+        cont = 2
+        suma=0
+        ws.cell(row=cont, column=1).fill = PatternFill(start_color='004ac2', end_color='004ac2', fill_type='solid')
+        ws.cell(row=cont, column=2).fill = PatternFill(start_color='004ac2', end_color='004ac2', fill_type='solid')
+        ws.cell(row=cont, column=3).fill = PatternFill(start_color='004ac2', end_color='004ac2', fill_type='solid')
+        ws.cell(row=cont, column=4).fill = PatternFill(start_color='004ac2', end_color='004ac2', fill_type='solid')
+        ws.cell(row=cont, column=5).fill = PatternFill(start_color='004ac2', end_color='004ac2', fill_type='solid')
+        ws.cell(row=cont, column=6).fill = PatternFill(start_color='004ac2', end_color='004ac2', fill_type='solid')
+        cont=cont+1
+        for item in queryset.rr_gastos.all():
+            ws.cell(row=cont, column=1).value = item.pago_id                    
+            ws.cell(row=cont, column=2).value = item.contrato_id.contrato_proveedor_id.proveedor_nombre
+            ws.cell(row=cont, column=3).value = item.contrato_id.contrato_sucursal.depto
+            ws.cell(row=cont, column=4).value = item.pago_metodo
+            ws.cell(row=cont, column=5).value = item.pago_creado
+            ws.cell(row=cont, column=6).value = item.pago_monto
+            ws.cell(row=cont, column=6).number_format = '#,##0.00'
+            cont += 1
+            suma += item.pago_monto or 0
+            ws.cell(row=cont, column=6).value= suma
+            
+
+
+        # penultima_fila = cont-1
+        ws.cell(row=cont, column=5).value = "Total"
+        # ws["F"+str(cont)] = "=SUM(F3:F{})".format(penultima_fila)
+        # ws["F"+str(cont)].number_format = '#,##0.00'
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max(
+                            (dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+        nombre_archivo = 'reembosorenta.xlsx'
         response = HttpResponse(content_type="application/ms-excel")
         content = "attachment; filename = {0}".format(nombre_archivo)
         response['Content-Disposition'] = content

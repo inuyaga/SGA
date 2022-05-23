@@ -73,7 +73,7 @@ class ContratosFormsEdit(forms.ModelForm):
 class PagoForms(forms.ModelForm):
     class Meta:
         model = Pago
-        exclude = ['pago_creado', 'contrato_id','pago_observacion']
+        exclude = ['pago_creado', 'contrato_id','pago_observacion','pago_status']
         widgets = {
         # 'pago_pdf': forms.FileInput(attrs={'required': 'true'}),
         'pago_monto': forms.NumberInput(attrs={'required': 'true'}),

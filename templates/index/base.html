@@ -356,7 +356,7 @@
 
 
                             {% if perms.gasto %}
-                            <li class="nav-item nav-item-has-subnav">
+                            <li class="nav-item nav-item-has-subnav {% block gastosRentas %}{% endblock gastosRentas %}">
                                 <a href="javascript:void(0)"><i class="fa fa-money"></i>Gastos</a> 
                                 <ul class="nav nav-subnav">
                                     {% if perms.gasto.view_tipogasto %} 
@@ -367,6 +367,9 @@
                                     
                                     <li>
                                         <a href="{% url 'gastos:gasto_list' %}">Gastos</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'gastos:gastorenta_list' %}">Gastos rentas</a>
                                     </li>
                                     
                                 </ul>

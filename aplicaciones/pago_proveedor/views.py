@@ -525,8 +525,10 @@ class PagoUpdate(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usuario'] = self.request.user
+        print(self.kwargs.get('pk'))
         try:
             context['pagos'] = Pago.objects.filter(contrato_id_id=self.kwargs.get('pk'))
+            # context['pagos'].update(pago_status=3)
         except Pago.DoesNotExist:
             context['pagos'] = None
         return context
@@ -534,6 +536,27 @@ class PagoUpdate(UpdateView):
     @method_decorator(permission_required('pago_proveedor.change_pago',reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
                 return super(PagoUpdate, self).dispatch(*args, **kwargs)
+
+class PagoAutorizar(UpdateView):
+    model = Pago
+    form_class = PagoForms
+    template_name = 'pagoproveedor/pago/pago_update.html'
+    success_url = reverse_lazy('proveedor:contrato_listar')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usuario'] = self.request.user
+        print(self.kwargs.get('pk'))
+        try:
+            context['pagos'] = Pago.objects.filter(contrato_id_id=self.kwargs.get('pk'))
+            context['pagos'].update(pago_status=3)
+            context['autorizar'] = "Verifica que la información sea correcta"
+        except Pago.DoesNotExist:
+            context['pagos'] = None
+        return context
+
+    @method_decorator(permission_required('pago_proveedor.pagoproveedor_autorizar_gasto',reverse_lazy('inicio:need_permisos')))
+    def dispatch(self, *args, **kwargs):
+                return super(PagoAutorizar, self).dispatch(*args, **kwargs)
 
 class PagoUpdateOb(UpdateView):
     model = Pago

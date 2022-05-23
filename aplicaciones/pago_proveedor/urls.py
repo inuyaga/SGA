@@ -3,7 +3,7 @@ from django.urls import path, re_path
 from aplicaciones.pago_proveedor.views import ProveedorList, ProveedorCreate, ProveedorUpdate, \
 ProveedorDelete, ContratosList, ContratoCreate, ContratoDelete, ContratoUpdate,  \
 ContratoDetalle, PagoCreate, PagoCreateP, PagoList, PagoUpdateOb, PagoDelete, PagoUpdate,  \
-report_contratso, CasaDeptoList, CasaDeptoAdd, CasaDeptoUpdate, PagorRegerarPDF
+report_contratso, CasaDeptoList, CasaDeptoAdd, CasaDeptoUpdate, PagorRegerarPDF, PagoAutorizar
 # from aplicaciones.inicio.views import inicio
 app_name = "proveedor"
 urlpatterns = [
@@ -28,6 +28,7 @@ urlpatterns = [
     # path('pago/listar/', PagoList.as_view(), name='pago_listar'),
     path('pago/eliminar/<int:pk>/<int:id_pago>/', PagoDelete.as_view(), name='pago_eliminar'),
     path('pago/editar/<int:pk>/', PagoUpdate.as_view(), name='pago_edicion'),
+    path('pago/autorizar/<int:pk>/', PagoAutorizar.as_view(), name='pago_autorizar'),
     path('pago/nota/<int:pk>/', PagoUpdateOb.as_view(), name='pago_observacion'),
     # path('pago/complemento/<int:pk>/', ComplementoCreate.as_view(), name='complemento_crear'),
     # path('pago/complemento/eliminar/<int:pk>/<int:id_comp>/', ComplementoDelete.as_view(), name='complemento_delete'), 

@@ -1,5 +1,6 @@
 from django import forms
 from aplicaciones.gasto.models import *
+# from aplicaciones.pago_proveedor.models import Pago
 from django.forms.models import inlineformset_factory
 
 from aplicaciones.empresa.models import Empresa, Departamento
@@ -67,3 +68,18 @@ class FiltrosGastoForm(forms.Form):
 
 
 ItemGastoInlineFormSet = inlineformset_factory(Gasto, ItemGasto, form=ItemGastoForm, extra=10, can_delete=True, validate_min=True)
+
+class FiltroGastoRentaForm(forms.Form): 
+    week=forms.DateField(widget=forms.DateInput(attrs={'type':'week'}, format='%Y-%m-%d'), required=False, label='Semana')
+    # departamento=forms.ModelChoiceField(queryset=Departamento.objects.all(), required=False)
+    # empresa=forms.ModelChoiceField(queryset=Empresa.objects.all(), required=False)
+    # tip_gasto=forms.ModelChoiceField(queryset=TipoGasto.objects.all(), required=False, label='Tipo de Gasto')
+    status=forms.ChoiceField(choices=((0, '-----'),)+STATUS, required=False, label='Estatus')
+    
+    # reembolsoID
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+# ItemGastoInlineFormSet = inlineformset_factory(Pago, ItemGasto, form=ItemGastoForm, extra=10, can_delete=True, validate_min=True)
