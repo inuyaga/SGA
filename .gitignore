@@ -22,6 +22,7 @@ var/
 wheels/
 *.egg-info/
 .installed.cfg
+.gitignore
 *.egg
 MANIFEST
 
@@ -113,3 +114,5 @@ windowsTaco-env/
 .idea/
 migrations/* !migrations/__init__.py
 0*.py
+*.whl
+static/
