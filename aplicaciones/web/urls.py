@@ -25,6 +25,8 @@ urlpatterns = [
     path('compras/pedidos/<int:pk>/detalles/', web_dash.DetalleCmpraWebView.as_view(), name='compras_web_detalle'),
     path('cuenta/user/', web_dash.DetalleCuentaView.as_view(), name='profile'),
     path('blog/view/<int:pk>/<slug:nombre>/', web_dash.BlogViewSingle.as_view(), name='blog_view'),
+    path('asuntosinternos/', web_dash.AsuntosInternosAdd.as_view(), name='AsuntosInternos'),
+    path('asuntosinternos/lista/', web_dash.AsuntosInternosList.as_view(), name='AsuntosInternosLista'),
     
     
     # Direcciones de la versión fea lic leo
@@ -33,5 +35,4 @@ urlpatterns = [
     path('politicas/', web_dash.PoliticasDevoluciones.as_view(), name='politicasdevo'),
     path('serviciocliente/', web_dash.ServicioCliente.as_view(), name='serviciocliente'),
     path('contacto/', web_dash.Contacto.as_view(), name='contacto'),
-    path('asuntosinternos/', web_dash.AsuntosInternosAdd.as_view(), name='AsuntosInternos'),
 ]

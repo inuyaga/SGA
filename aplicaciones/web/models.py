@@ -103,6 +103,7 @@ STATUS = ((1, 'Creado'), (2, 'Atendiendo'),  (3, 'Surtiendo'), (4, 'En Viaje'), 
 # 4 CUANDO ACTUALIZEN NUMERO DE FACTURA
 TIPO_DOMICILIO = ((1, 'Trabajo'), (2, 'Casa'),)
 TIPO_PAGO = ((1, 'EFECTIVO'),)
+STATUSQUEJA = ((1, 'Creado'), (2, 'Atendiendo'), (3, 'Cerrado'),)
 
 
 
@@ -229,3 +230,4 @@ class QuejaAcoso(models.Model):
     qa_correo = models.EmailField('Correo electronico para seguimiento del reporte')
     qa_asunto = models.CharField('Redacción del reporte', max_length=500, help_text="El reporte debe ser claro y objetivo")
     qa_fechaReporte = models.DateTimeField(verbose_name='Creado', auto_now_add=True)
+    qa_estatus = models.IntegerField(verbose_name="Estado del reporte", choices=STATUSQUEJA, default=1)

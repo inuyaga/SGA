@@ -67,7 +67,8 @@ class BlogForms(forms.ModelForm):
 class AsuntosInternosForm(forms.ModelForm):
     class Meta:
         model = QuejaAcoso
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ('qa_estatus',)
         widgets = {
         'qa_asunto': forms.Textarea(attrs={'rows':4, 'cols':15}),
         }

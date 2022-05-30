@@ -1,0 +1,39 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+ASUNTOS INTERNOS
+{% endblock titulo %}
+{% block asuntosinternosOpen %}Open{% endblock asuntosinternosOpen %}
+{% block contenido %}
+<div class="main">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table-condensed">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Empresa</th>
+                        <th scope="col">Correo</th>
+                        <th scope="col">Asunto</th>
+                        <th scope="col">Fecha Reporte</th>
+                        <th scope="col">Estatus</th>
+                        <th scope="col">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in object_list %}
+                    <tr>
+                        <th scope="row">{{item.id}}</th>
+                        <td>{{item.qa_empresa}}</td>
+                        <td>{{item.qa_correo}}</td>
+                        <td>{{item.qa_asunto}}</td>
+                        <td>{{item.qa_fechaReporte}}</td>
+                        <td>{{item.get_qa_estatus_display}}</td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

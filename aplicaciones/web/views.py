@@ -662,3 +662,7 @@ class AsuntosInternosAdd(CreateView):
     form_class = AsuntosInternosForm
     template_name = 'web/V2/asuntosinternos.html'
     success_url=reverse_lazy("web:inicio")
+
+class AsuntosInternosList(ListView):
+    template_name = "web/V2/asuntosin_list.html"
+    model = QuejaAcoso

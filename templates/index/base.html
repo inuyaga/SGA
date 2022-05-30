@@ -234,6 +234,18 @@
                                 </ul>
                             </li>
                             {% endif %}
+                            {% if perms.web %}
+                            <li class="nav-item nav-item-has-subnav {% block asuntosinternosOpen %}{% endblock asuntosinternosOpen %}">
+                                <a href="javascript:void(0)"><i class="fa fa-university" aria-hidden="true"></i> Asuntos internos</a>
+                                <ul class="nav nav-subnav">
+                                    {% if perms.web.view_quejaacoso %}
+                                    <li>
+                                        <a href="{% url 'web:AsuntosInternosLista' %}">Lista</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% endif %}
                             {% if perms.fuds %}
                             <li class="nav-item nav-item-has-subnav">
                                 <a href="javascript:void(0)"><i class="ion-document-text"></i> FUDS</a>
