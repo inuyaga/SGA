@@ -61,12 +61,14 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="text-center" style="width: 250px;">#</th>
-                                <th>Fecha</th>                                
-                                <th>Tipo de Servicio</th>                                
-                                <th>Actualizó</th>                                
-                                <th>Creador</th>                                
-                                <th>Estatus</th>                                
+                                <th class="text-center">#</th>
+                                <th class="text-center" style="width: 200px;">Img</th>
+                                <th class="text-center" style="width: 200px;">Img close</th>
+                                <th>Fecha</th>
+                                <th>Tipo de Servicio</th>
+                                <th>Actualizó</th>
+                                <th>Creador</th>
+                                <th>Estatus</th>
                                 <th class="text-center" style="width: 150px;">Acciones</th>
                             </tr>
                         </thead>
@@ -91,10 +93,12 @@
                                     '{{item.get_s_estatus_display}}',
                                     '{{item.s_user_cambio}}',
                                 )">{{item.id}}</a> </td>
-                                <td>{{item.s_fecha}}</td>                                
-                                <td>{{item.s_tipo}}</td>                                
-                                <td>{{item.s_user_cambio}}</td>                                
-                                <td>{{item.s_user}}</td>                                
+                                <td><a href="{{item.s_img_report.url}}"><img src="{{item.s_img_report.url}}" class="img-thumbnail" alt="{{item.id}}"></a></td>
+                                <td><a href="{{item.s_img_report_close.url}}"><img src="{{item.s_img_report_close.url}}" class="img-thumbnail" alt="{{item.id}}_CLOSE"></a></td>
+                                <td>{{item.s_fecha}}</td>
+                                <td>{{item.s_tipo}}</td>
+                                <td>{{item.s_user_cambio}}</td>
+                                <td>{{item.s_user}}</td>
                                 <td class="{{item.s_estatus|get_color_class_status_solicitud}}">{{item.get_s_estatus_display}}</td>                                
                                 <td class="text-center">
                                     <div class="btn-group">
@@ -112,11 +116,16 @@
                                          {% endif %}
                                              
                                         {% endif %}
+
+                                        {% if perms.solicitud.cerrar_servicio and item.s_estatus == 3 %}
+                                        <a class="btn btn-xs btn-default" data-toggle="tooltip" title="" data-original-title="Cerrar" href="{% url 'solicitud:servicio_cerrar' item.id%}"><i class="fa fa-lock" aria-hidden="true"></i></a>
+                                        {% endif %}
                                         
                                         {% if perms.solicitud.delete_servicio %}                                             
                                         <a class="btn btn-xs btn-default" data-toggle="tooltip" title="" data-original-title="Eliminar" href="{% url 'solicitud:servicio_delete' item.id %}"><i class="ion-close"></i></a>                                       
                                         {% endif %}
-                                            
+
+                                        <input type="hidden" id="{{item.id}}_obs_cierre" value="{{item.s_reporte_close}}">
                                     </div>
                                 </td>
                             </tr>
@@ -192,6 +201,7 @@
                         <li class="list-group-item" style="font-weight: bold;">Servicio Autorizado: <span id="s_serv_autorizado" style="font-weight: normal; margin-left: 5px;"></span></li>                       
                         <li class="list-group-item" style="font-weight: bold;">Presupuesto: <span id="s_presupuesto" style="font-weight: normal; margin-left: 5px;"></span></li>                       
                         <li class="list-group-item" style="font-weight: bold;">Estatus: <span id="s_estatus" style="font-weight: normal; margin-left: 5px;"></span></li>                       
+                        <li class="list-group-item" style="font-weight: bold;">Obs cierre: <span id="s_reporte_close" style="font-weight: normal; margin-left: 5px;"></span></li>                       
                         <li class="list-group-item" style="font-weight: bold;">Modifico: <span id="s_user_cambio" style="font-weight: normal; margin-left: 5px;"></span></li>                       
                     </ul>
                 </div>
@@ -244,6 +254,7 @@
             $("#s_presupuesto").text(s_presupuesto);
             $("#s_estatus").text(s_estatus);
             $("#s_user_cambio").text(s_user_cambio);
+            $("#s_reporte_close").text($("#"+id+"_obs_cierre").val());
         }
 
         function updatePage() {

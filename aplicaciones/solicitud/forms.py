@@ -20,6 +20,7 @@ class ServicioForm(forms.ModelForm):
             's_equipo',
             's_serie',
             's_reporte',
+            's_img_report',
         )        
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,6 +34,18 @@ class ServicioValidarForm(forms.ModelForm):
             's_provedor_aut',
             's_serv_autorizado',
             's_presupuesto',          
+        )        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class ServicioCerrarForm(forms.ModelForm):
+    class Meta:
+        model = Servicio
+        fields = (
+            's_img_report_close',
+            's_reporte_close',   
         )        
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

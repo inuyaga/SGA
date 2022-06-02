@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div class="card-block">
-                <form action="" method="post">
+                <form action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group has-success">
                         {{form.as_p}}

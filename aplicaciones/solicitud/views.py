@@ -182,6 +182,19 @@ class ServicioValidarView(UpdateView, PermissionRequiredMixin):
         self.object = form.save()
         return super().form_valid(form)
 
+class ServicioCerrarView(UpdateView, PermissionRequiredMixin):
+    permission_required = 'solicitud.cerrar_servicio'
+    model = Servicio
+    template_name = "solicitud/generic_form.html"
+    form_class = ServicioCerrarForm
+    success_url = reverse_lazy('solicitud:servicios')
+
+    def form_valid(self, form):
+        form.instance.s_estatus = 4
+        form.instance.s_user_cambio = self.request.user
+        self.object = form.save()
+        return super().form_valid(form)
+
 
 class ServicioDelete(DeleteView, PermissionRequiredMixin):
     permission_required = 'solicitud.delete_servicio'

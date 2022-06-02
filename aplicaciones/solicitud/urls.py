@@ -10,6 +10,7 @@ urlpatterns = [
     path('servicio/', SolicitudView.ServicioList.as_view(), name='servicios'),
     path('servicio/crear/', SolicitudView.ServicioCreate.as_view(), name='servicio_crear'),
     path('servicio/validar/<slug:pk>/', SolicitudView.ServicioValidarView.as_view(), name='servicio_validar'),
+    path('servicio/cierre/<slug:pk>/', SolicitudView.ServicioCerrarView.as_view(), name='servicio_cerrar'),
     path('servicio/eliminar/<slug:pk>/', SolicitudView.ServicioDelete.as_view(), name='servicio_delete'),
     path('servicio/autoriza/', SolicitudView.UpdateStatusServicioView.as_view(), name='servicio_autoriza'),
 

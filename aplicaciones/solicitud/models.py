@@ -29,8 +29,10 @@ class Servicio(models.Model):
     s_serv_autorizado = models.CharField(verbose_name="Servicio Autorizado", max_length=200, blank=True, null=True)
     s_presupuesto = models.FloatField(verbose_name="Presupuesto", blank=True, null=True)
     s_estatus = models.IntegerField(choices=ESTATUS, default=1, verbose_name="Estatus")
-    s_user_cambio = models.ForeignKey(User, related_name="user_cambio", on_delete=models.CASCADE,
-                                      verbose_name="Modifico")
+    s_user_cambio = models.ForeignKey(User, related_name="user_cambio", on_delete=models.CASCADE, verbose_name="Modifico")
+    s_img_report=models.ImageField(verbose_name='Imagen de apoyo a reporte',upload_to='solicitud/servicio/', blank=False, null=False)
+    s_img_report_close=models.ImageField(verbose_name='Imagen de apoyo para cierre de reporte',upload_to='solicitud/servicio_cerrado/', blank=False, null=True, default='empresa/logo/BLANCO-200x200.jpg')
+    s_reporte_close = models.TextField(verbose_name="Observaciones de cierre", default='')
 
     def __str__(self):
         return "{}".format(self.id)
@@ -39,4 +41,5 @@ class Servicio(models.Model):
         permissions = [
             ('validar_servicio', 'Puede validar el servicio'),
             ('autorizar_servicio', 'Puede autorizar servicio'),
+            ('cerrar_servicio', 'Puede cerrar servicio'),
         ]
