@@ -123,8 +123,10 @@
                         {% if user.is_authenticated %}
 <!--                            <a class="dropdown-item" >{{user.email}}</a> -->
                             <a class="dropdown-item" href="{% url 'web:compras_web' %}">PEDIDOS</a>
-                            {% if user.is_user_web == False%}
+                            <a class="dropdown-item" href="{% url 'promocion:promopuntolistaG' %}">PUNTOS</a>
+                            {% if user.is_user_web == False %}
                             <a class="dropdown-item" href="{% url 'inicio:index' %}">SGA</a>
+                            <a class="dropdown-item" href="{% url 'promocion:update_masive_promo' %}">CARGAR PUNTOS PROMOCIÓN</a>
                             {% endif %}
                             <a class="dropdown-item" href="{% url 'salir' %}">SALIR</a>
                             {% else %}

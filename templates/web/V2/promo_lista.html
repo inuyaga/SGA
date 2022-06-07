@@ -1,0 +1,101 @@
+{% extends 'web/base.html' %}
+{% load humanize %}
+{% load tags_promociones %}
+
+{% block titulo %}
+Mis puntos generados
+{% endblock titulo %}
+
+
+{% block contenido %}
+
+
+<div class="container">
+    {% if messages %}
+    <div class="container">
+        {% for message in messages %}
+        <div class="row">
+            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}" role="alert">
+                {{ message }}.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+<div class="row">
+    {% for item in puntos %}
+    <div class="col-md-2 my-2">
+        <div class="card">
+            <div class="card-body">
+                Proveedor: 
+                {% if item.proveedor == '255' %}
+                    NORMA
+                    <p><b>Puntos: </b>{{item.puntosR|PuntoG:15}}</p>
+                {% endif %}
+                {% if item.proveedor == '855' %}
+                    RODIN
+                    <p><b>Puntos: </b>{{item.puntosR|PuntoG:15}}</p>
+                {% endif %}
+                {% if item.proveedor == '261' %}
+                ESCRIMEX
+                <p><b>Puntos: </b>{{item.puntosR|PuntoG:9}}</p>
+                {% endif %}
+                {% if item.proveedor == '440' %}
+                ARIMANY
+                <p><b>Puntos: </b>{{item.puntosR|PuntoG:15}}</p>
+                {% endif %}
+                {% if item.proveedor == '022' %}
+                HENKEL
+                <p><b>Puntos: </b>{{item.puntosR|PuntoG:9}}</p>
+                {% endif %}
+                {% if item.proveedor == '009' %}
+                PELIKAN
+                <p><b>Puntos: </b>{{item.puntosR|PuntoG:9}}</p>
+                {% endif %}
+                {% if item.proveedor == '623' %}
+                JUMBO
+                <p><b>Puntos: </b>{{item.puntosR|PuntoG:6}}</p>
+                {% endif %}
+                {% if item.proveedor == '111' %}
+                KOLA LOKA
+                <p><b>Puntos: </b>{{item.puntosR|PuntoG:3}}</p>
+                {% endif %}
+                {% if item.proveedor == '801' %}
+                    ESTILO
+                    <p><b>Puntos: </b>{{item.puntosR|PuntoG:3}}</p>
+                {% endif %}
+
+                <p><b>Total: </b>${{item.totalpuntos}}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="col-md-12">
+        <hr>
+        <h2>Facturas con acumulación para puntos</h2>
+    </div>
+    {% for item in object_list %}
+    <div class="col-md-2 my-2">
+        <div class="card">
+            <div class="card-body">
+                <b>Factura:</b> <a href="{% url 'promocion:promopuntolistaD' item.fac %}">{{item.fac}}</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+    <div class="col-12">
+        <ul class="pagination mt-3 justify-content-center pagination_style1">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}">&#60;</a></li>
+            {% endif %}
+            <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">&#62;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">&#187;</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock contenido %}

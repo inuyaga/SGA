@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'aplicaciones.solicitud',
     'aplicaciones.ajustes',
     'aplicaciones.almacen',
+    'aplicaciones.promocion',
     'tinymce',
     'django_cleanup.apps.CleanupConfig',
 ]

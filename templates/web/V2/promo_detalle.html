@@ -1,0 +1,103 @@
+{% extends 'web/base.html' %}
+{% load humanize %}
+
+{% block titulo %}
+Mis puntos generados
+{% endblock titulo %}
+
+
+{% block contenido %}
+
+
+<div class="container">
+    {% if messages %}
+    <div class="container">
+        {% for message in messages %}
+        <div class="row">
+            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}" role="alert">
+                {{ message }}.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Venta</th>
+                <th scope="col">Código</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Factura</th>
+                <th scope="col">Fecha de fac</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for item in object_list %}
+            <tr>
+                <th>
+                    <a href="#" data-toggle="modal" data-target="#mod{{item.cw_id}}">{{item.venta}}</a>
+                    <div class="modal fade" id="mod{{item.cw_id}}" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Detalles</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table">
+                                        <thead>
+                                        </thead>
+                                        <tbody>
+                                            {% for detalle in item.detalles %}
+                                            <tr>
+                                                <th scope="row"><img style="width: 80px; height: 70px;"
+                                                        src="{{detalle.dcw_producto_id.producto_imagen.url}}" alt="">
+                                                </th>
+                                                <th scope="row">{{detalle.dcw_producto_id.producto_nombre}}</th>
+                                                <th scope="row">X</th>
+                                                <td>{{detalle.dcw_cantidad}}</td>
+                                            </tr>
+                                            {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </th>
+                <!-- <th scope="row">{{item.cw_id}}</th>               -->
+                <td>{{item.cod_prod}}</td>
+                <td>{{item.descripcion}}</td>
+                <td>{{item.importeNeto}}</a></td>
+                <td>{{item.fecha_fac}}</td>
+                <td>{{item.fac}}</td>
+                <td>{{item.proveedor}}</td>
+            </tr>
+            {% endfor %}
+
+            <tr> </tbody>
+    </table>
+    <div class="col-12">
+        <ul class="pagination mt-3 justify-content-center pagination_style1">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1&{{urls_formateada.urlencode}}">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{urls_formateada.urlencode}}">&#60;</a></li>
+            {% endif %}
+            <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{urls_formateada.urlencode}}">&#62;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{urls_formateada.urlencode}}">&#187;</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock contenido %}

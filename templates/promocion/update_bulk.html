@@ -1,0 +1,23 @@
+{% extends 'index/base.html'%}
+{% block titulo %}
+<title>Insertar productos de puntos a clientes participantes</title>
+{% endblock titulo %}
+
+
+{% block contenido %}
+<div class="container">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <div class="form-group">
+                <label for="file_producto_xls">Documento formato excel</label>
+                <input type="file" class="form-control-file" id="file_producto_xls" name="file_producto_xls">
+              </div>
+    </div>
+    <button type="submit" class="btn btn-outline-success">Insertar nuevos productos a clientes</button>
+  </form>
+</div>
+{% endblock contenido %}
+    
