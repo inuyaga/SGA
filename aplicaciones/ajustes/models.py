@@ -3,7 +3,6 @@ from django.db.models import Sum, F, FloatField
 from aplicaciones.empresa.models import Sucursal
 from aplicaciones.pedidos.models import Producto
 
-TIPO_AJUSTE_ITEM = ((1, 'Entrada'), (2, 'Salida'))
 STATUS = ((1, 'CREADO'), (2, 'AUTORIZADO'), (3, 'AJUSTADO'))
 class Ajuste(models.Model):
     id=models.BigAutoField(verbose_name="ID", primary_key=True)
@@ -37,7 +36,6 @@ class AjusteProduct(models.Model):
     cantidad=models.IntegerField(verbose_name="Cantidad")
     precio=models.FloatField(verbose_name="Precio unitario")
     vale=models.IntegerField(verbose_name="Vale") 
-    tipo=models.IntegerField(verbose_name="Tipo", choices=TIPO_AJUSTE_ITEM, default=1)
     def __str__(self):
         return self.producto.producto_codigo
 

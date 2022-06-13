@@ -48,12 +48,3 @@ class FiltroAjusteForm(forms.Form):
         lst = list(self.fields['estatus']._choices)
         lst.insert(0, ('', 'Todo'))
         self.fields['estatus'].choices=lst
-
-
-class AjusteProductForm(forms.ModelForm):
-    descripcion = forms.CharField()
-    producto = forms.CharField()
-    class Meta:
-        model = AjusteProduct        
-        exclude = ('ajuste',)
-       
