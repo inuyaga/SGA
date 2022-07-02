@@ -1,3 +1,4 @@
+from django.db.models import Sum, F, FloatField, Case, When
 from django.db import models
 from django.conf import settings
 Usuario = settings.AUTH_USER_MODEL
@@ -15,5 +16,22 @@ class Promocion(models.Model):
 
     def __str__(self):
         return self.venta
+
+    def mismejores(self):
+        consulta = self.objects.annotate(puntosR = Case(
+            When(proveedor="440", then= (Sum(F('importeNeto'))/10000)*15),
+            When(proveedor="623", then= (Sum(F('importeNeto'))/10000)*6),
+            When(proveedor="255", then= (Sum(F('importeNeto'))/10000)*15),
+            When(proveedor="855", then= (Sum(F('importeNeto'))/10000)*15),
+            When(proveedor="261", then= (Sum(F('importeNeto'))/10000)*9),
+            When(proveedor="022", then= (Sum(F('importeNeto'))/10000)*9),
+            When(proveedor="009", then= (Sum(F('importeNeto'))/10000)*9),
+            When(proveedor="111", then= (Sum(F('importeNeto'))/10000)*3),
+            When(proveedor="801", then= (Sum(F('importeNeto'))/10000)*3),
+            default=Sum(F('importeNeto')),
+            output_field=FloatField()
+        )).order_by('no_cliente')
+        return consulta
+
     class Meta:
         verbose_name = "Productos con puntos de promoción por cada 10 mil"

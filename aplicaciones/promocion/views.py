@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.db.models import Avg, Sum, F, FloatField, Count, Q
+from django.db.models import Avg, Sum, F, FloatField, Count, Q, Case, When, Max
 # Create your views here.
 class ProductosInsertPromo(TemplateView):
     template_name = "promocion/update_bulk.html"
@@ -71,7 +71,22 @@ class PromoList(LoginRequiredMixin,ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['puntos']=Promocion.objects.filter(no_cliente=self.request.user).values('proveedor').annotate(totalpuntos = Sum(F('importeNeto'),output_field=models.FloatField()), puntosR = Sum(('importeNeto'),output_field=models.IntegerField())/10000 )
+        context['puntos']=Promocion.objects.filter(no_cliente=self.request.user).values('proveedor').annotate(totalpuntos = Sum(F('importeNeto'),output_field=models.FloatField()), puntosR = Sum(('importeNeto'),output_field=models.FloatField())/10000 )
+        # context['orden']=Promocion.objects.values('no_cliente','proveedor').annotate(totalimporte = Sum(F('importeNeto'),output_field=models.FloatField()), puntosR = Case(
+        #     When(proveedor="440", then= (Sum(F('importeNeto'))/10000)*15),
+        #     When(proveedor="623", then= (Sum(F('importeNeto'))/10000)*6),
+        #     When(proveedor="255", then= (Sum(F('importeNeto'))/10000)*15),
+        #     When(proveedor="855", then= (Sum(F('importeNeto'))/10000)*15),
+        #     When(proveedor="261", then= (Sum(F('importeNeto'))/10000)*9),
+        #     When(proveedor="022", then= (Sum(F('importeNeto'))/10000)*9),
+        #     When(proveedor="009", then= (Sum(F('importeNeto'))/10000)*9),
+        #     When(proveedor="111", then= (Sum(F('importeNeto'))/10000)*3),
+        #     When(proveedor="801", then= (Sum(F('importeNeto'))/10000)*3),
+        #     default=Sum(F('importeNeto')),
+        # ))
+        context['orden']=Promocion.objects.all()
+        
+        context['mejores']=Promocion.objects.values('no_cliente').annotate(totalimporte = Sum(F('importeNeto'),output_field=models.FloatField()) ).order_by('-totalimporte')[:10]
         return context
     
     def get_queryset(self):

@@ -680,6 +680,12 @@ class DetallePedidoListView(ListView):
             detallepedido_pedido_id=self.kwargs.get('pk'))
         return queryset
 
+    def post(self, request, *args, **kwargs):
+        post = request.POST
+        url=reverse_lazy('pedidos:pedido_detalle_view', kwargs={'pk': self.kwargs.get('pk')})
+        Detalle_pedido.objects.filter(id=post.get('id')).update(detallepedido_cantidad=post.get('detallepedido_cantidad'))
+        return redirect(url)
+
     @method_decorator(permission_required('pedidos.view_detalle_pedido', reverse_lazy('inicio:need_permisos')))
     def dispatch(self, *args, **kwargs):
         return super(DetallePedidoListView, self).dispatch(*args, **kwargs)

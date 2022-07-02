@@ -342,7 +342,7 @@ class CarritoComprasView(LoginRequiredMixin, ListView):
         return queryset
     def post(self, request, *args, **kwargs):
         url=reverse_lazy('web:carrito')                
-        post = request.POST       
+        post = request.POST
         exclude_items=[] 
         for item in post:
             if 'csrfmiddlewaretoken' != item:
@@ -353,8 +353,6 @@ class CarritoComprasView(LoginRequiredMixin, ListView):
             exclude_items.append(item)
         
         Detalle_Compra_Web.objects.filter(dcw_creado_por=request.user, dcw_status=False).exclude(dcw_producto_id__in=exclude_items).delete()
-
-
         return redirect(url)
 
     def get_context_data(self, **kwargs): 

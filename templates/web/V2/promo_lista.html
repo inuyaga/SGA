@@ -6,11 +6,8 @@
 Mis puntos generados
 {% endblock titulo %}
 
-
 {% block contenido %}
-
-
-<div class="container">
+<!-- <div class="container"> -->
     {% if messages %}
     <div class="container">
         {% for message in messages %}
@@ -23,53 +20,35 @@ Mis puntos generados
     </div>
     {% endif %}
 <div class="row">
-    {% for item in puntos %}
-    <div class="col-md-2 my-2">
+    <div class="col-md-2">
+        <p style="font-size: 25px;">Primeros lugares</p>
+        {% for item in mejores %}
+        <p><b>{{ forloop.counter }}.-</b> Cliente({{ item.no_cliente }})</p>
+        {% endfor %}
+        {% for item in orden %}
+        <p><b>{{ forloop.counter }}.-</b> Cliente({{ item.no_cliente }}) Proveedor({% proveedorLetra item.proveedor %}) totalSuma({{ item.mismejores }}) t({{ item.puntosR }})</p>
+        {% endfor %}
+    </div>
+    <div class="row col-md-5">
+        {% for item in puntos %}
+    <div class="col-md-6 my-2">
         <div class="card">
             <div class="card-body">
-                Proveedor: 
-                {% if item.proveedor == '255' %}
-                    NORMA
-                    <p><b>Puntos: </b>{{item.puntosR|PuntoG:15}}</p>
-                {% endif %}
-                {% if item.proveedor == '855' %}
-                    RODIN
-                    <p><b>Puntos: </b>{{item.puntosR|PuntoG:15}}</p>
-                {% endif %}
-                {% if item.proveedor == '261' %}
-                ESCRIMEX
-                <p><b>Puntos: </b>{{item.puntosR|PuntoG:9}}</p>
-                {% endif %}
-                {% if item.proveedor == '440' %}
-                ARIMANY
-                <p><b>Puntos: </b>{{item.puntosR|PuntoG:15}}</p>
-                {% endif %}
-                {% if item.proveedor == '022' %}
-                HENKEL
-                <p><b>Puntos: </b>{{item.puntosR|PuntoG:9}}</p>
-                {% endif %}
-                {% if item.proveedor == '009' %}
-                PELIKAN
-                <p><b>Puntos: </b>{{item.puntosR|PuntoG:9}}</p>
-                {% endif %}
-                {% if item.proveedor == '623' %}
-                JUMBO
-                <p><b>Puntos: </b>{{item.puntosR|PuntoG:6}}</p>
-                {% endif %}
-                {% if item.proveedor == '111' %}
-                KOLA LOKA
-                <p><b>Puntos: </b>{{item.puntosR|PuntoG:3}}</p>
-                {% endif %}
-                {% if item.proveedor == '801' %}
-                    ESTILO
-                    <p><b>Puntos: </b>{{item.puntosR|PuntoG:3}}</p>
-                {% endif %}
-
+                Proveedor({% proveedorLetra item.proveedor %})
+                <p><b>Puntos: </b>{{item.proveedor|PuntoG:item.puntosR |floatformat:"4"|intcomma}}</p>
                 <p><b>Total: </b>${{item.totalpuntos}}</p>
             </div>
         </div>
     </div>
     {% endfor %}
+    </div>
+    <div class="col-md-5">
+        <canvas id="mejores_clientes">
+
+        </canvas>
+    </div>
+</div>
+<div class="row">
     <div class="col-md-12">
         <hr>
         <h2>Facturas con acumulación para puntos</h2>
@@ -84,6 +63,8 @@ Mis puntos generados
     </div>
     {% endfor %}
 </div>
+
+<div class="row">
     <div class="col-12">
         <ul class="pagination mt-3 justify-content-center pagination_style1">
             {% if page_obj.has_previous %}
@@ -98,4 +79,43 @@ Mis puntos generados
         </ul>
     </div>
 </div>
+<!-- </div> -->
 {% endblock contenido %}
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+<script>
+    
+
+
+    var activo_sum = document.getElementById('mejores_clientes');
+
+    var myPieChart = new Chart(activo_sum, {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: [
+                    {% for item in puntos %}
+                    {{item.proveedor|PuntoG:item.puntosR |floatformat:"4"|intcomma}},
+                    {% endfor %}
+                    ],
+                backgroundColor:[
+                {% for item in puntos %}
+                'rgba({% random_int 100 255 %}, {% random_int 1 255 %}, {% random_int 1 255 %}, 0.8)',
+                {% endfor %}
+                    ],
+                
+            }],
+
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+            {% for item in puntos %}
+            '{% proveedorLetra item.proveedor %}',
+            {% endfor %}
+            ], 
+
+            
+        },
+        options: {}
+    });
+</script>
+{% endblock script %}
