@@ -1,4 +1,4 @@
-{% extends 'web/base.html' %} 
+{% extends 'web/base.html' %}
 {% load static %}
 
 {% block contenido %}
@@ -10,7 +10,7 @@
 </style>
 <div id="carouselExampleFade" class="carousel slide carousel-fade" data-ride="carousel">
     <div class="carousel-inner">
-        {% for item in portadas %} 
+        {% for item in portadas %}
         
         {% if item.blog_Catalago %}
         <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">

@@ -30,10 +30,10 @@
                                 {% csrf_token %}
                             <td>
                                 <input type="text" name="id" value="{{item.id}}" hidden>
-                                <input type="text" name="detallepedido_cantidad" value="{{item.detallepedido_cantidad}}">
+                                <input type="number" min="1" class="form-control" name="detallepedido_cantidad" value="{{item.detallepedido_cantidad}}" required>
                             </td>
                             <td class="hidden-xs">{{item.detallepedido_precio}}</td>
-                            <td><button type="submit" class="btn btn-secondary">Actualizar</button></td>
+                            <td>{% if perms.solicitud.change_detalle_pedido %} <button type="submit" class="btn btn-secondary"><i class="ion-android-sync"></i></button>{% endif %}</td>
                             </form>
                         </tr>
                         {% endfor %}
