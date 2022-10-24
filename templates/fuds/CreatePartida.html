@@ -78,6 +78,8 @@
     if(Number($("#Partida_Cantidad"+Partida_producto).val()) <= 0 || Number($("#Partida_Precio"+Partida_producto).val()) <= 0){
       alert("Cantidad y precio no debe ser menor a 0");
     }else{
+      button = document.querySelector('#botonA');
+      button.disabled = true;
       $.ajax({
         type: 'POST',
         url: '',
@@ -89,13 +91,14 @@
           Partida_Cantidad: $("#Partida_Cantidad"+Partida_producto).val(),
         },
         success: function (data) {
-          
+          document.getElementById("mediocuerpo").innerHTML="..."
           document.getElementById("mediocuerpoResultado").innerHTML=data.cp;
           $("#Partida_Precio"+Partida_producto).val("");
           $("#Partida_Cantidad"+Partida_producto).val("");
           document.getElementById("informacion").innerHTML=data.rsp
         },
         error: function (data) {
+          button.disabled = false;
           console.log('An error occurred.');
           console.log(data);
         },

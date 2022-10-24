@@ -671,13 +671,8 @@ class PartidaCreate(CreateView):
                 Partida_Cantidad=request.POST.get('Partida_Cantidad'),
                 )
         pf.save()
-        respuesta="""
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {Partida_nombre} agredado al FUD!
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+        respuesta="""<h3>
+        {Partida_nombre} agredado al FUD! </h3>
         """.format(
             Partida_nombre = request.POST.get('Partida_nombre'),
         )
@@ -727,8 +722,8 @@ class PartidaView(View):
                 <th scope="row">{Partida}</th>
                 <th scope="row">{Descripcion} </th>
                 <th scope="row"><input type="number" step="any" class="form-control" id="Partida_Precio{Partida}"></th>
-                <th scope="row"><input type="number" class="form-control" id="Partida_Cantidad{Partida}"></th>
-                <th> <input type="submit" class="btn btn-info" onclick="guardar_partida('{Partida}',{idfud})" value="Agregar a fud" placeholder="Busqueda de producto"> </th>
+                <th scope="row"><input type="number" class="form-control" value="1" id="Partida_Cantidad{Partida}"></th>
+                <th> <input id="botonA" type="submit" class="btn btn-info" onclick="guardar_partida('{Partida}',{idfud})" value="Agregar a fud" placeholder="Busqueda de producto"> </th>
             </tr>
             </form>
             """.format(
