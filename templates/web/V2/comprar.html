@@ -261,9 +261,10 @@
                                 {% endif %}
 
                                 {% if item.prducto_existencia > 0 %}
+                                    <li class="add-to-cart">"La existencia de los productos en este sitio varia constantemente, por lo que después de levantar su pedido un ejecutivo de ventas le contactara para reconfirmar</li>
                                     <a class="btn botoncarrito" href="{% url 'web:producto_detalle' item.producto_codigo item.producto_nombre|slugify %}"><i class="fas fa-shopping-cart"></i> Ver</a>
                                 {% else %}
-                                    <li class="add-to-cart">*Sin Stock</li>                                                
+                                    <li class="add-to-cart"><b>*Sin Stock</b>("La existencia de los productos en este sitio varia constantemente, por lo que después de levantar su pedido un ejecutivo de ventas le contactara para reconfirmar)</li>
                                 {% endif %}
                             </div>
                         </div>
