@@ -101,3 +101,8 @@ def err_permisos(request):
     'usuario': request.user,
     }
     return render(request, 'index/error_permisos.html', contex)
+
+class v2(LoginRequiredMixin, TemplateView):
+    template_name = 'index/baseV2.html'
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'

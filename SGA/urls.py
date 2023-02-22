@@ -41,7 +41,7 @@ urlpatterns = [
     path('pedidos/', include('aplicaciones.pedidos.urls'), name='pedidos'),
     path('login/',LoginView.as_view(template_name='index/inicio.html'), name='inicio'),
     path('salir/', LogoutView.as_view(template_name='index/salir.html'), name="salir"),
-    path('sga', include('aplicaciones.inicio.urls'), name='principal'),
+    path('sga/', include('aplicaciones.inicio.urls'), name='principal'),
     re_path(r'^ajax_select/', include(ajax_select_urls)),
     path('Expos/', include('aplicaciones.expo.urls'), name='expo'),
     path('compras/', include('aplicaciones.compra.urls'), name='compras'),

@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SGA|{% block titulo %}{% endblock titulo %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.css" rel="stylesheet" />
+    <style>
+        .dropdown-menu li {
+            position: relative;
+        }
+
+        .dropdown-menu .dropdown-submenu {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: -7px;
+        }
+
+        .dropdown-menu .dropdown-submenu-left {
+            right: 100%;
+            left: auto;
+        }
+
+        .dropdown-menu>li:hover>.dropdown-submenu {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <ul class="navbar-nav">
+                <!-- Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-mdb-toggle="dropdown" aria-expanded="false">
+                        Activos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <!-- <li>
+                            <a class="dropdown-item" href="#">Action</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Another action</a>
+                        </li> -->
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Inmuebles &raquo;
+                            </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                                <!-- <li>
+                                    <a class="dropdown-item" href="#">Submenu item 1</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Submenu item 2</a>
+                                </li> -->
+
+                                <li>
+                                    <a class="dropdown-item" href="#">Terrenos &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Control</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Mantenimiento</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Locales &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Control</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Mantenimiento</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Casa habitación &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Control</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Mantenimiento</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- siguiente menú -->
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Flotilla &raquo;
+                            </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                                <li>
+                                    <a class="dropdown-item" href="#">Automóviles &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Asignación</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Control</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Mantenimiento</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Motocicletas &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Asignación</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Control</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Mantenimiento</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Vehículos de carga &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Asignación</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Control</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Mantenimiento</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Tractos &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Asignación</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Control</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Mantenimiento</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Moviliario y equipo &raquo;
+                            </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                                <li>
+                                    <a class="dropdown-item" href="#">Impresión y copiado &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Asignación</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Control</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Mantenimiento</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- fijos -->
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-mdb-toggle="dropdown" aria-expanded="false">
+                        Gastos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <!-- <li>
+                            <a class="dropdown-item" href="#">Action</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Another action</a>
+                        </li> -->
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Fijos &raquo;
+                            </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                                <!-- <li>
+                                    <a class="dropdown-item" href="#">Submenu item 1</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Submenu item 2</a>
+                                </li> -->
+
+                                <li>
+                                    <a class="dropdown-item" href="#">Rentas &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">CFE &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Agua &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Internet &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Seguros &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <!-- <li>
+                                    <a class="dropdown-item" href="#">Submenu item 4</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Submenu item 5</a>
+                                </li> -->
+                            </ul>
+                        </li>
+                        <!-- siguiente menú -->
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Operativos &raquo;
+                            </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                                <li>
+                                    <a class="dropdown-item" href="#">Combustible &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">IAVE &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Uso interno &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Recursos humanos &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Viáticos &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Peaje &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Alimentos &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Hospedaje &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Otros &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Alta</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Pago</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Baja</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Mercadotecnia &raquo;
+                            </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                                <li>
+                                    <a class="dropdown-item" href="#">Submenu item 3 &raquo; </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">Multi level 1</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">Multi level 2</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- fijos -->
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-mdb-toggle="dropdown" aria-expanded="false">
+                        RH
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <!-- <li>
+                            <a class="dropdown-item" href="#">Action</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Another action</a>
+                        </li> -->
+                        <li>
+                            <a class="dropdown-item" href="#">Nómina</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Pensiones</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Finiquitos</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">IMSS/INFONAVIT</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">FONACOT</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Préstamos</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Caja de ahorro</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Prestaciones</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Uniformes</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Otros</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                      data-mdb-toggle="dropdown" aria-expanded="false">
+                      Tesoreria
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <!-- <li>
+                        <a class="dropdown-item" href="#">Action</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li> -->
+                      <li>
+                        <a class="dropdown-item" href="#">
+                          Solicitudes de pago &raquo;
+                        </a>
+                        <ul class="dropdown-menu dropdown-submenu">
+                          <li>
+                            <a class="dropdown-item" href="#">En proceso</a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#">Procesados</a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#">Solicitudes de pago &raquo; </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                              <li>
+                                <a class="dropdown-item" href="#">Multi level 1</a>
+                              </li>
+                              <li>
+                                <a class="dropdown-item" href="#">Multi level 2</a>
+                              </li>
+                            </ul>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#">Submenu item 4</a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#">Submenu item 5</a>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                      data-mdb-toggle="dropdown" aria-expanded="false">
+                      Perfil-({{user.username}})
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <!-- <li>
+                        <a class="dropdown-item" href="#">Action</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li> -->
+                        <li>
+                            <a class="dropdown-item" href="{% url 'admin:index' %}">Admin panel</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'web:inicio' %}">Sitio web</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'salir' %}">Cerrar sesión</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <!-- MDB -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js"></script>
+</body>
+
+</html>
